@@ -275,7 +275,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">1</th>
-                                                            <td><a href="PPDCaseDetails.aspx" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
+                                                            <td><a href="#" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
                                                             <td>Demo User</td>
                                                             <td>Demo Hospital</td>
                                                             <td>Claim Forwarded by CEX(Insurance)</td>
@@ -791,7 +791,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbPackageCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -803,7 +803,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbIncentiveCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -816,7 +816,7 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="input-group">
                                                                 <div class="input-group-text">
-                                                                    <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                    <img src="../images/rupee.svg" />
                                                                 </div>
                                                                 <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbImplantCost" class="form-control"></asp:TextBox>
                                                             </div>
@@ -830,7 +830,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbTotalPackageCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -849,7 +849,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbAmountLiable" class="form-control"></asp:TextBox>
                                                         </div>
@@ -1052,63 +1052,85 @@
                                                             <h3 class="text-white">Preauthorization</h3>
                                                         </div>
                                                         <div class="ibox-content table-responsive">
-                                                            <table class="table table-bordered table-striped">
-                                                                <thead>
-                                                                    <tr class="table-primary">
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 10%;">Sl. No.</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 30%;">Attachment Name</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Hospital Name</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Card No.</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Document For</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Uploaded Date</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>1.</td>
-                                                                        <td>
-                                                                            <asp:LinkButton ID="attachmentPatientPhoto" CssClass="text-decoration-underline text-black fw-semibold" runat="server" OnClick="attachmentPatientPhoto_Click">Patient Photo</asp:LinkButton>
-                                                                        </td>
-                                                                        <td>
-                                                                            <asp:Label ID="lbAttachmentHospitalName" runat="server" Text='NA'></asp:Label>
-                                                                        </td>
-                                                                        <td>
-                                                                            <asp:Label ID="lbAttachmentCardNumber" runat="server" Text='NA'></asp:Label>
-                                                                        </td>
-                                                                        <td>Pre Investigation</td>
-                                                                        <td>
-                                                                            <asp:Label ID="lbAttachmentRegistrationDate" runat="server" Text='NA'></asp:Label>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                            <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
-                                    <alternatingrowstyle backcolor="Gainsboro" />
-                                    <columns>
-                                        <asp:TemplateField HeaderText="Attachment Name">
-                                            <itemtemplate>
-                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
-                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
-                                            </itemtemplate>
-                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Uploaded Date">
-                                            <itemtemplate>
-                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
-                                            </itemtemplate>
-                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                        </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Beneficiary Options">
-                                            <itemtemplate>
-                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
-                                            </itemtemplate>
-                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                        </asp:TemplateField>
-                                    </columns>
-                                </asp:GridView>--%>
+                                                            <asp:GridView ID="gridManditoryDocument" runat="server" OnRowDataBound="gridManditoryDocument_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                <alternatingrowstyle backcolor="Gainsboro" />
+                                                                <columns>
+                                                                    <asp:TemplateField HeaderText="Sl. No.">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="Label3" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Uploaded Date">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbUploadedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Document Name">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbDocumentName" runat="server" Text='<%# Eval("DocumentName") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Patient Name">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbPatientName" runat="server" Text='<%# Eval("PatientName") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Hospital Name">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbHospital" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Hospital Address">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbHospitalAddress" runat="server" Text='<%# Eval("HospitalAddress") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="15%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Card Number">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbCardNumber" runat="server" Text='<%# Eval("CardNumber") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Investigation Stage">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbDocumentFor" runat="server" Text='<%# Eval("DocumentFor") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Uploaded Documents">
+                                                                        <itemtemplate>
+                                                                            <asp:Label Visible="false" ID="lbFolder" runat="server" Text='<%# Eval("FolderName") %>'></asp:Label>
+                                                                            <asp:Label Visible="false" ID="lbUploadedFileName" runat="server" Text='<%# Eval("UploadedFileName") %>'></asp:Label>
+                                                                            <asp:Button ID="btnViewMandateDocument" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewMandateDocument_Click" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                </columns>
+                                                            </asp:GridView>
+                                                            <asp:Panel ID="panelNoManditoryDocument" runat="server" Visible="false">
+                                                                <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                                    <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                        <img src="../images/search.svg" />
+                                                                        <span class="fs-6 mt-2">No Record Found</span>
+                                                                        <span class="text-body-tertiary">Currently, no document available at this moment.</span>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:Panel>
                                                         </div>
                                                     </div>
                                                 </asp:View>
@@ -1195,6 +1217,15 @@
                                                                     </asp:TemplateField>
                                                                 </columns>
                                                             </asp:GridView>
+                                                            <asp:Panel ID="panelNoSpecialInvestigation" runat="server" Visible="false">
+                                                                <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                                    <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                        <img src="../images/search.svg" />
+                                                                        <span class="fs-6 mt-2">No Record Found</span>
+                                                                        <span class="text-body-tertiary">Currently, no document available at this moment.</span>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:Panel>
                                                         </div>
                                                     </div>
                                                 </asp:View>
@@ -1367,7 +1398,7 @@
                                         </asp:View>
                                         <asp:View ID="viewPhoto" runat="server">
                                             <div class="modal-body">
-                                                <div class="row table-responsive">
+                                                <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
                                                     <asp:Image ID="imgChildView" runat="server" class="img-fluid" ImageUrl="https://plus.unsplash.com/premium_photo-1664304370934-b21ea9e0b1f5?q=80&w=1883&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" AlternateText="Child Document" />
                                                 </div>
                                             </div>

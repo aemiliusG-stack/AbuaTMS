@@ -82,7 +82,7 @@
                                     <tbody>
                                         <tr>
                                             <th scope="row">1</th>
-                                            <td><a href="PPDPatientDetails.aspx" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
+                                            <td><a href="#" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
                                             <td>TRUST/RAN/2024/3393003210/1</td>
                                             <td>SEETA KUMARI</td>
                                             <td>MD02V937R</td>

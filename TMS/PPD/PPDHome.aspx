@@ -14,46 +14,32 @@
                     </div>
                     <div class="ibox-content">
                         <div class="ibox">
-                            <div class="ibox-content text-dark">
-                                <div class="row">
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Scheme</span>
-                                        <asp:DropDownList ID="dlSchemeId" runat="server" class="form-control mt-2">
-                                            <asp:ListItem Text="ABUA-JHARKHAND" Value="0"></asp:ListItem>
-                                        </asp:DropDownList>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Case Number</span>
-                                        <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Beneficiary Card Number</span>
-                                        <asp:TextBox runat="server" ID="tbBeneficiaryCardNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                    </div>
-                                    <%--<div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Category</span>
-                                        <asp:DropDownList ID="dlCategory" runat="server" class="form-control mt-2">
-                                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                        </asp:DropDownList>
-                                    </div>--%>
-                                    <%--<div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Procudure Name</span>
-                                        <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2">
-                                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                        </asp:DropDownList>
-                                    </div>--%>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Registered From Date</span>
-                                        <asp:TextBox runat="server" ID="tbRegisteredFromDate" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Registered To Date</span>
-                                        <asp:TextBox runat="server" ID="tbRegisteredToDate" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-lg-12 text-center mt-2">
-                                        <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" OnClick="btnSearch_Click" />
-                                        <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" OnClick="btnReset_Click" />
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <span class="form-label fw-semibold">Scheme</span>
+                                    <asp:DropDownList ID="dlSchemeId" runat="server" class="form-control mt-2">
+                                        <asp:ListItem Text="ABUA-JHARKHAND" Value="0"></asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <span class="form-label fw-semibold">Case Number</span>
+                                    <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <span class="form-label fw-semibold">Beneficiary Card Number</span>
+                                    <asp:TextBox runat="server" ID="tbBeneficiaryCardNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <span class="form-label fw-semibold">Registered From Date</span>
+                                    <asp:TextBox runat="server" ID="tbRegisteredFromDate" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <span class="form-label fw-semibold">Registered To Date</span>
+                                    <asp:TextBox runat="server" ID="tbRegisteredToDate" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
+                                </div>
+                                <div class="col-lg-12 text-center mt-2">
+                                    <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" OnClick="btnSearch_Click" />
+                                    <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" OnClick="btnReset_Click" />
                                 </div>
                             </div>
                         </div>
@@ -125,20 +111,16 @@
                                         </asp:TemplateField>
                                     </columns>
                                 </asp:GridView>
+                                <asp:Panel ID="panelNoData" runat="server" Visible="false">
+                                    <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                        <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                            <img src="../images/search.svg" />
+                                            <span class="fs-6 mt-2">No Record Found</span>
+                                            <span class="text-body-tertiary">Currently, no cases assigned to you at this moment.</span>
+                                        </div>
+                                    </div>
+                                </asp:Panel>
                             </div>
-                            <%--<nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end" style="margin: 10px 0 0 0;">
-                                    <li class="page-item disabled">
-                                        <a class="page-link">Previous</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </nav>--%>
                         </div>
                     </div>
                 </div>

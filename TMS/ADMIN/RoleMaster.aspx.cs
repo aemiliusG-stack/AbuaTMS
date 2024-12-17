@@ -163,7 +163,6 @@ public partial class ADMIN_RoleMaster : System.Web.UI.Page
         string RoleName = lbRoleName.Text.ToString();
 
         tbRoleName.Text = RoleName;
-        tbRoleName.Focus();
         btnUpdate.Visible = true;
         btnAdd.Visible = false;
     }

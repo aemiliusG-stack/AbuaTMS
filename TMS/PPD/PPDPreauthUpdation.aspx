@@ -95,7 +95,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <ContentTemplate>
+        <contenttemplate>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
@@ -312,7 +312,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">1</th>
-                                                            <td><a href="PPDCaseDetails.aspx" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
+                                                            <td><a href="#" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
                                                             <td>Demo User</td>
                                                             <td>Demo Hospital</td>
                                                             <td>Claim Forwarded by CEX(Insurance)</td>
@@ -461,86 +461,86 @@
                                                     <div class="row mb-3">
                                                         <div class="col-md-6 table-responsive">
                                                             <asp:GridView ID="gridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                                <Columns>
+                                                                <columns>
                                                                     <asp:TemplateField HeaderText="Sl. No.">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="15%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="PD Id" Visible="false">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbPPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="0%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Diagnosis Name">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="50%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Acted By Role">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Action" HeaderStyle-CssClass="text-center">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:LinkButton ID="lnkDeletePrimaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeletePrimaryDiagnosis_Click">Remove</asp:LinkButton>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
                                                                     </asp:TemplateField>
-                                                                </Columns>
+                                                                </columns>
                                                             </asp:GridView>
                                                         </div>
 
                                                         <div class="col-md-6 table-responsive">
                                                             <asp:GridView ID="gridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                                <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                <Columns>
+                                                                <alternatingrowstyle backcolor="Gainsboro" />
+                                                                <columns>
                                                                     <asp:TemplateField HeaderText="Sl. No.">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="15%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="PD Id" Visible="false">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbSPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="0%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Diagnosis Name">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="50%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Acted By Role">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Action" HeaderStyle-CssClass="text-center">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:LinkButton ID="lnkDeleteSecondaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeleteSecondaryDiagnosis_Click">Remove</asp:LinkButton>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
                                                                     </asp:TemplateField>
-                                                                </Columns>
+                                                                </columns>
                                                             </asp:GridView>
                                                         </div>
 
@@ -558,43 +558,43 @@
                                             </div>
                                             <div class="ibox-content table-responsive">
                                                 <asp:GridView ID="gridPrimaryDiagnosisValues" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                    <Columns>
+                                                    <columns>
                                                         <asp:TemplateField HeaderText="Sl. No.">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PD Id" Visible="false">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbPPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="0%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="ICD Value">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbIcd" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Diagnosis Name">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="50%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Acted By Role">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
-                                                    </Columns>
+                                                    </columns>
                                                 </asp:GridView>
 
                                             </div>
@@ -606,44 +606,44 @@
                                             </div>
                                             <div class="ibox-content table-responsive">
                                                 <asp:GridView ID="gridSecondaryDiagnosisValues" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                    <AlternatingRowStyle BackColor="Gainsboro" />
-                                                    <Columns>
+                                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                                    <columns>
                                                         <asp:TemplateField HeaderText="Sl. No.">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PD Id" Visible="false">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbSPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="0%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="ICD Value">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbIcd" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Diagnosis Name">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="50%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Acted By Role">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
-                                                    </Columns>
+                                                    </columns>
                                                 </asp:GridView>
 
                                             </div>
@@ -655,72 +655,72 @@
                                             </div>
                                             <div class="ibox-content table-responsive">
                                                 <asp:GridView ID="gridTreatementProtocol" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                    <RowStyle BackColor="White" Height="20px" />
-                                                    <Columns>
+                                                    <rowstyle backcolor="White" height="20px" />
+                                                    <columns>
                                                         <asp:TemplateField HeaderText="Sl. No.">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Speciality Name">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAddedSpeciality" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Procedure Name">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAddedProcedure" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="30%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="30%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Procedure Cost">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAddedAmount" runat="server" Text='<%# Eval("ProcedureAmountFinal") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Stratification Name">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAddedStratification" runat="server" Text='<%# Eval("StratificationName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Implant Name">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAddedImplants" runat="server" Text='<%# Eval("ImplantName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Implant Quantity">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAddedQuantity" runat="server" Text='<%# Eval("ImplantCount") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Implant Cost">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbImplantAmount" runat="server" Text='<%# Eval("ImplantAmount") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Total Cost">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAddedAmount" runat="server" Text='<%# Eval("TotalPackageCost") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
-                                                    </Columns>
+                                                    </columns>
                                                 </asp:GridView>
                                             </div>
                                         </div>
@@ -828,7 +828,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbPackageCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -840,7 +840,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbIncentiveCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -853,7 +853,7 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="input-group">
                                                                 <div class="input-group-text">
-                                                                    <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                    <img src="../images/rupee.svg" />
                                                                 </div>
                                                                 <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbImplantCost" class="form-control"></asp:TextBox>
                                                             </div>
@@ -867,7 +867,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbTotalPackageCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -886,7 +886,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" style="height: auto; width: 15px;" />
+                                                                <img src="../images/rupee.svg" />
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbAmountLiable" class="form-control"></asp:TextBox>
                                                         </div>
@@ -913,58 +913,58 @@
                                             </div>
                                             <div class="ibox-content table-responsive">
                                                 <asp:GridView ID="gridWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                    <AlternatingRowStyle BackColor="Gainsboro" />
-                                                    <Columns>
+                                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                                    <columns>
                                                         <asp:TemplateField HeaderText="Sl. No.">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Date and Time">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbDateTime" runat="server" Text='<%# Eval("ActionDate") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Role">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbRole" runat="server" Text='<%# Eval("Role") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="15%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Remarks">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Action">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAction" runat="server" Text='<%# Eval("Action") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Amount(Rs.)">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbAmount" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Preauth Query/ Rejection Reason">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbPreauthQueryRejection" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
-                                                    </Columns>
+                                                    </columns>
                                                 </asp:GridView>
                                             </div>
                                         </div>
@@ -975,52 +975,52 @@
                                             </div>
                                             <div class="ibox-content table-responsive">
                                                 <asp:GridView ID="gridPreauthQueryRejectionReason" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                    <AlternatingRowStyle BackColor="Gainsboro" />
-                                                    <Columns>
+                                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                                    <columns>
                                                         <asp:TemplateField HeaderText="Sl. No.">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Query Date">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbQueryDate" runat="server" Text='<%# Eval("QueryRaisedDate") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Main Reason">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbMainReason" runat="server" Text='<%# Eval("ReasonName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Sub Reason">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="30%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="30%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PPD Query">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Label ID="lbPPDQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="25%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Audit">
-                                                            <ItemTemplate>
+                                                            <itemtemplate>
                                                                 <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" />
                                                                 <%--OnClick="btnViewAudit_Click"--%>
-                                                            </ItemTemplate>
-                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
-                                                    </Columns>
+                                                    </columns>
                                                 </asp:GridView>
                                             </div>
                                         </div>
@@ -1090,55 +1090,86 @@
                                                             <h3 class="text-white">Preauthorization</h3>
                                                         </div>
                                                         <div class="ibox-content table-responsive">
-                                                            <table class="table table-bordered table-striped">
-                                                                <thead>
-                                                                    <tr class="table-primary">
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 10%;">Sl. No.</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 30%;">Attachment Name</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Hospital Name</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Card No.</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Document For</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white; width: 15%;">Uploaded Date</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>1.</td>
-                                                                        <td>
-                                                                            <asp:LinkButton ID="attachmentPatientPhoto" CssClass="text-decoration-underline text-black fw-semibold" runat="server" OnClick="attachmentPatientPhoto_Click">Patient Photo</asp:LinkButton>
-                                                                        </td>
-                                                                        <td><asp:Label ID="lbAttachmentHospitalName" runat="server" Text='NA'></asp:Label></td>
-                                                                        <td><asp:Label ID="lbAttachmentCardNumber" runat="server" Text='NA'></asp:Label></td>
-                                                                        <td>Pre Investigation</td>
-                                                                        <td><asp:Label ID="lbAttachmentRegistrationDate" runat="server" Text='NA'></asp:Label></td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
+                                                            <asp:GridView ID="gridManditoryDocument" runat="server" OnRowDataBound="gridManditoryDocument_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                <alternatingrowstyle backcolor="Gainsboro" />
+                                                                <columns>
+                                                                    <asp:TemplateField HeaderText="Sl. No.">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="Label3" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Uploaded Date">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbUploadedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Document Name">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbDocumentName" runat="server" Text='<%# Eval("DocumentName") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Patient Name">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbPatientName" runat="server" Text='<%# Eval("PatientName") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Hospital Name">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbHospital" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Hospital Address">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbHospitalAddress" runat="server" Text='<%# Eval("HospitalAddress") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="15%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Card Number">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbCardNumber" runat="server" Text='<%# Eval("CardNumber") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Investigation Stage">
+                                                                        <itemtemplate>
+                                                                            <asp:Label ID="lbDocumentFor" runat="server" Text='<%# Eval("DocumentFor") %>'></asp:Label>
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Uploaded Documents">
+                                                                        <itemtemplate>
+                                                                            <asp:Label Visible="false" ID="lbFolder" runat="server" Text='<%# Eval("FolderName") %>'></asp:Label>
+                                                                            <asp:Label Visible="false" ID="lbUploadedFileName" runat="server" Text='<%# Eval("UploadedFileName") %>'></asp:Label>
+                                                                            <asp:Button ID="btnViewMandateDocument" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewMandateDocument_Click" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                                    </asp:TemplateField>
+                                                                </columns>
+                                                            </asp:GridView>
+                                                            <asp:Panel ID="panelNoManditoryDocument" runat="server" Visible="false">
+                                                                <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                                    <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                        <img src="../images/search.svg" />
+                                                                        <span class="fs-6 mt-2">No Record Found</span>
+                                                                        <span class="text-body-tertiary">Currently, no document available at this moment.</span>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:Panel>
                                                         </div>
-                                                        <%--<div class="ibox-content table-responsive">
-                                                            <table class="table table-bordered table-striped">
-                                                                <thead>
-                                                                    <tr class="table-primary">
-                                                                        <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
-                                                                        <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <asp:LinkButton CssClass="text-decoration-underline text-black fw-semibold" runat="server" OnClick="attachmentPatientPhoto_Click">Patient Photo</asp:LinkButton></td>
-                                                                        <td>17-08-2024 12:30:00</td>
-                                                                        <td>NA</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><a href="#." class="text-decoration-underline text-black fw-semibold">Consent Document</a></td>
-                                                                        <td>17-08-2024 12:30:00</td>
-                                                                        <td>NA</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>--%>
                                                     </div>
                                                 </asp:View>
                                                 <asp:View ID="viewSpecialInvestigation" runat="server">
@@ -1148,82 +1179,91 @@
                                                         </div>
                                                         <div class="ibox-content table-responsive">
                                                             <asp:GridView ID="gridSpecialInvestigation" runat="server" AutoGenerateColumns="False" OnRowDataBound="gridSpecialInvestigation_RowDataBound" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                                <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                <Columns>
+                                                                <alternatingrowstyle backcolor="Gainsboro" />
+                                                                <columns>
                                                                     <asp:TemplateField HeaderText="Sl. No.">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="Label2" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Uploaded Date">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbCreatedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Hospital Name">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Speciality Name">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbPackageName" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Procedure Code">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbProcedureCode" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Procedure Name">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbProcedureName" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="25%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Investigation Code">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbInvestigationCode" runat="server" Text='<%# Eval("InvestigationCode") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Investigation Name">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbInvestigationName" runat="server" Text='<%# Eval("InvestigationName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="15%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Investigation Stage">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label ID="lbInvestigationStage" runat="server" Text='<%# Eval("InvestigationStage") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Uploaded Documents">
-                                                                        <ItemTemplate>
+                                                                        <itemtemplate>
                                                                             <asp:Label Visible="false" ID="lbFolderName" runat="server" Text='<%# Eval("FolderName") %>'></asp:Label>
                                                                             <asp:Label Visible="false" ID="lbFileName" runat="server" Text='<%# Eval("UploadedFileName") %>'></asp:Label>
                                                                             <asp:Button ID="btnViewDocument" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewDocument_Click" />
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                        </itemtemplate>
+                                                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                        <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                                     </asp:TemplateField>
-                                                                </Columns>
+                                                                </columns>
                                                             </asp:GridView>
+                                                            <asp:Panel ID="panelNoSpecialInvestigation" runat="server" Visible="false">
+                                                                <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                                    <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                        <img src="../images/search.svg" />
+                                                                        <span class="fs-6 mt-2">No Record Found</span>
+                                                                        <span class="text-body-tertiary">Currently, no document available at this moment.</span>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:Panel>
                                                         </div>
                                                     </div>
                                                 </asp:View>
@@ -1396,7 +1436,7 @@
                                         </asp:View>
                                         <asp:View ID="viewPhoto" runat="server">
                                             <div class="modal-body">
-                                                <div class="row table-responsive">
+                                                <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
                                                     <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Patient Document" />
                                                 </div>
                                             </div>
@@ -1492,10 +1532,10 @@
                     </div>
                 </asp:View>
             </asp:MultiView>
-        </ContentTemplate>
-        <Triggers>
+        </contenttemplate>
+        <triggers>
             <asp:PostBackTrigger ControlID="btnDownloadPdf" />
-        </Triggers>
+        </triggers>
     </asp:UpdatePanel>
 </asp:Content>
 

@@ -1,7 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Security;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 using CareerPath.DAL;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Web.Helpers;
 using System.Configuration;
 using System.Web.UI.WebControls;
@@ -10,42 +22,21 @@ using System.Web.UI;
 partial class Admin_CreateUser : System.Web.UI.Page
 {
     private string strMessage;
-    string pageName;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
     private MasterData md = new MasterData();
     protected void Page_Load(object sender, EventArgs e)
     {
-        try
+        if (Session["UserId"] == null)
         {
-            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
-            if (Session["UserId"] == null)
-            {
-                Response.Redirect("~/Unauthorize.aspx", false);
-                return;
-            }
-            else if (!IsPostBack)
-            {
-                if (Session["RoleId"].ToString() == "1" && Session["RoleName"].ToString() == "ADMIN")
-                {
-                    GetRoles();
-                    GetUserDetail();
-                }
-                else
-                {
-                    Response.Redirect("~/Unauthorize.aspx", false);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
+            return;
+        }
+        else if (!IsPostBack)
+        {
+            GetRoles();
+            GetUserDetail();
         }
     }
     protected void GetUserDetail()
@@ -171,11 +162,6 @@ partial class Admin_CreateUser : System.Web.UI.Page
     {
         try
         {
-            if (TextboxValidation.isAlphaNumeric(tbUserName.Text) == false || TextboxValidation.isAlphabet(tbFullName.Text) == false || TextboxValidation.isAlphaNumericSpecial(tbAddress.Text) == false || TextboxValidation.isNumeric(tbMobileNo.Text) == false || TextboxValidation.IsValidMobileNumber(tbMobileNo.Text) == false)
-            {
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Invalid Entry')", true);
-                return;
-            }
             if (dropRole.SelectedValue == "0")
             {
                 strMessage = "window.alert('Please Select Role!');";
@@ -196,7 +182,7 @@ partial class Admin_CreateUser : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
                     return;
                 }
-                else if (tbUserName.Text == "" | tbFullName.Text == "" | tbMobileNo.Text == "")
+                else if (tbUserName.Text == "" | tbPassword.Text == "" | tbFullName.Text == "" | tbMobileNo.Text == "")
                 {
                     strMessage = "window.alert('Please Fill Required Details!');";
                     ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
@@ -217,7 +203,7 @@ Register:
             ;
             string StrPasswd;
             // Dim StrSql As String
-            StrPasswd = Crypto.SHA256("TMS@123");
+            StrPasswd = Crypto.SHA256(tbPassword.Text);
             SqlParameter[] p = new SqlParameter[9];
             p[0] = new SqlParameter("@Username", tbUserName.Text);
             p[0].DbType = DbType.String;
@@ -256,7 +242,6 @@ Register:
         }
         catch (Exception ex)
         {
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
             return;
         }

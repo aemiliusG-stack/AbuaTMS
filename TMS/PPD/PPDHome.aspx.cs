@@ -72,6 +72,7 @@ public partial class PPD_PPDHome : System.Web.UI.Page
                 lbRecordCount.Text = "Total No Records: 0";
                 gridAssignedCases.DataSource = null;
                 gridAssignedCases.DataBind();
+                panelNoData.Visible = true;
             }
         }
         catch (Exception ex)

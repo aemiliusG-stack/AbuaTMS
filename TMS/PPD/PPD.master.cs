@@ -37,7 +37,7 @@ partial class PPD_PPD : System.Web.UI.MasterPage
     {
         if (Session["ClaimId"] != null)
         {
-            int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleName"].ToString());
+            int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
         }
         SqlParameter[] p = new SqlParameter[1];
         p[0] = new SqlParameter("@UserId", hdUserId.Value);

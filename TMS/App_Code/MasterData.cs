@@ -536,7 +536,7 @@ public class MasterData
     /*
         Added by Nirmal.
         Table: TMS_Roles.
-        Updating TMS_Roles data.
+        Inserting data into TMS_Roles.
     */
     public void AddRoles(string RoleName)
     {
@@ -604,7 +604,7 @@ public class MasterData
     }
 
     /*
-        Added by TMS_MasterPackageMaster.
+        Added by Nirmal.
         Table: TMS_MasterPackageMaster.
         Updating TMS_MasterPackageMaster data.
     */
@@ -654,6 +654,288 @@ public class MasterData
         cmd.Parameters.AddWithValue("@PackageId", PackageId);
         cmd.Parameters.AddWithValue("@SpecialityCode", SpecialityCode);
         cmd.Parameters.AddWithValue("@SpecialityName", SpecialityName);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void AddPrimaryDiagnosis(string PrimaryDiagnosisName, string IcdValue)
+    {
+        string Query = "INSERT INTO TMS_MasterPrimaryDiagnosis(PrimaryDiagnosisName, ICDValue, IsActive, IsDeleted, CreatedOn, UpdatedOn)values(@PrimaryDiagnosisName, @IcdValue, 1, 0, GETDATE(), GETDATE())";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PrimaryDiagnosisName", PrimaryDiagnosisName);
+        cmd.Parameters.AddWithValue("@IcdValue", IcdValue);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public DataTable GetPrimaryDiagnosis()
+    {
+        dt.Clear();
+        string Query = "SELECT PDId, PrimaryDiagnosisName, ICDValue, IsActive, IsDeleted, CreatedOn, UpdatedOn, DeletedOn FROM TMS_MasterPrimaryDiagnosis ORDER BY PDId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void TooglePrimaryDiagnosis(string PDId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_MasterPrimaryDiagnosis SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeletedOn = NULL WHERE PDId = @PDId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_MasterPrimaryDiagnosis SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeletedOn = GETDATE() WHERE PDId = @PDId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PDId", PDId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void UpdatePrimaryDiagnosis(string PDId, string Diagnosis, string IcdValue)
+    {
+        string Query = "UPDATE TMS_MasterPrimaryDiagnosis SET PrimaryDiagnosisName = @Diagnosis, ICDValue = @IcdValue, UpdatedOn = GETDATE() WHERE PDId = @PDId";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@Diagnosis", Diagnosis);
+        cmd.Parameters.AddWithValue("@IcdValue", IcdValue);
+        cmd.Parameters.AddWithValue("@PDId", PDId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void AddProcedureLabel(string LabelName)
+    {
+        string Query = "INSERT INTO TMS_MasterProcedureLabel(LabelName, IsActive, IsDeleted, CreatedOn, UpdatedOn)values(@LabelName, 1, 0, GETDATE(), GETDATE())";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@LabelName", LabelName);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public DataTable GetProcedureLabel()
+    {
+        dt.Clear();
+        string Query = "SELECT ProcedureLabelId, LabelName, IsActive, IsDeleted, CreatedOn, UpdatedOn, DeleteOn from TMS_MasterProcedureLabel ORDER BY ProcedureLabelId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void ToogleProcedureLabel(string ProcedureLabelId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_MasterProcedureLabel SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeleteOn = NULL WHERE ProcedureLabelId = @ProcedureLabelId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_MasterProcedureLabel SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeleteOn = GETDATE() WHERE ProcedureLabelId = @ProcedureLabelId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureLabelId", ProcedureLabelId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void UpdateProcedureLabel(string ProcedureLabelId, string LabelName)
+    {
+        string Query = "UPDATE TMS_MasterProcedureLabel SET LabelName = @LabelName, UpdatedOn = GETDATE() WHERE ProcedureLabelId = @ProcedureLabelId";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@LabelName", LabelName);
+        cmd.Parameters.AddWithValue("@ProcedureLabelId", ProcedureLabelId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public DataTable GetImplantDetails()
+    {
+        string Query = "SELECT ImplantId, CONCAT(ImplantCode, ' (' , ImplantName, ')') AS ImplantCode FROM TMS_MasterImplantMaster";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void InsertMapProcedureImplant(string ProcedureId, string ImplantId)
+    {
+        string Query = "INSERT INTO TMS_MapProcedureImplant(ProcedureId, ImplantId, IsActive, IsDeleted, CreatedOn, UpdatedOn)VALUES(@ProcedureId, @ImplantId, 1, 0, GETDATE(), GETDATE())";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        cmd.Parameters.AddWithValue("@ImplantId", ImplantId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public DataTable GetMapProcedureImplant()
+    {
+        dt.Clear();
+        string Query = "SELECT t1.ProcedureImplantId, t2.ProcedureId, t2.ProcedureCode, t2.ProcedureName, t2.ProcedureAmount, t3.ImplantId, t3.ImplantCode, t3.ImplantName, t3.ImplantAmount , t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn, t1.DeletedOn FROM TMS_MapProcedureImplant t1 LEFT JOIN TMS_MasterPackageDetail t2 ON t2.ProcedureId = t1.ProcedureId LEFT JOIN TMS_MasterImplantMaster t3 ON t3.ImplantId = t1.ImplantId ORDER BY t1.ProcedureImplantId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void ToogleMapProcedureImplant(string ProcedureImplantId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_MapProcedureImplant SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeletedOn = NULL WHERE ProcedureImplantId = @ProcedureImplantId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_MapProcedureImplant SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeletedOn = GETDATE() WHERE ProcedureImplantId = @ProcedureImplantId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureImplantId", ProcedureImplantId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void UpdateMapProcedureImplant(string ProcedureImplantId, string ProcedureId, string ImplantId)
+    {
+        string Query = "UPDATE TMS_MapProcedureImplant SET ProcedureId = @ProcedureId, ImplantId = @ImplantId, UpdatedOn = GETDATE() where ProcedureImplantId = @ProcedureImplantId";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureImplantId", ProcedureImplantId);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        cmd.Parameters.AddWithValue("@ImplantId", ImplantId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public DataTable GetStratificationDetails()
+    {
+        string Query = "SELECT StratificationId, CONCAT(StratificationCode,' (', StratificationName, '-',StratificationDetail,')') AS StratificationCode FROM TMS_MasterStratificationMaster";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void InsertMapProcedureStratification(string ProcedureId, string StratificationId)
+    {
+        string Query = "INSERT INTO TMS_MapProcedureStratification(ProcedureId, StratificationId, IsActive, IsDeleted, CreatedOn, UpdatedOn)VALUES(@ProcedureId, @StratificationId, 1, 0, GETDATE(), GETDATE())";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        cmd.Parameters.AddWithValue("@StratificationId", StratificationId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public DataTable GetMapProcedureStratification()
+    {
+        dt.Clear();
+        string Query = "SELECT t1.ProcedureStratificationId, t2.ProcedureId, t2.ProcedureCode, t2.ProcedureName, t2.ProcedureAmount, t3.StratificationId, t3.StratificationCode, CONCAT(t3.StratificationName, ' (', t3.StratificationDetail, ')') AS StratificationName, t3.StratificationAmount , t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn, t1.DeletedOn FROM TMS_MapProcedureStratification t1 LEFT JOIN TMS_MasterPackageDetail t2 ON t2.ProcedureId = t1.ProcedureId LEFT JOIN TMS_MasterStratificationMaster t3 ON t3.StratificationId = t1.StratificationId ORDER BY t1.ProcedureStratificationId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void ToogleMapProcedureStratification(string ProcedureStratificationId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_MapProcedureStratification SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeletedOn = NULL WHERE ProcedureStratificationId = @ProcedureStratificationId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_MapProcedureStratification SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeletedOn = GETDATE() WHERE ProcedureStratificationId = @ProcedureStratificationId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureStratificationId", ProcedureStratificationId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Aemilius Gaurav.
+    */
+    public void UpdateMapProcedureStratification(string ProcedureStratificationId, string ProcedureId, string StratificationId)
+    {
+        string Query = "UPDATE TMS_MapProcedureStratification SET ProcedureId = @ProcedureId, StratificationId = @StratificationId, UpdatedOn = GETDATE() where ProcedureStratificationId = @ProcedureStratificationId";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureStratificationId", ProcedureStratificationId);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        cmd.Parameters.AddWithValue("@StratificationId", StratificationId);
         con.Open();
         cmd.ExecuteNonQuery();
         con.Close();

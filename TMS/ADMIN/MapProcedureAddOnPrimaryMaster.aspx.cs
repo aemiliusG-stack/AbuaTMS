@@ -192,14 +192,13 @@ public partial class ADMIN_MapProcedureAddOnPrimaryMaster : System.Web.UI.Page
         }
     }
 
-
     protected void gridAddOnPrimary_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gridAddOnPrimary.PageIndex = e.NewPageIndex;
         GetProcedureAddOnPrimaryMasterData();
     }
 
-    protected void gridManditoryDocument_RowDataBound(object sender, GridViewRowEventArgs e)
+    protected void gridAddOnPrimary_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowType == DataControlRowType.DataRow)
         {

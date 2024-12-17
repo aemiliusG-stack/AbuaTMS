@@ -133,6 +133,7 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
                 lbRecordCount.Text = "Total No Records: 0";
                 gridPackageMaster.DataSource = null;
                 gridPackageMaster.DataBind();
+                panelNoData.Visible = true;
             }
         }
         catch (Exception ex)
@@ -161,6 +162,8 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
 
     protected void btnReset_Click(object sender, EventArgs e)
     {
-
+        dlSpeciality.SelectedIndex = 0;
+        dlProcedureName.SelectedIndex = 0;
+        GetPackageMaster(null, null);
     }
 }

@@ -14,8 +14,7 @@
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
-            <asp:HiddenField ID="hdRndNum" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdRndNum" runat="server" />
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ibox ">
@@ -42,11 +41,11 @@
                             <div class="form-group  row">
                                 <div class="col-md-4">
                                     <label>User Name:</label><span class="text-danger">*</span>
-                                    <asp:TextBox ID="tbUserName" runat="server" class="form-control" ValidationGroup="a" required="True" OnKeypress="return isAlphaNumeric(event);"></asp:TextBox>
+                                    <asp:TextBox ID="tbUserName" runat="server" class="form-control" ValidationGroup="a" required="True"></asp:TextBox>
                                 </div>
-                                <div class="col-md-4" style="visibility:hidden;">
+                                <div class="col-md-4">
                                     <label>Password:</label><span class="text-danger">*</span>
-                                    <asp:TextBox ID="tbPassword" TextMode="Password" class="form-control" runat="server" AutoCompleteType="Disabled" autocomplete="off" OnKeypress="return isPassword(event);"></asp:TextBox>
+                                    <asp:TextBox ID="tbPassword" TextMode="Password" class="form-control" runat="server" AutoCompleteType="Disabled" autocomplete="off"></asp:TextBox>
                                 </div>
                             </div>
                             <br />
@@ -66,16 +65,15 @@
                             <div class="form-group  row">
                                 <div class="col-md-4">
                                     <label>Full Name:</label><span class="text-danger">*</span>
-                                    <asp:TextBox ID="tbFullName" runat="server" class="form-control" ValidationGroup="a" required="True" OnKeypress="return isAlphabet(event);"></asp:TextBox>
+                                    <asp:TextBox ID="tbFullName" runat="server" class="form-control" ValidationGroup="a" required="True"></asp:TextBox>
                                 </div>
                                 <div class="col-md-4">
                                     <label>Address:</label>
-                                    <asp:TextBox ID="tbAddress" runat="server" class="form-control" ValidationGroup="a" OnKeypress="return isAlphaNumericSpecial(event);"></asp:TextBox>
+                                    <asp:TextBox ID="tbAddress" runat="server" class="form-control" ValidationGroup="a"></asp:TextBox>
                                 </div>
                                 <div class="col-md-4">
                                     <label>Mobile No:</label><span class="text-danger">*</span>
-                                    <asp:TextBox ID="tbMobileNo" runat="server" class="form-control" ValidationGroup="a" required="True" OnKeypress="return isNumeric(event);" MaxLength="10"></asp:TextBox>
-                                    <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ErrorMessage="*Invalid Mobile No!" ControlToValidate="tbMobileNo" ForeColor="Red" ValidationExpression="^[6-9]\d{9}$" ValidationGroup="a"></asp:RegularExpressionValidator>
+                                    <asp:TextBox ID="tbMobileNo" runat="server" class="form-control" ValidationGroup="a" required="True"></asp:TextBox>
                                 </div>
                             </div>
                             <div class="hr-line-dashed"></div>

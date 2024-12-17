@@ -44,7 +44,7 @@
                         <div class="card-body">
                             <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
                             <div class="table-responsive mt-2">
-                                <asp:GridView ID="gridAddOnPrimary" runat="server" AllowPaging="True" OnPageIndexChanging="gridAddOnPrimary_PageIndexChanging" OnRowDataBound="gridManditoryDocument_RowDataBound" PageSize="10" AutoGenerateColumns="False" Width="100%" CssClass="table table-bordered table-striped">
+                                <asp:GridView ID="gridAddOnPrimary" runat="server" AllowPaging="True" OnPageIndexChanging="gridAddOnPrimary_PageIndexChanging" OnRowDataBound="gridAddOnPrimary_RowDataBound" PageSize="10" AutoGenerateColumns="False" Width="100%" CssClass="table table-bordered table-striped">
                                     <alternatingrowstyle backcolor="Gainsboro" />
                                     <columns>
                                         <asp:TemplateField HeaderText="Sl. No.">

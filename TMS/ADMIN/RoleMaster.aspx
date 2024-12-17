@@ -79,8 +79,9 @@
                                             <itemtemplate>
                                                 <asp:Label ID="lbRoleId" runat="server" Text='<%# Eval("RoleId") %>' Visible="false"></asp:Label>
                                                 <asp:LinkButton ID="btnEdit" runat="server"
-                                                    CssClass="btn btn-warning btn-sm rounded-pill"
-                                                    Style="font-size: 12px;" OnClick="btnEdit_Click">Edit
+                                                    CssClass="btn btn-success btn-sm rounded-pill"
+                                                    Style="font-size: 12px;" OnClick="btnEdit_Click">
+                                                    <span class="bi bi-pencil"></span>
                                                 </asp:LinkButton>
                                             </itemtemplate>
                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />

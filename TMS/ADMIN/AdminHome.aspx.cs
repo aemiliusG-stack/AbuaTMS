@@ -11,8 +11,4 @@ public partial class Admin_AdminHome : System.Web.UI.Page
     {
 
     }
-    protected void GetDashboardDetail()
-    {
-        
-    }
 }
