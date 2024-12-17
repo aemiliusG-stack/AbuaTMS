@@ -1,9 +1,0 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/.vs
-/TMS.sln
-/TMS/Web.config
-/TMS/Web.config
-/TMS.sln
