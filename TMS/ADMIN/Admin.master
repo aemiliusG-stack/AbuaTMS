@@ -1,0 +1,180 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Admin.master.cs" Inherits="Admin_Admin" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+    <title>Mukhya Mantri ABUA Swasthya Suraksha Yojana</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="../css/plugins/dataTables/datatables.min.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/asby-style.css" rel="stylesheet" />
+    <script type="text/javascript">
+        function DisableBackButton() {
+            window.history.forward()
+        }
+        DisableBackButton();
+        window.onload = DisableBackButton;
+        window.onpageshow = function (evt) { if (evt.persisted) DisableBackButton() }
+        window.onunload = function () { void (0) }
+
+    </script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body class="asby-theme">
+    <form id="form1" runat="server">
+        <div id="wrapper">
+
+            <nav class="navbar-default navbar-static-side" role="navigation">
+                <div class="sidebar-collapse">
+                    <ul class="nav metismenu" id="side-menu">
+                        <li class="nav-header d-flex align-items-center p-0 py-2 px-2">
+                            <div class="profile-element">
+                                <img src="../images/JSAS.png" alt="Jharkhand" width="60" />
+                            </div>
+                            <div class="logo-element">
+                                <img src="../images/JSAS.png" alt="Jharkhand" width="52" />
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-th-large"></i>
+                                <span class="nav-label">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">User Registration</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="CreateUser.aspx">Create User</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">Master Forms</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="CreateUser.aspx">Create User</a></li>
+                                <li><a href="#.">Action Master</a></li>
+                                <li><a href="ImplantMaster.aspx">Implant Master</a></li>
+                                <li><a href="#.">Map Medical Radiation Oncology</a></li>
+                                <li><a href="#.">Map Package Addon</a></li>
+                                <li><a href="MapProcedureAddOnPrimaryMaster.aspx">Map Procedure Addon Primary</a></li>
+                                <li><a href="#.">Map Procedure Follow Up</a></li>
+                                <li><a href="#.">Map Procedure Implant</a></li>
+                                <li><a href="#.">Map Procedure Investigation</a></li>
+                                <li><a href="#.">Map Procedure Non Related</a></li>
+                                <li><a href="#.">Map Procedure Popup</a></li>
+                                <li><a href="MapProcedureSpecialRuleMaster.aspx">Map Procedure Special Rule</a></li>
+                                <li><a href="#.">Map Procedure Stratification</a></li>
+                                <li><a href="#.">Package Details</a></li>
+                                <li><a href="PackageMaster.aspx">Package Master</a></li>
+                                <li><a href="#.">Popup Master</a></li>
+                                <li><a href="PreAuthDocumentMaster.aspx">Preauth Manditory Documents</a></li>
+                                <li><a href="#.">Primary Diagnosis</a></li>
+                                <li><a href="#.">Procedure Label</a></li>
+                                <li><a href="RoleMaster.aspx">Role Master</a></li>
+                                <li><a href="#.">Secondary Diagnosis</a></li>
+                                <li><a href="#.">Stratification Master</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+
+            <div id="page-wrapper" class="gray-bg">
+                <div class="dashboard-context">
+                    <header>
+                        <div class="row border-bottom m-0">
+                            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                                <div class="navbar-header d-flex align-items-center">
+                                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#">
+                                        <i class="fa fa-bars"></i>
+                                    </a>
+                                    <h4 class="yojna-name text-white ml-2 d-none d-md-flex align-items-center">Mukhya Mantri ABUA Swasthya Suraksha Yojana </h4>
+                                </div>
+                                <ul class="nav navbar-top-links navbar-right">
+                                    <li class="d-none d-md-block">
+                                        <span class="icon-box btn btn-primary px-2"><i class="fa fa-home"></i></span>
+                                    </li>
+                                    <li class="d-none  d-md-block">
+                                        <span class="icon-box btn btn-primary px-2"><i class="fa fa-fax"></i></span>
+                                    </li>
+                                    <li class="d-none  d-md-block">
+                                        <span class="icon-box btn btn-primary px-2"><i class="fa fa-phone"></i></span>
+                                    </li>
+                                    <li class="user-profile">
+                                        <div class="dropdown profile-element">
+                                            <div class="user-img dropdown-toggle" data-toggle="dropdown">
+                                                <img style="width: 48px; height: 48px;" alt="" class="rounded-circle" src="../img/profile.jpg">
+                                            </div>
+                                            <div class="context">
+                                                <span class="user-title block m-t-xs font-bold"><%= hdUserName.Value %></span>
+                                                <span class="user-sub-title text-xs block"><%= hdRoleName.Value %></span>
+                                            </div>
+                                            <ul class="dropdown-menu m-t-xs">
+                                                <li><a class="dropdown-item" href="/Account/MyProfile">Profile</a></li>
+                                                <li><a class="dropdown-item" href="/Account/ChangePassword">Change Password</a></li>
+                                                <li class="dropdown-divider"></li>
+                                                <li>
+                                                    <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLogout_Click">Logout</asp:LinkButton></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </header>
+                    <main>
+                        <div class="wrapper wrapper-content animated fadeInRight">
+
+                            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                            </asp:ContentPlaceHolder>
+                        </div>
+                    </main>
+                    <footer>
+                        <div class="footer">
+                            <div class="d-flex flex-md-row flex-sm-column justify-content-md-between">
+                                <span><strong>Copyright</strong> ©
+                                    <script>document.write(new Date().getFullYear())</script>
+                                </span>
+                                <span>Version <strong>1.0</strong></span>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </div>
+        <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+        <asp:HiddenField ID="hdUserName" runat="server" Visible="false" />
+        <asp:HiddenField ID="hdRoleName" runat="server" Visible="false" />
+    </form>
+    <script src="../js/jquery-3.1.1.min.js"></script>
+    <script src="../js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="../lib/modules/global-function.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="../js/plugins/dataTables/datatables.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+    <script src="../js/TextboxValidation.js"></script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+::-webkit-scrollbar {
+    width: 6px;
+    background-color: #293846;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #19c0a0;
+    outline: 0px solid slategrey;
+    cursor: n-resize;
+}
+
+body.asby-theme {
+    background-color: #fff;
+}
+
+.asby-theme .asby-bg {
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(132, 116, 185, 1) 0%, rgba(0, 212, 255, 1) 100%) !important;
+    color: transparent !important;
+}
+
+body.asby-theme #page-wrapper {
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 0;
+}
+
+body.asby-theme .dashboard-context {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+    body.asby-theme .dashboard-context .row {
+        margin: 0 ;
+    }
+
+.asby-theme .nav-header {
+    padding: 33px 25px;
+    background-color: #2F4050;
+    background-image: url("/css/patterns/4.png?v=1");
+}
+
+body.mini-navbar .profile-element + h4 {
+    display: none;
+}
+
+body.mini-navbar .logo-element {
+    padding: 0px 0;
+}
+
+.asby-theme .navbar-top-links li {
+    cursor: pointer;
+}
+
+.asby-theme .navbar-default {
+    background-color: #19c0a0;
+    border-color: #2F4050;
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
+body.mini-navbar .navbar-static-side {
+    width: 70px;
+    overflow: unset;
+}
+
+    body.mini-navbar .navbar-static-side ul.nav.nav-second-level {
+        max-height: 78vh;
+        overflow-y: auto;
+        box-shadow: #2f4050 0px -10px 0px, #2f4050 0px 10px 0px;
+        top: 10px;
+    }
+
+body.asby-theme .nav-second-level li:last-child {
+    padding-bottom: 0;
+}
+
+.asby-theme .navbar-default .nav > li > a:hover,
+.asby-theme .navbar-default .nav > li > a:focus {
+    background-color: #009688;
+    color: white;
+}
+
+.asby-theme .navbar-default ul.nav.nav-second-level li a {
+    padding: 6px 20px 6px 20px;
+    border-bottom: #0f312d solid 1px;
+}
+
+.asby-theme .nav > li.active {
+    border-left: 4px solid #19aa8d;
+    background: #008e81;
+}
+
+
+
+.asby-theme .nav > li > a {
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 14px 20px 14px 20px;
+    display: block;
+}
+
+    .asby-theme .nav > li > a i {
+        margin-top: 4px;
+    }
+
+.asby-theme .navbar-top-links span.icon-box {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1ab394;
+    margin: 0px 4px;
+    border-radius: 50%;
+}
+
+    .asby-theme .navbar-top-links span.icon-box i {
+        font-size: 16px;
+        color: #fff;
+    }
+
+.asby-theme .navbar-fixed-top,
+.asby-theme .navbar-static-top {
+    background: #008e81;
+}
+
+.asby-theme .minimalize-styl-2 {
+    padding: 4px 12px;
+    margin: 18px 12px;
+}
+
+.asby-theme .user-profile {
+    margin: 0px 0px -7px 22px;
+}
+
+@media(max-width:480px) {
+    .asby-theme .user-profile {
+        margin: 0px;
+    }
+}
+
+.asby-theme .user-profile .profile-element {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background-color: #00675d;
+    padding: 8px 20px 4px 10px;
+    border-radius: 30px 30px 0px 0px;
+}
+
+    .asby-theme .user-profile .profile-element .context {
+        color: #fff;
+        text-align: left;
+    }
+
+        .asby-theme .user-profile .profile-element .context .user-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .asby-theme .user-profile .profile-element .context .user-sub-title {
+            color: #19c0a0;
+            font-size: 0.7rem;
+        }
+
+    .asby-theme .user-profile .profile-element ul.dropdown-menu {
+        width: 100%;
+        border-radius: 0px 0px 4px 4px;
+        background-color: #00675d;
+    }
+
+        .asby-theme .user-profile .profile-element ul.dropdown-menu li a {
+            padding: 3px 20px;
+            min-height: 0;
+            color: #fff;
+        }
+
+    .asby-theme .user-profile .profile-element .dropdown-menu > li > a:focus,
+    .asby-theme .user-profile .profile-element .dropdown-menu > li > a:hover {
+        color: #fff;
+        text-decoration: none;
+        background-color: #008e81;
+    }
+/* Login Registration Layout */
+.asby-login-register {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+    .asby-login-register .loginColumns {
+        padding: 20px 0px;
+        border-radius: 10px;
+        position: relative;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 60px 0 auto;
+        width: 350px;
+        background-color: #fff;
+        box-shadow: rgba(0, 0, 0, 0.06) 0px 10px 20px;
+    }
+
+@media(max-width:480px) {
+    .asby-login-register .loginColumns {
+        width: 94%;
+        margin: 20px auto;
+    }
+
+    .asby-login-register {
+        overflow: hidden;
+        overflow-y: auto;
+    }
+}
+
+.asby-login-register .loginColumns .ibox-content {
+    border-radius: 0;
+    box-shadow: unset;
+    border: 0;
+    position: relative;
+    background-color: transparent;
+}
+
+.asby-login-register header {
+    background: #008e81;
+    height: auto;
+    padding: 12px 12px;
+    position: relative;
+    z-index: 9;
+}
+
+    .asby-login-register header .asby-logo-context {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .asby-login-register header .asby-logo-context .logo {
+        }
+
+        .asby-login-register header .asby-logo-context .context {
+        }
+
+            .asby-login-register header .asby-logo-context .context .title {
+                font-size: 1rem;
+                font-weight: bold;
+                color: #fff;
+            }
+
+            .asby-login-register header .asby-logo-context .context .sub-title {
+            }
+
+.asby-login-register footer {
+    background-color: #00675d;
+    position: absolute;
+    z-index: 4;
+    bottom: 0;
+    width: 100%;
+}
+
+.asby-login-register nav.asby-navbar ul li a {
+    color: #fff;
+    display: block;
+    padding: 6px 12px;
+}
+
+    .asby-login-register nav.asby-navbar ul li a:hover,
+    .asby-login-register nav.asby-navbar ul li a:focus {
+        color: #c7f9ef;
+    }
+
+
+body.asby-theme .asby-login-register .bg-img {
+    background-image: url(/img/login-bg.webp);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-size: 114vw 150vh;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+    body.asby-theme .asby-login-register .bg-img:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff73;
+    }
+
+body.asby-theme .asby-login-register .register-form {
+    background-color: rgb(255 255 255);
+    position: relative;
+    z-index: 9;
+    padding: 15px 20px 20px 20px;
+    max-width: 86%;
+    margin: 5vh auto;
+    border-radius: 14px;
+}
+
+    body.asby-theme .asby-login-register .register-form form {
+        margin: 30px;
+    }
+
+        body.asby-theme .asby-login-register .register-form form label {
+            margin: 6px 0px 3px 0px;
+        }
+
+.register-page:before {
+    content: '';
+    position: absolute;
+    width: 60vw;
+    height: 40vw;
+    background-color: #008e8114;
+    border-radius: 50%;
+    top: 80px;
+    left: unset;
+    right: -290px;
+    z-index: 0;
+}
+
+figure.login-panel-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+    figure.login-panel-bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.forgot-pass-panel {
+    max-width: 450px;
+    padding: 15px 20px 20px 20px;
+    z-index: 3;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 14px;
+}
+
+    .forgot-pass-panel form {
+        margin: 30px;
+    }
+
+    .forgot-pass-panel .form-footer-action-button {
+        gap: 22px;
+    }
+
+
+/*Dashboard*/
+body.asby-theme .page-heading {
+    border-top: 0;
+    padding: 20px 10px 20px 10px;
+}
+
+body.asby-theme .btn-success,
+body.asby-theme .label-success,
+body.asby-theme .badge-success {
+    color: #fff;
+    background-color: #37bf3d;
+    border-color: #37bf3d;
+}
+
+body.asby-theme .btn-info {
+    color: #fff;
+    background-color: #2b88e7;
+    border-color: #2b88e7;
+}
+
+    body.asby-theme .btn-info:hover,
+    body.asby-theme .btn-info:focus {
+        background-color: #2e72b7;
+        border-color: #2e72b7;
+    }
+
+body.asby-theme .sweet-alert button.confirm {
+    background-color: #a5dc86 !important;
+}
+
+    body.asby-theme .sweet-alert button.confirm:hover,
+    body.asby-theme .sweet-alert button.confirm:focus {
+        background-color: #87cd5f !important;
+    }
+
+body.asby-theme .yojna-name {
+    text-shadow: #19c0a0 0px 2px 1px;
+    margin: 0;
+}
+
+body.asby-theme .jsas-logo {
+    margin-left: 12px;
+}
+
+body.asby-theme .page-heading .mainpagetitle {
+    margin: 0px !important;
+}
+
+body.asby-theme .dnt_Captcha {
+    display: block;
+    margin: 0px 0px 14px 0px;
+    float: left;
+    width: 100%;
+}
+
+    body.asby-theme .dnt_Captcha a#dnt_CaptchaRefreshButton {
+        display: block;
+        width: auto;
+        float: left;
+        margin: 0px 5px;
+        padding: 10px 12px;
+    }
+
+    body.asby-theme .dnt_Captcha .input-group-prepend {
+        display: block;
+        float: left;
+        width: 0px;
+        height: 20px;
+        background: red;
+    }
+
+    body.asby-theme .dnt_Captcha input#DNT_CaptchaInputText {
+        max-width: 198px;
+        margin: 0px 0px 0px 102px !important;
+    }
+
+    body.asby-theme .dnt_Captcha img#dnt_CaptchaImg {
+        margin: 0px !important;
+        float: left;
+        position: relative;
+        top: 6px;
+    }
+
+    body.asby-theme .dnt_Captcha span.text-danger.field-validation-error {
+        display: block;
+        float: left;
+        width: 100%;
+        padding: 5px 0px;
+    }
+
+body.asby-theme .forceloginpanel {
+    float: left;
+    width: 100%;
+}

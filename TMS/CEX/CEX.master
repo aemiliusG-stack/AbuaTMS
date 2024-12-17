@@ -1,0 +1,248 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="CEX.master.cs" Inherits="CEX_MasterPage" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+    <title>Mukhya Mantri ABUA Swasthya Suraksha Yojana | @ViewData["Title"]</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="../css/plugins/dataTables/datatables.min.css" rel="stylesheet">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/asby-style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .nav-tabs .nav-link {
+            background-color: #007e72;
+            color: white;
+            border: none;
+        }
+
+            .nav-tabs .nav-link.active {
+                background-color: #c9b412;
+                color: black;
+            }
+
+        .tab-content {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        .bg-dark-green {
+            background-color: #007e72;
+            color: white;
+        }
+
+        .progress-tracker {
+            position: relative;
+            margin-top: 20px;
+        }
+
+            .progress-tracker ul {
+                display: flex;
+                align-items: center;
+                padding: 0;
+                margin: 0;
+                list-style: none;
+            }
+
+        .step-item {
+            position: relative;
+            flex: 1;
+            text-align: center;
+        }
+
+            .step-item:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 100%;
+                width: calc(100% - 30px);
+                height: 2px;
+                background-color: red;
+                transform: translateY(-50%);
+                z-index: -1;
+            }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            line-height: 40px;
+            border-radius: 50%;
+        }
+
+            .step-icon.bg-primary {
+                background-color: #007bff;
+            }
+
+            .step-icon.bg-secondary {
+                background-color: #6c757d;
+            }
+
+            .step-icon.bg-success {
+                background-color: #28a745;
+            }
+
+            .step-icon.bg-warning {
+                background-color: #ffc107;
+            }
+    </style>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body class="asby-theme">
+    <form id="form1" runat="server">
+        <div id="wrapper">
+
+            <nav class="navbar-default navbar-static-side" role="navigation">
+                <div class="sidebar-collapse">
+                    <ul class="nav metismenu" id="side-menu">
+                        <li class="nav-header d-flex align-items-center p-0 py-2 px-2">
+                            <div class="profile-element">
+                                <img src="../images/JSAS.png" alt="Jharkhand" width="60" />
+                            </div>
+                            <div class="logo-element">
+                                <img src="../images/JSAS.png" alt="Jharkhand" width="52" />
+                            </div>
+                        </li>
+                        <li>
+                            <a href="/CEX/CEXDashboard.aspx">
+                                <i class="fa fa-th-large"></i>
+                                <span class="nav-label">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/CEX/CEXCaseSearch.aspx">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">Case Search</span>
+                            </a>
+                        </li>
+                        <%-- <li>
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">Offline Cases</span>
+                            </a>
+                        </li>--%>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">Claims</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="/CEX/CEXClaimUpdation.aspx">Claim Updation</a></li>
+                            </ul>
+                        </li>
+                        <%-- <li>
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">Covid Tests</span>
+                            </a>
+                        </li>--%>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">MIS</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="/CEX/CEXPackageMaster.aspx">Package Master</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+            </nav>
+
+
+            <div id="page-wrapper" class="gray-bg">
+                <div class="dashboard-context">
+                    <header>
+                        <div class="row border-bottom m-0">
+                            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                                <div class="navbar-header d-flex align-items-center">
+                                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#">
+                                        <i class="fa fa-bars"></i>
+                                    </a>
+                                    <h4 class="yojna-name text-white ml-2 d-none d-md-flex align-items-center">Mukhya Mantri ABUA Swasthya Suraksha Yojana </h4>
+                                </div>
+                                <ul class="nav navbar-top-links navbar-right">
+                                    <li class="d-none d-md-block">
+                                        <span class="icon-box btn btn-primary px-2"><i class="fa fa-home"></i></span>
+                                    </li>
+                                    <li class="d-none  d-md-block">
+                                        <span class="icon-box btn btn-primary px-2"><i class="fa fa-fax"></i></span>
+                                    </li>
+                                    <li class="d-none  d-md-block">
+                                        <span class="icon-box btn btn-primary px-2"><i class="fa fa-phone"></i></span>
+                                    </li>
+                                    <li class="user-profile">
+                                        <div class="dropdown profile-element">
+                                            <div class="user-img dropdown-toggle" data-toggle="dropdown">
+                                                <img style="width: 48px; height: 48px;" alt="" class="rounded-circle" src="../img/profile.jpg">
+                                            </div>
+                                            <div class="context">
+                                                <%-- <span class="user-title block m-t-xs font-bold">Ravi</span>
+                                                <span class="user-sub-title text-xs block">CEX</span>--%>
+                                                <span class="user-title block m-t-xs font-bold"><%=hdUserName.Value %></span>
+                                                <span class="user-sub-title text-xs block"><%=hdUserRole.Value %></span>
+                                            </div>
+                                            <ul class="dropdown-menu m-t-xs">
+                                                <li><a class="dropdown-item" href="/Account/MyProfile">Profile</a></li>
+                                                <li><a class="dropdown-item" href="/Account/ChangePassword">Change Password</a></li>
+                                                <li class="dropdown-divider"></li>
+                                                <li>
+                                                    <asp:LinkButton ID="LogOutButton" runat="server" OnClick="LogOutButton_Click">Logout</asp:LinkButton>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </header>
+                    <main>
+                        <div class="wrapper wrapper-content animated fadeInRight">
+                            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                            </asp:ContentPlaceHolder>
+                        </div>
+                    </main>
+                    <footer>
+                        <div class="footer">
+                            <div class="d-flex flex-md-row flex-sm-column justify-content-md-between">
+                                <span><strong>Copyright</strong> ©
+                                    <script>document.write(new Date().getFullYear())</script>
+                                </span>
+                                <span>Version <strong>1.0</strong></span>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </div>
+        <asp:HiddenField ID="hdUserId" runat="server" />
+        <asp:HiddenField ID="hdUserName" runat="server" />
+        <asp:HiddenField ID="hdUserRole" runat="server" />
+    </form>
+    <script src="../js/jquery-3.1.1.min.js"></script>
+    <script src="../js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="../lib/modules/global-function.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="../js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="../js/plugins/dataTables/datatables.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/plugins/pace/pace.min.js"></script>
+    <script src="../js/TextboxValidation.js"></script>
+</body>
+</html>

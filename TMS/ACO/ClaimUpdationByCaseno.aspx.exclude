@@ -1,0 +1,162 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ClaimUpdationByCaseno.aspx.cs" Inherits="ACO_ClaimUpdationByCaseno" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details UI</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .header-card {
+            background-color: #007B8F;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+
+        .section-card {
+            border: 1px solid #007B8F;
+            margin-top: 10px;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .table th {
+            background-color: #007B8F;
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: #FFA500;
+        }
+
+        .patient-photo {
+            width: 100px;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .tab-content {
+            margin-top: 20px;
+        }
+
+        .tab-pane .table {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
+    <div class="container mt-4">
+        <!-- Patient Details Header -->
+        <div class="row header-card">
+            <div class="col-md-8">
+                <h4>Patient Details</h4>
+            </div>
+            <div class="col-md-4 text-right">
+                <h4>Case No: CASE/PS7/HOSP20P27644/P2869415</h4>
+            </div>
+        </div>
+
+        <!-- Patient Info -->
+        <div class="row section-card">
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-4"><strong>Name:</strong> Sima Devi</div>
+                    <div class="col-md-4"><strong>Beneficiary Card ID:</strong> PNA4J1349</div>
+                    <div class="col-md-4"><strong>Registration No:</strong> 2332330</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><strong>Case Status:</strong> CPD Approved</div>
+                    <div class="col-md-4"><strong>IP No:</strong> NA</div>
+                    <div class="col-md-4"><strong>IP Registered Date:</strong> 24/06/2024</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><strong>Communication Contact No:</strong> 8228067425</div>
+                    <div class="col-md-4"><strong>Hospital Type:</strong> Private</div>
+                    <div class="col-md-4"><strong>Gender:</strong> Female</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><strong>Age:</strong> 36 years</div>
+                    <div class="col-md-4"><strong>Aadhar Verified:</strong> Yes</div>
+                    <div class="col-md-4"><strong>Patient District:</strong> DUMKA</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><strong>Authentication at Reg/Dis:</strong> Yes (BIOAUTH)</div>
+                    <div class="col-md-4"><strong>Patient Scheme:</strong> MSBY(P)</div>
+                    <div class="col-md-4"><strong>Family ID:</strong> 20P637eb894-7eef-11e5-a727-d89d671b89d8</div>
+                </div>
+            </div>
+            <div class="col-md-3 text-center">
+                <img src="https://via.placeholder.com/100x120" class="patient-photo" alt="Patient Photo">
+                <p>Photo Not Available</p>
+            </div>
+        </div>
+
+        <!-- Tabs Section -->
+        <ul class="nav nav-tabs mt-3">
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#past-history">Past History</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#preauthorization">Preauthorization</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#treatment">Treatment/Discharge</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#claims">Claims</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#attachments">Attachments</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#case-sheet">Case Sheet</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#oncology">Oncology Related Data</a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <div id="claims" class="tab-pane active">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>S No</th>
+                            <th>ICD Code</th>
+                            <th>ICD Description</th>
+                            <th>Acted By Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2C60</td>
+                            <td>Carcinoma of breast, specialized type(2C60)</td>
+                            <td>MEDCO</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2C62</td>
+                            <td>Breast carcinoma NOS(2C62)</td>
+                            <td>PPD</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>2C63</td>
+                            <td>Breast carcinoma NOS(2C63)</td>
+                            <td>CPD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Other tabs content here if needed -->
+        </div>
+    </div>
+</asp:Content>
+
