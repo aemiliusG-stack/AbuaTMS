@@ -940,5 +940,253 @@ public class MasterData
         cmd.ExecuteNonQuery();
         con.Close();
     }
+    //public DataTable GetMasterActions()
+    //{
+    //    string Query = "select ActionId, ActionName from TMS_MasterActionMaster";
+    //    SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+    //    con.Open();
+    //    sd.Fill(ds);
+    //    con.Close();
+    //    dt = ds.Tables[0];
+    //    return dt;
+    //}
 
+    //Package Detail by Harsha
+    public DataTable GetPackageDetailsMasterData()
+    {
+        string Query = "SELECT t1.PackageId, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.IsMultipleProcedure, t1.IsLevelApplied, t1.IsAutoApproved, t1.ProcedureType, t1.Reservance, t1.IsStratificationRequired, t1.MaxStratification, t1.IsImplantRequired, t1.MaxImplant, t1.IsSpecialCondition, t1.ReservationPublicHospital, t1.ReservationTertiaryHospital, t1.LevelOfCare, t1.LOS, PreInvestigation, t1.PostInvestigation, t1.ProcedureLabel, SpecialConditionPopUp, SpecialConditionRule, t1.IsEnhancementApplicable, t1.IsMedicalSurgical, t1.IsDayCare, t1.ClubbingId, t1.ClubbingRemarks, t1.IsCycleBased, t1.NoOfCycle, t1.CycleBasedRemarks, t1.IsSittingProcedure, t1.SittingNoOfDays, t1.SittingProcedureRemarks,  t1.IsActive, t1.CreatedOn, t1.UpdatedOn FROM TMS_MasterPackageDetail t1 inner join TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId ORDER BY t1.ProcedureId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    public void InsertPackageDetailsMaster(string PackageId, string ProcedureCode, string ProcedureName, string ProcedureAmount, string IsMultipleProcedure, string IsLevelApplied, string IsAutoApproved, string ProcedureType, string Reservance, string IsStratificationRequired, string MaxStratification, string IsImplantRequired, string MaxImplant, string IsSpecialCondition, string ReservationPublicHospital, string ReservationTertiaryHospital, string LevelOfCare, string LOS, string PreInvestigation, string PostInvestigation, string ProcedureLabel, string SpecialConditionPopUp, string SpecialConditionRule, string IsEnhancementApplicable, string IsMedicalSurgical, string IsDayCare, string ClubbingId, string ClubbingRemarks, string IsCycleBased, string NoOfCycle, string CycleBasedRemarks, string IsSittingProcedure, string SittingNoOfDays, string SittingProcedureRemarks)
+    {
+        string Query = "INSERT INTO TMS_MasterPackageDetail(PackageId, ProcedureCode, ProcedureName, ProcedureAmount, IsMultipleProcedure, IsLevelApplied, IsAutoApproved, ProcedureType, Reservance, IsStratificationRequired, MaxStratification, IsImplantRequired, MaxImplant, IsSpecialCondition, ReservationPublicHospital, ReservationTertiaryHospital, LevelOfCare, LOS, PreInvestigation, PostInvestigation, ProcedureLabel, SpecialConditionPopUp, SpecialConditionRule, IsEnhancementApplicable, IsMedicalSurgical, IsDayCare, ClubbingId, ClubbingRemarks, IsCycleBased, NoOfCycle, CycleBasedRemarks, IsSittingProcedure, SittingNoOfDays, SittingProcedureRemarks, IsActive, IsDeleted, CreatedOn, UpdatedOn) VALUES (@PackageId, @ProcedureCode, @ProcedureName, @ProcedureAmount, @IsMultipleProcedure, @IsLevelApplied, @IsAutoApproved, @ProcedureType, @Reservance, @IsStratificationRequired, @MaxStratification, @IsImplantRequired, @MaxImplant, @IsSpecialCondition, @ReservationPublicHospital, @ReservationTertiaryHospital, @LevelOfCare, @LOS, @PreInvestigation, @PostInvestigation, @ProcedureLabel, @SpecialConditionPopUp, @SpecialConditionRule, @IsEnhancementApplicable, @IsMedicalSurgical, @IsDayCare, @ClubbingId, @ClubbingRemarks, @IsCycleBased, @NoOfCycle, @CycleBasedRemarks, @IsSittingProcedure, @SittingNoOfDays, @SittingProcedureRemarks, 1, 0, GETDATE(), GETDATE())";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PackageId", PackageId);
+        cmd.Parameters.AddWithValue("@ProcedureCode", ProcedureCode);
+        cmd.Parameters.AddWithValue("@ProcedureName", ProcedureName);
+        cmd.Parameters.AddWithValue("@ProcedureAmount", ProcedureAmount);
+        cmd.Parameters.AddWithValue("@IsMultipleProcedure", IsMultipleProcedure);
+        cmd.Parameters.AddWithValue("@IsLevelApplied", IsLevelApplied);
+        cmd.Parameters.AddWithValue("@IsAutoApproved", IsAutoApproved);
+        cmd.Parameters.AddWithValue("@ProcedureType", ProcedureType);
+        cmd.Parameters.AddWithValue("@Reservance", Reservance);
+        cmd.Parameters.AddWithValue("@IsStratificationRequired", IsStratificationRequired);
+        cmd.Parameters.AddWithValue("@MaxStratification", MaxStratification);
+        cmd.Parameters.AddWithValue("@IsImplantRequired", IsImplantRequired);
+        cmd.Parameters.AddWithValue("@MaxImplant", MaxImplant);
+        cmd.Parameters.AddWithValue("@IsSpecialCondition", IsSpecialCondition);
+        cmd.Parameters.AddWithValue("@ReservationPublicHospital", ReservationPublicHospital);
+        cmd.Parameters.AddWithValue("@ReservationTertiaryHospital", ReservationTertiaryHospital);
+        cmd.Parameters.AddWithValue("@LevelOfCare", LevelOfCare);
+        cmd.Parameters.AddWithValue("@LOS", LOS);
+        cmd.Parameters.AddWithValue("@PreInvestigation", PreInvestigation);
+        cmd.Parameters.AddWithValue("@PostInvestigation", PostInvestigation);
+        cmd.Parameters.AddWithValue("@ProcedureLabel", ProcedureLabel);
+        cmd.Parameters.AddWithValue("@SpecialConditionPopUp", SpecialConditionPopUp);
+        cmd.Parameters.AddWithValue("@SpecialConditionRule", SpecialConditionRule);
+        cmd.Parameters.AddWithValue("@IsEnhancementApplicable", IsEnhancementApplicable);
+        cmd.Parameters.AddWithValue("@IsMedicalSurgical", IsMedicalSurgical);
+        cmd.Parameters.AddWithValue("@IsDayCare", IsDayCare);
+        cmd.Parameters.AddWithValue("@ClubbingId", ClubbingId);
+        cmd.Parameters.AddWithValue("@ClubbingRemarks", ClubbingRemarks);
+        cmd.Parameters.AddWithValue("@IsCycleBased", IsCycleBased);
+        cmd.Parameters.AddWithValue("@NoOfCycle", NoOfCycle);
+        cmd.Parameters.AddWithValue("@CycleBasedRemarks", CycleBasedRemarks);
+        cmd.Parameters.AddWithValue("@IsSittingProcedure", IsSittingProcedure);
+        cmd.Parameters.AddWithValue("@SittingNoOfDays", SittingNoOfDays);
+        cmd.Parameters.AddWithValue("@SittingProcedureRemarks", SittingProcedureRemarks);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+    public void UpdatePackageDetailsMaster(string ProcedureId, string PackageId, string ProcedureCode, string ProcedureName, string ProcedureAmount, string IsMultipleProcedure, string IsLevelApplied, string IsAutoApproved, string ProcedureType, string Reservance, string IsStratificationRequired, string MaxStratification, string IsImplantRequired, string MaxImplant, string IsSpecialCondition, string ReservationPublicHospital, string ReservationTertiaryHospital, string LevelOfCare, string LOS, string PreInvestigation, string PostInvestigation, string ProcedureLabel, string SpecialConditionPopUp, string SpecialConditionRule, string IsEnhancementApplicable, string IsMedicalSurgical, string IsDayCare, string ClubbingId, string ClubbingRemarks, string IsCycleBased, string NoOfCycle, string CycleBasedRemarks, string IsSittingProcedure, string SittingNoOfDays, string SittingProcedureRemarks)
+    {
+        string Query = "UPDATE TMS_MasterPackageDetail SET PackageId = @PackageId, ProcedureCode = @ProcedureCode, ProcedureName = @ProcedureName, ProcedureAmount = @ProcedureAmount, IsMultipleProcedure = @IsMultipleProcedure, IsLevelApplied = @IsLevelApplied, IsAutoApproved = @IsAutoApproved, ProcedureType = @ProcedureType, Reservance = @Reservance, IsStratificationRequired = @IsStratificationRequired, MaxStratification = @MaxStratification, IsSpecialCondition = @IsSpecialCondition, ReservationPublicHospital = @ReservationPublicHospital, ReservationTertiaryHospital = @ReservationTertiaryHospital, LevelOfCare = @LevelOfCare, LOS = @LOS, PreInvestigation = @PreInvestigation, PostInvestigation = @PostInvestigation, ProcedureLabel = @ProcedureLabel, SpecialConditionPopUp = @SpecialConditionPopUp, SpecialConditionRule = @SpecialConditionRule, IsEnhancementApplicable = @IsEnhancementApplicable, IsMedicalSurgical = @IsMedicalSurgical, IsDayCare = @IsDayCare, ClubbingId = @ClubbingId, ClubbingRemarks = @ClubbingRemarks, IsCycleBased = @IsCycleBased, NoOfCycle = @NoOfCycle, CycleBasedRemarks = @CycleBasedRemarks, IsSittingProcedure = @IsSittingProcedure, SittingNoOfDays = @SittingNoOfDays, SittingProcedureRemarks = @SittingProcedureRemarks, UpdatedOn = GETDATE() WHERE ProcedureId = @ProcedureId;";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PackageId", PackageId);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        cmd.Parameters.AddWithValue("@ProcedureCode", ProcedureCode);
+        cmd.Parameters.AddWithValue("@ProcedureName", ProcedureName);
+        cmd.Parameters.AddWithValue("@ProcedureAmount", ProcedureAmount);
+        cmd.Parameters.AddWithValue("@IsMultipleProcedure", IsMultipleProcedure);
+        cmd.Parameters.AddWithValue("@IsLevelApplied", IsLevelApplied);
+        cmd.Parameters.AddWithValue("@IsAutoApproved", IsAutoApproved);
+        cmd.Parameters.AddWithValue("@ProcedureType", ProcedureType);
+        cmd.Parameters.AddWithValue("@Reservance", Reservance);
+        cmd.Parameters.AddWithValue("@IsStratificationRequired", IsStratificationRequired);
+        cmd.Parameters.AddWithValue("@MaxStratification", MaxStratification);
+        cmd.Parameters.AddWithValue("@IsImplantRequired", IsImplantRequired);
+        cmd.Parameters.AddWithValue("@MaxImplant", MaxImplant);
+        cmd.Parameters.AddWithValue("@IsSpecialCondition", IsSpecialCondition);
+        cmd.Parameters.AddWithValue("@ReservationPublicHospital", ReservationPublicHospital);
+        cmd.Parameters.AddWithValue("@ReservationTertiaryHospital", ReservationTertiaryHospital);
+        cmd.Parameters.AddWithValue("@LevelOfCare", LevelOfCare);
+        cmd.Parameters.AddWithValue("@LOS", LOS);
+        cmd.Parameters.AddWithValue("@PreInvestigation", PreInvestigation);
+        cmd.Parameters.AddWithValue("@PostInvestigation", PostInvestigation);
+        cmd.Parameters.AddWithValue("@ProcedureLabel", ProcedureLabel);
+        cmd.Parameters.AddWithValue("@SpecialConditionPopUp", SpecialConditionPopUp);
+        cmd.Parameters.AddWithValue("@SpecialConditionRule", SpecialConditionRule);
+        cmd.Parameters.AddWithValue("@IsEnhancementApplicable", IsEnhancementApplicable);
+        cmd.Parameters.AddWithValue("@IsMedicalSurgical", IsMedicalSurgical);
+        cmd.Parameters.AddWithValue("@IsDayCare", IsDayCare);
+        cmd.Parameters.AddWithValue("@ClubbingId", ClubbingId);
+        cmd.Parameters.AddWithValue("@ClubbingRemarks", ClubbingRemarks);
+        cmd.Parameters.AddWithValue("@IsCycleBased", IsCycleBased);
+        cmd.Parameters.AddWithValue("@NoOfCycle", NoOfCycle);
+        cmd.Parameters.AddWithValue("@CycleBasedRemarks", CycleBasedRemarks);
+        cmd.Parameters.AddWithValue("@IsSittingProcedure", IsSittingProcedure);
+        cmd.Parameters.AddWithValue("@SittingNoOfDays", SittingNoOfDays);
+        cmd.Parameters.AddWithValue("@SittingProcedureRemarks", SittingProcedureRemarks);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+    public void StatusMasterPackage(string ProcedureId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_MasterPackageDetail SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeleteOn = NULL WHERE ProcedureId = @ProcedureId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_MasterPackageDetail SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeleteOn = GETDATE() WHERE ProcedureId = @ProcedureId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+    public DataTable GetClubbingRemarks()
+    {
+        dt.Clear();
+        string Query = "select ClubbingId, ClubbingRemarks from TMS_MasterClubbingRemarks where IsActive=1 and IsDeleted=0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+
+    }
+    //Master PopUp by Harsha 
+    public DataTable GetMasterPopupMasterData()
+    {
+        string Query = "SELECT PopUpId, PopUpDescription, IsActive, IsDeleted, CreatedOn, UpdatedOn FROM TMS_MasterPopUpMaster ORDER BY PopUpId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+    public void InsertMasterPopup(string PopUpDescription)
+    {
+        string Query = "INSERT INTO TMS_MasterPopUpMaster(PopUpDescription, IsActive, IsDeleted, CreatedOn, UpdatedOn) VALUES(@PopUpDescription, 1, 0, GETDATE(), GETDATE())";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PopUpDescription", PopUpDescription);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+    public void UpdateMasterPopup(string PopUpId, string PopUpDescription)
+    {
+        string Query = "UPDATE TMS_MasterPopUpMaster SET PopUpDescription = @PopUpDescription, UpdatedOn = GETDATE() where PopUpId = @PopUpId";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PopUpDescription", PopUpDescription);
+        cmd.Parameters.AddWithValue("@PopUpId", PopUpId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+    public void StatusMasterPopup(string PopUpId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_MasterPopUpMaster SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeletedOn = NULL WHERE PopUpId = @PopUpId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_MasterPopUpMaster SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeletedOn = GETDATE() WHERE PopUpId = @PopUpId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PopUpId", PopUpId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    //Map Procedure Non Related by Harsha 
+    public DataTable GetMapProcedureNonRelatedData()
+    {
+        string Query = "SELECT t1.ProcedureNonRelatedId, t1.ProcedureId, t1.NonRelatedId, p1.ProcedureCode AS ProcedureCode_ProcedureId, p2.ProcedureCode AS ProcedureCode_NonRelatedId, t1.Remarks, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn FROM TMS_MapProcedureNonRelated t1 LEFT JOIN TMS_MasterPackageDetail p1 ON t1.ProcedureId = p1.ProcedureId LEFT JOIN TMS_MasterPackageDetail p2 ON t1.NonRelatedId = p2.ProcedureId ORDER BY t1.ProcedureNonRelatedId DESC;";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+    public void InsertMapProcedureNonRelated(string PrimaryProcedureCode, string NonRelatedId, string Remarks)
+    {
+        string Query = "INSERT INTO TMS_MapProcedureNonRelated(ProcedureId, NonRelatedId, Remarks, IsActive, IsDeleted, CreatedOn, UpdatedOn) VALUES(@PrimaryProcedureCode, @NonRelatedId, @Remarks, 1, 0, GETDATE(), GETDATE())";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@PrimaryProcedureCode", PrimaryProcedureCode);
+        cmd.Parameters.AddWithValue("@NonRelatedId", NonRelatedId); // Corrected parameter name
+        cmd.Parameters.AddWithValue("@Remarks", Remarks);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+    public void UpdateMapProcedureNonRelated(string ProcedureNonRelatedId, string ProcedureId, string NonRelatedId, string Remarks)
+    {
+        string Query = "UPDATE TMS_MapProcedureNonRelated SET ProcedureId = @ProcedureId, NonRelatedId = @NonRelatedId, Remarks = @Remarks, UpdatedOn = GETDATE() where ProcedureNonRelatedId = @ProcedureNonRelatedId";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        cmd.Parameters.AddWithValue("@NonRelatedId", NonRelatedId);
+        cmd.Parameters.AddWithValue("@Remarks", Remarks);
+        cmd.Parameters.AddWithValue("@ProcedureNonRelatedId", ProcedureNonRelatedId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    public void StatusMapProcedureNonRelated(string ProcedureNonRelatedId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_MapProcedureNonRelated SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeleteOn = NULL WHERE ProcedureNonRelatedId = @ProcedureNonRelatedId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_MapProcedureNonRelated SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeleteOn = GETDATE() WHERE ProcedureNonRelatedId = @ProcedureNonRelatedId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ProcedureNonRelatedId", ProcedureNonRelatedId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+    public DataTable GetProcedureCode()
+    {
+        dt.Clear();
+        string Query = "select ProcedureId, ProcedureCode from TMS_MasterPackageDetail where IsActive=1 and IsDeleted=0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+
+    }
 }

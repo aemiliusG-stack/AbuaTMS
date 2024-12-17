@@ -653,7 +653,7 @@
                                                             <div class="row text-dark">
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="form-group">
-                                                                        <span class="font-weight-bold text-dark">Admission Type</span>
+                                                                        <span class="font-weight-bold text-dark">Admission Type<span class="text-danger">*</span></span>
                                                                         <div class="d-flex">
                                                                             <div class="form-check form-check-inline me-2">
                                                                                 <asp:RadioButton ID="RBPlanned" runat="server" GroupName="inlineRadioOptions" Checked="true" Enabled="false" CssClass="form-check-input" />
@@ -666,15 +666,16 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+
                                                                 <div class="col-md-8 mb-3">
                                                                     <div class="form-group">
-                                                                        <span class="font-weight-bold text-dark">Admission Date</span><br />
+                                                                        <span class="font-weight-bold text-dark">Admission Date<span class="text-danger">*</span></span><br />
                                                                         <asp:Label ID="lbAdmissionDate_Preauth" runat="server" CssClass="border-bottom" Style="margin-bottom: 0; padding-bottom: 0;"></asp:Label>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="col-md-4 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Package Cost</span>
+                                                                    <span class="font-weight-bold text-dark">Package Cost<span class="text-danger">*</span></span>
                                                                 </div>
                                                                 <div class="col-md-4 mb-3">
                                                                     <asp:Label ID="lbPackageCost" runat="server" CssClass="form-label" Style="margin-bottom: 0; padding-bottom: 0;"></asp:Label>
@@ -685,7 +686,7 @@
                                                                     <asp:Label ID="lbHospitalIncentive" runat="server" CssClass="form-label" Style="margin-bottom: 0; padding-bottom: 0;"></asp:Label>
                                                                 </div>
                                                                 <div class="col-md-4 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Incentive Amount</span>
+                                                                    <span class="font-weight-bold text-dark">Incentive Amount<span class="text-danger">*</span></span>
                                                                 </div>
                                                                 <div class="col-md-4 mb-3">
                                                                     <asp:Label ID="lbIncentiveAmount" runat="server" CssClass="form-label" Style="margin-bottom: 0; padding-bottom: 0;"></asp:Label>
@@ -693,7 +694,7 @@
                                                                 </div>
                                                                 <div class="col-md-4 mb-3"></div>
                                                                 <div class="col-md-4 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Total Package Cost</span>
+                                                                    <span class="font-weight-bold text-dark">Total Package Cost<span class="text-danger">*</span></span>
                                                                 </div>
                                                                 <div class="col-md-4 mb-3">
                                                                     <asp:Label ID="lbTotalPackageCost" runat="server" CssClass="form-label" Style="margin-bottom: 0; padding-bottom: 0;"></asp:Label>
@@ -702,9 +703,15 @@
 
                                                                 <div class="col-md-4 mb-3"></div>
                                                                 <div class="col-md-4 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Total Amount Liable by Insurance is</span>
+                                                                    <%--                                                                    <span class="font-weight-bold text-dark">Total Amount Liable by Insurance is</span>--%>
+                                                                    <asp:Label ID="lbRoleStatusPre" runat="server" class="font-weight-bold text-dark" /><span class="text-danger">*</span>
+
                                                                 </div>
                                                                 <div class="col-md-4 mb-3">
+                                                                    <asp:Label ID="lbAmountLiablePre" runat="server" CssClass="form-label" Text="100000" />
+                                                                    <hr style="margin-top: 0;" />
+                                                                </div>
+                                                                <%--<div class="col-md-4 mb-3">
                                                                     <asp:Label ID="lbTotalAmtInsurance" runat="server" CssClass="form-label" Text="100000" />
                                                                     <hr style="margin-top: 0;" />
                                                                 </div>
@@ -715,7 +722,7 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <asp:Label ID="lbTotalAmtTrust" runat="server" CssClass="form-label" Text="13615" />
                                                                     <hr style="margin-top: 0;" />
-                                                                </div>
+                                                                </div>--%>
                                                             </div>
                                                             <div class="col-md-12 mb-3">
                                                                 <div class="form-group">
@@ -736,64 +743,68 @@
                                                         </div>
                                                         <div class="ibox-content">
                                                             <div class="row">
-                                                                <asp:GridView ID="gvPreauthWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
-                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                    <Columns>
-                                                                        <asp:TemplateField HeaderText="Sl.No.">
-                                                                            <ItemTemplate>
-                                                                                <asp:Label ID="Label1" runat="server"
-                                                                                    Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                            </ItemTemplate>
-                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                        </asp:TemplateField>
+                                                                <div class="table-responsive">
+                                                                    <asp:GridView ID="gvPreauthWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                                        <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                        <Columns>
+                                                                            <asp:TemplateField HeaderText="S.No.">
+                                                                                <ItemTemplate>
+                                                                                    <asp:Label ID="lbSlNo" runat="server" Text='<%# Eval("SlNo") %>'></asp:Label>
+                                                                                </ItemTemplate>
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                            </asp:TemplateField>
+                                                                            <asp:TemplateField HeaderText="Date And Time">
+                                                                                <ItemTemplate>
+                                                                                    <asp:Label ID="lbPreActionDate" runat="server" Text='<%# Eval("ActionDate") %>'></asp:Label>
+                                                                                </ItemTemplate>
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                            </asp:TemplateField>
 
-                                                                        <asp:TemplateField HeaderText="Date and Time">
-                                                                            <ItemTemplate>
-                                                                                <asp:Label ID="lbDateTime" runat="server" Text='<%# Eval("ActionDate") %>'></asp:Label>
-                                                                            </ItemTemplate>
-                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                        </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Role">
-                                                                            <ItemTemplate>
-                                                                                <asp:Label ID="lbRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
-                                                                            </ItemTemplate>
-                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                        </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Remarks">
-                                                                            <ItemTemplate>
-                                                                                <asp:Label ID="lbRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
-                                                                            </ItemTemplate>
-                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                        </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Action">
-                                                                            <ItemTemplate>
-                                                                                <asp:Label ID="lbAction" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
-                                                                            </ItemTemplate>
-                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                        </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Amount(Rs.)">
-                                                                            <ItemTemplate>
-                                                                                <asp:Label ID="Label3" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
-                                                                            </ItemTemplate>
-                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                        </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Preauth Query Rejection Reason">
-                                                                            <ItemTemplate>
-                                                                                <asp:Label ID="lbPreauthQuery" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
-                                                                            </ItemTemplate>
-                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                        </asp:TemplateField>
-                                                                    </Columns>
-                                                                </asp:GridView>
+                                                                            <asp:TemplateField HeaderText="Role Name">
+                                                                                <ItemTemplate>
+                                                                                    <asp:Label ID="lbPreRoleName" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                                </ItemTemplate>
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                            </asp:TemplateField>
+
+                                                                            <asp:TemplateField HeaderText="Remarks">
+                                                                                <ItemTemplate>
+                                                                                    <asp:Label ID="lbPreRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                                </ItemTemplate>
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                            </asp:TemplateField>
+
+                                                                            <asp:TemplateField HeaderText="Action">
+                                                                                <ItemTemplate>
+                                                                                    <asp:Label ID="lbPreActionTaken" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
+                                                                                </ItemTemplate>
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                            </asp:TemplateField>
+
+                                                                            <asp:TemplateField HeaderText="Approved Amount(Rs.)">
+                                                                                <ItemTemplate>
+                                                                                    <asp:Label ID="lbPreAmount" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
+                                                                                </ItemTemplate>
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                            </asp:TemplateField>
+
+                                                                            <asp:TemplateField HeaderText="PreAuth Query/Rejection Reasons">
+                                                                                <ItemTemplate>
+                                                                                    <asp:Label ID="lbPreRejectionReason" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
+                                                                                </ItemTemplate>
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                            </asp:TemplateField>
+                                                                        </Columns>
+                                                                    </asp:GridView>
+                                                                </div>
                                                             </div>
-                                                            <!-- Add margin below the GridView -->
                                                             <div style="margin-top: 20px;">
                                                                 <div class="form-check">
                                                                     <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
@@ -803,8 +814,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                             </asp:View>
@@ -821,35 +830,31 @@
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Doctor Type</span><br />
-                                                                        <asp:DropDownList ID="dropDocType" runat="server" CssClass="form-control">
-                                                                            <asp:ListItem>Other</asp:ListItem>
-                                                                        </asp:DropDownList>
+                                                                        <asp:Label ID="lbDoctorType" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="1759"></asp:Label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Name</span><br />
-                                                                        <asp:DropDownList ID="dropDocName" runat="server" CssClass="form-control">
-                                                                            <asp:ListItem>Dr. Sanjeet Anand(1759)</asp:ListItem>
-                                                                        </asp:DropDownList>
+                                                                        <asp:Label ID="lbDoctorName" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="1759"></asp:Label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Regn No</span><br />
-                                                                        <asp:Label ID="lbRegnNo" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="1759"></asp:Label>
+                                                                        <asp:Label ID="lbDocRegnNo" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="1759"></asp:Label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Qualification</span><br />
-                                                                        <asp:Label ID="lbQualification" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                        <asp:Label ID="lbDocQualification" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="&nbsp;"></asp:Label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Contact No</span><br />
-                                                                        <asp:Label ID="Label2" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                        <asp:Label ID="lbDocContactNo" runat="server" CssClass="d-block w-50 border-bottom p-1" Text="&nbsp;"></asp:Label>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1210,13 +1215,13 @@
                                                             <div class="ibox-content text-dark">
                                                                 <div class="row">
                                                                     <div class="col-md-3 mb-3">
-                                                                        <sapn class="form-label fw-semibold">Primary Diagnosis<span class="text-danger">*</span></sapn>
+                                                                        <sapn class="form-label fw-semibold font-weight-bold text-dark">Primary Diagnosis<span class="text-danger">*</span></sapn>
                                                                         <asp:DropDownList ID="dropPrimaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropPrimaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                                         </asp:DropDownList>
                                                                     </div>
                                                                     <div class="col-md-3"></div>
                                                                     <div class="col-md-3 mb-3">
-                                                                        <span class="form-label fw-semibold">Secondary Diagnosis<span class="text-danger">*</span></span>
+                                                                        <span class="form-label fw-semibold font-weight-bold text-dark">Secondary Diagnosis<span class="text-danger">*</span></span>
                                                                         <asp:DropDownList ID="dropSecondaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropSecondaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                                         </asp:DropDownList>
                                                                     </div>
@@ -1427,41 +1432,47 @@
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Last Claim Updated Date:</span><br />
                                                                             <asp:Label ID="lbLastClaimUpadted" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Penalty Amount:</span><br />
                                                                             <asp:Label ID="lbPenaltyAmt" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Claim Amount:</span><br />
                                                                             <asp:Label ID="lbClaimAmount" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <%--<div class="col-md-3">
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Insurance Liable Amount:</span><br />
                                                                             <asp:Label ID="lbInsuranceLiableAmt" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                                                         </div>
                                                                         <div class="col-md-3">
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Trust Liable Amount:</span><br />
                                                                             <asp:Label ID="lbTrustLiableAmt" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
+                                                                        </div>--%>
+                                                                        <div class="col-md-3 mt-3">
+                                                                            <asp:Label ID="lbRoleStatus" runat="server" class="form-label fw-semibold" Style="font-size: 14px; font-weight: 800;"></asp:Label><br />
+                                                                            <asp:Label ID="tbAmountLiable" Style="font-size: 12px;" runat="server"></asp:Label>
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Bill Amount:</span><br />
                                                                             <asp:Label ID="lbBillAmt" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Final E-rupi Voucher Amount:</span><br />
                                                                             <asp:Label ID="lbFinalErupiAmt" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
+                                                                        </div>
+                                                                        <div class="col-md-3 mt-3">
                                                                             <span class="form-label fw-semibold" style="font-size: 14px; font-weight: 800;">Remarks:</span>
                                                                             <asp:Label ID="lbRemark" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                         </div>
-                                                                        <div class="col-md-3">
+                                                                        <div class="col-md-3 mt-3">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1485,11 +1496,11 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbIsNameCorrectYes" runat="server" GroupName="IsNameCorrect" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsNameCorrectYes" runat="server" GroupName="IsNameCorrect" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="form-check-label font-weight-bold text-dark">Yes</span>
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbIsNameCorrectNo" runat="server" GroupName="IsNameCorrect" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsNameCorrectNo" runat="server" GroupName="IsNameCorrect" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">No</span>
                                                                         </div>
                                                                     </div>
@@ -1502,11 +1513,11 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbIsGenderCorrectYes" runat="server" GroupName="IsGenderCorrect" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsGenderCorrectYes" runat="server" GroupName="IsGenderCorrect" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">Yes</span>
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbIsGenderCorrectNo" runat="server" GroupName="IsGenderCorrect" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsGenderCorrectNo" runat="server" GroupName="IsGenderCorrect" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">No</span>
                                                                         </div>
                                                                     </div>
@@ -1519,11 +1530,11 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbIsPhotoVerifiedYes" runat="server" GroupName="IsPhotoVerified" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsPhotoVerifiedYes" runat="server" GroupName="IsPhotoVerified" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">Yes</span>
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbIsPhotoVerifiedNo" runat="server" GroupName="IsPhotoVerified" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsPhotoVerifiedNo" runat="server" GroupName="IsPhotoVerified" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">No</span>
                                                                         </div>
                                                                     </div>
@@ -1539,8 +1550,10 @@
                                                                     <asp:Label ID="lbNonTechAdmissionDate" runat="server" CssClass="form-label" />
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Case Sheet</span>
-                                                                    <asp:TextBox ID="tbCSAdmissionDate" runat="server" TextMode="Date" AutoPostBack="true" CssClass="form-control border-0 border-bottom"></asp:TextBox>
+                                                                    <span class="font-weight-bold text-dark">Case Sheet</span><br />
+                                                                    <%--                                                                    <asp:TextBox ID="tbCSAdmissionDate" runat="server" TextMode="Date" AutoPostBack="true" CssClass="form-control border-0 border-bottom"></asp:TextBox>--%>
+                                                                    <asp:Label ID="lbCSAdmissionDate" runat="server" CssClass="form-label" />
+
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="d-flex">
@@ -1562,8 +1575,9 @@
                                                                     <asp:Label ID="lbNonTechSurgeryDate" runat="server" CssClass="form-label" />
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Case Sheet</span>
-                                                                    <asp:TextBox ID="tbCSTherepyDate" runat="server" TextMode="Date" AutoPostBack="true" CssClass="form-control border-0 border-bottom"></asp:TextBox>
+                                                                    <span class="font-weight-bold text-dark">Case Sheet</span><br />
+                                                                    <%--                                                                    <asp:TextBox ID="tbCSTherepyDate" runat="server" TextMode="Date" AutoPostBack="true" CssClass="form-control border-0 border-bottom"></asp:TextBox>--%>
+                                                                    <asp:Label ID="lbCSTherepyDate" runat="server" CssClass="form-label" />
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="d-flex">
@@ -1585,8 +1599,10 @@
                                                                     <asp:Label ID="lbNonTechDeathDate" runat="server" CssClass="form-label" />
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Case Sheet</span>
-                                                                    <asp:TextBox ID="tbCSDischargeDate" runat="server" TextMode="Date" AutoPostBack="true" CssClass="form-control border-0 border-bottom"></asp:TextBox>
+                                                                    <span class="font-weight-bold text-dark">Case Sheet</span><br />
+                                                                    <%--                                                                    <asp:TextBox ID="tbCSDischargeDate" runat="server" TextMode="Date" AutoPostBack="true" CssClass="form-control border-0 border-bottom"></asp:TextBox>--%>
+                                                                    <asp:Label ID="lbCSDischargeDate" runat="server" CssClass="form-label" />
+
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="d-flex">
@@ -1611,11 +1627,11 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbIsSignVerifiedYes" runat="server" GroupName="IsSignVerified" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsSignVerifiedYes" runat="server" GroupName="IsSignVerified" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">Yes</span>
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbIsSignVerifiedNo" runat="server" GroupName="IsSignVerified" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsSignVerifiedNo" runat="server" GroupName="IsSignVerified" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">No</span>
                                                                         </div>
                                                                     </div>
@@ -1628,11 +1644,11 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbIsReportCorrectYes" runat="server" GroupName="IsReportCorrect" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsReportCorrectYes" runat="server" GroupName="IsReportCorrect" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">Yes</span>
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbIsReportCorrectNo" runat="server" GroupName="IsReportCorrect" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsReportCorrectNo" runat="server" GroupName="IsReportCorrect" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">No</span>
                                                                         </div>
                                                                     </div>
@@ -1645,11 +1661,11 @@
                                                                 <div class="col-md-4 mb-3">
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbIsReportVerifiedYes" runat="server" GroupName="IsReportVerified" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsReportVerifiedYes" runat="server" GroupName="IsReportVerified" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">Yes</span>
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbIsReportVerifiedNo" runat="server" GroupName="IsReportVerified" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsReportVerifiedNo" runat="server" GroupName="IsReportVerified" Enabled="false" CssClass="form-check-input" />
                                                                             <span class="font-weight-bold text-dark">No</span>
                                                                         </div>
                                                                     </div>
@@ -1887,10 +1903,70 @@
                                                             </div>
                                                         </div>
                                                         <div class="ibox mt-4">
+                                                            <div class="ibox-title text-center">
+                                                                <h3 class="text-white">Claim Query/ Rejection Reason</h3>
+                                                            </div>
+                                                            <div class="ibox-content table-responsive">
+                                                                <asp:GridView ID="gridClaimQueryRejectionReason" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                    <Columns>
+                                                                        <asp:TemplateField HeaderText="Sl. No.">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Query Date">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbQueryDate" runat="server" Text='<%# Eval("QueryRaisedDate") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Main Reason">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbMainReason" runat="server" Text='<%# Eval("ReasonName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Sub Reason">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="30%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="PPD Query">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbPPDQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Audit">
+                                                                            <ItemTemplate>
+                                                                                <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" />
+                                                                                <%--OnClick="btnViewAudit_Click"--%>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                    </Columns>
+                                                                </asp:GridView>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ibox mt-4">
                                                             <div class="ibox-content">
+                                                                <div class="row mt-3">
+                                                                    <div class="col-md-12 form-check mb-3">
+                                                                        <asp:CheckBox ID="cbTerms" runat="server" CssClass="" Text="&nbsp;&nbsp;I have reviewed the case with best of my knowledge and have validated all documents before making any decision." />
+                                                                    </div>
+                                                                </div>
                                                                 <div class="row">
                                                                     <div class="col-md-3 mb-3">
-                                                                        <span class="form-label fw-semibold">Action<span class="text-danger">*</span></span>
+                                                                        <span class="form-label fw-semibold font-weight-bold text-dark">Action<span class="text-danger">*</span></span>
                                                                         <asp:DropDownList ID="ddlActionType" runat="server" CssClass="form-control mt-2" AutoPostBack="True" OnSelectedIndexChanged="ddlActionType_SelectedIndexChanged">
                                                                         </asp:DropDownList>
                                                                     </div>
@@ -1924,11 +2000,7 @@
                                                                         <asp:TextBox runat="server" ID="tbRejectRemarks" class="form-control mt-2"></asp:TextBox>
                                                                     </asp:Panel>
                                                                 </div>
-                                                                <div class="row mt-3">
-                                                                    <div class="col-md-12 form-check mb-3">
-                                                                        <asp:CheckBox ID="cbTerms" runat="server" CssClass="" Text="&nbsp;&nbsp;I have reviewed the case with best of my knowledge and have validated all documents before making any decision." />
-                                                                    </div>
-                                                                </div>
+
                                                                 <div class="row mt-3">
                                                                     <div class="col-lg-12 text-start">
                                                                         <asp:Button ID="btnSubmit" runat="server" CssClass="btn btn-primary rounded-pill" Text="Submit" OnClick="btnSubmit_Click" AutoPostBack="True" />
@@ -1946,7 +2018,7 @@
                                                     </div>
                                             </asp:View>
                                             <asp:View ID="ViewAttachment" runat="server">
-                                                <div class="tab-pane fade" id="attachment" role="tabpanel">
+                                                <%--                                                <div class="tab-pane fade" id="attachment" role="tabpanel">
                                                     <ul class="nav nav-tabs d-flex flex-row justify-content-around" id="attachTab" role="tablist">
                                                         <li class="nav-item">
                                                             <a class="nav-link active nav-attach" id="one-tab"
@@ -2351,7 +2423,588 @@
                                                         </div>
                                                     </div>
 
+                                                </div>--%>
+                                                <div class="tab-pane fade show active" id="attachment" role="tabpanel">
+                                                    <ul class="nav nav-tabs d-flex flex-row justify-content-around" id="attachTab" role="tablist">
+                                                        <li class="nav-item mr-2 mt-1" id="preAuth">
+                                                            <asp:LinkButton ID="lnkPreauthorization" runat="server" CssClass="nav-link active nav-attach" OnClick="lnkPreauthorization_Click">Preauthorization</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="discharge">
+                                                            <asp:LinkButton ID="lnkDischarge" runat="server" CssClass="nav-link nav-attach" OnClick="lnkDischarge_Click">Discharge</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="death">
+                                                            <asp:LinkButton ID="lnkDeath" runat="server" CssClass="nav-link nav-attach" OnClick="lnkDeath_Click">Death</i></asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="claim">
+                                                            <asp:LinkButton ID="lnkClaim" runat="server" CssClass="nav-link nav-attach" OnClick="lnkClaim_Click">Claim</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="generalInvestigation">
+                                                            <asp:LinkButton ID="lnkGeneralInvestigation" runat="server" CssClass="nav-link nav-attach" OnClick="lnkGeneralInvestigation_Click">General Investigation</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="specialInvestigation">
+                                                            <asp:LinkButton ID="lnkSpecialInvestigation" runat="server" CssClass="nav-link nav-attach" OnClick="lnkSpecialInvestigation_Click">Special Investigation</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="fraud">
+                                                            <asp:LinkButton ID="lnkFraudDocuments" runat="server" CssClass="nav-link nav-attach" OnClick="lnkFraudDocuments_Click">Fraud Documents</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mt-1" id="audit">
+                                                            <asp:LinkButton ID="lnkAuditDocuments" runat="server" CssClass="nav-link nav-attach" OnClick="lnkAuditDocuments_Click">Audit Documents</asp:LinkButton>
+                                                        </li>
+                                                    </ul>
+
+                                                    <%--<div class="col-md-12 p-3">
+            <asp:Button ID="btnViewInactiveAttachment" runat="server" Text="View All Inactive Attachments" class="btn btn-primary rounded-pill mt-1" />
+            <asp:Button ID="btnViewAnamolyAttathment" runat="server" Text="View Data Anamoly Attachments" class="btn btn-primary rounded-pill mt-1" />
+        </div>--%>
+
+                                                    <div class="tab-content" id="attachTabContent">
+                                                        <asp:MultiView ID="MultiView2" runat="server" ActiveViewIndex="0">
+                                                            <asp:View ID="viewPreauthorization" runat="server">
+                                                                <div class="tab-pane fade show active" id="one" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Preauthorization</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>
+<%--                                                                                        <asp:LinkButton ID="attachmentPatientPhoto" CssClass="text-decoration-underline text-black fw-semibold" runat="server" OnClick="attachmentPatientPhoto_Click">Patient Photo</asp:LinkButton></td>--%>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Consent Document</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewDischarge" runat="server">
+                                                                <div class="tab-pane fade show active" id="two" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Discharge</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewDeath" runat="server">
+                                                                <div class="tab-pane fade show active" id="three" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Death</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewClaimsAttach" runat="server">
+                                                                <div class="tab-pane fade show active" id="four" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Claims</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewGeneralInvestigation" runat="server">
+                                                                <div class="tab-pane fade show active" id="five" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">General Investigations</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewSpecialInvestigation" runat="server">
+                                                                <div class="tab-pane fade show active" id="six" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Special Investigations</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <asp:GridView ID="gridSpecialInvestigation" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                            <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                            <Columns>
+                                                                                <asp:TemplateField HeaderText="Sl. No.">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label1" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Uploaded Date">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Hospital Name">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label3" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Speciality Name">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label2" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Procedure Code">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label4" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Procedure Name">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label9" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Investigation Code">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label5" runat="server" Text='<%# Eval("InvestigationCode") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Investigation Name">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("InvestigationName") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Investigation Stage">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("InvestigationStage") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Uploaded Documents">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Button ID="Button1" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" />
+                                                                                        <%--OnClick="btnViewAudit_Click"--%>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                                </asp:TemplateField>
+                                                                            </Columns>
+                                                                        </asp:GridView>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewFraudDocuments" runat="server">
+                                                                <div class="tab-pane fade show active" id="seven" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Fraud Documents</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewAuditDocuments" runat="server">
+                                                                <div class="tab-pane fade show active" id="eight" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Audit Documents</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                        </asp:MultiView>
+                                                        <%--<div class="col-md-12 mt-3">
+                                                <span class="text-danger font-weight-bold">Note:</span><br />
+                                                <span class="text-danger">1. File size should not exceed 500kb.</span><br />
+                                                <span class="text-danger">2. Attachment names with blue color are related to notification.</span><br />
+                                                <span class="text-danger">3. Discharge summary document quality and its notation.</span><br />
+                                                <span class="text-danger">4. Document of good quality.
+                    <i class="bi bi-clipboard-check text-black"></i>
+                                                </span>
+                                                <br />
+                                                <span class="text-danger m-0">4. Document of bad quality.
+                    <i class="bi bi-file-excel text-black"></i>
+                                                </span>
+                                                <br />
+                                                <span class="text-danger m-0">4. Document which is not valid.
+                    <i class="bi bi-exclamation-square text-black"></i>
+                                                </span>
+                                                <br />
+                                                <span class="text-danger m-0">4. Document of bad quality.
+                    <i class="bi bi-exclamation-triangle-fill text-black"></i>
+                                                </span>
+                                                <br />
+                                            </div>--%>
+                                                        <div class="col-md-12 mt-2 mb-2">
+                                                            <asp:Button ID="btnDownloadPdf" runat="server" Text="Download As One PDF" class="btn btn-primary rounded-pill" OnClick="btnDownloadPdf_Click" />
+                                                        </div>
+                                                    </div>
                                                 </div>
+
                                             </asp:View>
                                         </asp:MultiView>
                                     </div>

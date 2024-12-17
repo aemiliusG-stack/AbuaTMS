@@ -41,8 +41,163 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         BindGrid_ICHIDetails();
         BindPreauthAdmissionDetails();
     }
+    private void BindPatientName(string caseNo)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(caseNo))
+            {
+                lbName.Text = "Case number is missing.";
+                ClearLabels();
+                return;
+            }
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+            new SqlParameter("@CaseNo", caseNo)
+            };
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDCaseSearchPatientDetails", parameters);
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                dt = ds.Tables[0];
+                lbCaseNoHead.Text = dt.Rows[0]["CaseNumber"].ToString();
+                lbName.Text = dt.Rows[0]["PatientName"].ToString();
+                lbBeneficiaryId.Text = dt.Rows[0]["CardNumber"].ToString();
+                hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString();
+                lbRegNo.Text = dt.Rows[0]["PatientRegId"].ToString();
+                caseNo = dt.Rows[0]["CaseNumber"].ToString();
+                lbCaseNo.Text = caseNo;
+                Session["CaseNumber"] = caseNo;
+                lbCaseStatus.Text = dt.Rows[0]["CaseStatus"].ToString();
+                lbContactNo.Text = dt.Rows[0]["MobileNumber"].ToString();
+                string gender = dt.Rows[0]["Gender"].ToString().Trim().ToUpper();
+                lbGender.Text = gender == "M" ? "Male" : gender == "F" ? "Female" : "Other";
+                lbFamilyId.Text = dt.Rows[0]["PatientFamilyId"].ToString();
+                lbPatientDistrict.Text = dt.Rows[0]["District"].ToString();
+                int isAadharVerified = Convert.ToInt32(dt.Rows[0]["IsAadharVerified"]);
+                lbAadharVerified.Text = isAadharVerified == 1 ? "Yes" : "No";
+                lbAge.Text = dt.Rows[0]["Age"].ToString();
+                lbHospitalType.Text = dt.Rows[0]["HospitalType"].ToString();
+                if (!string.IsNullOrEmpty(dt.Rows[0]["RegDate"].ToString()))
+                {
+                    lbActualRegDate.Text = Convert.ToDateTime(dt.Rows[0]["RegDate"]).ToString("dd/MM/yyyy hh:mm tt");
+                }
+                else
+                {
+                    lbActualRegDate.Text = "N/A";
+                }
+                multiViewRecords.ActiveViewIndex = 0;
+                string patientImageBase64 = Convert.ToString(dt.Rows[0]["ImageURL"].ToString());
+                string folderName = hdAbuaId.Value;
+                string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
+                string base64String = "";
 
+                base64String = cpd.DisplayImage(folderName, imageFileName);
+                if (base64String != "")
+                {
+                    imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
+                    imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64String;
+                }
 
+                else
+                {
+                    imgPatientPhoto.ImageUrl = "~/img/profile.jpeg";
+                    imgPatientPhotosecond.ImageUrl = "~/img/profile.jpeg";
+                }
+                BindGrid_PICDDetails_Claims();
+            }
+            else
+            {
+                lbName.Text = "No data found.";
+                ClearLabels();
+            }
+        }
+        catch (Exception ex)
+        {
+            lbName.Text = "Error: " + ex.Message;
+            ClearLabels();
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+    }
+
+    private void ClearLabels()
+    {
+        lbBeneficiaryId.Text = "";
+        lbCaseNo.Text = "";
+        lbCaseStatus.Text = "";
+        lbContactNo.Text = "";
+        lbGender.Text = "";
+        lbFamilyId.Text = "";
+        lbPatientDistrict.Text = "";
+        lbAadharVerified.Text = "";
+        lbActualRegDate.Text = "";
+        lbAge.Text = "";
+    }
+    //Claims Updation
+    private void BindGrid_PICDDetails_Claims()
+    {
+        string cardNo = Session["CardNumber"] as string;
+        int patientRedgNo = Session["PatientRegId"] != null ? Convert.ToInt32(Session["PatientRegId"]) : 0;
+
+        dt.Clear();
+        dt = cpd.GetPICDDetails(cardNo, patientRedgNo);
+
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            gvPICDDetails_Claim.DataSource = dt;
+            gvPICDDetails_Claim.DataBind();
+        }
+        else
+        {
+            gvPICDDetails_Claim.DataSource = null;
+            gvPICDDetails_Claim.EmptyDataText = "No ICD details found.";
+            gvPICDDetails_Claim.DataBind();
+        }
+    }
+    public void BindNonTechnicalChecklist(string caseNo)
+    {
+        try
+        {
+            DataTable dtNonTechChecklist = cpd.GetNonTechnicalChecklist(caseNo);
+
+            if (dtNonTechChecklist.Rows.Count > 0)
+            {
+                DataRow row = dtNonTechChecklist.Rows[0];
+                rbIsNameCorrectYes.Checked = row["IsNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsNameCorrect"]);
+                rbIsNameCorrectNo.Checked = row["IsNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsNameCorrect"]);
+                rbIsGenderCorrectYes.Checked = row["IsGenderCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsGenderCorrect"]);
+                rbIsGenderCorrectNo.Checked = row["IsGenderCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsGenderCorrect"]);
+                rbIsPhotoVerifiedYes.Checked = row["DoesPhotoMatch"] != DBNull.Value && Convert.ToBoolean(row["DoesPhotoMatch"]);
+                rbIsPhotoVerifiedNo.Checked = row["DoesPhotoMatch"] != DBNull.Value && !Convert.ToBoolean(row["DoesPhotoMatch"]);
+                rbIsAdmissionDateVerifiedYes.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesAddDateMatchCS"]);
+                rbIsAdmissionDateVerifiedNo.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesAddDateMatchCS"]);
+                rbIsSurgeryDateVerifiedYes.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesSurDateMatchCS"]);
+                rbIsSurgeryDateVerifiedNo.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesSurDateMatchCS"]);
+                rbIsDischargeDateCSVerifiedYes.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesDischDateMatchCS"]);
+                rbIsDischargeDateCSVerifiedNo.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesDischDateMatchCS"]);
+                rbIsSignVerifiedYes.Checked = row["IsPatientSignVerified"] != DBNull.Value && Convert.ToBoolean(row["IsPatientSignVerified"]);
+                rbIsSignVerifiedNo.Checked = row["IsPatientSignVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsPatientSignVerified"]);
+                rbIsReportCorrectYes.Checked = row["IsReportVerified"] != DBNull.Value && Convert.ToBoolean(row["IsReportVerified"]);
+                rbIsReportCorrectNo.Checked = row["IsReportVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsReportVerified"]);
+                rbIsReportVerifiedYes.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsDateAndNameCorrect"]);
+                rbIsReportVerifiedNo.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsDateAndNameCorrect"]);
+                lbNonTechAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbNonTechSurgeryDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSTherepyDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbNonTechDeathDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSDischargeDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
+                tbNonTechFormRemark.Text = row["NonTechChecklistRemarks"] != DBNull.Value ? row["NonTechChecklistRemarks"].ToString() : "";
+            }
+        }
+        catch (Exception ex)
+        {
+            lblMessage.Text = "Error loading data: " + ex.Message;
+        }
+    }
     private void BindGrid_ICDDetails_Preauth()
     {
         DataTable dt = new DataTable();
@@ -293,81 +448,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         mvCPDTabs.SetActiveView(ViewAttachment);
     }
 
-    private void BindPatientName(string caseNo)
-    {
-        try
-        {
-            if (string.IsNullOrEmpty(caseNo))
-            {
-                lbName.Text = "Case number is missing.";
-                ClearLabels();
-                return;
-            }
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-            new SqlParameter("@CaseNo", caseNo) 
-            };
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDCaseSearchPatientDetails", parameters);
-            if (ds.Tables[0].Rows.Count > 0)
-            {
-                dt = ds.Tables[0];
-                lbCaseNoHead.Text = dt.Rows[0]["CaseNumber"].ToString();
-                lbName.Text = dt.Rows[0]["PatientName"].ToString();
-                lbBeneficiaryId.Text = dt.Rows[0]["CardNumber"].ToString();
-                lbRegNo.Text = dt.Rows[0]["PatientRegId"].ToString();
-                caseNo = dt.Rows[0]["CaseNumber"].ToString();
-                lbCaseNo.Text = caseNo;
-                Session["CaseNumber"] = caseNo;
-                lbCaseStatus.Text = dt.Rows[0]["CaseStatus"].ToString();
-                lbContactNo.Text = dt.Rows[0]["MobileNumber"].ToString();
-                string gender = dt.Rows[0]["Gender"].ToString().Trim().ToUpper();
-                lbGender.Text = gender == "M" ? "Male" : gender == "F" ? "Female" : "Other";
-                lbFamilyId.Text = dt.Rows[0]["PatientFamilyId"].ToString();
-                lbPatientDistrict.Text = dt.Rows[0]["District"].ToString();
-                int isAadharVerified = Convert.ToInt32(dt.Rows[0]["IsAadharVerified"]);
-                lbAadharVerified.Text = isAadharVerified == 1 ? "Yes" : "No";
-                lbAge.Text = dt.Rows[0]["Age"].ToString();
-                lbHospitalType.Text = dt.Rows[0]["HospitalType"].ToString();
-                if (!string.IsNullOrEmpty(dt.Rows[0]["RegDate"].ToString()))
-                {
-                    lbActualRegDate.Text = Convert.ToDateTime(dt.Rows[0]["RegDate"]).ToString("dd/MM/yyyy hh:mm tt");
-                }
-                else
-                {
-                    lbActualRegDate.Text = "N/A";
-                }
-            }
-            else
-            {
-                lbName.Text = "No data found.";
-                ClearLabels();
-            }
-        }
-        catch (Exception ex)
-        {
-            lbName.Text = "Error: " + ex.Message;
-            ClearLabels();
-        }
-        finally
-        {
-            if (con.State == ConnectionState.Open)
-                con.Close();
-        }
-    }
-
-    private void ClearLabels()
-    {
-        lbBeneficiaryId.Text = "";
-        lbCaseNo.Text = "";
-        lbCaseStatus.Text = "";
-        lbContactNo.Text = "";
-        lbGender.Text = "";
-        lbFamilyId.Text = "";
-        lbPatientDistrict.Text = "";
-        lbAadharVerified.Text = "";
-        lbActualRegDate.Text = "";
-        lbAge.Text = "";
-    }
+    
 
     private void getNetworkHospitalDetails(string caseNo)
     {
@@ -438,15 +519,15 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
                 tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
                 tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
-                if (row["IsSpecialCase"] != DBNull.Value)
-                {
-                    bool isSpecialCase = Convert.ToBoolean(row["IsSpecialCase"]);
-                    tbSpecialCase.Text = isSpecialCase ? "Yes" : "No";
-                }
-                else
-                {
-                    tbSpecialCase.Text = string.Empty;
-                }
+                //if (row["IsSpecialCase"] != DBNull.Value)
+                //{
+                //    bool isSpecialCase = Convert.ToBoolean(row["IsSpecialCase"]);
+                //    tbSpecialCase.Text = isSpecialCase ? "Yes" : "No";
+                //}
+                //else
+                //{
+                //    tbSpecialCase.Text = string.Empty;
+                //}
             }
         }
     }

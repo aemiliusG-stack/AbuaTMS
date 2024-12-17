@@ -325,9 +325,15 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     private void BindGrid_PreauthWorkFlow()
     {
         dt.Clear();
-        dt = cpd.GetCUPreauthWorkFlow();
+        string caseNo = Session["CaseNumber"].ToString();
+        dt = cpd.GetClaimWorkFlow(caseNo);
         if (dt != null && dt.Rows.Count > 0)
         {
+            dt.Columns.Add("SlNo", typeof(int));
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                dt.Rows[i]["SlNo"] = i + 1;
+            }
             gvPreauthWorkFlow.DataSource = dt;
             gvPreauthWorkFlow.DataBind();
         }
@@ -514,7 +520,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     private void BindClaimWorkflow()
     {
         dt.Clear();
-        dt = cpd.GetClaimWorkFlow();
+        dt = cpd.GetClaimWorkFlow(caseNo);
         if (dt != null && dt.Rows.Count > 0)
         {
             gvClaimWorkFlow.DataSource = dt;

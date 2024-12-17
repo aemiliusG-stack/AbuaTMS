@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Configuration;
-using System.Collections;
-using AbuaTMS;
-using System.Data.Common;
-
+using iText.IO.Image;
+using iText.Kernel.Pdf;
+using iText.Layout.Element;
+using System.Net;
+using iText.Layout;
 
 
 public class CPD
@@ -88,12 +80,12 @@ public class CPD
         SqlCommand cmd = new SqlCommand(query, con);
         SqlDataAdapter sd = new SqlDataAdapter(cmd);
 
-        con.Open(); 
-        sd.Fill(ds); 
-        con.Close(); 
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
 
-        dt = ds.Tables[0]; 
-        return dt; 
+        dt = ds.Tables[0];
+        return dt;
     }
 
     //public DataTable GetCaseType()
@@ -228,16 +220,16 @@ public class CPD
     //    dt = ds.Tables[0];
     //    return dt;
     //}
-    public DataTable GetCUPreauthWorkFlow()
-    {
-        string Query = "select t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason from TMS_PatientActionHistory t1 inner join  TMS_Roles t2 on t1.ActionTakenBy = t2.RoleId";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        con.Open();
-        sd.Fill(ds);
-        con.Close();
-        dt = ds.Tables[0];
-        return dt;
-    }
+    //public DataTable GetCUPreauthWorkFlow()
+    //{
+    //    string Query = "select t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason from TMS_PatientActionHistory t1 inner join  TMS_Roles t2 on t1.ActionTakenBy = t2.RoleId";
+    //    SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+    //    con.Open();
+    //    sd.Fill(ds);
+    //    con.Close();
+    //    dt = ds.Tables[0];
+    //    return dt;
+    //}
     public DataTable GetActionType()
     {
         dt.Clear();
@@ -278,6 +270,30 @@ public class CPD
         string Query = "select ReasonId,SubReasonId, SubReasonName from TMS_MasterQuerySubReason where ReasonId= @ReasonId and IsActive=1 and IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ReasonId", ReasonId);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+    public DataTable GetUsersByRole(string RoleId, string UserId)
+    {
+        dt.Clear();
+        string Query = "SELECT UserId, CONCAT(FullName,' '+ RoleName+' ('+Username+')') AS FullName FROM TMS_Users WHERE RoleId = @RoleId AND UserId != @UserId AND IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@RoleId", RoleId);
+        sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+    public DataTable GetNonTechnicalChecklist(string CaseNo)
+    {
+        dt.Clear();
+        string Query = "SELECT CaseNo, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks FROM TMS_CEXNonTechChecklist WHERE IsActive = 1 AND IsDeleted = 0 AND CaseNo = @CaseNo";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
         con.Close();
@@ -381,16 +397,37 @@ public class CPD
             }
         }
     }
-    public DataTable GetClaimWorkFlow()
+    public DataTable GetClaimWorkFlow(string CaseNo)
     {
-        string Query = "select t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason from TMS_PatientActionHistory t1 inner join  TMS_Roles t2 on t1.ActionTakenBy = t2.RoleId";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason " +
+                       "FROM TMS_PatientActionHistory t1 " +
+                       "INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId " +
+                       "INNER JOIN TMS_ClaimMaster t3 ON t1.ClaimId = t3.ClaimId " +
+                       "WHERE t3.CaseNumber = @CaseNo";
+        //DataTable dt = new DataTable();
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(ds);
-        con.Close();
-        dt = ds.Tables[0];
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
     }
+    public DataTable GetClaimQuery(string ClaimId)
+    {
+        dt.Clear();
+        string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, t1.Remarks, t1.IsQueryReplied, t1.QueryReply, t1.QueryReplyDate FROM TMS_ClaimQuery t1 inner join TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId inner join TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
     public void UpdateWorkflowStatus(string CaseNo)
     {
         try
@@ -699,7 +736,7 @@ public class CPD
         }
         return dt;
     }
-    public DataTable GetPackageMaster(string PackageId, string ProcedureId) 
+    public DataTable GetPackageMaster(string PackageId, string ProcedureId)
     {
         dt.Clear();
         string Query = "";
@@ -759,6 +796,66 @@ public class CPD
                 con.Dispose();
             }
         }
+    }
+    //Treatment and Discharge
+    public DataTable GetSurgeonDetails(string ClaimId)
+    {
+        string Query = "SELECT t2.TypeOfMedicalExpertise, t2.DoctorName, t2.DoctorRegistrationNumber, t2.Qualification, t2.DoctorContactNumber FROM TMS_DischargeDetail t1 INNER JOIN HEM_Execl_DoctorRegistration t2 ON t1.DoctorId = t2.Sno WHERE t1.ClaimId = @ClaimId";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+    //Claim Updation Attachments
+    //public byte[] CreatePdfWithImagesInMemory(string[] images)
+    //{
+    //    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+    //    MemoryStream ms = new MemoryStream();
+    //    PdfWriter pdfWriter = new PdfWriter(ms);
+    //    PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+    //    Document document = new Document(pdfDocument);
+    //    foreach (string image in images)
+    //    {
+    //        WebClient webClient = new WebClient();
+    //        byte[] imageBytes = webClient.DownloadData(image);
+    //        ImageData imageData = ImageDataFactory.Create(imageBytes);
+    //        document.Add(new Image(imageData));
+    //        if (image != images.Last())
+    //        {
+    //            document.Add(new AreaBreak());
+    //        }
+    //    }
+    //    document.Close();
+    //    return ms.ToArray();
+    //}
+    public byte[] CreatePdfWithImagesInMemory(string[] images)
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        MemoryStream ms = new MemoryStream();
+        PdfWriter pdfWriter = new PdfWriter(ms);
+        PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+        Document document = new Document(pdfDocument);
+
+        foreach (string image in images)
+        {
+            WebClient webClient = new WebClient();
+            byte[] imageBytes = webClient.DownloadData(image);
+            ImageData imageData = ImageDataFactory.Create(imageBytes);
+
+            // Fully qualify the Image class from iText
+            iText.Layout.Element.Image pdfImage = new iText.Layout.Element.Image(imageData);
+            document.Add(pdfImage);
+
+            if (image != images.Last())
+            {
+                document.Add(new AreaBreak());
+            }
+        }
+        document.Close();
+        return ms.ToArray();
     }
 
 }
