@@ -58,7 +58,7 @@ public class PreAuth
     {
         dtTemp.Clear();
         //AND PDId NOT IN(select PDId from TMS_PatientSecondaryDiagnosis)
-       string Query = "select PDId, PrimaryDiagnosisName, ICDValue from TMS_MasterPrimaryDiagnosis where IsActive = 1 AND IsDeleted = 0";
+        string Query = "select PDId, PrimaryDiagnosisName, ICDValue from TMS_MasterPrimaryDiagnosis where IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(dtTemp);

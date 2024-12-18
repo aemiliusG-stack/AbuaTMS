@@ -175,13 +175,7 @@
                                 <li><a href="../CPD/CPDPackageMaster.aspx">Packange Master</a></li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="../CPD/MultipleImage.aspx">
-                                <i class="bi bi-search"></i>
-                                <span class="nav-label">Image Upload</span>
-
-                            </a>
-                        </li>
+                        
                     </ul>
 
                 </div>

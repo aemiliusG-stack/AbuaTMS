@@ -34,6 +34,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         else if(!IsPostBack)
         {
             hdUserId.Value = Session["UserId"].ToString();
+            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             string caseNo = Session["CaseNumber"] as string;
             string cardNo = Session["CardNumber"] as string;
             string claimId = Session["ClaimId"] as string;
