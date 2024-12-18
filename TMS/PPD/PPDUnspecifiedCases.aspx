@@ -12,60 +12,56 @@
                         <h3 class="text-white">Assigned Cases</h3>
                     </div>
                     <div class="ibox-content">
-                        <div class="ibox">
-                            <div class="ibox-content text-dark">
-                                <div class="row">
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Case Number</span>
-                                        <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Beneficiary Card Number</span>
-                                        <asp:TextBox runat="server" ID="tbBeneficiaryCardNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Patient Name</span>
-                                        <asp:TextBox runat="server" ID="tbPatientName" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Registered From Date</span>
-                                        <asp:TextBox ID="tbRegisteredFromDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Registered To Date</span>
-                                        <asp:TextBox ID="tbRegisteredToDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Scheme Id</span>
-                                        <asp:DropDownList ID="dlSchemeId" runat="server" class="form-control mt-2">
-                                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                        </asp:DropDownList>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Category</span>
-                                        <asp:DropDownList ID="dlCategory" runat="server" class="form-control mt-2">
-                                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                        </asp:DropDownList>
-                                    </div>
-                                    <div class="col-md-3 mb-3">
-                                        <span class="form-label fw-semibold">Procudure Name</span>
-                                        <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2">
-                                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                        </asp:DropDownList>
-                                    </div>
-                                    <div class="col-lg-12 text-center mt-2">
-                                        <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" />
-                                        <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" />
-                                    </div>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Case Number</span>
+                                <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Beneficiary Card Number</span>
+                                <asp:TextBox runat="server" ID="tbBeneficiaryCardNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Patient Name</span>
+                                <asp:TextBox runat="server" ID="tbPatientName" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Registered From Date</span>
+                                <asp:TextBox ID="tbRegisteredFromDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Registered To Date</span>
+                                <asp:TextBox ID="tbRegisteredToDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Scheme Id</span>
+                                <asp:DropDownList ID="dlSchemeId" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Category</span>
+                                <asp:DropDownList ID="dlCategory" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold">Procudure Name</span>
+                                <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-lg-12 text-center mt-2">
+                                <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" />
+                                <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" />
                             </div>
                         </div>
                     </div>
 
                     <div class="card mt-4">
                         <div class="card-body">
-                            <h5 class="card-title">Total No Records</h5>
-                            <div class="table-responsive">
+                            <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
+                            <div class="table-responsive mt-2">
                                 <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr class="table-primary">
@@ -148,19 +144,6 @@
                                 </columns>
                             </asp:GridView>--%>
                             </div>
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end" style="margin: 10px 0 0 0;">
-                                    <li class="page-item disabled">
-                                        <a class="page-link">Previous</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </nav>
                         </div>
                     </div>
                 </div>

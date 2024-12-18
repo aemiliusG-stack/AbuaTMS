@@ -261,6 +261,17 @@ public class PPDHelper
         return dt;
     }
 
+    public DataTable GetDashboardData()
+    {
+        dt.Clear();
+        string Query = "SELECT COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustToday, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 2 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerAssignedToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 2 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerAssignedOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 2 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustAssignedToday, COUNT(CASE WHEN t2.ForwardActionTrust = 2 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustAssignedOverall,COUNT(CASE WHEN CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PreauthCountToday, COUNT(t1.AdmissionId) AS PreauthCountOverall FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
     public byte[] CreatePdfWithImagesInMemory(List<string> images)
     {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
