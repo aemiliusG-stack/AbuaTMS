@@ -192,6 +192,241 @@ public class MasterData
     }
 
     /*
+    Added by Shivani.
+    Retrieving Action Details From Table TMS_MasterActionMaster
+*/
+    public DataTable GetActionDetail()
+    {
+
+        try
+        {
+            string Query = @"
+        SELECT 
+            ActionId, 
+            ActionName, 
+            CASE WHEN PPD = 1 THEN 'Active' ELSE 'Inactive' END AS PPD, 
+            CASE WHEN CEX = 1 THEN 'Active' ELSE 'Inactive' END AS CEX, 
+            CASE WHEN CPD = 1 THEN 'Active' ELSE 'Inactive' END AS CPD, 
+            CASE WHEN ACO = 1 THEN 'Active' ELSE 'Inactive' END AS ACO, 
+            CASE WHEN SHA = 1 THEN 'Active' ELSE 'Inactive' END AS SHA, 
+            CASE WHEN IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive, 
+            FORMAT(CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
+        FROM TMS_MasterActionMaster";
+
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            con.Open();
+            sd.Fill(ds);
+            con.Close();
+
+            if (ds.Tables.Count > 0)
+            {
+                dt = ds.Tables[0];
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+        }
+
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Duplicacy of Action Name From Table TMS_MasterActionMaster
+    */
+    public bool CheckDuplicateActionMaster(string actionName)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MasterActionMaster WHERE ActionName = @ActionName";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@ActionName", actionName);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar(); // Retrieve the count of matching records
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Inserting Action Into TMS_MasterActionMaster
+    */
+    public bool AddActionMaster(string actionName, bool ppd, bool cex, bool cpd, bool aco, bool sha)
+    {
+        try
+        {
+            string query = @"INSERT INTO TMS_MasterActionMaster (ActionName, PPD, CEX, CPD, ACO, SHA, CreatedOn, IsActive)
+                           VALUES (@ActionName, @PPD, @CEX, @CPD, @ACO, @SHA, GETDATE(), 1)";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@ActionName", actionName);
+            sd.InsertCommand.Parameters.AddWithValue("@PPD", ppd);
+            sd.InsertCommand.Parameters.AddWithValue("@CEX", cex);
+            sd.InsertCommand.Parameters.AddWithValue("@CPD", cpd);
+            sd.InsertCommand.Parameters.AddWithValue("@ACO", aco);
+            sd.InsertCommand.Parameters.AddWithValue("@SHA", sha);
+
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Updating Active Status of Action In Table TMS_MasterActionMaster
+    */
+    public bool UpdateActionStatus(int actionId)
+    {
+        try
+        {
+            string query = "UPDATE TMS_MasterActionMaster SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END WHERE ActionId = @ActionId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@ActionId", actionId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+       Added by Shivani.
+       Retrieving Action Details On Behalf of ActionId from Table TMS_MasterActionMaster
+   */
+    public DataTable GetActionDetailsById(int actionId)
+    {
+        try
+        {
+            string query = "SELECT ActionName, PPD, CEX, CPD, ACO, SHA FROM TMS_MasterActionMaster WHERE ActionId = @ActionId";
+
+            SqlDataAdapter sd = new SqlDataAdapter(query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ActionId", actionId);
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            throw new Exception("Error fetching action details", ex);
+        }
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Action Name Duplicacy While Updating.
+    */
+    public bool CheckActionNameDuplicacy(int actionId, string actionName)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MasterActionMaster WHERE ActionName = @ActionName and ActionId <> @ActionId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@ActionId", actionId);
+            cmd.Parameters.AddWithValue("@ActionName", actionName);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar(); // Retrieve the count of matching records
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Updating Table TMS_MasterActionMaster
+    */
+    public bool UpdateActionNew(int actionId, string actionName, bool ppd, bool cex, bool cpd, bool aco, bool sha)
+    {
+        try
+        {
+            string query = @"UPDATE TMS_MasterActionMaster SET ActionName = @ActionName, PPD = @PPD, CEX = @CEX, CPD = @CPD, ACO = @ACO, SHA = @SHA WHERE ActionId = @ActionId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@ActionId", actionId);
+            sd.UpdateCommand.Parameters.AddWithValue("@ActionName", actionName);
+            sd.UpdateCommand.Parameters.AddWithValue("@PPD", ppd);
+            sd.UpdateCommand.Parameters.AddWithValue("@CEX", cex);
+            sd.UpdateCommand.Parameters.AddWithValue("@CPD", cpd);
+            sd.UpdateCommand.Parameters.AddWithValue("@ACO", aco);
+            sd.UpdateCommand.Parameters.AddWithValue("@SHA", sha);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
         Added by Nirmal.
         Table: TMS_MasterActionMaster.
         Selecting TMS_MasterActionMaster data for PPD.

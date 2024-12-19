@@ -13,119 +13,117 @@
                         <h3 class="text-white">Case Search</h3>
                     </div>
                     <div class="ibox-content">
-                        <div class="ibox">
-                            <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Case Number</span>
-                                    <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Beneficiary Card Number</span>
-                                    <asp:TextBox runat="server" ID="tbBeneficiaryCardNumber" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Patient State<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlPatientState" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Patient District</span><br />
-                                    <asp:DropDownList ID="dlPatientDistrict" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Case Type<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlCaseType" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Scheme<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlScheme" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Hospital State<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlHospitalState" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Hospital Name<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlHospitalName" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Category<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlCategory" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Procedure Name<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Case Status<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlCaseStatus" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Policy Period<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlPolicyPeriod" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">UTR<span class="text-danger">*</span></span>
-                                    <asp:TextBox ID="tbUtr" runat="server" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Hospital District<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlHospitalDistrict" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Record Period<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlRecordPeriod" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Special Case<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlSpecialCase" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Advance Search Parameter<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlAdvanceSearchParameter" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">From Date<span class="text-danger">*</span></span>
-                                    <asp:TextBox ID="tbFromDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">To Date<span class="text-danger">*</span></span>
-                                    <asp:TextBox ID="tbToDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <span class="text-danger fw-bold">Note:<span class="fw-normal"> Report will be generated for maximum of 90 days.</span></span>
-                                </div>
-                                <div class="col-lg-12 text-center mt-2">
-                                    <asp:Button ID="btnSearch" runat="server" class="btn btn-success rounded-pill" Text="Search" />
-                                    <asp:Button ID="btnReset" runat="server" class="btn btn-warning rounded-pill" Text="Reset" />
-                                </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Case Number</span>
+                                <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Beneficiary Card Number</span>
+                                <asp:TextBox runat="server" ID="tbBeneficiaryCardNumber" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Patient State<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlPatientState" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Patient District</span><br />
+                                <asp:DropDownList ID="dlPatientDistrict" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Case Type<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlCaseType" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Scheme<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlScheme" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Hospital State<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlHospitalState" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Hospital Name<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlHospitalName" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Category<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlCategory" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Procedure Name<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Case Status<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlCaseStatus" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Policy Period<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlPolicyPeriod" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">UTR<span class="text-danger">*</span></span>
+                                <asp:TextBox ID="tbUtr" runat="server" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Hospital District<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlHospitalDistrict" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Record Period<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlRecordPeriod" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Special Case<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlSpecialCase" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Advance Search Parameter<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlAdvanceSearchParameter" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">From Date<span class="text-danger">*</span></span>
+                                <asp:TextBox ID="tbFromDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">To Date<span class="text-danger">*</span></span>
+                                <asp:TextBox ID="tbToDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <span class="text-danger fw-bold">Note:<span class="fw-normal"> Report will be generated for maximum of 90 days.</span></span>
+                            </div>
+                            <div class="col-lg-12 text-center mt-2">
+                                <asp:Button ID="btnSearch" runat="server" class="btn btn-success rounded-pill" Text="Search" />
+                                <asp:Button ID="btnReset" runat="server" class="btn btn-warning rounded-pill" Text="Reset" />
                             </div>
                         </div>
                     </div>

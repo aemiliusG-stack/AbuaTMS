@@ -92,7 +92,7 @@
                                 <li><a href="HybridPaymentRejectedCases.aspx">Hybrid payment Rejected Cases</a></li>
                                 <li><a href="MiscellaneousPaymentRejectedCases.aspx">Miscellaneous Payment Rejected Cases</a></li>
                                 <li><a href="PaymentRejectedCases.aspx">Payment Rejected Cases</a></li>
-                                <li><a href="/Master/Block">TDS Rejected Cases</a></li>
+                                <li><a href="TDSRejectedCases.aspx ">TDS Rejected Cases</a></li>
                                 <li><a href="/Master/Block">RF Payment Rejected Cases</a></li>
                                 <li><a href="/Master/Block">Offline Recovery For Paid Fraud Claims</a></li>
                                 <li><a href="/Master/Block">View Offline Recovery Cases</a></li>
@@ -113,7 +113,7 @@
                                 <span class="fa arrow"></span>
                             </a>
                             <ul class="nav nav-second-level collapse">
-                                <li><a href="/AdminHome/Register">Claims with out A/C</a></li>
+                                <li><a href="ClaimWithoutbanckAC.aspx">Claims with out A/C</a></li>
                                 <li><a href="ClaimUpdationaspx.aspx">Claims Updation</a></li>
                                 <li><a href="/Master/Block">Claims Update for Fraudulent/Partial Amount Cases</a></li>
                                 <li><a href="/Master/Block">Adjustment Excel Upload</a></li>
