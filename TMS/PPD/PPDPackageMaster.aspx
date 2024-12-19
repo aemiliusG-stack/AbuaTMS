@@ -13,41 +13,39 @@
                         <h3 class="text-white">Package Master</h3>
                     </div>
                     <div class="ibox-content">
-                        <div class="ibox">
-                            <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Speciality Name</span><br />
-                                    <asp:DropDownList ID="dlSpeciality" runat="server" class="form-control mt-2" AutoPostBack="true" OnSelectedIndexChanged="dlSpeciality_SelectedIndexChanged">
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Procedure Name</span><br />
-                                    <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2" AutoPostBack="true">
-                                        <asp:ListItem Text="--SELECT--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">State<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlState" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="Jharkhand" Value="1"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Scheme<span class="text-danger">*</span></span><br />
-                                    <asp:DropDownList ID="dlScheme" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="ABUA-JHARKHAND" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <span class="form-label fw-semibold" style="font-size: 14px;">Reservance</span><br />
-                                    <asp:DropDownList ID="dlReservance" runat="server" class="form-control mt-2">
-                                        <asp:ListItem Text="--SELECT--" Value="0"></asp:ListItem>
-                                    </asp:DropDownList>
-                                </div>
-                                <div class="col-lg-12 text-center mt-2">
-                                    <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" OnClick="btnSearch_Click" />
-                                    <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" OnClick="btnReset_Click" />
-                                </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Speciality Name</span><br />
+                                <asp:DropDownList ID="dlSpeciality" runat="server" class="form-control mt-2" AutoPostBack="true" OnSelectedIndexChanged="dlSpeciality_SelectedIndexChanged">
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Procedure Name</span><br />
+                                <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2" AutoPostBack="true">
+                                    <asp:ListItem Text="--SELECT--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">State<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlState" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="Jharkhand" Value="1"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Scheme<span class="text-danger">*</span></span><br />
+                                <asp:DropDownList ID="dlScheme" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="ABUA-JHARKHAND" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <span class="form-label fw-semibold" style="font-size: 14px;">Reservance</span><br />
+                                <asp:DropDownList ID="dlReservance" runat="server" class="form-control mt-2">
+                                    <asp:ListItem Text="--SELECT--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+                            <div class="col-lg-12 text-center mt-2">
+                                <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" OnClick="btnSearch_Click" />
+                                <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" OnClick="btnReset_Click" />
                             </div>
                         </div>
                     </div>
