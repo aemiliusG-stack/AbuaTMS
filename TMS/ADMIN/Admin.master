@@ -71,7 +71,7 @@
                             </a>
                             <ul class="nav nav-second-level collapse">
                                 <li><a href="CreateUser.aspx">Create User</a></li>
-                                <li><a href="#.">Action Master</a></li>
+                                <li><a href="ActionMaster.aspx">Action Master</a></li>
                                 <li><a href="ImplantMaster.aspx">Implant Master</a></li>
                                 <li><a href="#.">Map Medical Radiation Oncology</a></li>
                                 <li><a href="#.">Map Package Addon</a></li>
