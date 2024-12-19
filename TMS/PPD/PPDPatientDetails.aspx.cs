@@ -37,6 +37,10 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             }
             if (!IsPostBack)
             {
+                if (Session["ClaimId"] != null)
+                {
+                    int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+                }
                 MultiView1.SetActiveView(viewPreauth);
                 btnPreauth.CssClass = "btn btn-warning p-3";
                 GetPatientForPreAuthApproval();
@@ -228,7 +232,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             p[2].DbType = DbType.String;
             p[3] = new SqlParameter("@ClaimId", claimId);
             p[3].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetAssignedCaseForPreAuthApproval", p);
+            DataSet ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetAssignedCaseForPreAuthApproval", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
             if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)

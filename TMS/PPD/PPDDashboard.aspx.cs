@@ -12,7 +12,6 @@ using WebGrease.Css.Ast;
 
 public partial class PPD_PPDDashboard : System.Web.UI.Page
 {
-    private string strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private MasterData md = new MasterData();
     public static PPDHelper ppdHelper = new PPDHelper();

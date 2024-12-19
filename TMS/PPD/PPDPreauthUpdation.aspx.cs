@@ -32,6 +32,10 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             }
             if (!IsPostBack)
             {
+                if (Session["ClaimId"] != null)
+                {
+                    int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+                }
                 hdUserId.Value = Session["UserId"].ToString();
                 MultiView1.SetActiveView(viewPreauth);
                 btnPreauth.CssClass = "btn btn-warning p-3";
@@ -217,7 +221,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             SqlParameter[] p = new SqlParameter[1];
             p[0] = new SqlParameter("@UserId", hdUserId.Value);
             p[0].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetPatientForPreAuthApproval", p);
+            DataSet ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetPatientForPreAuthApproval", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
             if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)

@@ -58,4 +58,48 @@ partial class PPD_PPD : System.Web.UI.MasterPage
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         Response.Redirect("~/Default.aspx");
     }
+
+    public void transferCase()
+    {
+        if (Session["ClaimId"] != null)
+        {
+            int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+        }
+    }
+
+    protected void btnAssignedCases_Click(object sender, EventArgs e)
+    {
+        transferCase();
+        Response.Redirect("PPDHome.aspx", false);
+    }
+
+    protected void btnDashboard_Click(object sender, EventArgs e)
+    {
+        transferCase();
+        Response.Redirect("PPDDashboard.aspx", false);
+    }
+
+    protected void btnPreauthUpdation_Click(object sender, EventArgs e)
+    {
+        transferCase();
+        Response.Redirect("PPDPreauthUpdation.aspx", false);
+    }
+
+    protected void btnCaseSearch_Click(object sender, EventArgs e)
+    {
+        transferCase();
+        Response.Redirect("PPDCaseSearch.aspx", false);
+    }
+
+    protected void btnUnspecifiedCases_Click(object sender, EventArgs e)
+    {
+        transferCase();
+        Response.Redirect("PPDUnspecifiedCases.aspx", false);
+    }
+
+    protected void btnPackageMaster_Click(object sender, EventArgs e)
+    {
+        transferCase();
+        Response.Redirect("PPDPackageMaster.aspx", false);
+    }
 }

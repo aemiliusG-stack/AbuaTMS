@@ -1,7 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/PPD/PPD.master" AutoEventWireup="true" CodeFile="PPDPreauthUpdation.aspx.cs" Inherits="PPD_PPDPreauthUpdation" %>
 
-<%--<%@ Register Assembly="System.Web.DataVisualization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Namespace="System.Web.UI.DataVisualization.Charting" TagPrefix="asp" %>--%>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <style>
         .span-title {
@@ -207,7 +205,7 @@
                                                     <span class="form-label span-title">Age:</span><br />
                                                     <asp:Label ID="lbAge" runat="server" Text="06/04/2024" Style="font-size: 12px;"></asp:Label>
                                                 </div>
-                                                <asp:Panel ID="panelChild" runat="server" Visible="false" Style="padding-left: 0px !important; padding-right: 0px !important;">
+                                                <asp:Panel ID="panelChild" runat="server" Visible="false" Style="padding-left: 0px !important; padding-right: 0px !important; width: 100%;">
                                                     <div class="row">
                                                         <div class="col-md-3 mb-3">
                                                             <span class="form-label span-title">Child Name:</span><br />
@@ -846,7 +844,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
-                                                    <asp:Panel ID="panelImplant" runat="server" CssClass="row p-0" Visible="true">
+                                                    <asp:Panel ID="panelImplant" runat="server" CssClass="row p-0 w-100" Visible="true">
                                                         <div class="col-md-4 mb-3">
                                                             <span class="form-label fw-semibold">Implant Cost<span class="text-danger">*</span></span>
                                                         </div>
@@ -1304,7 +1302,9 @@
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title fs-5 font-weight-bolder"></asp:Label>
-                                        <button type="button" class="btn-close" onclick="hideModal();"></button>
+                                        <button type="button" class="btn" onclick="hideModal();">
+                                            <img src="../img/bootstrapicons/x-lg.svg"/>
+                                        </button>
                                     </div>
                                     <asp:MultiView ID="MultiView3" runat="server">
                                         <asp:View ID="viewEnhancement" runat="server">
