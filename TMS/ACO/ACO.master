@@ -115,7 +115,7 @@
                             <ul class="nav nav-second-level collapse">
                                 <li><a href="ClaimWithoutbanckAC.aspx">Claims with out A/C</a></li>
                                 <li><a href="ClaimUpdationaspx.aspx">Claims Updation</a></li>
-                                <li><a href="/Master/Block">Claims Update for Fraudulent/Partial Amount Cases</a></li>
+                                <li><a href="ClaimsUpdateforFraudulentOrPartialAmountCases.aspx">Claims Update for Fraudulent/Partial Amount Cases</a></li>
                                 <li><a href="/Master/Block">Adjustment Excel Upload</a></li>
                                 <li><a href="ReconciliationClaimCasesforApproval.aspx">Reconcillation Request</a></li>
                                 <li><a href="/Master/Block">Adjustment Cases</a></li>
