@@ -3,7 +3,6 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
 using System.Web.UI.WebControls;
-using AbuaTMS;
 
 public partial class CPD_CPDPackageMaster : System.Web.UI.Page
 {
@@ -102,38 +101,6 @@ public partial class CPD_CPDPackageMaster : System.Web.UI.Page
             return;
         }
     }
-    public void GetPackageMaster(string PackageId, string ProcedureId)
-    {
-        try
-        {
-            dt.Clear();
-            dt = cpd.GetPackageMaster(PackageId, ProcedureId);
-
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
-                ViewState["PackageId"] = PackageId;
-                ViewState["ProcedureId"] = ProcedureId;
-                gridPackageMaster.DataSource = dt;
-                gridPackageMaster.DataBind();
-            }
-            else
-            {
-                lbRecordCount.Text = "Total No Records: 0";
-                gridPackageMaster.DataSource = new DataTable();
-                gridPackageMaster.DataBind();
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         try
@@ -146,10 +113,6 @@ public partial class CPD_CPDPackageMaster : System.Web.UI.Page
                     selectedSpeciality != "0" ? selectedSpeciality : null,
                     selectedProcedure != "0" ? selectedProcedure : null
                 );
-            }
-            else if (selectedSpeciality != "0" && selectedProcedure == "0")
-            {
-                GetPackageMaster(selectedSpeciality, null);
             }
             else
             {
@@ -166,14 +129,39 @@ public partial class CPD_CPDPackageMaster : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    
+    public void GetPackageMaster(string PackageId, string ProcedureId)
+    {
+        try
+        {
+            dt.Clear();
+            dt = cpd.GetPackageMaster(PackageId, ProcedureId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
+                gridPackageMaster.DataSource = dt;
+                gridPackageMaster.DataBind();
+            }
+            else
+            {
+                lbRecordCount.Text = "Total No Records: 0";
+                gridPackageMaster.DataSource = "";
+                gridPackageMaster.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
     protected void gridPackageMaster_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gridPackageMaster.PageIndex = e.NewPageIndex;
-        string packageId = ViewState["PackageId"] as string;
-        string procedureId = ViewState["ProcedureId"] as string;
-
-        GetPackageMaster(packageId, procedureId);
+        GetPackageMaster(null, null);
     }
     protected void btnReset_Click(object sender, EventArgs e)
     {

@@ -1,26 +1,142 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/CPD/CPD.master" AutoEventWireup="true" CodeFile="CPDClaimUpdation.aspx.cs" Inherits="CPD_CPDClaimUpdation" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
-    
+    <style>
+        .nav-tabs .nav-link {
+            background-color: #1ab394;
+            color: white;
+            border: none;
+        }
 
+
+            .nav-tabs .nav-link.active {
+                background-color: #c9b412;
+                color: black;
+            }
+
+
+
+        .nav-tabs .nav-attach {
+            background-color: #e1e1e1;
+            color: white;
+            border: none;
+        }
+
+            .nav-tabs .nav-attach.active {
+                background-color: #ff9800;
+                color: white;
+                border: none;
+            }
+
+        .radio-button {
+            font-family: Arial, sans-serif;
+            margin-bottom: 15px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        .radio-options {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+            .radio-options label {
+                margin-right: 20px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .button-group {
+            display: flex; /* Arrange buttons in one line */
+            gap: 10px; /* Optional: Space between buttons */
+        }
+
+            .button-group .nav-link {
+                background-color: #1ab394; /* Button background color */
+                color: white; /* Text color */
+                border: none; /* Remove default border */
+                border-radius: 5px; /* Optional: Rounded corners */
+                padding: 10px 20px; /* Adjust padding to increase button size */
+                cursor: pointer; /* Pointer cursor on hover */
+                flex-grow: 1; /* Optional: Makes all buttons the same width */
+                text-align: center; /* Center the text */
+            }
+
+                .button-group .nav-link:hover {
+                    background-color: #18a085; /* Darker shade on hover */
+                }
+
+        .dropdown-underline {
+            border: none; /* Remove the default dropdown borders */
+            border-bottom: 2px solid lightgrey; /* Adds a bottom line like <hr> */
+            border-width: thin;
+            background-color: transparent; /* Transparent background to avoid box appearance */
+            width: 100%; /* Full width */
+            padding: 5px 0; /* Padding for space */
+            font-size: 12px; /* Set a readable font size */
+            outline: none; /* Remove the default focus outline */
+            -webkit-appearance: none; /* Remove default dropdown arrow in WebKit browsers */
+            -moz-appearance: none; /* Remove default dropdown arrow in Firefox */
+            appearance: none; /* Remove default dropdown arrow for modern browsers */
+            cursor: pointer; /* Show pointer to indicate dropdown is clickable */
+        }
+
+        .dropdown-wrapper {
+            position: relative; /* Required for positioning the arrow */
+        }
+
+        .dropdown-arrow {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none; /* Ignore clicks on the arrow */
+            font-size: 12px; /* Adjust size of the arrow */
+            color: grey;
+        }
+
+        .span-title {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Override Bootstrap tab background color */
+        .nav-tabs .nav-link {
+            background-color: #1ab394;
+            color: white; /* White text color for all tabs */
+            border: none; /* Remove borders */
+        }
+
+            .nav-tabs .nav-link.active {
+                background-color: #c9b412; /* Yellow background for the active tab */
+                color: black; /* Change text color to black when active */
+            }
+
+        .nav-tabs .nav-attach {
+            background-color: #e1e1e1;
+            color: black !important; /* White text color for all tabs */
+            border: none; /* Remove borders */
+        }
+
+            .nav-tabs .nav-attach.active {
+                background-color: #ff9800;
+                color: white !important; /* White text color for all tabs */
+                border: none; /* Remove borders */
+            }
+    </style>
     <script type="text/javascript">
         function setView(viewIndex) {
             __doPostBack('<%= mvCPDTabs.UniqueID %>', viewIndex.toString());
         }
     </script>
     <script type="text/javascript">
-
-        function showModal() {
-            $('#contentModal').modal('hide');
-            $('.modal-backdrop').remove();
-            $('#contentModal').modal('show');
-        }
-        function hideModal() {
-            $('#contentModal').modal('hide');
-            $('.modal-backdrop').remove();
-            $('#contentModal').modal('hide');
-        }
-
         window.onbeforeunload = function (event) {
             notifyServerOnTabClose();
         };
@@ -39,22 +155,23 @@
                 }
             });
         }
-    </script>
+</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
+    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />
+    </asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
-            <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdPackageId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hfPDId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hfAdmissionId" runat="server" Visible="false" />
-
-            <asp:MultiView ID="MultiViewMain" runat="server" ActiveViewIndex="0">
+            <asp:MultiView ID="multiViewRecords" runat="server" ActiveViewIndex="0">
                 <asp:View ID="viewMain" runat="server">
+                    <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+                    <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
+                    <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
+                    <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
+                    <asp:HiddenField ID="hdPackageId" runat="server" Visible="false" />
+                    <asp:HiddenField ID="hfPDId" runat="server" Visible="false" />
+                    <asp:HiddenField ID="hfAdmissionId" runat="server" Visible="false" />
+
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="ibox ">
@@ -69,6 +186,7 @@
                                         </div>
                                     </div>
                                     <div class="ibox-content">
+
                                         <div class="ibox-content text-dark">
                                             <div class="row">
                                                 <div class="col-lg-9">
@@ -172,27 +290,15 @@
 
                                 </div>
                             </div>
-                            <%--<div class="row">
-                                <div class="col-lg-12">--%>
-                                    <ul class="nav nav-tabs" id="mytabs" role="tablist">
-                                        <li class="nav-item ml-3">
-                                        <asp:Button ID="btnPastHistory" runat="server" Text="Past History" OnClick="btnPastHistory_Click" Style="padding: 1rem;" class="nav-link d-flex flex-column align-items-center" />
-                                        </li>
-                                        <li class="nav-item ml-3">
-                                        <asp:Button ID="btnPreauth" runat="server" Text="Preauthorization" OnClick="btnPreauth_Click" Style="padding: 1rem;" class="nav-link d-flex flex-column align-items-center" />
-                                        </li>
-                                        <li class="nav-item ml-3">
-                                        <asp:Button ID="btnTreatment" runat="server" Text="Treatment And Discharge" OnClick="btnTreatment_Click" Style="padding: 1rem;" class="nav-link d-flex flex-column align-items-center" />
-                                        </li>
-                                        <li class="nav-item ml-3">
-                                        <asp:Button ID="btnClaims" runat="server" Text="Claims" OnClick="btnClaims_Click" Style="padding: 1rem;" class="nav-link d-flex flex-column align-items-center" />
-                                        </li>
-                                        <li class="nav-item ml-3">
-                                        <asp:Button ID="btnAttachments" runat="server" Text="Attachments" OnClick="btnAttachments_Click" Style="padding: 1rem;" class="nav-link d-flex flex-column align-items-center" />
-                                        </li>
-                                    </ul>
-                                    <%--<div class="button-group">
-                                    </div>--%>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="button-group">
+                                        <asp:Button ID="btnPastHistory" runat="server" Text="Past History" OnClick="btnPastHistory_Click" class="nav-link d-flex flex-column align-items-center" />
+                                        <asp:Button ID="btnPreauth" runat="server" Text="Preauthorization" OnClick="btnPreauth_Click" class="nav-link d-flex flex-column align-items-center" />
+                                        <asp:Button ID="btnTreatment" runat="server" Text="Treatment And Discharge" OnClick="btnTreatment_Click" class="nav-link d-flex flex-column align-items-center" />
+                                        <asp:Button ID="btnClaims" runat="server" Text="Claims" OnClick="btnClaims_Click" class="nav-link d-flex flex-column align-items-center" />
+                                        <asp:Button ID="btnAttachments" runat="server" Text="Attachments" OnClick="btnAttachments_Click" class="nav-link d-flex flex-column align-items-center" />
+                                    </div>
                                     <div class="tab-content mt-4" id="myTabContent">
                                         <asp:MultiView ID="mvCPDTabs" runat="server">
                                             <asp:View ID="ViewPast" runat="server">
@@ -766,8 +872,9 @@
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Anaesthetist Name</span><br />
-                                                                        <asp:Label ID="lbAnaesthetistName" runat="server" CssClass="d-block w-50 border-bottom p-1" Text="&nbsp;"></asp:Label>
-
+                                                                        <asp:DropDownList ID="dropAnaesthetistName" runat="server" CssClass="form-control">
+                                                                            <asp:ListItem>Select</asp:ListItem>
+                                                                        </asp:DropDownList>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
@@ -785,8 +892,9 @@
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Anaesthetist Type</span><br />
-                                                                        <asp:Label ID="lbAnaesthetistType" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="NA"></asp:Label>
-
+                                                                        <asp:DropDownList ID="dropAnaesthetistType" runat="server" CssClass="form-control">
+                                                                            <asp:ListItem>Select</asp:ListItem>
+                                                                        </asp:DropDownList>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -812,10 +920,10 @@
                                                                         <span class="font-weight-bold text-dark">OP Photos/WebEx Taken</span><br />
                                                                         <div class="d-flex">
                                                                             <div class="form-check form-check-inline me-2">
-                                                                                <asp:RadioButton ID="rbOPPhotoYes" runat="server" GroupName="OPPhotoWebEx" Enabled="False" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbOPPhotoYes" runat="server" GroupName="OPPhotoWebEx" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
                                                                             </div>
                                                                             <div class="form-check form-check-inline">
-                                                                                <asp:RadioButton ID="rbOPPhotoNo" runat="server" GroupName="OPPhotoWebEx" Enabled="False" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbOPPhotoNo" runat="server" GroupName="OPPhotoWebEx" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -825,10 +933,10 @@
                                                                         <span class="font-weight-bold text-dark">Vedio Recording Done</span><br />
                                                                         <div class="d-flex">
                                                                             <div class="form-check form-check-inline me-2">
-                                                                                <asp:RadioButton ID="rbVedioRecDoneYes" runat="server" GroupName="VedioRecording" Enabled="False" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbVedioRecDoneYes" runat="server" GroupName="VedioRecording" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
                                                                             </div>
                                                                             <div class="form-check form-check-inline">
-                                                                                <asp:RadioButton ID="rbVedioRecDoneNo" runat="server" GroupName="VedioRecording" Enabled="False" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbVedioRecDoneNo" runat="server" GroupName="VedioRecording" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -850,10 +958,10 @@
                                                                         <span class="font-weight-bold text-dark">Specimen Removed</span><br />
                                                                         <div class="d-flex">
                                                                             <div class="form-check form-check-inline me-2">
-                                                                                <asp:RadioButton ID="rbSpecimenRemoveYes" runat="server" GroupName="SpecimenRemoved" Enabled="False" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbSpecimenRemoveYes" runat="server" GroupName="SpecimenRemoved" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
                                                                             </div>
                                                                             <div class="form-check form-check-inline">
-                                                                                <asp:RadioButton ID="rbSpecimenRemoveNo" runat="server" GroupName="SpecimenRemoved" Enabled="False" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbSpecimenRemoveNo" runat="server" GroupName="SpecimenRemoved" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -887,10 +995,10 @@
                                                                         <span class="font-weight-bold text-dark">Complications If Any</span><br />
                                                                         <div class="d-flex">
                                                                             <div class="form-check form-check-inline me-2">
-                                                                                <asp:RadioButton ID="rbComplicationsYes" runat="server" GroupName="ComplicationIfAny" Enabled="False" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbComplicationsYes" runat="server" GroupName="ComplicationIfAny" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
                                                                             </div>
                                                                             <div class="form-check form-check-inline">
-                                                                                <asp:RadioButton ID="rbComplicationsNo" runat="server" GroupName="ComplicationIfAny" Enabled="False" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
+                                                                                <asp:RadioButton ID="rbComplicationsNo" runat="server" GroupName="ComplicationIfAny" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -916,13 +1024,13 @@
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Surgery Start Time</span><br />
-                                                                        <asp:TextBox ID="tbSurgeryStartTime" runat="server" Enabled="False" TextMode="Time" CssClass="form-control"></asp:TextBox>
+                                                                        <asp:TextBox ID="tbSurgeryStartTime" runat="server" TextMode="Time" CssClass="form-control"></asp:TextBox>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Surgery End Time</span><br />
-                                                                        <asp:TextBox ID="tbSurgeryEndTime" runat="server" Enabled="False" TextMode="Time" CssClass="form-control"></asp:TextBox>
+                                                                        <asp:TextBox ID="tbSurgeryEndTime" runat="server" TextMode="Time" CssClass="form-control"></asp:TextBox>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -959,7 +1067,7 @@
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Traetment Given</span><br />
-                                                                        <asp:TextBox ID="tbTreatmentGiven" ReadOnly="true" runat="server" TextMode="MultiLine" CssClass="form-control border-0 border-bottom "></asp:TextBox>
+                                                                        <asp:TextBox ID="ybTreatmentGiven" ReadOnly="true" runat="server" TextMode="MultiLine" CssClass="form-control border-0 border-bottom "></asp:TextBox>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
@@ -1055,34 +1163,27 @@
                                                                     </div>
                                                                     <div class="col-md-3 mb-3">
                                                                         <div class="form-group">
-                                                                            <span class="font-weight-bold text-dark">Final Diagnosis</span><br />
-                                                                            <asp:Label ID="lbFinalDiagnosis" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
-
+                                                                            <span class="font-weight-bold text-dark">Is Special Case</span><br />
+                                                                            <asp:Label ID="lbIsSpecialCase" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-3 mb-3">
                                                                         <div class="form-group">
-                                                                            <span class="font-weight-bold text-dark">Is Special Case</span><br />
-                                                                            <div class="d-flex">
-                                                                                <div class="form-check form-check-inline me-2">
-                                                                                    <asp:RadioButton ID="rbIsSpecialCaseYes" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="Yes" CssClass="form-check-input" />
-                                                                                </div>
-                                                                                <div class="form-check form-check-inline">
-                                                                                    <asp:RadioButton ID="rbIsSpecialCaseNo" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="No" CssClass="form-check-input" />
-                                                                                </div>
-                                                                            </div>
+                                                                            <span class="font-weight-bold text-dark">Final Diagnosis</span><br />
+                                                                            <asp:DropDownList ID="dropFinalDiagnosis" runat="server" CssClass="form-control border-0 border-bottom">
+                                                                                <asp:ListItem>Select</asp:ListItem>
+                                                                            </asp:DropDownList>
                                                                         </div>
                                                                     </div>
-
                                                                     <div class="col-md-3 mb-3">
                                                                         <div class="form-group">
                                                                             <span class="font-weight-bold text-dark">Procedure Consent</span><br />
                                                                             <div class="d-flex">
                                                                                 <div class="form-check form-check-inline me-2">
-                                                                                    <asp:RadioButton ID="rbConsentYes" runat="server" GroupName="ProceduralConsent" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                                    <asp:RadioButton ID="rbConsentYes" runat="server" GroupName="ProceduralConsent" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
                                                                                 </div>
                                                                                 <div class="form-check form-check-inline">
-                                                                                    <asp:RadioButton ID="rbConsentNo" runat="server" GroupName="ProceduralConsent" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                                    <asp:RadioButton ID="rbConsentNo" runat="server" GroupName="ProceduralConsent" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1101,6 +1202,7 @@
                                                     </asp:Panel>
                                                 </div>
                                             </asp:View>
+
                                             <asp:View ID="ViewClaims" runat="server">
                                                 <div class="tab-pane fade show active" id="claims" role="tabpanel">
                                                     <div class="ibox mt-4">
@@ -1916,15 +2018,444 @@
                                                     </div>
                                             </asp:View>
                                             <asp:View ID="ViewAttachment" runat="server">
-                                                <div class="tab-pane fade show active" id="attachment" role="tabpanel">
-                                                    <ul class="nav nav-tabs d-flex flex-row" id="attachTab" role="tablist">
-                                                        <li class="nav-item" id="preAuth">
-                                                            <asp:LinkButton ID="lnkPreauthorization" runat="server" CssClass="nav-link active nav-attach" OnClick="lnkPreauthorization_Click">Preauthorization</asp:LinkButton>
+                                                <%--                                                <div class="tab-pane fade" id="attachment" role="tabpanel">
+                                                    <ul class="nav nav-tabs d-flex flex-row justify-content-around" id="attachTab" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active nav-attach" id="one-tab"
+                                                                data-toggle="tab" href="#one" role="tab" aria-controls="one" aria-selected="true">
+                                                                <img src="~/images/notes-notepad-svgrepo-com.svg" width="20" />
+                                                            </a>
                                                         </li>
-                                                        <li class="nav-item ml-2" id="specialInvestigation">
-                                                            <asp:LinkButton ID="lnkSpecialInvestigation" runat="server" CssClass="nav-link nav-attach" OnClick="lnkSpecialInvestigation_Click">Special Investigation</asp:LinkButton>
+                                                        <li class="nav-item ml-2">
+                                                            <a class="nav-link nav-attach" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="two" aria-selected="false">
+                                                                <img src="~/images/bed-svgrepo-com.svg" width="20" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item ml-2">
+                                                            <a class="nav-link nav-attach" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="three" aria-selected="false">
+                                                                <img src="~/images/foot-svgrepo-com.svg" width="20" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item ml-2">
+                                                            <a class="nav-link nav-attach" id="three-tab" data-toggle="tab" href="#four" role="tab" aria-controls="four" aria-selected="false">
+                                                                <img src="~/images/rupee-sign-solid-svgrepo-com.svg" width="20" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item ml-2">
+                                                            <a class="nav-link nav-attach" id="three-tab" data-toggle="tab" href="#five" role="tab" aria-controls="five" aria-selected="false">
+                                                                <img src="~/images/search.svg" width="20" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item ml-2">
+                                                            <a class="nav-link nav-attach" id="three-tab" data-toggle="tab" href="#six" role="tab" aria-controls="six" aria-selected="false">
+                                                                <img src="~/images/search.svg" width="20" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item ml-2">
+                                                            <a class="nav-link nav-attach" id="three-tab" data-toggle="tab" href="#seven" role="tab" aria-controls="seven" aria-selected="false">
+                                                                <img src="~/images/notes-tick-svgrepo-com.svg" width="20" />
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item ml-2">
+                                                            <a class="nav-link nav-attach" id="three-tab" data-toggle="tab" href="#eight" role="tab" aria-controls="eight" aria-selected="false">
+                                                                <img src="~/images/laptop.svg" width="20" />
+                                                            </a>
                                                         </li>
                                                     </ul>
+                                                    <div class="col-md-12 p-3">
+                                                        <button class="btn btn-success rounded-pill">View All Inactive Attachments</button>
+                                                        <button class="btn btn-success rounded-pill">View Data Anamoly Attachments</button>
+                                                    </div>
+                                                    <div class="tab-content" id="attachTabContent">
+                                                        <div class="tab-pane fade show active" id="one" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Preauthorization</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="two" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Discharge</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="three" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Death</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="four" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Claims</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="five" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">General Investigations</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="six" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Special Investigations</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Pre or Post</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>PRE</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>PRE</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>PRE</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>PRE</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="seven" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Fraud Documents</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="eight" role="tabpanel">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Audit Documents</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <table class="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr class="table-primary">
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                            <td>17-08-2024 12:30:00</td>
+                                                                            <td>NA</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12 mt-3">
+                                                            <p class="text-danger m-0">Note:</p>
+                                                            <p class="text-danger m-0">1. File size should not exceed 500kb.</p>
+                                                            <p class="text-danger m-0">2. Attachment names with blue color are related to notification.</p>
+                                                            <p class="text-danger m-0">3. Discharge summary document quality and its notation.</p>
+                                                            <p class="text-danger m-0">
+                                                                4. Document of good quality.
+                           
+                                        <img src="~/images/file-check.svg" width="20" />
+                                                            </p>
+                                                            <p class="text-danger m-0">
+                                                                4. Document of bad quality.
+                           
+                                        <img src="~/images/file-error.svg" width="15" />
+                                                            </p>
+                                                            <p class="text-danger m-0">
+                                                                4. Document which is not valid.
+                           
+                                        <img src="~/images/invalid.svg" width="15" />
+                                                            </p>
+                                                            <p class="text-danger m-0">
+                                                                4. Document of bad quality.
+                           
+                                        <img src="~/images/error.svg" width="15" />
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-12 mt-2 mb-2">
+                                                            <button class="btn btn-success rounded-pill" type="button">Download as one PDF<img src="~/images/pdf.svg" width="15" class="ml-2" /></button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>--%>
+                                                <div class="tab-pane fade show active" id="attachment" role="tabpanel">
+                                                    <ul class="nav nav-tabs d-flex flex-row justify-content-around" id="attachTab" role="tablist">
+                                                        <li class="nav-item mr-2 mt-1" id="preAuth">
+                                                            <asp:LinkButton ID="lnkPreauthorization" runat="server" CssClass="nav-link active nav-attach" OnClick="lnkPreauthorization_Click">Preauthorization</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="discharge">
+                                                            <asp:LinkButton ID="lnkDischarge" runat="server" CssClass="nav-link nav-attach" OnClick="lnkDischarge_Click">Discharge</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="death">
+                                                            <asp:LinkButton ID="lnkDeath" runat="server" CssClass="nav-link nav-attach" OnClick="lnkDeath_Click">Death</i></asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="claim">
+                                                            <asp:LinkButton ID="lnkClaim" runat="server" CssClass="nav-link nav-attach" OnClick="lnkClaim_Click">Claim</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="generalInvestigation">
+                                                            <asp:LinkButton ID="lnkGeneralInvestigation" runat="server" CssClass="nav-link nav-attach" OnClick="lnkGeneralInvestigation_Click">General Investigation</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="specialInvestigation">
+                                                            <asp:LinkButton ID="lnkSpecialInvestigation" runat="server" CssClass="nav-link nav-attach" OnClick="lnkSpecialInvestigation_Click">Special Investigation</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mr-2 mt-1" id="fraud">
+                                                            <asp:LinkButton ID="lnkFraudDocuments" runat="server" CssClass="nav-link nav-attach" OnClick="lnkFraudDocuments_Click">Fraud Documents</asp:LinkButton>
+                                                        </li>
+                                                        <li class="nav-item mt-1" id="audit">
+                                                            <asp:LinkButton ID="lnkAuditDocuments" runat="server" CssClass="nav-link nav-attach" OnClick="lnkAuditDocuments_Click">Audit Documents</asp:LinkButton>
+                                                        </li>
+                                                    </ul>
+
+                                                    <%--<div class="col-md-12 p-3">
+            <asp:Button ID="btnViewInactiveAttachment" runat="server" Text="View All Inactive Attachments" class="btn btn-primary rounded-pill mt-1" />
+            <asp:Button ID="btnViewAnamolyAttathment" runat="server" Text="View Data Anamoly Attachments" class="btn btn-primary rounded-pill mt-1" />
+        </div>--%>
 
                                                     <div class="tab-content" id="attachTabContent">
                                                         <asp:MultiView ID="MultiView2" runat="server" ActiveViewIndex="0">
@@ -1934,85 +2465,296 @@
                                                                         <h3 class="text-white">Preauthorization</h3>
                                                                     </div>
                                                                     <div class="ibox-content table-responsive">
-                                                                        <asp:GridView ID="gridManditoryDocument" runat="server" OnRowDataBound="gridManditoryDocument_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                                            <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                            <Columns>
-                                                                                <asp:TemplateField HeaderText="Sl. No.">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="Label3" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Uploaded Date">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="lbUploadedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Document Name">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="lbDocumentName" runat="server" Text='<%# Eval("DocumentName") %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Patient Name">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="lbPatientName" runat="server" Text='<%# Eval("PatientName") %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Hospital Name">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="lbHospital" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Hospital Address">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="lbHospitalAddress" runat="server" Text='<%# Eval("HospitalAddress") %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Card Number">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="lbCardNumber" runat="server" Text='<%# Eval("CardNumber") %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Investigation Stage">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label ID="lbDocumentFor" runat="server" Text='<%# Eval("DocumentFor") %>'></asp:Label>
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                                </asp:TemplateField>
-                                                                                <asp:TemplateField HeaderText="Uploaded Documents">
-                                                                                    <ItemTemplate>
-                                                                                        <asp:Label Visible="false" ID="lbFolder" runat="server" Text='<%# Eval("FolderName") %>'></asp:Label>
-                                                                                        <asp:Label Visible="false" ID="lbUploadedFileName" runat="server" Text='<%# Eval("UploadedFileName") %>'></asp:Label>
-                                                                                        <asp:Button ID="btnViewMandateDocument" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewMandateDocument_Click" />
-                                                                                    </ItemTemplate>
-                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                                </asp:TemplateField>
-                                                                            </Columns>
-                                                                        </asp:GridView>
-                                                                        <asp:Panel ID="panelNoManditoryDocument" runat="server" Visible="false">
-                                                                            <div class="row ibox-content" style="background-color: #f0f0f0;">
-                                                                                <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
-                                                                                    <img src="../images/search.svg" />
-                                                                                    <span class="fs-6 mt-2">No Record Found</span>
-                                                                                    <span class="text-body-tertiary">Currently, no document available at this moment.</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </asp:Panel>
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>
+<%--                                                                                        <asp:LinkButton ID="attachmentPatientPhoto" CssClass="text-decoration-underline text-black fw-semibold" runat="server" OnClick="attachmentPatientPhoto_Click">Patient Photo</asp:LinkButton></td>--%>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Consent Document</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewDischarge" runat="server">
+                                                                <div class="tab-pane fade show active" id="two" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Discharge</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewDeath" runat="server">
+                                                                <div class="tab-pane fade show active" id="three" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Death</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewClaimsAttach" runat="server">
+                                                                <div class="tab-pane fade show active" id="four" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Claims</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewGeneralInvestigation" runat="server">
+                                                                <div class="tab-pane fade show active" id="five" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">General Investigations</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
                                                                     </div>
                                                                 </div>
                                                             </asp:View>
@@ -2022,120 +2764,243 @@
                                                                         <h3 class="text-white">Special Investigations</h3>
                                                                     </div>
                                                                     <div class="ibox-content table-responsive">
-                                                                        <asp:GridView ID="gridSpecialInvestigation" runat="server" AutoGenerateColumns="False" OnRowDataBound="gridSpecialInvestigation_RowDataBound" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                        <asp:GridView ID="gridSpecialInvestigation" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                             <AlternatingRowStyle BackColor="Gainsboro" />
                                                                             <Columns>
                                                                                 <asp:TemplateField HeaderText="Sl. No.">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="Label2" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                                        <asp:Label ID="Label1" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Uploaded Date">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbCreatedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label8" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Hospital Name">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label3" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Speciality Name">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbPackageName" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label2" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Procedure Code">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbProcedureCode" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label4" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Procedure Name">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbProcedureName" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label9" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Investigation Code">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbInvestigationCode" runat="server" Text='<%# Eval("InvestigationCode") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label5" runat="server" Text='<%# Eval("InvestigationCode") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Investigation Name">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbInvestigationName" runat="server" Text='<%# Eval("InvestigationName") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label6" runat="server" Text='<%# Eval("InvestigationName") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Investigation Stage">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label ID="lbInvestigationStage" runat="server" Text='<%# Eval("InvestigationStage") %>'></asp:Label>
+                                                                                        <asp:Label ID="Label7" runat="server" Text='<%# Eval("InvestigationStage") %>'></asp:Label>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
                                                                                 </asp:TemplateField>
                                                                                 <asp:TemplateField HeaderText="Uploaded Documents">
                                                                                     <ItemTemplate>
-                                                                                        <asp:Label Visible="false" ID="lbFolderName" runat="server" Text='<%# Eval("FolderName") %>'></asp:Label>
-                                                                                        <asp:Label Visible="false" ID="lbFileName" runat="server" Text='<%# Eval("UploadedFileName") %>'></asp:Label>
-                                                                                        <asp:Button ID="btnViewDocument" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewDocument_Click" />
+                                                                                        <asp:Button ID="Button1" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" />
+                                                                                        <%--OnClick="btnViewAudit_Click"--%>
                                                                                     </ItemTemplate>
                                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                                     <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                                                 </asp:TemplateField>
                                                                             </Columns>
                                                                         </asp:GridView>
-                                                                        <asp:Panel ID="panelNoSpecialInvestigation" runat="server" Visible="false">
-                                                                            <div class="row ibox-content" style="background-color: #f0f0f0;">
-                                                                                <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
-                                                                                    <img src="../images/search.svg" />
-                                                                                    <span class="fs-6 mt-2">No Record Found</span>
-                                                                                    <span class="text-body-tertiary">Currently, no document available at this moment.</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </asp:Panel>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewFraudDocuments" runat="server">
+                                                                <div class="tab-pane fade show active" id="seven" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Fraud Documents</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                                <asp:Label ID="lbAttachmentName" runat="server" Text="Attachment Name"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:View>
+                                                            <asp:View ID="viewAuditDocuments" runat="server">
+                                                                <div class="tab-pane fade show active" id="eight" role="tabpanel">
+                                                                    <div class="ibox-title text-center">
+                                                                        <h3 class="text-white">Audit Documents</h3>
+                                                                    </div>
+                                                                    <div class="ibox-content table-responsive">
+                                                                        <table class="table table-bordered table-striped">
+                                                                            <thead>
+                                                                                <tr class="table-primary">
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Attachment Name</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Uploaded Date</th>
+                                                                                    <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Options</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Declaration Letter From Patient</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Id Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td><a href="#." class="text-decoration-underline text-black fw-semibold">Certificate Of Proof</a></td>
+                                                                                    <td>17-08-2024 12:30:00</td>
+                                                                                    <td>NA</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <%--<asp:GridView ID="gridPreauthorization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                    <columns>
+                                        <asp:TemplateField HeaderText="Attachment Name">
+                                            <itemtemplate>
+                                                <asp:LinkButton ID="lbAttachmentName" runat="Attachment Name"></asp:LinkButton>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Uploaded Date">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbUploadedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Options">
+                                            <itemtemplate>
+                                                <asp:Label ID="lbBeneficiaryOptions" runat="server" Text="NA"></asp:Label>
+                                            </itemtemplate>
+                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </asp:TemplateField>
+                                    </columns>
+                                </asp:GridView>--%>
                                                                     </div>
                                                                 </div>
                                                             </asp:View>
                                                         </asp:MultiView>
-                                                        <div class="col-md-12 mt-3">
-                                                            <span class="text-danger font-weight-bold">Note:</span><br />
-                                                            <span class="text-danger">1. File size should not exceed 500kb.</span><br />
-                                                            <span class="text-danger">2. Attachment names with blue color are related to notification.</span><br />
-                                                            <span class="text-danger">3. Discharge summary document quality and its notation.</span><br />
-                                                            <span class="text-danger">4. Document of good quality.
-                                                            <i class="bi bi-clipboard-check text-black"></i>
-                                                            </span>
-                                                            <br />
-                                                            <span class="text-danger m-0">4. Document of bad quality.
-                                                            <i class="bi bi-file-excel text-black"></i>
-                                                            </span>
-                                                            <br />
-                                                            <span class="text-danger m-0">4. Document which is not valid.
-                                                               <i class="bi bi-exclamation-square text-black"></i>
-                                                            </span>
-                                                            <br />
-                                                            <span class="text-danger m-0">4. Document of bad quality.
-                                                               <i class="bi bi-exclamation-triangle-fill text-black"></i>
-                                                            </span>
-                                                            <br />
-                                                        </div>
+                                                        <%--<div class="col-md-12 mt-3">
+                                                <span class="text-danger font-weight-bold">Note:</span><br />
+                                                <span class="text-danger">1. File size should not exceed 500kb.</span><br />
+                                                <span class="text-danger">2. Attachment names with blue color are related to notification.</span><br />
+                                                <span class="text-danger">3. Discharge summary document quality and its notation.</span><br />
+                                                <span class="text-danger">4. Document of good quality.
+                    <i class="bi bi-clipboard-check text-black"></i>
+                                                </span>
+                                                <br />
+                                                <span class="text-danger m-0">4. Document of bad quality.
+                    <i class="bi bi-file-excel text-black"></i>
+                                                </span>
+                                                <br />
+                                                <span class="text-danger m-0">4. Document which is not valid.
+                    <i class="bi bi-exclamation-square text-black"></i>
+                                                </span>
+                                                <br />
+                                                <span class="text-danger m-0">4. Document of bad quality.
+                    <i class="bi bi-exclamation-triangle-fill text-black"></i>
+                                                </span>
+                                                <br />
+                                            </div>--%>
                                                         <div class="col-md-12 mt-2 mb-2">
-                                                            <asp:Button ID="btnDownloadPdf" runat="server" Text="Download as one PDF" class="btn btn-primary rounded-pill" OnClick="btnDownloadPdf_Click" />
+                                                            <asp:Button ID="btnDownloadPdf" runat="server" Text="Download As One PDF" class="btn btn-primary rounded-pill" OnClick="btnDownloadPdf_Click" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2143,29 +3008,9 @@
                                             </asp:View>
                                         </asp:MultiView>
                                     </div>
-                               <%-- </div>
-                            </div>--%>
-
-                        </div>
-
-                        <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-xl">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title fs-5 font-weight-bolder"></asp:Label>
-                                        <button type="button" class="btn-close" onclick="hideModal();"></button>
-                                    </div>
-                                    <asp:MultiView ID="MultiView3" runat="server">
-                                        <asp:View ID="viewPhoto" runat="server">
-                                            <div class="modal-body">
-                                                <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
-                                                    <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Patient Document" />
-                                                </div>
-                                            </div>
-                                        </asp:View>
-                                    </asp:MultiView>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </asp:View>

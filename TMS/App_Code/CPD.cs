@@ -5,12 +5,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Configuration;
+using iText.IO.Image;
 using iText.Kernel.Pdf;
 using iText.Layout.Element;
 using System.Net;
 using iText.Layout;
-using System.Collections.Generic;
-using iText.IO.Image;
 
 
 public class CPD
@@ -197,28 +196,7 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
-    //Treatment and Discharge
-    public DataTable GetSurgeonDetails(string ClaimId)
-    {
-        string Query = "SELECT t2.TypeOfMedicalExpertise, t2.DoctorName, t2.DoctorRegistrationNumber, t2.Qualification, t2.DoctorContactNumber FROM TMS_DischargeDetail t1 INNER JOIN HEM_Execl_DoctorRegistration t2 ON t1.DoctorId = t2.Sno WHERE t1.ClaimId = @ClaimId";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
-        con.Open();
-        sd.Fill(dt);
-        con.Close();
-        return dt;
-    }
-    public DataTable GetTreatmentDischarge(string ClaimId)
-    {
-        string Query = "SELECT T3.TypeOfMedicalExpertise, T3.DoctorName, T3.DoctorRegistrationNumber, T3.Qualification, T3.DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id LEFT JOIN HEM_Execl_DoctorRegistration T3 ON T1.DoctorId = T3.Sno WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
-        con.Open();
-        sd.Fill(ds);
-        con.Close();
-        dt = ds.Tables[0];
-        return dt;
-    }
+
     public DataTable GetClaimsDetails(string CaseNo)
     {
         dt.Clear();
@@ -336,7 +314,6 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
-    //MIS
     public DataTable GetSpecialityName()
     {
 
@@ -361,55 +338,6 @@ public class CPD
         con.Close();
         dt = ds.Tables[0];
         return dt;
-    }
-   public DataTable GetPackageMaster(string PackageId, string ProcedureId)
-    {
-        dt.Clear();
-        string Query = "";
-
-        try
-        {
-            if (!string.IsNullOrEmpty(PackageId) && !string.IsNullOrEmpty(ProcedureId))
-            {
-                Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
-                FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2  ON t1.PackageId = t2.PackageId WHERE  t2.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId";
-            }
-            else if (!string.IsNullOrEmpty(PackageId))
-            {
-                Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName,t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
-                FROM TMS_MasterPackageDetail t1 
-                INNER JOIN TMS_MasterPackageMaster t2  ON t1.PackageId = t2.PackageId WHERE  t2.PackageId = @PackageId";
-            }
-            else
-            {
-                Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
-                FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId";
-            }
-
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-
-            if (!string.IsNullOrEmpty(PackageId))
-            {
-                sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
-            }
-            if (!string.IsNullOrEmpty(ProcedureId))
-            {
-                sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
-            }
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-
-        }
-        catch (SqlException ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-        }
-        return dt;
-
     }
     public string GetUserRole(int userId)
     {
@@ -808,7 +736,29 @@ public class CPD
         }
         return dt;
     }
-    
+    public DataTable GetPackageMaster(string PackageId, string ProcedureId)
+    {
+        dt.Clear();
+        string Query = "";
+        if (PackageId != null && ProcedureId != null)
+        {
+            Query = "SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation FROM TMS_MasterPackageDetail t1 inner join TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId WHERE t2.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId";
+        }
+        else
+        {
+            Query = "SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation FROM TMS_MasterPackageDetail t1 inner join TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId";
+        }
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        if (PackageId != null && ProcedureId != null)
+        {
+            sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
+            sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        }
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
     public void ExecuteStoredProcedure(long claimId, long userId, long forwardedToId, long actionId, string remarks)
     {
         SqlConnection con = null;
@@ -847,7 +797,17 @@ public class CPD
             }
         }
     }
-    
+    //Treatment and Discharge
+    public DataTable GetSurgeonDetails(string ClaimId)
+    {
+        string Query = "SELECT t2.TypeOfMedicalExpertise, t2.DoctorName, t2.DoctorRegistrationNumber, t2.Qualification, t2.DoctorContactNumber FROM TMS_DischargeDetail t1 INNER JOIN HEM_Execl_DoctorRegistration t2 ON t1.DoctorId = t2.Sno WHERE t1.ClaimId = @ClaimId";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
 
     //Claim Updation Attachments
     //public byte[] CreatePdfWithImagesInMemory(string[] images)
@@ -871,64 +831,32 @@ public class CPD
     //    document.Close();
     //    return ms.ToArray();
     //}
-    
-    //Attachments
-    public DataTable GetManditoryDocuments(string HospitalId, string PatientRegId)
+    public byte[] CreatePdfWithImagesInMemory(string[] images)
     {
-        dt.Clear();
-        string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
-        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-        con.Open();
-        sd.Fill(dt);
-        con.Close();
-        return dt;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        MemoryStream ms = new MemoryStream();
+        PdfWriter pdfWriter = new PdfWriter(ms);
+        PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+        Document document = new Document(pdfDocument);
+
+        foreach (string image in images)
+        {
+            WebClient webClient = new WebClient();
+            byte[] imageBytes = webClient.DownloadData(image);
+            ImageData imageData = ImageDataFactory.Create(imageBytes);
+
+            // Fully qualify the Image class from iText
+            iText.Layout.Element.Image pdfImage = new iText.Layout.Element.Image(imageData);
+            document.Add(pdfImage);
+
+            if (image != images.Last())
+            {
+                document.Add(new AreaBreak());
+            }
+        }
+        document.Close();
+        return ms.ToArray();
     }
-    public DataTable GetPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
-    {
-        dt.Clear();
-        string Query = "SELECT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPreInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PreInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PreInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Pre'";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
-        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
-        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-        con.Open();
-        sd.Fill(dt);
-        con.Close();
-        return dt;
-    }
-    //public byte[] CreatePdfWithImagesInMemory(List<string> images)
-    //{
-    //    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-    //    MemoryStream ms = new MemoryStream();
-    //    PdfWriter pdfWriter = new PdfWriter(ms);
-    //    PdfDocument pdfDocument = new PdfDocument(pdfWriter);
-    //    Document document = new Document(pdfDocument);
-    //    foreach (string image in images)
-    //    {
-    //        if (image.StartsWith("data:image", StringComparison.OrdinalIgnoreCase))
-    //        {
-    //            string base64String = image.Substring(image.IndexOf(",") + 1);
-    //            byte[] imageBytes = Convert.FromBase64String(base64String);
-    //            ImageData imageData = ImageDataFactory.Create(imageBytes);
-    //            document.Add(new Image(imageData));
-    //        }
-    //        else
-    //        {
-    //            WebClient webClient = new WebClient();
-    //            byte[] imageBytes = webClient.DownloadData(image);
-    //            ImageData imageData = ImageDataFactory.Create(imageBytes);
-    //            document.Add(new Image(imageData));
-    //        }
-    //        if (image != images.Last())
-    //        {
-    //            document.Add(new AreaBreak());
-    //        }
-    //    }
-    //    document.Close();
-    //    return ms.ToArray();
-    //}
 
 }
 
