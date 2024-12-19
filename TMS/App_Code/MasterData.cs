@@ -427,6 +427,1014 @@ public class MasterData
     }
 
     /*
+     Added by Shivani.
+     Retrieving Data From Table TMS_MasterPackageMaster
+ */
+    public DataTable GetMapAddOnDetail()
+    {
+        try
+        {
+            string Query = @"
+                     SELECT 
+                         A1.PackageAddOnId, 
+                         A2.SpecialityCode + '(' + A2.SpecialityName + ')' AS Speciality, 
+                         A3.ProcedureCode AS ProcedureCode,
+                         CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
+                         FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
+                     FROM  
+                     TMS_MapPackageAddOn A1 
+                     LEFT JOIN  
+                         TMS_MasterPackageMaster A2 
+                            ON A1.PackageId = A2.PackageId 
+                     LEFT JOIN 
+                         TMS_MasterPackageDetail A3  
+                             ON A1.ProcedureCode = A3.ProcedureId;";
+
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            con.Open();
+            sd.Fill(ds);
+            con.Close();
+
+            if (ds.Tables.Count > 0)
+            {
+                dt = ds.Tables[0];
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+        }
+
+        return dt;
+    }
+
+    /*
+      Added by Shivani.
+      Updating Active Status of table TMS_MapPackageAddOn
+    */
+    public bool UpdateMApAddOnStatus(int packageAddOnId)
+    {
+        try
+        {
+            DataTable dt = new DataTable(); // To adhere to the required style
+            string query = "UPDATE TMS_MapPackageAddOn SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END WHERE PackageAddOnId = @PackageAddOnId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@PackageAddOnId", packageAddOnId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+            // Optionally log or rethrow the exception
+            throw new Exception("Error updating action status", ex);
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Checking Duplicacy Mapped Package Add On From Table TMS_MapPackageAddOn
+    */
+    public bool CheckDuplicatePackageAddOn(string packageId, string procedureId)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MapPackageAddOn WHERE PackageId = @PackageId AND ProcedureCode = @ProcedureCode";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@PackageId", packageId);
+            cmd.Parameters.AddWithValue("@ProcedureCode", procedureId);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar(); // Retrieve the count of matching records
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Inserting New Entry in Map Package AddOn
+        Table : TMS_MapPackageAddOn
+    */
+    public bool AddPackageAddOn(string packageId, string procedureId)
+    {
+        try
+        {
+            string query = @"INSERT INTO TMS_MapPackageAddOn (PackageId, ProcedureCode, IsActive, CreatedOn, IsDeleted, UpdatedOn)
+                             VALUES (@PackageId, @ProcedureId, 1, GETDATE(), 0, GETDATE())";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@PackageId", packageId);
+            sd.InsertCommand.Parameters.AddWithValue("@ProcedureId", procedureId);
+
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+       Added by Shivani.
+       Fetching Mapped AddOn Details By PackageAddOnId
+       Table: TMS_MapPackageAddOn
+   */
+    public DataTable GetAddOnDetailsById(int packageAddOnId)
+    {
+        DataTable dt = new DataTable();
+        try
+        {
+            string query = @"
+         SELECT 
+             A1.PackageAddOnId, 
+             A1.PackageId,
+             A1.ProcedureCode,
+             A2.SpecialityName,
+             A2.SpecialityCode + '(' + A2.SpecialityName + ')' AS Speciality,
+             A3.ProcedureCode AS MapProcedureCode,
+             CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
+             FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn
+         FROM
+             TMS_MapPackageAddOn A1
+         LEFT JOIN
+             TMS_MasterPackageMaster A2
+             ON A1.PackageId = A2.PackageId
+         LEFT JOIN
+             TMS_MasterPackageDetail A3
+             ON A1.ProcedureCode = A3.ProcedureId
+         WHERE 
+             A1.PackageAddOnId = @PackageAddOnId;";
+
+            SqlDataAdapter sd = new SqlDataAdapter(query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@PackageAddOnId", packageAddOnId);
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            throw new Exception("Error fetching action details", ex);
+        }
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Check Duplicacy While Updating Map Package AddOn
+        Table: TMS_MapPackageAddOn
+    */
+    public bool CheckAddOnDuplicacy(int packageId, int procedureId, int packageAddOnId)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MapPackageAddOn WHERE PackageId = @PackageId AND ProcedureCode = @ProcedureId AND PackageAddOnId <> @PackageAddOnId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@ProcedureId", procedureId);
+            cmd.Parameters.AddWithValue("@PackageId", packageId);
+            cmd.Parameters.AddWithValue("@PackageAddOnId", packageAddOnId);
+
+            con.Open();
+            int existingRecords = (cmd.ExecuteScalar() as int? ?? 0);
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Updating Mapped Package AddOn
+        Table: TMS_MapPackageAddOn
+    */
+    public bool UpdateMapAddOnNew(int packageAddOnId, int packageId, int procedureId)
+    {
+        try
+        {
+            string query = @"UPDATE TMS_MapPackageAddOn SET PackageId = @PackageId,ProcedureCode = @ProcedureId,UpdatedOn = GETDATE() WHERE PackageAddOnId = @PackageAddOnId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@PackageId", packageId);
+            sd.UpdateCommand.Parameters.AddWithValue("@ProcedureId", procedureId);
+            sd.UpdateCommand.Parameters.AddWithValue("@PackageAddOnId", packageAddOnId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Retrieving Stratification Master Details
+        Table: TMS_MasterStratificationMaster
+    */
+    public DataTable GetStratDetail()
+    {
+
+        try
+        {
+            string Query = @"
+        SELECT 
+             StratificationId,StratificationCode,StratificationName,StratificationDetail,StratificationAmount,
+             CASE WHEN IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive, 
+             FORMAT(CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
+        FROM TMS_MasterStratificationMaster";
+
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            con.Open();
+            sd.Fill(ds);
+            con.Close();
+
+            if (ds.Tables.Count > 0)
+            {
+                dt = ds.Tables[0];
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+        }
+
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Duplicacy of stratification Code  
+        Table TMS_MasterStratificationMaster
+    */
+    public bool CheckDuplicateStratMaster(string stratCode)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MasterStratificationMaster WHERE StratificationCode = @StratificationCode";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@StratificationCode", stratCode);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar(); // Retrieve the count of matching records
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+         Inserting Streatification Into Table TMS_MasterStratificationMaster
+    */
+    public bool AddStratMaster(string stratCode, string stratName, string stratDetails, string stratAmount)
+    {
+        try
+        {
+            string query = @"INSERT INTO TMS_MasterStratificationMaster
+            (StratificationCode, StratificationName, StratificationDetail, StratificationAmount, CreatedOn,UpdatedOn, IsActive,IsDeleted)
+        VALUES
+            (@StratificationCode, @StratificationName, @StratificationDetail, @StratificationAmount, GETDATE(),GETDATE(), 1,0)";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@StratificationCode", stratCode);
+            sd.InsertCommand.Parameters.AddWithValue("@StratificationName", stratName);
+            sd.InsertCommand.Parameters.AddWithValue("@StratificationDetail", stratDetails);
+            sd.InsertCommand.Parameters.AddWithValue("@StratificationAmount", stratAmount);
+
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+       Added by Shivani.
+       Stratification Details by Id
+       Table TMS_MasterStratificationMaster
+   */
+    public DataTable GetStratDetailsById(long stratificationId)
+    {
+        try
+        {
+            string query = "Select StratificationCode,StratificationName,StratificationDetail,StratificationAmount FROM TMS_MasterStratificationMaster WHERE StratificationId = @StratificationId";
+
+            SqlDataAdapter sd = new SqlDataAdapter(query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@StratificationId", stratificationId);
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            throw new Exception("Error fetching action details", ex);
+        }
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Stratification Duplicacy While Updating.
+        Table: TMS_MasterStratificationMaster 
+    */
+    public bool CheckStratCodeDuplicacy(long stratificationId, string stratCode)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1)  FROM TMS_MasterStratificationMaster WHERE StratificationCode = @StratificationCode AND StratificationId <> @StratificationId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@StratificationCode", stratCode);
+            cmd.Parameters.AddWithValue("@StratificationId", stratificationId);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar();
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Updating Table TMS_MasterStratificationMaster
+    */
+    public bool UpdateStratNew(long stratificationId, string stratCode, string stratName, string stratDetails, string stratAmount)
+    {
+        try
+        {
+            string query = @"UPDATE TMS_MasterStratificationMaster SET StratificationCode = @StratificationCode, StratificationName = @StratificationName, StratificationDetail = @StratificationDetail,StratificationAmount = @StratificationAmount,UpdatedOn = GETDATE() WHERE StratificationId = @StratificationId;";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@StratificationId", stratificationId);
+            sd.UpdateCommand.Parameters.AddWithValue("@StratificationCode", stratCode);
+            sd.UpdateCommand.Parameters.AddWithValue("@StratificationName", stratName);
+            sd.UpdateCommand.Parameters.AddWithValue("@StratificationDetail", stratDetails);
+            sd.UpdateCommand.Parameters.AddWithValue("@StratificationAmount", stratAmount);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+      Added by Shivani.
+      Updating Active status from Table TMS_MasterStratificationMaster
+    */
+    public bool UpdateStratStatus(int stratificationId)
+    {
+        try
+        {
+            DataTable dt = new DataTable(); // To adhere to the required style
+            string query = "UPDATE TMS_MasterStratificationMaster SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END WHERE StratificationId = @StratificationId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@StratificationId", stratificationId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+            // Optionally log or rethrow the exception
+            throw new Exception("Error updating action status", ex);
+        }
+    }
+
+
+    /*
+        Added by Shivani.
+        Retrieving Map Procedure FollowUp Details
+    */
+    public DataTable GetProceduireFollowUpDetail()
+    {
+        try
+        {
+            string Query = @"
+                    SELECT  A1.ProcedureFollowId,
+                            A1.ProcedureId,
+                            A2.ProcedureCode AS ProcedureCode, 
+                            A1.FollowUpId,
+                            A3.ProcedureCode AS ProcedureFollowUpCode,
+                    CASE 
+                            WHEN A1.IsActive = 1 THEN 'Active' 
+                            ELSE 'Inactive' 
+                            END AS IsActive,
+                    FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn
+                    FROM 
+                    TMS_MapProcedureFollowUp A1
+                    LEFT JOIN 
+                        TMS_MasterPackageDetail A2
+                            ON A1.ProcedureId = A2.ProcedureId
+                    LEFT JOIN 
+                        TMS_MasterPackageDetail A3
+                            ON A1.FollowUpId = A3.ProcedureId;";
+
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            con.Open();
+            sd.Fill(ds);
+            con.Close();
+
+            if (ds.Tables.Count > 0)
+            {
+                dt = ds.Tables[0];
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+        }
+
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Duplicacy while Inserting from Table TMS_MapProcedureFollowUp
+    */
+    public bool CheckDuplicateFollowup(string procedureId, string followUpId)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MapProcedureFollowUp WHERE ProcedureId = @ProcedureId AND FollowUpId = @FollowUpId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@FollowUpId", followUpId);
+            cmd.Parameters.AddWithValue("@ProcedureId", procedureId);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar(); // Retrieve the count of matching records
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Inserting Mapped Procedure FollowUp in Table TMS_MapProcedureFollowUp
+    */
+    public bool AddMapFollowUp(string procedureId, string followUpId)
+    {
+        try
+        {
+            string query = @"INSERT INTO TMS_MapProcedureFollowUp (ProcedureId, FollowUpId, IsActive, CreatedOn, IsDeleted, UpdatedOn)
+                             VALUES (@ProcedureId, @FollowUpId, 1, GETDATE(), 0, GETDATE())";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@ProcedureId", procedureId);
+            sd.InsertCommand.Parameters.AddWithValue("@FollowUpId", followUpId);
+
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+       Added by Shivani.
+       Retrieving Mapped FollowUp Details By Id
+       Table: TMS_MapProcedureFollowUp
+   */
+    public DataTable GetFollowDetailsById(int followUpId)
+    {
+        DataTable dt = new DataTable();
+        try
+        {
+            string query = @"
+         SELECT 
+             A1.ProcedureFollowId,
+             A1.ProcedureId,
+             A2.ProcedureCode AS ProcedureCode, 
+          A1.FollowUpId,
+             A3.ProcedureCode AS ProcedureFollowUpCode,
+             CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
+             FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn
+         FROM
+             TMS_MapProcedureFollowUp A1
+         LEFT JOIN 
+             TMS_MasterPackageDetail A2
+                 ON A1.ProcedureId = A2.ProcedureId
+         LEFT JOIN 
+             TMS_MasterPackageDetail A3
+                 ON A1.FollowUpId = A3.ProcedureId
+         WHERE 
+             A1.ProcedureFollowId = @ProcedureFollowId;";
+
+            SqlDataAdapter sd = new SqlDataAdapter(query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ProcedureFollowId", followUpId);
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            throw new Exception("Error fetching action details", ex);
+        }
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Duplicacy while Updating Table TMS_MapProcedureFollowUp
+    */
+    public bool CheckFollowUpDuplicacy(int ProcedureFollowId, int followUpId, int procedureId)
+    {
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MapProcedureFollowUp WHERE ProcedureId = @ProcedureId AND FollowUpId = @FollowUpId AND ProcedureFollowId <> @ProcedureFollowId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@ProcedureId", procedureId);
+            cmd.Parameters.AddWithValue("@FollowUpId", followUpId);
+            cmd.Parameters.AddWithValue("@ProcedureFollowId", ProcedureFollowId);
+
+            con.Open();
+            int existingRecords = (cmd.ExecuteScalar() as int? ?? 0);
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Updating Mapped Procedure FollowUp Table TMS_MapProcedureFollowUp
+    */
+    public bool UpdateProcedureFollowUpNew(int ProcedureFollowId, int followUpId, int procedureId)
+    {
+        try
+        {
+            string query = @"UPDATE TMS_MapProcedureFollowUp SET ProcedureId = @ProcedureId , FollowUpId = @FollowUpId , UpdatedOn = GETDATE() WHERE ProcedureFollowId = @ProcedureFollowId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@ProcedureId", procedureId);
+            sd.UpdateCommand.Parameters.AddWithValue("@FollowUpId", followUpId);
+            sd.UpdateCommand.Parameters.AddWithValue("@ProcedureFollowId", ProcedureFollowId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+      Added by Shivani.
+      Updating Active Status From TMS_MapProcedureFollowUp
+    */
+    public bool UpdateMapProcedureFollowUpStatus(int procedureFollowId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string query = "UPDATE TMS_MapProcedureFollowUp SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END WHERE ProcedureFollowId = @ProcedureFollowId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@ProcedureFollowId", procedureFollowId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+            // Optionally log or rethrow the exception
+            throw new Exception("Error updating action status", ex);
+        }
+    }
+
+
+    /*
+        Added by Shivani.
+        Retrieving Mapped Procedure PopUp
+    */
+    public DataTable GetMapPopUpDetail()
+    {
+        try
+        {
+            string Query = @"SELECT A1.ProcedurePopUpId,A2.PopUpDescription,A3.ProcedureCode, A4.RoleName, 
+                                CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
+                                FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn FROM TMS_MapProcedurePopUp A1 LEFT JOIN TMS_MasterPopUpMaster A2 ON A1.PopUpId=A2.PopUpId
+                           LEFT JOIN TMS_MasterPackageDetail A3 ON A1.ProcedureId = A3.ProcedureId LEFT JOIN TMS_Roles A4 ON A1.PopUpRoleId = A4.RoleId";
+
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            con.Open();
+            sd.Fill(ds);
+            con.Close();
+
+            if (ds.Tables.Count > 0)
+            {
+                dt = ds.Tables[0];
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+        }
+
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Retriving PopUp Description From Table TMS_MasterPopUpMaster
+    */
+    public DataTable GetPopDescription()
+    {
+        dt.Clear();
+        try
+        {
+            string Query = "select PopUpId,PopUpDescription from TMS_MasterPopUpMaster where IsActive=1 and IsDeleted=0";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            con.Open();
+            sd.Fill(ds);
+            con.Close();
+            dt = ds.Tables[0];
+        }
+        catch
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Duplicacy while Inserting Data in Table TMS_MapProcedurePopUp
+    */
+    public bool CheckDuplicateMappedPopUp(int popUpId, int popUpRoleId, int procedureId)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MapProcedurePopUp WHERE PopUpId = @PopUpId AND ProcedureId = @ProcedureId AND PopUpRoleId = @PopUpRoleId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@PopUpId", popUpId);
+            cmd.Parameters.AddWithValue("@PopUpRoleId", popUpRoleId);
+            cmd.Parameters.AddWithValue("@ProcedureId", procedureId);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar();
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Inserting Data into TMS_MapProcedurePopUp
+    */
+    public bool AddMappedPopUp(int popUpId, int popUpRoleId, int procedureId)
+    {
+        try
+        {
+            string query = @"INSERT INTO TMS_MapProcedurePopUp (PopUpId, ProcedureId,PopUpRoleId, IsActive, CreatedOn, IsDeleted, UpdatedOn)
+                             VALUES (@PopUpId, @ProcedureId,@PopUpRoleId, 1, GETDATE(), 0, GETDATE())";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@PopUpId", popUpId);
+            sd.InsertCommand.Parameters.AddWithValue("@PopUpRoleId", popUpRoleId);
+            sd.InsertCommand.Parameters.AddWithValue("@ProcedureId", procedureId);
+
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Retriving Mapped PopUp Details By Id  TMS_MapProcedurePopUp
+    */
+    public DataTable GetMappedPopUpDetailsById(int procedurePopUpId)
+    {
+        DataTable dt = new DataTable();
+        try
+        {
+            string query = @"SELECT A1.ProcedurePopUpId,A1.ProcedureId,A1.PopUpRoleId,A1.PopUpId,A2.PopUpDescription,A3.ProcedureCode, A4.RoleName, A1.IsActive,FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn FROM TMS_MapProcedurePopUp A1 LEFT JOIN TMS_MasterPopUpMaster A2 ON A1.PopUpId=A2.PopUpId
+                           LEFT JOIN TMS_MasterPackageDetail A3 ON A1.ProcedureId = A3.ProcedureId LEFT JOIN TMS_Roles A4 ON A1.PopUpRoleId = A4.RoleId WHERE A1.ProcedurePopUpId = @ProcedurePopUpId";
+
+            SqlDataAdapter sd = new SqlDataAdapter(query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ProcedurePopUpId", procedurePopUpId);
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            throw new Exception("Error fetching action details", ex);
+        }
+        return dt;
+    }
+
+    /*
+        Added by Shivani.
+        Checking Du8plicacy while Updating Table TMS_MapProcedurePopUp
+    */
+    public bool CheckMappedPopUpDuplicacy(int popUpId, int procedureId, int popUpRoleId, int procedurePopUpId)
+    {
+
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_MapProcedurePopUp WHERE PopUpId = @PopUpId AND ProcedureId = @ProcedureId AND PopUpRoleId = @PopUpRoleId AND ProcedurePopUpId <> @ProcedurePopUpId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@PopUpId", popUpId);
+            cmd.Parameters.AddWithValue("@ProcedureId", procedureId);
+            cmd.Parameters.AddWithValue("@PopUpRoleId", popUpRoleId);
+            cmd.Parameters.AddWithValue("@ProcedurePopUpId", procedurePopUpId);
+
+            con.Open();
+            int existingRecords = (cmd.ExecuteScalar() as int? ?? 0);
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Updating Table TMS_MapProcedurePopUp
+    */
+    public bool UpdateMapPopUpNew(int procedurePopUpId, int popUpId, int procedureId, int popUpRoleId)
+    {
+        try
+        {
+            string query = @"UPDATE TMS_MapProcedurePopUp SET PopUpId = @PopUpId, ProcedureId = @ProcedureId,PopUpRoleId = @PopUpRoleId,UpdatedOn = GETDATE() WHERE ProcedurePopUpId = @ProcedurePopUpId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@ProcedurePopUpId", procedurePopUpId);
+            sd.UpdateCommand.Parameters.AddWithValue("@PopUpId", popUpId);
+            sd.UpdateCommand.Parameters.AddWithValue("@ProcedureId", procedureId);
+            sd.UpdateCommand.Parameters.AddWithValue("@PopUpRoleId", popUpRoleId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+    /*
+        Added by Shivani.
+        Updating Active Status from table TMS_MapProcedurePopUp
+    */
+    public bool UpdateMApPopUpStatus(int procedurePopUpId)
+    {
+        try
+        {
+            DataTable dt = new DataTable(); // To adhere to the required style
+            string query = "UPDATE TMS_MapProcedurePopUp SET IsActive = CASE WHEN IsActive = 1 THEN 0 ELSE 1 END WHERE ProcedurePopUpId = @ProcedurePopUpId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.UpdateCommand = new SqlCommand(query, con);
+            sd.UpdateCommand.Parameters.AddWithValue("@ProcedurePopUpId", procedurePopUpId);
+
+            con.Open();
+            int rowsAffected = sd.UpdateCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+
+            // Optionally log or rethrow the exception
+            throw new Exception("Error updating action status", ex);
+        }
+    }
+
+
+
+    /*
         Added by Nirmal.
         Table: TMS_MasterActionMaster.
         Selecting TMS_MasterActionMaster data for PPD.

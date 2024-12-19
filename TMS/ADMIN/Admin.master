@@ -74,13 +74,13 @@
                                 <li><a href="ActionMaster.aspx">Action Master</a></li>
                                 <li><a href="ImplantMaster.aspx">Implant Master</a></li>
                                 <li><a href="#.">Map Medical Radiation Oncology</a></li>
-                                <li><a href="#.">Map Package Addon</a></li>
+                                <li><a href="MapPackageAddon.aspx">Map Package Addon</a></li>
                                 <li><a href="MapProcedureAddOnPrimaryMaster.aspx">Map Procedure Addon Primary</a></li>
-                                <li><a href="#.">Map Procedure Follow Up</a></li>
+                                <li><a href="MapProcedureFollowup.aspx">Map Procedure Follow Up</a></li>
                                 <li><a href="MapProcedureImplantMaster.aspx">Map Procedure Implant</a></li>
                                 <li><a href="#.">Map Procedure Investigation</a></li>
                                 <li><a href="MapProcedureNonRelated.aspx">Map Procedure Non Related</a></li>
-                                <li><a href="#.">Map Procedure Popup</a></li>
+                                <li><a href="MapProcedurePopup.aspx">Map Procedure Popup</a></li>
                                 <li><a href="MapProcedureSpecialRuleMaster.aspx">Map Procedure Special Rule</a></li>
                                 <li><a href="MapProcedureStratificationMaster.aspx">Map Procedure Stratification</a></li>
                                 <li><a href="PackageDetails.aspx">Package Details</a></li>
@@ -91,7 +91,7 @@
                                 <li><a href="ProcedureLabelMaster.aspx">Procedure Label</a></li>
                                 <li><a href="RoleMaster.aspx">Role Master</a></li>
                                 <li><a href="#.">Secondary Diagnosis</a></li>
-                                <li><a href="#.">Stratification Master</a></li>
+                                <li><a href="StratificationMaster.aspx">Stratification Master</a></li>
                             </ul>
                         </li>
                     </ul>
