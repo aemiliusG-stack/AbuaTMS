@@ -39,32 +39,27 @@
                             <div class="form-group row justify-content-center text-dark font-bold">
                                 <!-- PPD Checkbox -->
                                 <div class="col-md-2 mb-3 d-flex align-items-center text-dark justify-content-center">
-                                    <asp:CheckBox ID="chkPPD" runat="server" class="mr-2" />
-                                    <label for="chkPPD" class="mb-0 ">PPD</label>
+                                    <asp:CheckBox ID="chkPPD" runat="server" Text="&nbsp;&nbsp;&nbsp;PPD" class="mr-2" />
                                 </div>
 
                                 <!-- CEX Checkbox -->
                                 <div class="col-md-2 mb-3 d-flex align-items-center text-dark justify-content-center">
-                                    <asp:CheckBox ID="chkCEX" runat="server" class="mr-2" />
-                                    <label for="chkCEX" class="mb-0">CEX</label>
+                                    <asp:CheckBox ID="chkCEX" runat="server" Text="&nbsp;&nbsp;&nbsp;CEX" class="mr-2" />
                                 </div>
 
                                 <!-- CPD Checkbox -->
                                 <div class="col-md-2 mb-3 d-flex align-items-center text-dark justify-content-center">
-                                    <asp:CheckBox ID="chkCPD" runat="server" class="mr-2" />
-                                    <label for="chkCPD" class="mb-0">CPD</label>
+                                    <asp:CheckBox ID="chkCPD" runat="server" Text="&nbsp;&nbsp;&nbsp;CPD" class="mr-2" />
                                 </div>
 
                                 <!-- ACO Checkbox -->
                                 <div class="col-md-2 mb-3 d-flex align-items-center text-dark justify-content-center">
-                                    <asp:CheckBox ID="chkACO" runat="server" class="mr-2" />
-                                    <label for="chkACO" class="mb-0">ACO</label>
+                                    <asp:CheckBox ID="chkACO" runat="server" Text="&nbsp;&nbsp;&nbsp;ACO" class="mr-2" />
                                 </div>
 
                                 <!-- SHA Checkbox -->
                                 <div class="col-md-2 mb-3 d-flex align-items-center text-dark justify-content-center">
-                                    <asp:CheckBox ID="chkSHA" runat="server" class="mr-2" />
-                                    <label for="chkSHA" class="mb-0">SHA</label>
+                                    <asp:CheckBox ID="chkSHA" runat="server" Text="&nbsp;&nbsp;&nbsp;SHA" class="mr-2" />
                                 </div>
                             </div>
 
