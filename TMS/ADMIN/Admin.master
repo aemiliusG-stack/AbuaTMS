@@ -84,9 +84,7 @@
                                 <li><a href="MapProcedurePopup.aspx">Map Procedure Popup</a></li>
 =======
 <<<<<<< HEAD
-                                <li><a href="#">Map Procedure Popup</a></li>
-=======
-                                <li><a href="MapProcedurePopup.aspx">Map Procedure Popup</a></li>
+                               
 >>>>>>> 6cd72cb06d587f7f686dc7f600507950d2b6e665
 >>>>>>> Stashed changes
                                 <li><a href="MapProcedureSpecialRuleMaster.aspx">Map Procedure Special Rule</a></li>
