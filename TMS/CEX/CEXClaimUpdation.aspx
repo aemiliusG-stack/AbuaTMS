@@ -1011,12 +1011,10 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="d-flex">
                                                                 <div class="form-check form-check-inline me-2">
-                                                                    <asp:RadioButton ID="rbIsNameCorrectYes" runat="server" GroupName="IsNameCorrect" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">Yes</span>
+                                                                    <asp:RadioButton ID="rbIsNameCorrectYes" runat="server" GroupName="IsNameCorrect" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                                 <div class="form-check form-check-inline">
-                                                                    <asp:RadioButton ID="rbIsNameCorrectNo" runat="server" GroupName="IsNameCorrect" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">No</span>
+                                                                    <asp:RadioButton ID="rbIsNameCorrectNo" runat="server" GroupName="IsNameCorrect" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1028,12 +1026,10 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="d-flex">
                                                                 <div class="form-check form-check-inline me-2">
-                                                                    <asp:RadioButton ID="rbIsGenderCorrectYes" runat="server" GroupName="IsGenderCorrect" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">Yes</span>
+                                                                    <asp:RadioButton ID="rbIsGenderCorrectYes" runat="server" GroupName="IsGenderCorrect" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                                 <div class="form-check form-check-inline">
-                                                                    <asp:RadioButton ID="rbIsGenderCorrectNo" runat="server" GroupName="IsGenderCorrect" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">No</span>
+                                                                    <asp:RadioButton ID="rbIsGenderCorrectNo" runat="server" GroupName="IsGenderCorrect" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1045,12 +1041,10 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="d-flex">
                                                                 <div class="form-check form-check-inline me-2">
-                                                                    <asp:RadioButton ID="rbIsPhotoVerifiedYes" runat="server" GroupName="IsPhotoVerified" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">Yes</span>
+                                                                    <asp:RadioButton ID="rbIsPhotoVerifiedYes" runat="server" GroupName="IsPhotoVerified" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                                 <div class="form-check form-check-inline">
-                                                                    <asp:RadioButton ID="rbIsPhotoVerifiedNo" runat="server" GroupName="IsPhotoVerified" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">No</span>
+                                                                    <asp:RadioButton ID="rbIsPhotoVerifiedNo" runat="server" GroupName="IsPhotoVerified" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1137,12 +1131,10 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="d-flex">
                                                                 <div class="form-check form-check-inline me-2">
-                                                                    <asp:RadioButton ID="rbIsSignVerifiedYes" runat="server" GroupName="IsSignVerified" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">Yes</span>
+                                                                    <asp:RadioButton ID="rbIsSignVerifiedYes" runat="server" GroupName="IsSignVerified" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                                 <div class="form-check form-check-inline">
-                                                                    <asp:RadioButton ID="rbIsSignVerifiedNo" runat="server" GroupName="IsSignVerified" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">No</span>
+                                                                    <asp:RadioButton ID="rbIsSignVerifiedNo" runat="server" GroupName="IsSignVerified" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1154,12 +1146,10 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="d-flex">
                                                                 <div class="form-check form-check-inline me-2">
-                                                                    <asp:RadioButton ID="rbIsReportCorrectYes" runat="server" GroupName="IsReportCorrect" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">Yes</span>
+                                                                    <asp:RadioButton ID="rbIsReportCorrectYes" runat="server" GroupName="IsReportCorrect" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                                 <div class="form-check form-check-inline">
-                                                                    <asp:RadioButton ID="rbIsReportCorrectNo" runat="server" GroupName="IsReportCorrect" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">No</span>
+                                                                    <asp:RadioButton ID="rbIsReportCorrectNo" runat="server" GroupName="IsReportCorrect" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1171,12 +1161,10 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="d-flex">
                                                                 <div class="form-check form-check-inline me-2">
-                                                                    <asp:RadioButton ID="rbIsReportVerifiedYes" runat="server" GroupName="IsReportVerified" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">Yes</span>
+                                                                    <asp:RadioButton ID="rbIsReportVerifiedYes" runat="server" GroupName="IsReportVerified" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                                 <div class="form-check form-check-inline">
-                                                                    <asp:RadioButton ID="rbIsReportVerifiedNo" runat="server" GroupName="IsReportVerified" CssClass="form-check-input" />
-                                                                    <span class="font-weight-bold text-dark">No</span>
+                                                                    <asp:RadioButton ID="rbIsReportVerifiedNo" runat="server" GroupName="IsReportVerified" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input font-weight-bold text-dark" />
                                                                 </div>
                                                             </div>
                                                         </div>
