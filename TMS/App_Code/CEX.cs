@@ -156,6 +156,11 @@ public class CEX
         }
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        con.Close();
         con.Open();
         int rowsAffected = cmd.ExecuteNonQuery();
         con.Close();
