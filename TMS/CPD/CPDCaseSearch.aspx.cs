@@ -199,17 +199,17 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
             return;
         }
     }
-    private void LoadData(string caseNumber, string cardNumber, string patientState, string patientDistrict, string packageId, string procedureId)
+    private void LoadData(string caseNumber, string cardNumber, string patientStateId, string patientDistrictId, string packageId, string procedureId)
     {
         try
         {
             SqlParameter[] parameters = new SqlParameter[] {
             CreateSqlParameter("@CaseNumber", caseNumber),
             CreateSqlParameter("@CardNumber", cardNumber),
-            CreateSqlParameter("@PStateTitle", patientState),
-            CreateSqlParameter("@PDistrictTitle", patientDistrict),
+            CreateSqlParameter("@PStateId", patientStateId),
+            CreateSqlParameter("@PDistrictId", patientDistrictId),
             CreateSqlParameter("@PackageId", packageId),
-            CreateSqlParameter("@ProcedureName", procedureId)  
+            CreateSqlParameter("@ProcedureId", procedureId)  
         };
 
             if (con.State == ConnectionState.Closed)
@@ -249,11 +249,11 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
         {
             string caseNumber = tbCaseNumber.Text;
             string cardNumber = tbCardNumber.Text;
-            string patientState = ddPatientState.Text;
-            string patientDistrict = ddPatientDistrict.Text;
+            string patientStateId = ddPatientState.Text;
+            string patientDistrictId = ddPatientDistrict.Text;
             string packageId = ddCategory.SelectedValue;
             string procedureId = ddProcedureName.SelectedValue;
-            LoadData(caseNumber, cardNumber, patientState, patientDistrict, packageId, procedureId);
+            LoadData(caseNumber, cardNumber, patientStateId, patientDistrictId, packageId, procedureId);
         }
         catch (Exception ex)
         {

@@ -291,7 +291,7 @@ public class CPD
     public DataTable GetNonTechnicalChecklist(string CaseNo)
     {
         dt.Clear();
-        string Query = "SELECT CaseNo, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks FROM TMS_CEXNonTechChecklist WHERE IsActive = 1 AND IsDeleted = 0 AND CaseNo = @CaseNo";
+        string Query = "SELECT CaseNo, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks FROM TMS_CEXNonTechChecklist WHERE IsActive = 1 AND CaseNo = @CaseNo";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
@@ -303,9 +303,7 @@ public class CPD
     public DataTable GetTechnicalChecklist(string CaseNo)
     {
         dt.Clear();
-        string Query = "select t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountApproved, t1.TrustClaimAmountApproved" +
-            //", t2.IsSpecialCase" +
-            " from TMS_ClaimMaster t1 inner join TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId where t1.CaseNumber =@CaseNo and t1.IsActive = 1 and t1.IsDeleted = 0";
+        string Query = "select t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountApproved, t1.TrustClaimAmountApproved\r\n, t3.IsSpecialCase from TMS_ClaimMaster t1 inner join TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId inner join TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId where t1.CaseNumber = @CaseNo and t1.IsActive = 1 and t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
@@ -455,16 +453,12 @@ public class CPD
             }
         }
     }
-    public DataTable GetClaimWorkFlow(string CaseNo)
+    public DataTable GetClaimWorkFlow(string claimId)
     {
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason " +
-                       "FROM TMS_PatientActionHistory t1 " +
-                       "INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId " +
-                       "INNER JOIN TMS_ClaimMaster t3 ON t1.ClaimId = t3.ClaimId " +
-                       "WHERE t3.CaseNumber = @CaseNo";
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId WHERE t1.ClaimId = 1";
         //DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand(Query, con);
-        cmd.Parameters.AddWithValue("@CaseNo", CaseNo);
+        cmd.Parameters.AddWithValue("@claimId", claimId);
         con.Open();
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
@@ -516,42 +510,7 @@ public class CPD
             }
         }
     }
-    public bool UpdatePatientAdmissionDetails(string CaseNo)
-    {
-        int forwardedBy = 5;
-        int forwardedTo = 6;
-        int forwardAction = 1;
-        string query = @"UPDATE TMS_PatientAdmissionDetail
-                  SET ForwardedBy = @ForwardedBy, 
-                      ForwardedTo = @ForwardedTo, 
-                      ForwardAction = @ForwardAction
-                  WHERE CaseNumber = @CaseNo";
-        SqlCommand cmd = new SqlCommand(query, con);
-        cmd.Parameters.AddWithValue("@ForwardedBy", forwardedBy);
-        cmd.Parameters.AddWithValue("@ForwardedTo", forwardedTo);
-        cmd.Parameters.AddWithValue("@ForwardAction", forwardAction);
-        cmd.Parameters.AddWithValue("@CaseNo", CaseNo); // Fixing the parameter name
-        try
-        {
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
-            int rowsAffected = cmd.ExecuteNonQuery();
-            return rowsAffected > 0;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error updating patient admission details: " + ex.Message);
-        }
-        finally
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-        }
-    }
+   
     public DataTable getPrimaryDiagnosis(string CaseNo)
     {
         dtTemp.Clear();
@@ -622,18 +581,14 @@ public class CPD
         con.Close();
         return dtTemp;
     }
-    public void InsertTechnicalChecklist(string caseNumber, string cardNumber, int totalClaims, int insuranceApprovedAmt, int trustApprovedAmt, bool specialCase, bool diagnosisSupported, bool caseManagementSTP, bool evidenceTherapyConducted, bool mandatoryReports, string remarks)
+    public void InsertTechnicalChecklist(string caseNumber, string cardNumber,  bool diagnosisSupported, bool caseManagementSTP, bool evidenceTherapyConducted, bool mandatoryReports, string remarks)
     {
-        string query = "INSERT INTO TMS_CPDTechnicalCkecklist (CaseNumber, CardNumber, TotalClaims, InsuranceapprovedAmt, TrustApprovedAmt, SpecialCase, DiagnosisSupportedEvidence, CaseManagementSTP, EvidenceTherapyConducted, MandatoryReports, Remarks, IsActive, IsDeleted, CreatedOn, UpdatedOn) " +
-                           "VALUES (@CaseNumber, @CardNumber, @TotalClaims, @InsuranceapprovedAmt, @TrustApprovedAmt, @SpecialCase, @DiagnosisSupportedEvidence, @CaseManagementSTP, @EvidenceTherapyConducted, @MandatoryReports, @Remarks, @IsActive, @IsDeleted, @CreatedOn, @UpdatedOn)";
+        string query = "INSERT INTO TMS_CPDTechnicalCkecklist (CaseNumber, CardNumber, DiagnosisSupportedEvidence, CaseManagementSTP, EvidenceTherapyConducted, MandatoryReports, Remarks, IsActive, IsDeleted, CreatedOn, UpdatedOn) " +
+                           "VALUES (@CaseNumber, @CardNumber, @DiagnosisSupportedEvidence, @CaseManagementSTP, @EvidenceTherapyConducted, @MandatoryReports, @Remarks, @IsActive, @IsDeleted, @CreatedOn, @UpdatedOn)";
 
         SqlCommand cmd = new SqlCommand(query, con);
         cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
         cmd.Parameters.AddWithValue("@CardNumber", cardNumber);
-        cmd.Parameters.AddWithValue("@TotalClaims", totalClaims);
-        cmd.Parameters.AddWithValue("@InsuranceapprovedAmt", insuranceApprovedAmt);
-        cmd.Parameters.AddWithValue("@TrustApprovedAmt", trustApprovedAmt);
-        cmd.Parameters.AddWithValue("@SpecialCase", specialCase);
         cmd.Parameters.AddWithValue("@DiagnosisSupportedEvidence", diagnosisSupported);
         cmd.Parameters.AddWithValue("@CaseManagementSTP", caseManagementSTP);
         cmd.Parameters.AddWithValue("@EvidenceTherapyConducted", evidenceTherapyConducted);
