@@ -91,8 +91,8 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     string maxDate = DateTime.Now.ToString("yyyy-MM-dd");
                     tbCSDischargeDate.Attributes["min"] = minDateDischargedate;
                     tbCSDischargeDate.Attributes["max"] = maxDate;
-                    //tbCSTherepyDate.Attributes["min"] = minDateSurgerydate;
-                    //tbCSTherepyDate.Attributes["max"] = maxDate;
+                    tbCSTherepyDate.Attributes["min"] = minDateSurgerydate;
+                    tbCSTherepyDate.Attributes["max"] = maxDate;
                     tbCSAdmissionDate.Attributes["min"] = minDateadmission;
                     tbCSAdmissionDate.Attributes["max"] = maxDate;
                     Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
