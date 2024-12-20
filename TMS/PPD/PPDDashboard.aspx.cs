@@ -70,7 +70,7 @@ public partial class PPD_PPDDashboard : System.Web.UI.Page
                     lbTitle.Text = "Pendency At Trust";
                     lbUserRole.Text = "Preauth Panel Doctor Trust";
                     lbUserRoleAssigned.Text = "Preauth Panel Doctor Trust (Assigned)";
-                    lbUserTodayCount.Text = dt.Rows[0]["PPDInsurerToday"].ToString();
+                    lbUserTodayCount.Text = dt.Rows[0]["PPDTrustToday"].ToString();
                     lbUserOverallCount.Text = dt.Rows[0]["PPPDTrustOverall"].ToString();
                     lbAssignedToday.Text = dt.Rows[0]["PPDTrustAssignedToday"].ToString();
                     lbAssignedOverall.Text = dt.Rows[0]["PPPDTrustAssignedOverall"].ToString();

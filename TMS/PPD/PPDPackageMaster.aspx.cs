@@ -32,7 +32,7 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
             {
                 hdUserId.Value = Session["UserId"].ToString();
                 GetSpecialityName();
-                GetPackageMaster(null, null);
+                GetPackageMaster(null, null, false);
             }
         }
         catch (Exception ex)
@@ -116,7 +116,7 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
         }
     }
 
-    public void GetPackageMaster(string PackageId, string ProcedureId)
+    public void GetPackageMaster(string PackageId, string ProcedureId, bool isClicked)
     {
         try
         {
@@ -127,6 +127,7 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
                 lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
                 gridPackageMaster.DataSource = dt;
                 gridPackageMaster.DataBind();
+                panelNoData.Visible = false;
             }
             else
             {
@@ -134,6 +135,11 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
                 gridPackageMaster.DataSource = null;
                 gridPackageMaster.DataBind();
                 panelNoData.Visible = true;
+                if (isClicked)
+                {
+                    string strMessage = "window.alert('No records found for the given search criteria.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
             }
         }
         catch (Exception ex)
@@ -150,20 +156,20 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
     protected void gridPackageMaster_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gridPackageMaster.PageIndex = e.NewPageIndex;
-        GetPackageMaster(null, null);
+        GetPackageMaster(null, null, false);
     }
 
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         string selectedSpeciality = dlSpeciality.SelectedItem.Value;
         string selectedProcedure = dlProcedureName.SelectedItem.Value;
-        GetPackageMaster(selectedSpeciality, selectedProcedure);
+        GetPackageMaster(selectedSpeciality, selectedProcedure, true);
     }
 
     protected void btnReset_Click(object sender, EventArgs e)
     {
         dlSpeciality.SelectedIndex = 0;
         dlProcedureName.SelectedIndex = 0;
-        GetPackageMaster(null, null);
+        GetPackageMaster(null, null, false);
     }
 }

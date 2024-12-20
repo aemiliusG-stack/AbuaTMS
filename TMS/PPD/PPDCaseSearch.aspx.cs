@@ -79,6 +79,7 @@ public partial class PPD_PPDCaseSearch : System.Web.UI.Page
                     lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
                     gridCaseSearch.DataSource = dt;
                     gridCaseSearch.DataBind();
+                    panelNoData.Visible = false;
                 }
                 else
                 {

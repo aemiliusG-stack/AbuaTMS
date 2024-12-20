@@ -15,7 +15,6 @@ public partial class PPD_PPDHome : System.Web.UI.Page
     private string pageName;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
     private MasterData md = new MasterData();
     private PPDHelper ppdHelper = new PPDHelper();
     string CurrentDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -27,7 +26,7 @@ public partial class PPD_PPDHome : System.Web.UI.Page
             if (!IsPostBack)
             {
                 hdUserId.Value = Session["UserId"].ToString();
-                SearchAssignedCases("", "", "", CurrentDate);
+                SearchAssignedCases("", "", "", CurrentDate, false);
             }
         }
         catch (Exception ex)
@@ -47,15 +46,15 @@ public partial class PPD_PPDHome : System.Web.UI.Page
         tbBeneficiaryCardNo.Text = string.Empty;
         tbRegisteredFromDate.Text = string.Empty;
         tbRegisteredToDate.Text = string.Empty;
-        SearchAssignedCases("", "", "", CurrentDate);
+        SearchAssignedCases("", "", "", CurrentDate, false);
     }
 
     protected void btnSearch_Click(object sender, EventArgs e)
     {
-        SearchAssignedCases(tbCaseNo.Text.ToString(), tbBeneficiaryCardNo.Text.ToString(), tbRegisteredFromDate.Text.ToString(), tbRegisteredToDate.Text.ToString());
+        SearchAssignedCases(tbCaseNo.Text.ToString(), tbBeneficiaryCardNo.Text.ToString(), tbRegisteredFromDate.Text.ToString(), tbRegisteredToDate.Text.ToString(), true);
     }
 
-    public void SearchAssignedCases(string CaseNumber, string CardNumber, string FromDate, string ToDate)
+    public void SearchAssignedCases(string CaseNumber, string CardNumber, string FromDate, string ToDate, bool isButtonClicked)
     {
         try
         {
@@ -73,6 +72,11 @@ public partial class PPD_PPDHome : System.Web.UI.Page
                 gridAssignedCases.DataSource = null;
                 gridAssignedCases.DataBind();
                 panelNoData.Visible = true;
+                if (isButtonClicked)
+                {
+                    string strMessage = "window.alert('No records found for the given search criteria.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
             }
         }
         catch (Exception ex)
@@ -89,16 +93,16 @@ public partial class PPD_PPDHome : System.Web.UI.Page
     protected void gridAssignedCases_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gridAssignedCases.PageIndex = e.NewPageIndex;
-        SearchAssignedCases("", "", "", CurrentDate);
+        SearchAssignedCases("", "", "", CurrentDate, false);
     }
 
     protected void lnkCaseNo_Click(object sender, EventArgs e)
     {
         LinkButton btn = (LinkButton)sender;
         GridViewRow row = (GridViewRow)btn.NamingContainer;
-        Label lbAdmissionId = (Label) row.FindControl("lbAdmissionId");
-        Label lbClaimId = (Label) row.FindControl("lbClaimId");
-        LinkButton lnkCaseNo = (LinkButton) row.FindControl("lnkCaseNo");
+        Label lbAdmissionId = (Label)row.FindControl("lbAdmissionId");
+        Label lbClaimId = (Label)row.FindControl("lbClaimId");
+        LinkButton lnkCaseNo = (LinkButton)row.FindControl("lnkCaseNo");
         string CaseNumber = lnkCaseNo.Text.ToString();
         string AdmissionId = lbAdmissionId.Text.ToString();
         Response.Redirect("PPDPatientDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
