@@ -114,7 +114,7 @@
                                         </h2>
                                         <h3 class="h2 m-0">No Pending Cases</h3>
                                         <p class="mb-4">We’re sorry, but there is no pending cases available at this time.</p>
-                                        <asp:LinkButton ID="lnkBackToHome" runat="server" CssClass="btn bsb-btn-5xl btn-primary rounded-pill px-5 fs-6 m-0" OnClientClick="location.reload(); return false;">New Case</asp:LinkButton>
+                                        <asp:LinkButton ID="lnkBackToHome" runat="server" CssClass="btn bsb-btn-5xl btn-primary rounded-pill px-5 m-0" OnClientClick="location.reload(); return false;">New Case</asp:LinkButton>
                                     </div>
                                 </div>
                             </div>
@@ -1162,7 +1162,7 @@
                                                                 <div class="row ibox-content" style="background-color: #f0f0f0;">
                                                                     <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
                                                                         <img src="../images/search.svg" />
-                                                                        <span class="fs-6 mt-2">No Record Found</span>
+                                                                        <span class="mt-2">No Record Found</span>
                                                                         <span class="text-body-tertiary">Currently, no document available at this moment.</span>
                                                                     </div>
                                                                 </div>
@@ -1257,7 +1257,7 @@
                                                                 <div class="row ibox-content" style="background-color: #f0f0f0;">
                                                                     <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
                                                                         <img src="../images/search.svg" />
-                                                                        <span class="fs-6 mt-2">No Record Found</span>
+                                                                        <span class="mt-2">No Record Found</span>
                                                                         <span class="text-body-tertiary">Currently, no document available at this moment.</span>
                                                                     </div>
                                                                 </div>

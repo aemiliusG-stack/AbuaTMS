@@ -10,35 +10,37 @@ using CareerPath.DAL;
 
 public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 {
-    private string caseNumber, admissionId, claimId;
+    private string pageName, childImageUrl, caseNumber, admissionId, claimId;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
     private MasterData md = new MasterData();
     private PreAuth preAuth = new PreAuth();
     public static PPDHelper ppdHelper = new PPDHelper();
-    string pageName, childImageUrl;
 
     protected void Page_Load(object sender, EventArgs e)
     {
 
         try
         {
-            caseNumber = Request.QueryString["CaseNumber"];
-            admissionId = Request.QueryString["AdmissionId"];
-            claimId = Request.QueryString["ClaimId"];
-            hdUserId.Value = Session["UserId"].ToString();
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             if (Session["UserId"] == null)
             {
                 Response.Redirect("~/Unauthorize.aspx", false);
                 return;
             }
-            if (!IsPostBack)
+            else
             {
-                MultiView1.SetActiveView(viewPreauth);
-                btnPreauth.CssClass = "btn btn-warning p-3";
-                GetPatientDetails();
+                caseNumber = Request.QueryString["CaseNumber"];
+                admissionId = Request.QueryString["AdmissionId"];
+                claimId = Request.QueryString["ClaimId"];
+                hdUserId.Value = Session["UserId"].ToString();
+                if (!IsPostBack)
+                {
+                    MultiView1.SetActiveView(viewPreauth);
+                    btnPreauth.CssClass = "btn btn-warning p-3";
+                    GetPatientDetails();
+                }
             }
         }
         catch (Exception ex)
@@ -78,6 +80,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         btnPastHistory.CssClass = "btn btn-primary p-3";
         btnTreatmentDischarge.CssClass = "btn btn-warning p-3";
         btnAttachmanet.CssClass = "btn btn-primary p-3";
+        if (!hdDischargeId.Value.ToString().Equals(""))
+        {
+            getSurgeonDetails(hdDischargeId.Value.ToString());
+        }
     }
 
     protected void btnAttachmanet_Click(object sender, EventArgs e)
@@ -204,6 +210,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     MultiViewMain.SetActiveView(viewContent);
                     DateTime registrationDate = Convert.ToDateTime(dt.Rows[0]["RegDate"].ToString().Trim());
                     DateTime admissionDate = Convert.ToDateTime(dt.Rows[0]["AdmissionDate"].ToString().Trim());
+                    string IsDischarged = dt.Rows[0]["IsDischarged"].ToString().Trim();
                     Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
                     Session["ClaimId"] = dt.Rows[0]["ClaimId"].ToString().Trim();
                     hdCaseId.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
@@ -230,7 +237,17 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     tbHospitalAddress.Text = dt.Rows[0]["HospitalAddress"].ToString().Trim();
                     tbAdmissionDate.Text = admissionDate.ToString("dd-MM-yyyy");
                     tbRemarks.Text = dt.Rows[0]["Remarks"].ToString().Trim();
-
+                    if (IsDischarged.Equals("True"))
+                    {
+                        panelTreatementDischarge.Visible = true;
+                        panelNoTreatementDischarge.Visible = false;
+                        hdDischargeId.Value = dt.Rows[0]["DischargeId"].ToString().Trim();
+                    }
+                    else
+                    {
+                        panelTreatementDischarge.Visible = false;
+                        panelNoTreatementDischarge.Visible = true;
+                    }
                     if (dt.Rows[0]["AdmissionType"].ToString().Trim() == "0")
                     {
                         rbPlanned.Checked = true;
@@ -723,6 +740,144 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             lbTitle.Text = DocumentName;
             MultiView3.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getSurgeonDetails(string DischargeId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetSurgeonDetails(DischargeId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                tbDoctorType.Text = dt.Rows[0]["DoctorType"].ToString();
+                tbDoctorName.Text = dt.Rows[0]["Name"].ToString();
+                tbRegNo.Text = dt.Rows[0]["RegistrationNumber"].ToString();
+                tbQualification.Text = dt.Rows[0]["Qualification"].ToString();
+                tbContact.Text = dt.Rows[0]["MobileNumber"].ToString();
+                getAnesthetistDetails(DischargeId);
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getAnesthetistDetails(string DischargeId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetAnesthetistDetails(DischargeId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                tbAnesthetistName.Text = dt.Rows[0]["Name"].ToString();
+                tbAnesthetistRegNo.Text = dt.Rows[0]["RegistrationNumber"].ToString();
+                tbAnesthetistContact.Text = dt.Rows[0]["MobileNumber"].ToString();
+                getOtherDischargeDetails(DischargeId);
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getOtherDischargeDetails(string DischargeId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetOtherDischargeDetails(DischargeId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                tbIncisionType.Text = dt.Rows[0]["IncisionType"].ToString();
+                if (dt.Rows[0]["OPPhotosWebexTaken"].ToString().Equals("True"))
+                {
+                    rbPhotoWebYes.Checked = true;
+                    rbPhotoWebNo.Checked = false;
+                }
+                else
+                {
+                    rbPhotoWebYes.Checked = false;
+                    rbPhotoWebNo.Checked = true;
+                }
+                if (dt.Rows[0]["VideoRecordingDone"].ToString().Equals("True"))
+                {
+                    rbVideoYes.Checked = true;
+                    rbVideoNo.Checked = false;
+                }
+                else
+                {
+                    rbVideoYes.Checked = false;
+                    rbVideoNo.Checked = true;
+                }
+                tbSwabCount.Text = dt.Rows[0]["SwabCountInstrumentsCount"].ToString();
+                tbSutures.Text = dt.Rows[0]["SuturesLigatures"].ToString();
+                if (dt.Rows[0]["SpecimenRequired"].ToString().Equals("True"))
+                {
+                    rbSpecimenYes.Checked = true;
+                    rbSpecimenNo.Checked = false;
+                }
+                else
+                {
+                    rbSpecimenYes.Checked = false;
+                    rbSpecimenNo.Checked = true;
+                }
+                tbDrainageCount.Text = dt.Rows[0]["DrainageCount"].ToString();
+                tbBloodLoss.Text = dt.Rows[0]["BloodLoss"].ToString();
+                tbPostOperative.Text = dt.Rows[0]["PostOperativeInstructions"].ToString();
+                tbPatientCondition.Text = dt.Rows[0]["PatientCondition"].ToString();
+                if (dt.Rows[0]["ComplicationsIfAny"].ToString().Equals("True"))
+                {
+                    rbComplicationYes.Checked = true;
+                    rbComplicationNo.Checked = false;
+                }
+                else
+                {
+                    rbComplicationYes.Checked = false;
+                    rbComplicationNo.Checked = true;
+                }
+                tbTreatementDate.Text = dt.Rows[0]["TreatmentSurgeryStartDate"].ToString();
+                tbSurgeryStartTime.Text = dt.Rows[0]["SurgeryStartTime"].ToString();
+                tbSurgeryEndTime.Text = dt.Rows[0]["SurgeryEndTime"].ToString();
+                tbTreatementGiven.Text = dt.Rows[0]["TreatmentGiven"].ToString();
+                tbOperativeFinding.Text = dt.Rows[0]["OperativeFindings"].ToString();
+                tbPostOperativePeriod.Text = dt.Rows[0]["PostOperativePeriod"].ToString();
+                tbPostSurgeryGiven.Text = dt.Rows[0]["PostSurgeryInvestigationGiven"].ToString();
+                tbStatusAtDischarge.Text = dt.Rows[0]["StatusAtDischarge"].ToString();
+                tbReview.Text = dt.Rows[0]["Review"].ToString();
+                tbAdvice.Text = dt.Rows[0]["Advice"].ToString();
+                //rbDischarge.Checked = false;
+                tbDischargeDate.Text = dt.Rows[0]["DischargeDate"].ToString();
+                tbNextFollowDate.Text = dt.Rows[0]["NextFollowUpDate"].ToString();
+                tbConsultAtBlock.Text = dt.Rows[0]["ConsultAtBlock"].ToString();
+                tbFloor.Text = dt.Rows[0]["FloorNo"].ToString();
+                tbRoomNo.Text = dt.Rows[0]["RoomNo"].ToString();
+                tbIsSpecialCase.Text = dt.Rows[0]["IsSpecialCase"].ToString();
+                tbSpecialCaseValue.Text = dt.Rows[0]["SpecialCaseValue"].ToString();
+                tbFinalDiagnosis.Text = dt.Rows[0]["FinalDiagnosis"].ToString();
+                tbFinalDiagnosisDescription.Text = dt.Rows[0]["FinalDiagnosisDesc"].ToString();
+                if (dt.Rows[0]["ProcedureConsent"].ToString().Equals("True"))
+                {
+                    rbProcedureConsentYes.Checked = true;
+                    rbProcedureConsentNo.Checked = false;
+                }
+                else
+                {
+                    rbProcedureConsentYes.Checked = false;
+                    rbProcedureConsentNo.Checked = true;
+                }
+            }
         }
         catch (Exception ex)
         {

@@ -25,25 +25,28 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
         try
         {
-            caseNumber = Request.QueryString["CaseNumber"];
-            admissionId = Request.QueryString["AdmissionId"];
-            claimId = Request.QueryString["ClaimId"];
-            hdUserId.Value = Session["UserId"].ToString();
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             if (Session["UserId"] == null)
             {
                 Response.Redirect("~/Unauthorize.aspx", false);
                 return;
             }
-            if (!IsPostBack)
+            else
             {
-                if (Session["ClaimId"] != null)
+                caseNumber = Request.QueryString["CaseNumber"];
+                admissionId = Request.QueryString["AdmissionId"];
+                claimId = Request.QueryString["ClaimId"];
+                hdUserId.Value = Session["UserId"].ToString();
+                if (!IsPostBack)
                 {
-                    int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+                    if (Session["ClaimId"] != null)
+                    {
+                        int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+                    }
+                    MultiView1.SetActiveView(viewPreauth);
+                    btnPreauth.CssClass = "btn btn-warning p-3";
+                    GetPatientForPreAuthApproval();
                 }
-                MultiView1.SetActiveView(viewPreauth);
-                btnPreauth.CssClass = "btn btn-warning p-3";
-                GetPatientForPreAuthApproval();
             }
         }
         catch (Exception ex)

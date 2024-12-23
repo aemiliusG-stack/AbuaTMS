@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.Services;
 
 public partial class PPD_PPDHome : System.Web.UI.Page
 {
@@ -23,10 +19,18 @@ public partial class PPD_PPDHome : System.Web.UI.Page
         try
         {
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
-            if (!IsPostBack)
+            if (Session["UserId"] == null)
+            {
+                Response.Redirect("~/Unauthorize.aspx", false);
+                return;
+            }
+            else
             {
                 hdUserId.Value = Session["UserId"].ToString();
-                SearchAssignedCases("", "", "", CurrentDate, false);
+                if (!IsPostBack)
+                {
+                    SearchAssignedCases("", "", "", CurrentDate, false);
+                }
             }
         }
         catch (Exception ex)

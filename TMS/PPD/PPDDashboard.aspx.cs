@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using WebGrease.Css.Ast;
 
 public partial class PPD_PPDDashboard : System.Web.UI.Page
 {
@@ -27,10 +20,13 @@ public partial class PPD_PPDDashboard : System.Web.UI.Page
                 Response.Redirect("~/Unauthorize.aspx", false);
                 return;
             }
-            if (!IsPostBack)
+            else
             {
                 hdUserId.Value = Session["UserId"].ToString();
-                getDashboardData();
+                if (!IsPostBack)
+                {
+                    getDashboardData();
+                }
             }
         }
         catch (Exception ex)

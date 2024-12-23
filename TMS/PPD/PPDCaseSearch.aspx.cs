@@ -24,11 +24,15 @@ public partial class PPD_PPDCaseSearch : System.Web.UI.Page
                 Response.Redirect("~/Unauthorize.aspx", false);
                 return;
             }
-            if (!IsPostBack)
+            else
             {
                 hdUserId.Value = Session["UserId"].ToString();
-                GetPatients();
+                if (!IsPostBack)
+                {
+                    GetPatients();
+                }
             }
+            
         }
         catch (Exception ex)
         {

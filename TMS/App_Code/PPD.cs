@@ -272,6 +272,65 @@ public class PPDHelper
         return dt;
     }
 
+    public DataTable GetSurgeonDetails(string DischargeId)
+    {
+        dt.Clear();
+        string Query;
+        SqlDataAdapter sd;
+        Query = "SELECT DoctorId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+
+        string DoctorId = dt.Rows[0]["DoctorId"].ToString().Trim();
+        Query = "SELECT DISTINCT t1.Id, t1.Name, t1.RegistrationNumber, t2.Title AS Qualification, t1.MobileNumber, t3.Title AS DoctorType FROM HEM_HospitalManPowers t1 LEFT JOIN HEM_MasterQualifications t2 ON t1.QualificationId = t2.Id LEFT JOIN HEM_MasterMedicalExpertiseSubTypes t3 ON t1.MedicalSubExpertiseId = t3.Id WHERE t1.Id = @DoctorId";
+        dt.Clear();
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DoctorId", DoctorId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+    public DataTable GetAnesthetistDetails(string DischargeId)
+    {
+        dt.Clear();
+        string Query;
+        SqlDataAdapter sd;
+        Query = "SELECT AnesthetistId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+
+        DataTable dtSurgeon = dt;
+        string AnesthetistId = dtSurgeon.Rows[0]["AnesthetistId"].ToString().Trim();
+        Query = "SELECT DISTINCT t1.Id, t1.Name, t1.RegistrationNumber, t2.Title AS Qualification, t1.MobileNumber FROM HEM_HospitalManPowers t1 LEFT JOIN HEM_MasterQualifications t2 ON t1.QualificationId = t2.Id WHERE t1.Id = @AnesthetistId";
+        dt.Clear();
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@AnesthetistId", AnesthetistId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+    public DataTable GetOtherDischargeDetails(string DischargeId)
+    {
+        string Query = "SELECT t1.IncisionType, t1.OPPhotosWebexTaken, t1.VideoRecordingDone, t1.SwabCountInstrumentsCount, t1.SuturesLigatures, t1.SpecimenRequired, t1.DrainageCount, t1.BloodLoss, t1.PostOperativeInstructions, t1.PatientCondition, t1.ComplicationsIfAny, t1.TreatmentSurgeryStartDate, t1.SurgeryStartTime, t1.SurgeryEndTime, t1.TreatmentGiven, t1.OperativeFindings, t1.PostOperativePeriod, t1.PostSurgeryInvestigationGiven, t1.StatusAtDischarge, t1.Review, t1.Advice, t1.DischargeDate, t1.NextFollowUpDate, t1.ConsultAtBlock, t1.FloorNo, t1.RoomNo, t1.IsSpecialCase, t1.SpecialCaseValue, t1.FinalDiagnosis, t1.FinalDiagnosisDesc, t1.ProcedureConsent FROM TMS_DischargeDetail t1 WHERE t1.DischargeId = @DischargeId";
+        dt.Clear();
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
     public byte[] CreatePdfWithImagesInMemory(List<string> images)
     {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;

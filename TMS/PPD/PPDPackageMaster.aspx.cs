@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using CareerPath.DAL;
 
 public partial class PPD_PPDPackageMaster : System.Web.UI.Page
 {
@@ -28,11 +24,14 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
                 Response.Redirect("~/Unauthorize.aspx", false);
                 return;
             }
-            if (!IsPostBack)
+            else
             {
                 hdUserId.Value = Session["UserId"].ToString();
-                GetSpecialityName();
-                GetPackageMaster(null, null, false);
+                if (!IsPostBack)
+                {
+                    GetSpecialityName();
+                    GetPackageMaster(null, null, false);
+                }
             }
         }
         catch (Exception ex)

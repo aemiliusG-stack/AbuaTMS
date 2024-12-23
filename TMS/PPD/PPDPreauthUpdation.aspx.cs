@@ -30,16 +30,19 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
                 Response.Redirect("~/Unauthorize.aspx", false);
                 return;
             }
-            if (!IsPostBack)
+            else
             {
-                if (Session["ClaimId"] != null)
-                {
-                    int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
-                }
                 hdUserId.Value = Session["UserId"].ToString();
-                MultiView1.SetActiveView(viewPreauth);
-                btnPreauth.CssClass = "btn btn-warning p-3";
-                GetPatientForPreAuthApproval();
+                if (!IsPostBack)
+                {
+                    if (Session["ClaimId"] != null)
+                    {
+                        int affectedRows = ppdHelper.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+                    }
+                    MultiView1.SetActiveView(viewPreauth);
+                    btnPreauth.CssClass = "btn btn-warning p-3";
+                    GetPatientForPreAuthApproval();
+                }
             }
         }
         catch (Exception ex)

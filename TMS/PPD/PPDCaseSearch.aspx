@@ -206,7 +206,7 @@
                                     <div class="row ibox-content" style="background-color: #f0f0f0;">
                                         <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
                                             <img src="../images/search.svg" />
-                                            <span class="fs-6 mt-2">No Record Found</span>
+                                            <span class="mt-2">No Record Found</span>
                                             <span class="text-body-tertiary">Currently, no cases available at this moment.</span>
                                         </div>
                                     </div>
