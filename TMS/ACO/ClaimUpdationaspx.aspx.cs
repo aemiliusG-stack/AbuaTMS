@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebGrease.Css.Ast;
 
 public partial class ACO_ClaimUpdationaspx : System.Web.UI.Page
 {
@@ -14,10 +15,18 @@ public partial class ACO_ClaimUpdationaspx : System.Web.UI.Page
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
+    string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        if (Session["UserId"] == null)
         {
+            Response.Redirect("~/Unauthorize.aspx", false);
+            return;
+        }
+        else if (!IsPostBack)
+        {
+            hdUserId.Value = Session["UserId"].ToString();
+            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             LoadClaimDetails();
         }
     }
@@ -27,26 +36,40 @@ public partial class ACO_ClaimUpdationaspx : System.Web.UI.Page
 
         try
         {
-            using (SqlCommand cmd = new SqlCommand("sp_GetClaimDetails", con))
+            string UserId = Session["UserId"].ToString();
+            if (UserId != null)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                long userId;
+                if (long.TryParse(Session["UserId"].ToString(), out userId))
                 {
-                    da.Fill(dt);
+                    SqlParameter[] parameters = new SqlParameter[]
+                    {
+                    new SqlParameter("@UserId", userId)
+                    };
+                    //using (SqlCommand cmd = new SqlCommand("sp_GetClaimDetails", con))
+                    using (SqlCommand cmd = new SqlCommand("sp_GetClaimDetailsUpdated", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        // Add parameters to the command
+                        cmd.Parameters.AddRange(parameters);
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                        {
+                            da.Fill(dt);
+                        }
+                    }
+                    // Check if there is data
+                    if (dt.Rows.Count > 0)
+                    {
+                        rptClaimCases.DataSource = dt;
+                        rptClaimCases.DataBind();
+                    }
+                    else
+                    {
+                        // If no data, clear the repeater
+                        rptClaimCases.DataSource = null;
+                        rptClaimCases.DataBind();
+                    }
                 }
-            }
-            // Check if there is data
-            if (dt.Rows.Count > 0)
-            {
-                rptClaimCases.DataSource = dt;
-                rptClaimCases.DataBind();
-            }
-            else
-            {
-                // If no data, clear the repeater
-                rptClaimCases.DataSource = null;
-                rptClaimCases.DataBind();
             }
         }
         catch (Exception ex)

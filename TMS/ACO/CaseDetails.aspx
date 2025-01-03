@@ -14,6 +14,7 @@
             <div class="d-flex w-100 justify-content-center position-relative" style="margin-left: -20px;">
                 <h3 class="m-0">Patient Details</h3>
             </div>
+            <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
             <div class="text-white text-nowrap">
                 <span>Case No: </span>
                 <asp:Label ID="lbCaseNoHead" runat="server"></asp:Label>

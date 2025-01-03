@@ -62,6 +62,7 @@
                 <div class="ibox-title text-center" style="background-color: #31859c; color: white;">
                     <h4 class="m-0">Claim Cases For Approval</h4>
                 </div>
+                <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
                 <div class="ibox-content p-4 bg-light">
                     <div class="row mb-3">
                         <!-- Hospital Type -->
