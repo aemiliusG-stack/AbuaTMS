@@ -1669,6 +1669,48 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
         anamolyPanel.Visible = true;
         ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
     }
+
+    protected void btnConsent_Click(object sender, EventArgs e)
+    {
+        attachmentPanel.Visible = true;
+        anamolyPanel.Visible = false;
+        btnConsent.CssClass = "btn btn-warning p-3";
+        btnAttachment.CssClass = "btn btn-primary p-3";
+        MultiviewConsent.SetActiveView(viewConsent);
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+    }
+
+    protected void btnAttachment_Click(object sender, EventArgs e)
+    {
+        attachmentPanel.Visible = true;
+        anamolyPanel.Visible = false;
+        btnAttachment.CssClass = "btn btn-warning p-3";
+        btnConsent.CssClass = "btn btn-primary p-3";
+        MultiviewConsent.SetActiveView(viewAttachment);
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+    }
+
+    protected void btnAddMore_Click(object sender, EventArgs e)
+    {
+        //if (fuAttachmentOne.HasFile)
+        //{
+        //    panelAttachmentTwo.Visible = true;
+        //    attachmentPanel.Visible = true;
+        //    anamolyPanel.Visible = false;
+        //    btnAttachment.CssClass = "btn btn-warning p-3";
+        //    btnConsent.CssClass = "btn btn-primary p-3";
+        //    MultiviewConsent.SetActiveView(viewAttachment);
+        //    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+        //}
+        panelAttachmentTwo.Visible = true;
+        attachmentPanel.Visible = true;
+        anamolyPanel.Visible = false;
+        btnAttachment.CssClass = "btn btn-warning p-3";
+        btnConsent.CssClass = "btn btn-primary p-3";
+        MultiviewConsent.SetActiveView(viewAttachment);
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+    }
+
     protected void btnUploadConsent_Click(object sender, EventArgs e)
     {
         try

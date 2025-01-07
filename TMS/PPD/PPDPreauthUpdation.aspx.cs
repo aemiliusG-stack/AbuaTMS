@@ -1175,12 +1175,14 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
     {
         try
         {
-            DataTable dt = new DataTable();
+            DataTable dtSpecialDocument = new DataTable();
+            DataTable dtManditoryDocument = new DataTable();
             List<string> images = new List<string>();
-            dt = ppdHelper.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
-            if (dt != null && dt.Rows.Count > 0)
+            dtSpecialDocument = ppdHelper.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtManditoryDocument = ppdHelper.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value); ;
+            if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
             {
-                foreach (DataRow row in dt.Rows)
+                foreach (DataRow row in dtManditoryDocument.Rows)
                 {
                     string folderName = row["FolderName"].ToString().Trim();
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
@@ -1193,16 +1195,32 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
                         }
                     }
                 }
-                if (images.Count > 0)
+            }
+            if (dtSpecialDocument != null && dtSpecialDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtSpecialDocument.Rows)
                 {
-                    byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
-                    Response.Clear();
-                    Response.ContentType = "application/pdf";
-                    Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
-                    Response.BinaryWrite(pdfBytes);
-                    Response.Flush();
-                    HttpContext.Current.ApplicationInstance.CompleteRequest();
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
                 }
+            }
+            if (images.Count > 0)
+            {
+                byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
+                Response.Clear();
+                Response.ContentType = "application/pdf";
+                Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
+                Response.BinaryWrite(pdfBytes);
+                Response.Flush();
+                HttpContext.Current.ApplicationInstance.CompleteRequest();
             }
         }
         catch (Exception ex)
@@ -1211,4 +1229,5 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
 }

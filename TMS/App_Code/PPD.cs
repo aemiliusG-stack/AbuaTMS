@@ -15,11 +15,10 @@ using System.Collections.Generic;
 public class PPDHelper
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
     public DataTable GetAssignedCases(string UserId, string CaseNumber, string CardNumber, string FromDate, string ToDate)
     {
-        dt.Clear();
+        DataSet ds = new DataSet();
+        DataTable dt = new DataTable();
         SqlParameter[] p = new SqlParameter[5];
         p[0] = new SqlParameter("@UserId", UserId);
         p[0].DbType = DbType.String;
@@ -62,7 +61,7 @@ public class PPDHelper
 
     public DataTable GetUserDetails(string UserId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT t1.RoleName FROM TMS_Users t1 WHERE t1.UserId = @UserId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
@@ -74,7 +73,7 @@ public class PPDHelper
 
     public DataTable GetAdmissionDetails(string AdmissionId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT t1.IncentivePercentage, t1.PackageCost, t1.IncentiveAmount, t1.ImplantAmount, t1.TotalPackageCost, t2.InsurerClaimAmountRequested, t2.TrustClaimAmountRequested FROM TMS_PatientAdmissionDetail t1 INNER JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
@@ -86,7 +85,7 @@ public class PPDHelper
 
     public DataTable GetUsersByRole(string RoleId, string UserId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT UserId, CONCAT(FullName,' '+ RoleName+' ('+Username+')') AS FullName FROM TMS_Users WHERE RoleId = @RoleId AND UserId != @UserId AND IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@RoleId", RoleId);
@@ -99,7 +98,7 @@ public class PPDHelper
 
     public DataTable GetWorkFlow(string ClaimId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT t1.ActionDate, CONCAT(t2.FullName,' ',t2.RoleName) AS Role, t1.Remarks, t1.ActionTaken AS Action, t1.Amount, ISNULL(t1.RejectionReason, 'NA') AS RejectionReason FROM TMS_PatientActionHistory t1 inner join TMS_Users t2 ON t1.ActionTakenBy = t2.UserId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
@@ -111,7 +110,7 @@ public class PPDHelper
 
     public DataTable GetQueryReasons()
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT ReasonId, ReasonName FROM TMS_MasterQueryReason WHERE IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
@@ -122,7 +121,7 @@ public class PPDHelper
 
     public DataTable GetSubQueryReasons(string ReasonId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT SubReasonId, ReasonId, SubReasonName FROM TMS_MasterQuerySubReason WHERE ReasonId = @ReasonId AND IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ReasonId", ReasonId);
@@ -134,7 +133,7 @@ public class PPDHelper
 
     public DataTable GetRejectReasons()
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT RejectId, RejectName FROM TMS_MasterRejectReason WHERE IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
@@ -145,7 +144,7 @@ public class PPDHelper
 
     public DataTable GetPreauthQuery(string ClaimId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, t1.Remarks, t1.IsQueryReplied, t1.QueryReply, t1.QueryReplyDate FROM TMS_ClaimQuery t1 inner join TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId inner join TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
@@ -157,7 +156,7 @@ public class PPDHelper
 
     public DataTable GetSpecialityName()
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT PackageId, SpecialityName from TMS_MasterPackageMaster WHERE IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
@@ -168,7 +167,7 @@ public class PPDHelper
 
     public DataTable GetSpecialityBasedProcedure(string PackageId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT ProcedureId, ProcedureName from TMS_MasterPackageDetail WHERE PackageId = @PackageId AND IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
@@ -180,7 +179,7 @@ public class PPDHelper
 
     public DataTable GetPackageMaster(string PackageId, string ProcedureId) //, int OffSet, int PageSize
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "";
         if (PackageId != null && ProcedureId != null)
         {
@@ -204,7 +203,7 @@ public class PPDHelper
 
     public DataTable GetPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPreInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PreInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PreInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Pre'";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
@@ -218,7 +217,7 @@ public class PPDHelper
 
     public DataTable GetManditoryDocuments(string HospitalId, string PatientRegId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
@@ -251,7 +250,7 @@ public class PPDHelper
 
     public DataTable GetCaseCurrentAction(string ClaimId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT t1.ForwardActionInsurer, t1.ForwardActionTrust FROM TMS_ClaimMaster t1 WHERE ClaimId = @ClaimId";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
@@ -263,7 +262,7 @@ public class PPDHelper
 
     public DataTable GetDashboardData()
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustToday, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 2 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerAssignedToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 2 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerAssignedOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 2 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustAssignedToday, COUNT(CASE WHEN t2.ForwardActionTrust = 2 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustAssignedOverall,COUNT(CASE WHEN CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PreauthCountToday, COUNT(t1.AdmissionId) AS PreauthCountOverall FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
@@ -274,7 +273,7 @@ public class PPDHelper
 
     public DataTable GetSurgeonDetails(string DischargeId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query;
         SqlDataAdapter sd;
         Query = "SELECT DoctorId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
@@ -297,7 +296,7 @@ public class PPDHelper
 
     public DataTable GetAnesthetistDetails(string DischargeId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query;
         SqlDataAdapter sd;
         Query = "SELECT AnesthetistId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
@@ -322,7 +321,7 @@ public class PPDHelper
     public DataTable GetOtherDischargeDetails(string DischargeId)
     {
         string Query = "SELECT t1.IncisionType, t1.OPPhotosWebexTaken, t1.VideoRecordingDone, t1.SwabCountInstrumentsCount, t1.SuturesLigatures, t1.SpecimenRequired, t1.DrainageCount, t1.BloodLoss, t1.PostOperativeInstructions, t1.PatientCondition, t1.ComplicationsIfAny, t1.TreatmentSurgeryStartDate, t1.SurgeryStartTime, t1.SurgeryEndTime, t1.TreatmentGiven, t1.OperativeFindings, t1.PostOperativePeriod, t1.PostSurgeryInvestigationGiven, t1.StatusAtDischarge, t1.Review, t1.Advice, t1.DischargeDate, t1.NextFollowUpDate, t1.ConsultAtBlock, t1.FloorNo, t1.RoomNo, t1.IsSpecialCase, t1.SpecialCaseValue, t1.FinalDiagnosis, t1.FinalDiagnosisDesc, t1.ProcedureConsent FROM TMS_DischargeDetail t1 WHERE t1.DischargeId = @DischargeId";
-        dt.Clear();
+        DataTable dt = new DataTable();
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
         con.Open();
