@@ -51,12 +51,26 @@ public partial class ADMIN_PreAuthDocumentMaster : System.Web.UI.Page
             string SelectedData = dropDocumentFor.SelectedValue;
             if (!SelectedData.Equals("0") && !DocumentName.IsEmpty())
             {
-                md.InsertPreAuthManditoryDocument(DocumentName, SelectedData);
-                tbDocumentName.Text = "";
-                dropDocumentFor.SelectedIndex = 0;
-                strMessage = "window.alert('Document Added Successfully...!!');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetPreAuthManditoryDocument();
+
+                DataTable dt = new DataTable();
+                dt = md.CheckExistingMandateDocument(DocumentName);
+                if (dt != null)
+                {
+                    if (dt.Rows.Count > 0 && dt.Rows[0]["DocumentId"].ToString().Trim() != null)
+                    {
+                        strMessage = "window.alert('Duplicate Document Found...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        md.InsertPreAuthManditoryDocument(DocumentName, SelectedData);
+                        tbDocumentName.Text = "";
+                        dropDocumentFor.SelectedIndex = 0;
+                        strMessage = "window.alert('Document Added Successfully...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        GetPreAuthManditoryDocument();
+                    }
+                }
             }
         }
         catch (Exception ex)
@@ -96,6 +110,44 @@ public partial class ADMIN_PreAuthDocumentMaster : System.Web.UI.Page
                 lbRecordCount.Text = "Total No Records: 0";
                 gridManditoryDocument.DataSource = null;
                 gridManditoryDocument.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string SearchText = tbSearch.Text;
+            if (!SearchText.Equals(""))
+            {
+                dt.Clear();
+                dt = md.SearchPreAuthManditoryDocument(SearchText);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
+                    gridManditoryDocument.DataSource = dt;
+                    gridManditoryDocument.DataBind();
+                }
+                else
+                {
+                    lbRecordCount.Text = "Total No Records: 0";
+                    gridManditoryDocument.DataSource = null;
+                    gridManditoryDocument.DataBind();
+                }
+            }
+            else
+            {
+                GetPreAuthManditoryDocument();
             }
         }
         catch (Exception ex)
@@ -213,15 +265,28 @@ public partial class ADMIN_PreAuthDocumentMaster : System.Web.UI.Page
                 string SelectedData = dropDocumentFor.SelectedValue;
                 if (!DocumentName.Equals("") && SelectedData != null && !SelectedData.Equals("0"))
                 {
-                    md.UpdatePreAuthMandateDocument(hdDcoumentId.Value, DocumentName, SelectedData);
-                    tbDocumentName.Text = "";
-                    dropDocumentFor.SelectedIndex = 0;
-                    hdDcoumentId.Value = null;
-                    btnUpdate.Visible = false;
-                    btnAdd.Visible = true;
-                    strMessage = "window.alert('Document Updated Successfully...!!');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    GetPreAuthManditoryDocument();
+                    DataTable dt = new DataTable();
+                    dt = md.CheckExistingMandateDocument(DocumentName);
+                    if (dt != null)
+                    {
+                        if (dt.Rows.Count > 0 && dt.Rows[0]["DocumentId"].ToString().Trim() != null)
+                        {
+                            strMessage = "window.alert('Duplicate Document Found...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            md.UpdatePreAuthMandateDocument(hdDcoumentId.Value, DocumentName, SelectedData);
+                            tbDocumentName.Text = "";
+                            dropDocumentFor.SelectedIndex = 0;
+                            hdDcoumentId.Value = null;
+                            btnUpdate.Visible = false;
+                            btnAdd.Visible = true;
+                            strMessage = "window.alert('Document Updated Successfully...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            GetPreAuthManditoryDocument();
+                        }
+                    }
                 }
             }
         }

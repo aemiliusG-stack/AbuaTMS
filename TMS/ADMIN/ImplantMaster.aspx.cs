@@ -110,14 +110,27 @@ public partial class ADMIN_ImplantMaster : System.Web.UI.Page
             string ImplantAmount = tbImplantAmount.Text;
             if (!ImplantCode.Equals("") && !ImplantName.Equals("") && !ImplantCount.Equals("") && !ImplantAmount.Equals(""))
             {
-                md.InsertImplant(ImplantCode, ImplantName, ImplantCount, ImplantAmount);
-                tbImplantCode.Text = "";
-                tbImplantName.Text = "";
-                tbImplantCount.Text = "";
-                tbImplantAmount.Text = "";
-                strMessage = "window.alert('Implant Added Successfully...!!');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetImplantMasterData();
+                DataTable dt = new DataTable();
+                dt = md.CheckExistingImplant(ImplantCode, ImplantName);
+                if (dt != null)
+                {
+                    if (dt.Rows.Count > 0 && dt.Rows[0]["ImplantId"].ToString().Trim() != null)
+                    {
+                        strMessage = "window.alert('Duplicate Implant Found...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        md.InsertImplant(ImplantCode, ImplantName, ImplantCount, ImplantAmount);
+                        tbImplantCode.Text = "";
+                        tbImplantName.Text = "";
+                        tbImplantCount.Text = "";
+                        tbImplantAmount.Text = "";
+                        strMessage = "window.alert('Implant Added Successfully...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        GetImplantMasterData();
+                    }
+                }
             }
         }
         catch (Exception ex)
@@ -144,18 +157,69 @@ public partial class ADMIN_ImplantMaster : System.Web.UI.Page
                 string ImplantAmount = tbImplantAmount.Text;
                 if (!ImplantCode.Equals("") && !ImplantName.Equals("") && !ImplantCount.Equals("") && !ImplantAmount.Equals(""))
                 {
-                    md.UpdateImplant(hdImplantId.Value, ImplantCode, ImplantName, ImplantCount, ImplantAmount);
-                    tbImplantCode.Text = "";
-                    tbImplantName.Text = "";
-                    tbImplantCount.Text = "";
-                    tbImplantAmount.Text = "";
-                    hdImplantId.Value = null;
-                    btnUpdate.Visible = false;
-                    btnAddImplant.Visible = true;
-                    strMessage = "window.alert('Implant Updated Successfully...!!');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    GetImplantMasterData();
+                    DataTable dt = new DataTable();
+                    dt = md.CheckExistingImplant(ImplantCode, ImplantName);
+                    if (dt != null)
+                    {
+                        if (dt.Rows.Count > 0 && dt.Rows[0]["ImplantId"].ToString().Trim() != null)
+                        {
+                            strMessage = "window.alert('Duplicate Implant Found...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            md.UpdateImplant(hdImplantId.Value, ImplantCode, ImplantName, ImplantCount, ImplantAmount);
+                            tbImplantCode.Text = "";
+                            tbImplantName.Text = "";
+                            tbImplantCount.Text = "";
+                            tbImplantAmount.Text = "";
+                            hdImplantId.Value = null;
+                            btnUpdate.Visible = false;
+                            btnAddImplant.Visible = true;
+                            strMessage = "window.alert('Implant Updated Successfully...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            GetImplantMasterData();
+                        }
+                    }
                 }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string SearchText = tbSearch.Text;
+            if (!SearchText.Equals(""))
+            {
+                dt.Clear();
+                dt = md.SearchImplantMasterData(SearchText);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
+                    gridImplant.DataSource = dt;
+                    gridImplant.DataBind();
+                }
+                else
+                {
+                    lbRecordCount.Text = "Total No Records: 0";
+                    gridImplant.DataSource = null;
+                    gridImplant.DataBind();
+                }
+            }
+            else
+            {
+                GetImplantMasterData();
             }
         }
         catch (Exception ex)

@@ -52,12 +52,25 @@ public partial class ADMIN_MapProcedureSpecialRuleMaster : System.Web.UI.Page
             string SelectedData = dropProcedureCode.SelectedValue;
             if (!SelectedData.Equals("0") && !RuleDescription.IsEmpty())
             {
-                md.InsertProcedureSpecialRule(SelectedData, RuleDescription);
-                tbRuleDescription.Text = "";
-                dropProcedureCode.SelectedIndex = 0;
-                strMessage = "window.alert('Rule Added Successfully...!!');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetProcedureRuleMasterData();
+                DataTable dt = new DataTable();
+                dt = md.CheckExistingMapProcedureSpecialRule(SelectedData);
+                if (dt != null)
+                {
+                    if (dt.Rows.Count > 0 && dt.Rows[0]["ProcedureSpecialId"].ToString().Trim() != null)
+                    {
+                        strMessage = "window.alert('Duplicate Mapping Found...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        md.InsertProcedureSpecialRule(SelectedData, RuleDescription);
+                        tbRuleDescription.Text = "";
+                        dropProcedureCode.SelectedIndex = 0;
+                        strMessage = "window.alert('Rule Added Successfully...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        GetProcedureRuleMasterData();
+                    }
+                }
             }
         }
         catch (Exception ex)
@@ -90,15 +103,29 @@ public partial class ADMIN_MapProcedureSpecialRuleMaster : System.Web.UI.Page
                 string SelectedData = dropProcedureCode.SelectedValue;
                 if (!RuleDescription.Equals("") && SelectedData != null)
                 {
-                    md.UpdateProcedureRule(hdProcedureSpecialId.Value, SelectedData, RuleDescription);
-                    tbRuleDescription.Text = "";
-                    hdProcedureSpecialId.Value = null;
-                    dropProcedureCode.SelectedIndex = 0;
-                    btnUpdate.Visible = false;
-                    btnAdd.Visible = true;
-                    strMessage = "window.alert('Procedure Rule Updated Successfully...!!');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    GetProcedureRuleMasterData();
+                    DataTable dt = new DataTable();
+                    dt = md.CheckExistingMapProcedureSpecialRule(SelectedData);
+                    if (dt != null)
+                    {
+                        if (dt.Rows.Count > 0 && dt.Rows[0]["ProcedureSpecialId"].ToString().Trim() != null)
+                        {
+                            strMessage = "window.alert('Duplicate Mapping Found...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            md.UpdateProcedureRule(hdProcedureSpecialId.Value, SelectedData, RuleDescription);
+                            tbRuleDescription.Text = "";
+                            hdProcedureSpecialId.Value = null;
+                            dropProcedureCode.SelectedIndex = 0;
+                            btnUpdate.Visible = false;
+                            btnAdd.Visible = true;
+                            strMessage = "window.alert('Procedure Rule Updated Successfully...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            GetProcedureRuleMasterData();
+                        }
+                    }
+                    
                 }
             }
         }
@@ -200,6 +227,43 @@ public partial class ADMIN_MapProcedureSpecialRuleMaster : System.Web.UI.Page
         }
     }
 
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string SearchText = tbSearch.Text;
+            if (!SearchText.Equals(""))
+            {
+                dt.Clear();
+                dt = md.SearchProcedureRuleMasterData(SearchText);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
+                    gridSpecialRule.DataSource = dt;
+                    gridSpecialRule.DataBind();
+                }
+                else
+                {
+                    lbRecordCount.Text = "Total No Records: 0";
+                    gridSpecialRule.DataSource = null;
+                    gridSpecialRule.DataBind();
+                }
+            }
+            else
+            {
+                GetProcedureRuleMasterData();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
 
     protected void btnDelete_Click(object sender, EventArgs e)
     {

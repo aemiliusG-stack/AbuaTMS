@@ -1469,6 +1469,41 @@ public class MasterData
     /*
         Added by Nirmal.
         Table: TMS_MasterImplantMaster.
+        Searching TMS_MasterImplantMaster data.
+    */
+    public DataTable SearchImplantMasterData(string ImplantCode)
+    {
+        string Query = "SELECT ImplantId, ImplantCode, ImplantName, MaxImplant, ImplantAmount, IsActive, CreatedOn, UpdatedOn FROM TMS_MasterImplantMaster WHERE ImplantCode = @ImplantCode";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ImplantCode", ImplantCode);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MasterImplantMaster.
+        Checking duplicate record TMS_MasterImplantMaster table.
+    */
+    public DataTable CheckExistingImplant(string ImplantCode, string ImplantName)
+    {
+        string Query = "SELECT ImplantId FROM TMS_MasterImplantMaster WHERE ImplantCode = @ImplantCode AND ImplantName = @ImplantName";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ImplantCode", ImplantCode);
+        sd.SelectCommand.Parameters.AddWithValue("@ImplantName", ImplantName);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MasterImplantMaster.
         Inserting into TMS_MasterImplantMaster table.
     */
     public void InsertImplant(string ImplantCode, string ImplantName, string MaxImplant, string ImplantAmount)
@@ -1545,6 +1580,23 @@ public class MasterData
     /*
         Added by Nirmal.
         Table: TMS_MasterPreAuthMandatoryDocument.
+        Checking duplicate record TMS_MasterPreAuthMandatoryDocument table.
+    */
+    public DataTable CheckExistingMandateDocument(string DocumentName)
+    {
+        string Query = "SELECT DocumentId FROM TMS_MasterPreAuthMandatoryDocument WHERE DocumentName = @DocumentName";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DocumentName", DocumentName);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MasterPreAuthMandatoryDocument.
         Inserting data into TMS_MasterPreAuthMandatoryDocument.
     */
     public void InsertPreAuthManditoryDocument(string DocumentName, string DocumentFor)
@@ -1567,6 +1619,23 @@ public class MasterData
     {
         string Query = "SELECT DocumentId, DocumentName, DocumentFor, IsActive, IsDeleted, CreatedOn, UpdatedOn FROM TMS_MasterPreAuthMandatoryDocument ORDER BY DocumentId DESC";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MasterPreAuthMandatoryDocument.
+        Searching TMS_MasterPreAuthMandatoryDocument data.
+    */
+    public DataTable SearchPreAuthManditoryDocument(string DocumentName)
+    {
+        string Query = "SELECT DocumentId, DocumentName, DocumentFor, IsActive, IsDeleted, CreatedOn, UpdatedOn FROM TMS_MasterPreAuthMandatoryDocument WHERE DocumentName = @DocumentName";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DocumentName", DocumentName);
         con.Open();
         sd.Fill(ds);
         con.Close();
@@ -1617,6 +1686,23 @@ public class MasterData
     /*
         Added by Nirmal.
         Table: TMS_MapProcedureSpecialRule.
+        Checking duplicate record TMS_MapProcedureSpecialRule table.
+    */
+    public DataTable CheckExistingMapProcedureSpecialRule(string ProcedureId)
+    {
+        string Query = "SELECT ProcedureSpecialId FROM TMS_MapProcedureSpecialRule WHERE ProcedureId = @ProcedureId";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MapProcedureSpecialRule.
         Inserting data into TMS_MapProcedureSpecialRule.
     */
     public void InsertProcedureSpecialRule(string ProcedureId, string RuleDescription)
@@ -1639,6 +1725,23 @@ public class MasterData
     {
         string Query = "SELECT t1.ProcedureSpecialId, t1.ProcedureId, t2.ProcedureCode, t1.RuleDescription, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn FROM TMS_MapProcedureSpecialRule t1 INNER JOIN  TMS_MasterPackageDetail t2 ON t1.ProcedureId = t2.ProcedureId ORDER BY ProcedureSpecialId DESC";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MapProcedureSpecialRule.
+        Searching TMS_MapProcedureSpecialRule data.
+    */
+    public DataTable SearchProcedureRuleMasterData(string ProcedureCode)
+    {
+        string Query = "SELECT t1.ProcedureSpecialId, t1.ProcedureId, t2.ProcedureCode, t1.RuleDescription, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn FROM TMS_MapProcedureSpecialRule t1 INNER JOIN  TMS_MasterPackageDetail t2 ON t1.ProcedureId = t2.ProcedureId WHERE t2.ProcedureCode = @ProcedureCode";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ProcedureCode", ProcedureCode);
         con.Open();
         sd.Fill(ds);
         con.Close();
@@ -1695,6 +1798,41 @@ public class MasterData
     {
         string Query = "SELECT t1.ProcedurePrimaryId, t1.ProcedureId, t1.AddOnPrimaryId, t2.ProcedureCode, t3.ProcedureCode AS AddOnProcedureCode, t1.Remarks, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn FROM TMS_MapProcedureAddOnPrimary t1 INNER JOIN TMS_MasterPackageDetail t2 ON t1.ProcedureId = t2.ProcedureId INNER JOIN TMS_MasterPackageDetail t3 ON t1.AddOnPrimaryId = t3.ProcedureId INNER JOIN TMS_MasterPackageMaster t4 ON t2.PackageId = t4.PackageId ORDER BY t1.ProcedurePrimaryId DESC";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MapProcedureAddOnPrimary.
+        Searching TMS_MapProcedureAddOnPrimary data.
+    */
+    public DataTable SearchProcedureAddOnPrimaryMasterData(string ProcedureCode)
+    {
+        string Query = "SELECT t1.ProcedurePrimaryId, t1.ProcedureId, t1.AddOnPrimaryId, t2.ProcedureCode, t3.ProcedureCode AS AddOnProcedureCode, t1.Remarks, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn FROM TMS_MapProcedureAddOnPrimary t1 INNER JOIN TMS_MasterPackageDetail t2 ON t1.ProcedureId = t2.ProcedureId INNER JOIN TMS_MasterPackageDetail t3 ON t1.AddOnPrimaryId = t3.ProcedureId INNER JOIN TMS_MasterPackageMaster t4 ON t2.PackageId = t4.PackageId WHERE t2.ProcedureCode = @ProcedureCode OR t3.ProcedureCode = @ProcedureCode";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ProcedureCode", ProcedureCode);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_MapProcedureAddOnPrimary.
+        Checking duplicate record TMS_MapProcedureAddOnPrimary table.
+    */
+    public DataTable CheckExistingMapProcedureAddOnPrimary(string ProcedureId, string AddOnPrimaryId)
+    {
+        string Query = "SELECT ProcedurePrimaryId FROM TMS_MapProcedureAddOnPrimary WHERE ProcedureId = @ProcedureId AND AddOnPrimaryId = @AddOnPrimaryId";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        sd.SelectCommand.Parameters.AddWithValue("@AddOnPrimaryId", AddOnPrimaryId);
         con.Open();
         sd.Fill(ds);
         con.Close();

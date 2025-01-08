@@ -54,13 +54,26 @@ public partial class ADMIN_MapProcedureAddOnPrimaryMaster : System.Web.UI.Page
 
             if (!selectedProcedure.Equals("0") && !selectedAddOnProcedure.Equals("0") && !Remarks.IsEmpty())
             {
-                md.InsertMapProcedureAddOnPrimary(selectedProcedure, selectedAddOnProcedure, Remarks);
-                tbRemarks.Text = "";
-                dropProcedureCode.SelectedIndex = 0;
-                dropProcedureCodeAddOn.SelectedIndex = 0;
-                strMessage = "window.alert('Map Procedure Added Successfully...!!');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetProcedureAddOnPrimaryMasterData();
+                DataTable dt = new DataTable();
+                dt = md.CheckExistingMapProcedureAddOnPrimary(selectedProcedure, selectedAddOnProcedure);
+                if (dt != null)
+                {
+                    if (dt.Rows.Count > 0 && dt.Rows[0]["ProcedurePrimaryId"].ToString().Trim() != null)
+                    {
+                        strMessage = "window.alert('Duplicate Mapping Found...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        md.InsertMapProcedureAddOnPrimary(selectedProcedure, selectedAddOnProcedure, Remarks);
+                        tbRemarks.Text = "";
+                        dropProcedureCode.SelectedIndex = 0;
+                        dropProcedureCodeAddOn.SelectedIndex = 0;
+                        strMessage = "window.alert('Map Procedure Added Successfully...!!');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        GetProcedureAddOnPrimaryMasterData();
+                    }
+                }
             }
         }
         catch (Exception ex)
@@ -95,16 +108,30 @@ public partial class ADMIN_MapProcedureAddOnPrimaryMaster : System.Web.UI.Page
                 string selectedAddOnProcedure = dropProcedureCodeAddOn.SelectedValue;
                 if (!Remarks.Equals("") && selectedProcedure != null && !selectedProcedure.Equals("0") && selectedAddOnProcedure != null && !selectedAddOnProcedure.Equals("0"))
                 {
-                    md.UpdateMapProcedureAddOnPrimary(hdProcedurePrimaryId.Value, selectedProcedure, selectedAddOnProcedure, Remarks);
-                    tbRemarks.Text = "";
-                    dropProcedureCode.SelectedIndex = 0;
-                    dropProcedureCodeAddOn.SelectedIndex = 0;
-                    hdProcedurePrimaryId.Value = null;
-                    btnUpdate.Visible = false;
-                    btnAdd.Visible = true;
-                    strMessage = "window.alert('Mapping Updated Successfully...!!');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    GetProcedureAddOnPrimaryMasterData();
+                    DataTable dt = new DataTable();
+                    dt = md.CheckExistingMapProcedureAddOnPrimary(selectedProcedure, selectedAddOnProcedure);
+                    if (dt != null)
+                    {
+                        if (dt.Rows.Count > 0 && dt.Rows[0]["ProcedurePrimaryId"].ToString().Trim() != null)
+                        {
+                            strMessage = "window.alert('Duplicate Mapping Found...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            md.UpdateMapProcedureAddOnPrimary(hdProcedurePrimaryId.Value, selectedProcedure, selectedAddOnProcedure, Remarks);
+                            tbRemarks.Text = "";
+                            dropProcedureCode.SelectedIndex = 0;
+                            dropProcedureCodeAddOn.SelectedIndex = 0;
+                            hdProcedurePrimaryId.Value = null;
+                            btnUpdate.Visible = false;
+                            btnAdd.Visible = true;
+                            strMessage = "window.alert('Mapping Updated Successfully...!!');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            GetProcedureAddOnPrimaryMasterData();
+                        }
+                    }
+                    
                 }
             }
         }
@@ -179,6 +206,44 @@ public partial class ADMIN_MapProcedureAddOnPrimaryMaster : System.Web.UI.Page
                 lbRecordCount.Text = "Total No Records: 0";
                 gridAddOnPrimary.DataSource = null;
                 gridAddOnPrimary.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string SearchText = tbSearch.Text;
+            if (!SearchText.Equals(""))
+            {
+                dt.Clear();
+                dt = md.SearchProcedureAddOnPrimaryMasterData(SearchText);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
+                    gridAddOnPrimary.DataSource = dt;
+                    gridAddOnPrimary.DataBind();
+                }
+                else
+                {
+                    lbRecordCount.Text = "Total No Records: 0";
+                    gridAddOnPrimary.DataSource = null;
+                    gridAddOnPrimary.DataBind();
+                }
+            }
+            else
+            {
+                GetProcedureAddOnPrimaryMasterData();
             }
         }
         catch (Exception ex)

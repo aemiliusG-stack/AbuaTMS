@@ -44,7 +44,16 @@
                     </div>
                     <div class="card mt-4">
                         <div class="card-body">
-                            <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold m-0"></asp:Label>
+                                <div class="d-flex align-items-center">
+                                    <asp:TextBox runat="server" ID="tbSearch" class="form-control" OnKeypress="return isAlphaNumeric(event)" placeholder="Search..."></asp:TextBox>
+                                    <asp:LinkButton ID="btnSearch" runat="server"
+                                        Style="font-size: 12px; margin-left: 10px;" OnClick="btnSearch_Click">
+                                        <asp:Label ID="Label2" runat="server" Text='Search' CssClass="btn btn-success btn-sm rounded-pill"></asp:Label>
+                                    </asp:LinkButton>
+                                </div>
+                            </div>
                             <div class="table-responsive mt-2">
                                 <asp:GridView ID="gridImplant" runat="server" AllowPaging="True" OnPageIndexChanging="gridImplant_PageIndexChanging" OnRowDataBound="gridImplant_RowDataBound" PageSize="10" AutoGenerateColumns="False" Width="100%" CssClass="table table-bordered table-striped">
                                     <alternatingrowstyle backcolor="Gainsboro" />
@@ -102,7 +111,7 @@
                                             <itemtemplate>
                                                 <asp:LinkButton ID="btnDelete" runat="server"
                                                     Style="font-size: 12px;" OnClick="btnDelete_Click">
-                                                    <asp:Label ID="lbStatus" runat="server" Text='<%# Eval("IsActive") %>' CssClass="btn btn-success btn-sm rounded-pill"></asp:Label>
+                                                    <asp:Label ID="lbStatus" runat="server" Text='<%# Eval("IsActive") %>' CssClass="btn btn-success btn-sm rounded-pill" style="padding: 4px 15px;"></asp:Label>
                                                 </asp:LinkButton>
                                             </itemtemplate>
                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
@@ -112,13 +121,12 @@
                                             <itemtemplate>
                                                 <asp:Label ID="lbImplantId" runat="server" Text='<%# Eval("ImplantId") %>' Visible="false"></asp:Label>
                                                 <asp:LinkButton ID="btnEdit" runat="server"
-                                                    CssClass="btn btn-success btn-sm rounded-pill"
                                                     Style="font-size: 12px;" OnClick="btnEdit_Click">
-                                                    <span class="bi bi-pencil"></span>
+                                                    <asp:Label ID="Label1" runat="server" Text='Edit' CssClass="btn btn-warning btn-sm rounded-pill" style="padding: 4px 15px;"></asp:Label>
                                                 </asp:LinkButton>
                                             </itemtemplate>
                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                            <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
                                         </asp:TemplateField>
                                     </columns>
                                 </asp:GridView>
