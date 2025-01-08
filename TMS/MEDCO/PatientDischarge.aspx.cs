@@ -8,6 +8,7 @@ using System.Web.Security;
 using System.Web;
 using CareerPath.DAL;
 using iText.IO.Image;
+using System.IO;
 
 public partial class MEDCO_PatientDischarge : System.Web.UI.Page
 {
@@ -81,7 +82,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             Label lbGridCardNo = (Label)gridPatientForDischarge.Rows[i].FindControl("lbCardNo");
             //Label lbGridCardNo = (Label)gridPatientForDischarge.Rows[i].FindControl("lbPatientCardNo");
             hdPatientRegId.Value = lbGridPatientRegId.Text;
-            hdAdmissionId.Value = lbGridPatientRegId.Text;
+            hdAdmissionId.Value = lbGridAdmissionId.Text;
             hdClaimId.Value = lbClaimId.Text;
             hdAbuaId.Value = lbGridCardNo.Text;
 
@@ -102,7 +103,43 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 lbAadharVerified.Text = dt.Rows[0]["IsAadharVerified"].ToString();
                 lbBiometricVerified.Text = dt.Rows[0]["IsBiometricVerified"].ToString();
                 lbPatientDistrict.Text = dt.Rows[0]["District"].ToString();
-                
+
+                string patientImageBase64 = Convert.ToString(dt.Rows[0]["ImageURL"].ToString());
+                string folderName = hdAbuaId.Value;
+                string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
+                string base64String = "";
+
+                string imageBaseUrl = ConfigurationManager.AppSettings["ImageUrlPath"];
+                string imageUrl = string.Format("{0}{1}/{2}", imageBaseUrl, folderName, imageFileName);
+                if (File.Exists(imageUrl))
+                {
+                    base64String = preAuth.DisplayImage(folderName, imageFileName);
+                    if (base64String != "")
+                        imgPatient.ImageUrl = "data:image/jpeg;base64," + base64String;
+                    else
+                        imgPatient.ImageUrl = "~/img/profile.jpeg";
+                }
+
+
+                patientImageBase64 = Convert.ToString(dt.Rows[0]["ChildImageURL"].ToString());
+                imageFileName = hdAbuaId.Value + "_Profile_Image_Child.jpeg";
+                imageUrl = string.Format("{0}{1}/{2}", imageBaseUrl, folderName, imageFileName);
+                if (File.Exists(imageUrl))
+                {
+                    base64String = "";
+                    base64String = preAuth.DisplayImage(folderName, imageFileName);
+
+                    if (base64String != "")
+                    {
+                        imgChild.ImageUrl = "data:image/jpeg;base64," + base64String;
+                        imgChild.Visible = true;
+                    }
+                    else
+                    {
+                        imgChild.ImageUrl = "~/img/profile.jpeg";
+                        imgChild.Visible = false;
+                    }
+                }
             }
             MultiView1.SetActiveView(viewDischarge);
         }
@@ -195,6 +232,42 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     protected void btnRequestEnhancement_Click(object sender, EventArgs e)
     {
         MultiView3.SetActiveView(viewEnhancement);
+    }
+
+    protected void btnInitiateEnhancement_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            SqlParameter[] p = new SqlParameter[8];
+            p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+            p[0].DbType = DbType.String;
+            p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+            p[1].DbType = DbType.String;
+            p[2] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
+            p[2].DbType = DbType.String;
+            p[3] = new SqlParameter("@ClaimId", hdClaimId.Value);
+            p[3].DbType = DbType.String;
+            p[4] = new SqlParameter("@StratificationId", hdHospitalId.Value);
+            p[4].DbType = DbType.String;
+            p[5] = new SqlParameter("@FromDate", hdHospitalId.Value);
+            p[5].DbType = DbType.String;
+            p[6] = new SqlParameter("@ToDate", hdAdmissionId.Value);
+            p[6].DbType = DbType.String;
+            p[7] = new SqlParameter("@Remarks", hdAdmissionId.Value);
+            p[7].DbType = DbType.String;
+
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientDischargeDetails", p);
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+        }
     }
 
     protected void btnChangeWard_Click(object sender, EventArgs e)
@@ -459,9 +532,9 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 SqlParameter[] p = new SqlParameter[40];
                 p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
                 p[0].DbType = DbType.String;
-                p[1] = new SqlParameter("@PatientRegId", hdAdmissionId.Value);
+                p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
                 p[1].DbType = DbType.String;
-                p[2] = new SqlParameter("@AdmissionId", hdPatientRegId.Value);
+                p[2] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
                 p[2].DbType = DbType.String;
                 p[3] = new SqlParameter("@ClaimId", hdClaimId.Value);
                 p[3].DbType = DbType.String;

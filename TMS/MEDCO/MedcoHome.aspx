@@ -126,5 +126,6 @@
     <asp:HiddenField ID="hdMasterUserId" runat="server" Visible="false" />
     <asp:HiddenField ID="hdMasterRoleId" runat="server" Visible="false" />
     <asp:HiddenField ID="hdMasterRoleName" runat="server" Visible="false" />
+    <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
 </asp:Content>
 

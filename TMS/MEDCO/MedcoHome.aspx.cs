@@ -78,6 +78,7 @@ public partial class MEDCO_MedcoHome : System.Web.UI.Page
                     hdMasterUserId.Value = Session["UserId"].ToString();
                     hdMasterRoleId.Value = Session["RoleId"].ToString();
                     hdMasterRoleName.Value = Session["RoleName"].ToString();
+                    hdHospitalId.Value = Session["HospitalId"].ToString();
                     getDashboardData();
                 }
                 else
@@ -100,7 +101,7 @@ public partial class MEDCO_MedcoHome : System.Web.UI.Page
     {
         try
         {
-            dt = lm.getMEDCODashboardData();
+            dt = lm.getMEDCODashboardData(Convert.ToInt32(hdHospitalId.Value));
             if (dt.Rows.Count > 0)
             {
                 lbTodayPatientRegistered.Text = dt.Rows[0]["PatientRegistered_Today"].ToString();

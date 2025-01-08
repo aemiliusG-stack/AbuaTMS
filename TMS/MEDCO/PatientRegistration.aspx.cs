@@ -11,6 +11,7 @@ using System.Web.UI;
 using System.Web.Security;
 using System.Web;
 using WebGrease.Css.Ast;
+using System.Net;
 
 partial class MEDCO_PatientRegistration : System.Web.UI.Page
 {
@@ -119,7 +120,19 @@ partial class MEDCO_PatientRegistration : System.Web.UI.Page
                 if (ds.Tables[0].Rows[0]["checkId"].ToString() == "0")
                 {
                     string benId = tbIdNumber.Text;
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
 
+                    HttpClientHandler handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
+                        {
+                            // Log or inspect errors for debugging
+                            Console.WriteLine(sslPolicyErrors);
+                            // Ignore certificate validation errors (only for testing)
+                            return true;
+                        }
+                    };
+                    HttpClient _httpClient = new HttpClient(handler);
                     // Setup the request with headers
                     var request = new HttpRequestMessage(HttpMethod.Get, _baseUrl + benId);
                     request.Headers.Add("accept", "*/*");
@@ -531,7 +544,7 @@ RegisterPatient:
                     IsChildImage = 0;
                 }
             }
-            else
+            else if (fuRationCard.HasFile)
             {
                 string fileExtension = Path.GetExtension(fuRationCard.FileName).ToLower();
                 if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")

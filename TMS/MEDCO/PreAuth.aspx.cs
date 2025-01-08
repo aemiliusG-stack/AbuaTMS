@@ -6,10 +6,7 @@ using CareerPath.DAL;
 using System.Configuration;
 using System.Web.UI.WebControls;
 using System.Web.UI;
-using System.Web.Security;
-using System.Web;
 using System.Linq;
-using WebGrease.Activities;
 partial class MEDCO_PreAuth : System.Web.UI.Page
 {
     private string strMessage;
@@ -42,6 +39,7 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                     getRegisteredPatient();
                     getPrimaryDiagnosis();
                     getSecondaryDiagnosis();
+                    divChild.Visible = false;
                     //ShowPreInvestigationDocuments();
                     MultiView1.SetActiveView(viewRegisteredPatient);
                     MultiView2.SetActiveView(View1);
@@ -159,12 +157,41 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                     string folderName = hdAbuaId.Value;
                     string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
                     string base64String = "";
-
                     base64String = preAuth.DisplayImage(folderName, imageFileName);
                     if (base64String != "")
                         imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
                     else
                         imgPatientPhoto.ImageUrl = "~/img/profile.jpeg";
+
+                    //Child Details
+                    if (dt.Rows[0]["IsChild"].ToString() == "True")
+                    {
+                        lbChildName.Text = dt.Rows[0]["ChildName"].ToString();
+                        lbChildDOB.Text = dt.Rows[0]["ChildDOB"].ToString();
+                        patientImageBase64 = Convert.ToString(dt.Rows[0]["ChildImageURL"].ToString());
+                        imageFileName = hdAbuaId.Value + "_Profile_Image_Child.jpeg";
+
+                        base64String = "";
+                        base64String = preAuth.DisplayImage(folderName, imageFileName);
+
+                        if (base64String != "")
+                        {
+                            imgChildPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
+                            imgChildPhoto.Visible = true;
+                        }
+                        else
+                        {
+                            imgChildPhoto.ImageUrl = "~/img/profile.jpeg";
+                            imgChildPhoto.Visible = false;
+                        }
+                    }
+                    else
+                    {
+                        imgChildPhoto.Visible = true;
+                        divChild.Visible = false;
+                        imgChildPhoto.Visible = false;
+                    }
+
                     getPatientPrimaryDiagnosis();
                     getPatientSecondaryDiagnosis();
                     dt.Clear();
@@ -236,6 +263,10 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
             strMessage = "window.alert('Patient already removed! Please reolad the page');";
             ScriptManager.RegisterStartupScript(btnUploadPreInvestigationFile, btnUploadPreInvestigationFile.GetType(), "Error", strMessage, true);
         }
+    }
+    protected void lnkBackToList_Click(object sender, EventArgs e)
+    {
+        MultiView1.SetActiveView(viewRegisteredPatient);
     }
     protected void showGeneralFindingModal_Click(object sender, EventArgs e)
     {
@@ -1255,6 +1286,8 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                             ShowPreInvestigationDocuments();
                             panelStratification.Visible = false;
                             panelImplant.Visible = false;
+                            dropPackageMaster.SelectedValue = "0";
+                            dropProcedure.Items.Clear();
                             strMessage = "window.alert('Added successfully!');";
                             ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "Error", strMessage, true);
                         }
@@ -1336,12 +1369,48 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
             i = row.RowIndex;
             Label lbPackageId = (Label)gridAddedpackageProcedure.Rows[i].FindControl("lbPackageId");
             Label lbProcedureId = (Label)gridAddedpackageProcedure.Rows[i].FindControl("lbProcedureId");
-            int rowsAffected = 0;
-            rowsAffected = preAuth.DeleteAddedProcedure(hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbPackageId.Text), Convert.ToInt32(lbProcedureId.Text));
-            getAddedProcedure();
-            ShowPreInvestigationDocuments();
-            strMessage = "window.alert('Removed successfully!');";
-            ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "Error", strMessage, true);
+            //int rowsAffected = 0;
+            //rowsAffected = preAuth.DeleteAddedProcedure(hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbPackageId.Text), Convert.ToInt32(lbProcedureId.Text));
+            SqlParameter[] p = new SqlParameter[5];
+            p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+            p[0].DbType = DbType.String;
+            p[1] = new SqlParameter("@CardNumber", hdAbuaId.Value);
+            p[1].DbType = DbType.String;
+            p[2] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+            p[2].DbType = DbType.String;
+            p[3] = new SqlParameter("@PackageId", Convert.ToInt32(lbPackageId.Text));
+            p[3].DbType = DbType.String;
+            p[4] = new SqlParameter("@ProcedureId", Convert.ToInt32(lbProcedureId.Text));
+            p[4].DbType = DbType.String;
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthRemovePackage", p);
+            if (con.State == ConnectionState.Open)
+                con.Close();
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                lbPackageCost.Text = ds.Tables[0].Rows[0]["ProcedureAmount"].ToString();
+                lbIncentiveAmount.Text = ds.Tables[0].Rows[0]["IncentiveAmount"].ToString();
+                lbTotalPackageCost.Text = ds.Tables[0].Rows[0]["TotalPackageCost"].ToString();
+                lbHospitalIncentivePercentage.Text = ds.Tables[0].Rows[0]["IncentivePercentage"].ToString();
+                getAddedProcedure();
+                ShowPreInvestigationDocuments();
+                dropPackageMaster.SelectedValue = "0";
+                dropProcedure.Items.Clear();
+                strMessage = "window.alert('Removed successfully!');";
+                ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "Error", strMessage, true);
+            }
+            else
+            {
+                lbPackageCost.Text = "0";
+                lbIncentiveAmount.Text = "0";
+                lbTotalPackageCost.Text = "0";
+                lbHospitalIncentivePercentage.Text = "0";
+                getAddedProcedure();
+                ShowPreInvestigationDocuments();
+                dropPackageMaster.SelectedValue = "0";
+                dropProcedure.Items.Clear();
+                strMessage = "window.alert('Removed successfully!');";
+                ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "Error", strMessage, true);
+            }
         }
         catch (Exception ex)
         {
@@ -1669,48 +1738,6 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
         anamolyPanel.Visible = true;
         ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
     }
-
-    protected void btnConsent_Click(object sender, EventArgs e)
-    {
-        attachmentPanel.Visible = true;
-        anamolyPanel.Visible = false;
-        btnConsent.CssClass = "btn btn-warning p-3";
-        btnAttachment.CssClass = "btn btn-primary p-3";
-        MultiviewConsent.SetActiveView(viewConsent);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
-    }
-
-    protected void btnAttachment_Click(object sender, EventArgs e)
-    {
-        attachmentPanel.Visible = true;
-        anamolyPanel.Visible = false;
-        btnAttachment.CssClass = "btn btn-warning p-3";
-        btnConsent.CssClass = "btn btn-primary p-3";
-        MultiviewConsent.SetActiveView(viewAttachment);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
-    }
-
-    protected void btnAddMore_Click(object sender, EventArgs e)
-    {
-        //if (fuAttachmentOne.HasFile)
-        //{
-        //    panelAttachmentTwo.Visible = true;
-        //    attachmentPanel.Visible = true;
-        //    anamolyPanel.Visible = false;
-        //    btnAttachment.CssClass = "btn btn-warning p-3";
-        //    btnConsent.CssClass = "btn btn-primary p-3";
-        //    MultiviewConsent.SetActiveView(viewAttachment);
-        //    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
-        //}
-        panelAttachmentTwo.Visible = true;
-        attachmentPanel.Visible = true;
-        anamolyPanel.Visible = false;
-        btnAttachment.CssClass = "btn btn-warning p-3";
-        btnConsent.CssClass = "btn btn-primary p-3";
-        MultiviewConsent.SetActiveView(viewAttachment);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
-    }
-
     protected void btnUploadConsent_Click(object sender, EventArgs e)
     {
         try
@@ -2192,6 +2219,13 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                     con.Close();
                 if (ds.Tables[0].Rows.Count > 0)
                 {
+                    if (ds.Tables[0].Rows[0]["Id"].ToString() == "0")
+                    {
+                        strMessage = "window.alert('Wallet Balance is Low! Remaining Balance is: " + ds.Tables[0].Rows[0]["RemainingBalance"].ToString() + "');";
+                        ScriptManager.RegisterStartupScript(btnSubmitAdmission, btnSubmitAdmission.GetType(), "Error", strMessage, true);
+                    }
+                    else if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
+                    {
                     panelStratification.Visible = false;
                     panelImplant.Visible = false;
                     getRegisteredPatient();
@@ -2215,7 +2249,8 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                     string caseNumber = ds.Tables[0].Rows[0]["CaseNumber"].ToString();
                     string strMessage = "window.alert('Admission Successful! Case No.: " + caseNumber.Replace("'", "\\'") + "');";
                     ScriptManager.RegisterStartupScript(btnSubmitAdmission, btnSubmitAdmission.GetType(), "AlertMessage", strMessage, true);
-                    //ShowPreInvestigationDocuments();
+                        //ShowPreInvestigationDocuments();
+                    }
                 }
                 else
                 {
