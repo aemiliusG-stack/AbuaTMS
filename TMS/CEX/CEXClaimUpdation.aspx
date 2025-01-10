@@ -492,24 +492,77 @@
                                                 </div>
                                             </div>
                                             <%--work Flow--%>
-                                            <div class="ibox">
-                                                <div class="ibox-title d-flex justify-content-between align-items-center text-white">
-                                                    <div class="w-100 text-center">
-                                                        <h3 class="m-0">Work Flow</h3>
+                                            <div class="ibox-content">
+                                                <div class="row">
+                                                    <div class="table-responsive">
+                                                        <asp:GridView ID="gvPreauthWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                            <AlternatingRowStyle BackColor="Gainsboro" />
+                                                            <Columns>
+                                                                <asp:TemplateField HeaderText="Sl No.">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbSlNoPriauth" runat="server" Text='<%# Container.DataItemIndex+1 %>'></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                </asp:TemplateField>
+                                                                <asp:TemplateField HeaderText="Date And Time">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbPreActionDate" runat="server" Text='<%# Eval("ActionDate") %>'></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                </asp:TemplateField>
+
+                                                                <asp:TemplateField HeaderText="Role Name">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbPreRoleName" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                </asp:TemplateField>
+
+                                                                <asp:TemplateField HeaderText="Remarks">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbPreRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                </asp:TemplateField>
+
+                                                                <asp:TemplateField HeaderText="Action">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbPreActionTaken" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                </asp:TemplateField>
+
+                                                                <asp:TemplateField HeaderText="Approved Amount(Rs.)">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbPreAmount" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                </asp:TemplateField>
+
+                                                                <asp:TemplateField HeaderText="PreAuth Query/Rejection Reasons">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbPreRejectionReason" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                </asp:TemplateField>
+                                                            </Columns>
+                                                        </asp:GridView>
                                                     </div>
                                                 </div>
-                                                <div class="ibox-content">
-                                                    <asp:GridView ID="GridWorkflow" runat="server" CssClass="table table-bordered" AutoGenerateColumns="false">
-                                                        <Columns>
-                                                            <asp:BoundField DataField="S No" HeaderText="S No" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Date and Time" HeaderText="Date and Time" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Role" HeaderText="Role" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Remarks" HeaderText="Remarks" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Action" HeaderText="Action" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Amount" HeaderText="Amount(Rs)" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Preauth Querry Rejection" HeaderText="Preauth Querry Rejection" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                        </Columns>
-                                                    </asp:GridView>
+                                                <div style="margin-top: 20px;">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                            I have reviewed the cases with the best of my knowledge and have validated all documents before making any decision
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="form-group mb-0 d-flex align-items-center">
@@ -532,35 +585,31 @@
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Doctor Type</span><br />
-                                                                <asp:DropDownList ID="dropDocType" runat="server" CssClass="form-control">
-                                                                    <asp:ListItem>Other</asp:ListItem>
-                                                                </asp:DropDownList>
+                                                                <asp:Label ID="lbDocType" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Name</span><br />
-                                                                <asp:DropDownList ID="dropDocName" runat="server" CssClass="form-control">
-                                                                    <asp:ListItem>Dr. Sanjeet Anand(1759)</asp:ListItem>
-                                                                </asp:DropDownList>
+                                                                <asp:Label ID="lbDoctorName" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Regn No</span><br />
-                                                                <asp:Label ID="lbRegnNo" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="1759"></asp:Label>
+                                                                <asp:Label ID="lbDocRegnNo" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Qualification</span><br />
-                                                                <asp:Label ID="lbQualification" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                <asp:Label ID="lbDocQualification" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Contact No</span><br />
-                                                                <asp:Label ID="lbContactNo" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                <asp:Label ID="lbDocContactNo" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -578,29 +627,25 @@
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Anaesthetist Name</span><br />
-                                                                <asp:DropDownList ID="dropAnaesthetistName" runat="server" CssClass="form-control">
-                                                                    <asp:ListItem>Select</asp:ListItem>
-                                                                </asp:DropDownList>
+                                                                <asp:Label ID="lbAnaesthetistName" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Regn No</span><br />
-                                                                <asp:Label ID="lbAnaesthetistRegNo" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="1759"></asp:Label>
+                                                                <asp:Label ID="lbAnaesthetistRegNo" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Contact No</span><br />
-                                                                <asp:Label ID="lbAnaesthetistContactNo" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                <asp:Label ID="lbAnaesthetistContactNo" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Anaesthetist Type</span><br />
-                                                                <asp:DropDownList ID="dropAnaesthetistType" runat="server" CssClass="form-control">
-                                                                    <asp:ListItem>Select</asp:ListItem>
-                                                                </asp:DropDownList>
+                                                                <asp:Label ID="lbAnaesthetistType" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -618,7 +663,7 @@
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Incision type</span><br />
-                                                                <asp:Label ID="lbIncisionType" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                <asp:Label ID="lbIncisionType" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -701,10 +746,10 @@
                                                                 <span class="font-weight-bold text-dark">Complications If Any</span><br />
                                                                 <div class="d-flex">
                                                                     <div class="form-check form-check-inline me-2">
-                                                                        <asp:RadioButton ID="rbComplicationsYes" runat="server" GroupName="ComplicationIfAny" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbComplicationsYes" runat="server" GroupName="ComplicationIfAny" Enabled="false" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
                                                                     </div>
                                                                     <div class="form-check form-check-inline">
-                                                                        <asp:RadioButton ID="rbComplicationsNo" runat="server" GroupName="ComplicationIfAny" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbComplicationsNo" runat="server" GroupName="ComplicationIfAny" Enabled="false" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -724,19 +769,19 @@
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Traetment/Surgery Date</span><br />
-                                                                <asp:Label ID="lbTraetmentDate" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="14/08/2024"></asp:Label>
+                                                                <asp:Label ID="lbTraetmentDate" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Surgery Start Time</span><br />
-                                                                <asp:TextBox ID="tbSurgeryStartTime" runat="server" TextMode="Time" CssClass="form-control"></asp:TextBox>
+                                                                <asp:TextBox ID="tbSurgeryStartTime" runat="server" TextMode="Time" CssClass="form-control" Enabled="false"></asp:TextBox>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Surgery End Time</span><br />
-                                                                <asp:TextBox ID="tbSurgeryEndTime" runat="server" TextMode="Time" CssClass="form-control"></asp:TextBox>
+                                                                <asp:TextBox ID="tbSurgeryEndTime" runat="server" TextMode="Time" CssClass="form-control" Enabled="false"></asp:TextBox>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -773,7 +818,7 @@
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Traetment Given</span><br />
-                                                                <asp:TextBox ID="ybTreatmentGiven" ReadOnly="true" runat="server" TextMode="MultiLine" CssClass="form-control border-0 border-bottom "></asp:TextBox>
+                                                                <asp:TextBox ID="tbTreatmentGiven" ReadOnly="true" runat="server" TextMode="MultiLine" CssClass="form-control border-0 border-bottom "></asp:TextBox>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -870,15 +915,20 @@
                                                             <div class="col-md-3 mb-3">
                                                                 <div class="form-group">
                                                                     <span class="font-weight-bold text-dark">Is Special Case</span><br />
-                                                                    <asp:Label ID="lbIsSpecialCase" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                    <div class="d-flex">
+                                                                        <div class="form-check form-check-inline me-2">
+                                                                            <asp:RadioButton ID="rbIsSpecialCaseYes" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                        </div>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <asp:RadioButton ID="rbIsSpecialCaseNo" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-3 mb-3">
                                                                 <div class="form-group">
                                                                     <span class="font-weight-bold text-dark">Final Diagnosis</span><br />
-                                                                    <asp:DropDownList ID="dropFinalDiagnosis" runat="server" CssClass="form-control border-0 border-bottom">
-                                                                        <asp:ListItem>Select</asp:ListItem>
-                                                                    </asp:DropDownList>
+                                                                    <asp:Label ID="lbFinalDiagnosis" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-3 mb-3">
@@ -886,10 +936,10 @@
                                                                     <span class="font-weight-bold text-dark">Procedural Consent</span><br />
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbConsentYes" runat="server" GroupName="ProceduralConsent" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbConsentYes" runat="server" GroupName="ProceduralConsent" Enabled="false" Text="&nbsp;&nbsp;&nbsp;Yes" CssClass="form-check-input" />
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbConsentNo" runat="server" GroupName="ProceduralConsent" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbConsentNo" runat="server" GroupName="ProceduralConsent" Enabled="false" Text="&nbsp;&nbsp;&nbsp;No" CssClass="form-check-input" />
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1178,24 +1228,76 @@
                                                 </div>
                                             </div>
                                             <%--WorkFlow--%>
-                                            <div class="ibox">
-                                                <div class="ibox-title d-flex justify-content-between align-items-center text-white">
-                                                    <div class="w-100 text-center">
+                                            <div class="ibox mt-4">
+                                                <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                    <div class="d-flex w-100 justify-content-center position-relative">
                                                         <h3 class="m-0">Work Flow</h3>
                                                     </div>
                                                 </div>
                                                 <div class="ibox-content">
-                                                    <asp:GridView ID="GridWorkFlowClaim" runat="server" CssClass="table table-bordered" AutoGenerateColumns="false">
-                                                        <Columns>
-                                                            <asp:BoundField DataField="S No" HeaderText="S No" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Date and Time" HeaderText="Date and Time" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Name" HeaderText="Name" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Remarks" HeaderText="Remarks" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Action" HeaderText="Action" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Approved Amount" HeaderText="Approved Amount(Rs)" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Claim Querry Rejection" HeaderText="Claim Querry Rejection" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                        </Columns>
-                                                    </asp:GridView>
+                                                    <div class="row">
+                                                        <div class="table-responsive">
+                                                            <asp:GridView ID="gvClaimWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                                <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                <Columns>
+                                                                    <asp:TemplateField HeaderText="Sl No.">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex+1 %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Date And Time">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label9" runat="server" Text='<%# Eval("ActionDate") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                    </asp:TemplateField>
+
+                                                                    <asp:TemplateField HeaderText="Name">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label10" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+
+                                                                    <asp:TemplateField HeaderText="Remarks">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label11" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                    </asp:TemplateField>
+
+                                                                    <asp:TemplateField HeaderText="Action">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label13" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                    </asp:TemplateField>
+
+                                                                    <asp:TemplateField HeaderText="Approved Amount(Rs.)">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label15" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                                    </asp:TemplateField>
+
+                                                                    <asp:TemplateField HeaderText="Claim Query/Rejection Reasons">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label16" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                    </asp:TemplateField>
+                                                                </Columns>
+                                                            </asp:GridView>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="ibox-content">
@@ -1276,7 +1378,8 @@
                                                                         <tbody>
                                                                             <tr>
                                                                                 <%--<td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>--%>
-                                                                                <td> <asp:LinkButton ID="LinkButton1"  runat="server"  CssClass="text-decoration-none" OnClick="LinkButton1_Click"><span>Patient Photo</span></asp:LinkButton></td>
+                                                                                <td>
+                                                                                    <asp:LinkButton ID="LinkButton1" runat="server" CssClass="text-decoration-none" OnClick="LinkButton1_Click"><span>Patient Photo</span></asp:LinkButton></td>
                                                                                 <td>17-08-2024 12:30:00</td>
                                                                                 <td>NA</td>
                                                                             </tr>

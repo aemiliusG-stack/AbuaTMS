@@ -10,6 +10,9 @@ using System.Xml.Linq;
 using WebGrease.Css.Ast;
 using System.Configuration;
 using System.Web;
+using AbuaTMS;
+using Org.BouncyCastle.Crypto.General;
+using System.Security.Cryptography;
 
 
 public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
@@ -39,9 +42,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                 BindGridPrimaryDiagnosis();
                 BindGridPrimaryICDValue();
                 BindGridICHIDetail();
-                BindGridWorkflow();
                 BindGridSurgeryDate();
-                BindGridWorkFlowClaim();
                 getpatient();
             }
         }
@@ -70,7 +71,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                 MultiView1.SetActiveView(ViewClaimupdationpage);
                 mvCEXTabs.SetActiveView(ViewClaim);
 
-                btnPastHistory.CssClass = "btn btn-primary"; 
+                btnPastHistory.CssClass = "btn btn-primary";
                 btnPreauth.CssClass = "btn btn-primary";
                 btnTreatment.CssClass = "btn btn-primary";
                 btnClaims.CssClass = "btn btn-warning";
@@ -128,7 +129,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                         imgPatientPhoto.ImageUrl = "~/img/profile.jpg";
                         imgPatientPhotosecond.ImageUrl = "~/img/profile.jpg";
                     }
-                        
+
 
                     lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     lbRegDate.Text = registrationDate.ToString("dd-MM-yyyy");
@@ -160,6 +161,9 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     lbNonTechDeathDate.Text = DischargeDate.ToString("dd-MM-yyyy");
 
                     BindGrid_TreatmentProtocol();
+                    BindGrid_PreauthWorkFlow();
+                    BindClaimWorkflow();
+                    getTreatmentDischarge();
 
                     if (hdRoleId.Value == "5")
                     {
@@ -216,7 +220,97 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    private void getTreatmentDischarge()
+    {
+        string claimId = Session["ClaimId"] as string;
+        dt.Clear();
+        dt = cex.GetTreatmentDischarge(claimId);
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            DataRow row = dt.Rows[0];
+            lbDocType.Text = row["TypeOfMedicalExpertise"].ToString();
+            lbDoctorName.Text = row["DoctorName"].ToString();
+            lbDocRegnNo.Text = row["DoctorRegistrationNumber"].ToString();
+            lbDocQualification.Text = row["Qualification"].ToString();
+            lbDocContactNo.Text = row["DoctorContactNumber"].ToString();
+            lbAnaesthetistName.Text = row["AnaesthetistName"].ToString();
+            lbAnaesthetistRegNo.Text = row["AnaesthetistRegNo"].ToString();
+            lbAnaesthetistContactNo.Text = row["AnaesthetistMobNo"].ToString();
+            //lbAnaesthetistType.Text = row["DoctorContactNumber"].ToString();
+            lbIncisionType.Text = row["IncisionType"].ToString();
+            rbOPPhotoYes.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && Convert.ToBoolean(row["OPPhotosWebexTaken"]);
+            rbOPPhotoNo.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && !Convert.ToBoolean(row["OPPhotosWebexTaken"]);
+            rbVedioRecDoneYes.Checked = row["VideoRecordingDone"] != DBNull.Value && Convert.ToBoolean(row["VideoRecordingDone"]);
+            rbVedioRecDoneNo.Checked = row["VideoRecordingDone"] != DBNull.Value && !Convert.ToBoolean(row["VideoRecordingDone"]);
+            lbSwabCounts.Text = row["SwabCountInstrumentsCount"].ToString();
+            lbSurutes.Text = row["SuturesLigatures"].ToString();
+            rbSpecimenRemoveYes.Checked = row["SpecimenRequired"] != DBNull.Value && Convert.ToBoolean(row["SpecimenRequired"]);
+            rbSpecimenRemoveNo.Checked = row["SpecimenRequired"] != DBNull.Value && !Convert.ToBoolean(row["SpecimenRequired"]);
+            lbDranageCount.Text = row["DrainageCount"].ToString();
+            lbBloodLoss.Text = row["BloodLoss"].ToString();
+            lbOperativeInstructions.Text = row["PostOperativeInstructions"].ToString();
+            lbPatientCondition.Text = row["PatientCondition"].ToString();
+            rbComplicationsYes.Checked = row["ComplicationsIfAny"] != DBNull.Value && Convert.ToBoolean(row["ComplicationsIfAny"]);
+            rbComplicationsNo.Checked = row["ComplicationsIfAny"] != DBNull.Value && !Convert.ToBoolean(row["ComplicationsIfAny"]);
+            lbTraetmentDate.Text = Convert.ToDateTime(row["TreatmentSurgeryStartDate"]).ToString("dd/MM/yyyy");
+            tbSurgeryStartTime.Text = TimeSpan.Parse(row["SurgeryStartTime"].ToString()).ToString(@"hh\:mm");
+            tbSurgeryEndTime.Text = TimeSpan.Parse(row["SurgeryEndTime"].ToString()).ToString(@"hh\:mm");
+            tbTreatmentGiven.Text = row["TreatmentGiven"].ToString();
+            tbOperativeFindings.Text = row["OperativeFindings"].ToString();
+            tbPostOperativePeriod.Text = row["PostOperativePeriod"].ToString();
+            tbSpecialInvestigationGiven.Text = row["PostSurgeryInvestigationGiven"].ToString();
+            tbStatusAtDischarge.Text = row["StatusAtDischarge"].ToString();
+            tbReview.Text = row["Review"].ToString();
+            tbAdvice.Text = row["Advice"].ToString();
+            rbDischarge.Checked = row["IsDischarged"] != DBNull.Value && Convert.ToBoolean(row["IsDischarged"]);
+            rbDeath.Checked = row["IsDischarged"] != DBNull.Value && !Convert.ToBoolean(row["IsDischarged"]);
+            lbDischargeDate.Text = Convert.ToDateTime(row["DischargeDate"]).ToString("dd-MM-yyyy");
+            lbNextFollowUp.Text = Convert.ToDateTime(row["NextFollowUpDate"]).ToString("dd-MM-yyyy");
+            lbConsultBlockName.Text = row["ConsultAtBlock"].ToString();
+            lbFloor.Text = row["FloorNo"].ToString();
+            lbRoomNo.Text = row["RoomNo"].ToString();
+            rbIsSpecialCaseYes.Checked = row["IsSpecialCase"] != DBNull.Value && Convert.ToBoolean(row["IsSpecialCase"]);
+            rbIsSpecialCaseNo.Checked = row["IsSpecialCase"] != DBNull.Value && !Convert.ToBoolean(row["IsSpecialCase"]);
+            lbFinalDiagnosis.Text = row["FinalDiagnosis"].ToString();
+            rbConsentYes.Checked = row["ProcedureConsent"] != DBNull.Value && Convert.ToBoolean(row["ProcedureConsent"]);
+            rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);
+        }
+        else
+        {
+            lbDocType.Text = "";
+            lbDoctorName.Text = "";
+            lbDocRegnNo.Text = "";
+            lbDocQualification.Text = "";
+            lbDocContactNo.Text = "";
+            lbAnaesthetistName.Text = "";
+            lbAnaesthetistRegNo.Text = "";
+            lbAnaesthetistContactNo.Text = "";
+            //lbAnaesthetistType.Text = "";
+            lbSwabCounts.Text = "";
+            lbSurutes.Text = "";
+            lbDranageCount.Text = "";
+            lbBloodLoss.Text = "";
+            lbOperativeInstructions.Text = "";
+            lbPatientCondition.Text = "";
+            lbTraetmentDate.Text = "";
+            tbSurgeryStartTime.Text = "";
+            tbSurgeryEndTime.Text = "";
+            tbTreatmentGiven.Text = "";
+            tbOperativeFindings.Text = "";
+            tbPostOperativePeriod.Text = "";
+            tbSpecialInvestigationGiven.Text = "";
+            tbStatusAtDischarge.Text = "";
+            tbReview.Text = "";
+            tbAdvice.Text = "";
+            lbDischargeDate.Text = "";
+            lbNextFollowUp.Text = "";
+            lbConsultBlockName.Text = "";
+            lbFloor.Text = "";
+            lbRoomNo.Text = "";
+            lbFinalDiagnosis.Text = "";
 
+        }
+    }
     protected void tbCSAdmissionDate_TextChanged(object sender, EventArgs e)
     {
         try
@@ -253,9 +347,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
 
                     }
                 }
-
-
-
             }
             else
             {
@@ -417,35 +508,39 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
                     return;
                 }
-                SqlParameter[] p1 = new SqlParameter[19];
 
-                p1[0] = new SqlParameter("@CaseNo", hdCaseNo.Value) { DbType = DbType.String };
-                p1[1] = new SqlParameter("@cardNumber", hdAbuaId.Value) { DbType = DbType.String };
-                p1[2] = new SqlParameter("@UserId", hdUserId.Value) { DbType = DbType.String };
-                p1[3] = new SqlParameter("@ClaimId", hdClaimId.Value) { DbType = DbType.String };
-                p1[4] = new SqlParameter("@AddmissionId", hdAdmissionId.Value) { DbType = DbType.String };
-                p1[5] = new SqlParameter("@IsNameCorrect", rbIsNameCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[6] = new SqlParameter("@IsGenderCorrect", rbIsGenderCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[7] = new SqlParameter("@DoesPhotoMatch", rbIsPhotoVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[8] = new SqlParameter("@AdmissionDateCS", tbCSAdmissionDate.Text) { DbType = DbType.String };
-                p1[9] = new SqlParameter("@DoesAddDateMatchCS", rbIsAdmissionDateVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[10] = new SqlParameter("@SurgeryDateCS", tbCSTherepyDate.Text) { DbType = DbType.String };
-                p1[11] = new SqlParameter("@DoesSurDateMatchCS", rbIsSurgeryDateVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[12] = new SqlParameter("@DischargeDateCS", lbNonTechDeathDate.Text) { DbType = DbType.String };
-                p1[13] = new SqlParameter("@DoesDischDateMatchCS", rbIsDischargeDateCSVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[14] = new SqlParameter("@IsPatientSignVerified", rbIsSignVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[15] = new SqlParameter("@IsReportVerified", rbIsReportCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[16] = new SqlParameter("@IsDateAndNameCorrect", rbIsReportVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                p1[17] = new SqlParameter("@NonTechChecklistRemarks", tbNonTechFormRemark.Text) { DbType = DbType.String };
-                p1[18] = new SqlParameter("@RoleId", hdRoleId.Value) { DbType = DbType.String };
-                DateTime admissionDate, surgeryDate, dischargeDate;
+                string caseNo = hdCaseNo.Value;
+                string cardNumber = hdAbuaId.Value;
+                string userId = hdUserId.Value;
+                string claimId = hdClaimId.Value;
+                string admissionId = hdAdmissionId.Value;
+
+                int isNameCorrect = rbIsNameCorrectYes.Checked ? 1 : 0;
+                int isGenderCorrect = rbIsGenderCorrectYes.Checked ? 1 : 0;
+                int doesPhotoMatch = rbIsPhotoVerifiedYes.Checked ? 1 : 0;
+
+                string admissionDateCS = tbCSAdmissionDate.Text;
+                string admissionDateCSText = tbCSAdmissionDate.Text;
+
+                int doesAddDateMatchCS = rbIsAdmissionDateVerifiedYes.Checked ? 1 : 0;
+
+                string surgeryDateCS = tbCSTherepyDate.Text;
+                int doesSurDateMatchCS = rbIsSurgeryDateVerifiedYes.Checked ? 1 : 0;
 
 
+                string dischargeDateCS = tbCSDischargeDate.Text;
+                int doesDischargeDateMatchCS = rbIsDischargeDateCSVerifiedYes.Checked ? 1 : 0;
 
-                // Validate and assign Admission Date
+                int isPatientSignVerified = rbIsSignVerifiedYes.Checked ? 1 : 0;
+                int isReportVerified = rbIsReportCorrectYes.Checked ? 1 : 0;
+                int isDateAndNameCorrect = rbIsReportVerifiedYes.Checked ? 1 : 0;
+
+                string nonTechChecklistRemarks = tbNonTechFormRemark.Text;
+
+                DateTime admissionDate;
                 if (DateTime.TryParse(tbCSAdmissionDate.Text, out admissionDate))
                 {
-                    p1[8] = new SqlParameter("@AdmissionDateCS", admissionDate) { DbType = DbType.DateTime };
+                    string formattedAdmissionDate = admissionDate.ToString("yyyy-MM-dd");
                 }
                 else
                 {
@@ -454,10 +549,10 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     return;
                 }
 
-                // Validate and assign Surgery Date
+                DateTime surgeryDate;
                 if (DateTime.TryParse(tbCSTherepyDate.Text, out surgeryDate))
                 {
-                    p1[10] = new SqlParameter("@SurgeryDateCS", surgeryDate) { DbType = DbType.DateTime };
+                    string formattedSurgeryDate = surgeryDate.ToString("yyyy-MM-dd");
                 }
                 else
                 {
@@ -466,10 +561,10 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     return;
                 }
 
-                // Validate and assign Discharge Date
-                if (DateTime.TryParse(lbNonTechDeathDate.Text, out dischargeDate))
+                DateTime dischargeDate;
+                if (DateTime.TryParse(tbCSDischargeDate.Text, out dischargeDate))
                 {
-                    p1[12] = new SqlParameter("@DischargeDateCS", dischargeDate) { DbType = DbType.DateTime };
+                    string formattedDischargeDate = dischargeDate.ToString("yyyy-MM-dd");
                 }
                 else
                 {
@@ -477,17 +572,126 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
                     return;
                 }
+                bool resultId = cex.InsertCEXNonTechChecklist(caseNo, cardNumber, userId, claimId, admissionId, isNameCorrect, isGenderCorrect, doesPhotoMatch, admissionDateCS, doesAddDateMatchCS, surgeryDateCS, doesSurDateMatchCS, dischargeDateCS, doesDischargeDateMatchCS, isPatientSignVerified, isReportVerified, isDateAndNameCorrect, nonTechChecklistRemarks);
 
-
-                ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertCEXNonTechChecklist", p1);
-
-                if (con.State == ConnectionState.Open)
+                if (resultId)
                 {
-                    con.Close();
+                    if (hdRoleId.Value == "5")
+                    {
+                        bool result = cex.UpdateClaimMasterForCEXInsurer(caseNo, userId, claimId);
+
+                        if (result)
+                        {
+                            bool ActionResult = cex.PatientActionForCEXInsurer(userId, claimId, nonTechChecklistRemarks);
+                            if (ActionResult)
+                            {
+                                string strMessage = "window.alert('Saved Successfully!');window.location.reload();";
+                                ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                            }
+                        }
+                        else
+                        {
+                            strMessage = "window.alert('Something Went Wrong.');window.location.reload();";
+                            ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                        }
+                    }
+                    else if (hdRoleId.Value == "6")
+                    {
+                        bool result = cex.UpdateClaimMasterForCEXTrust(caseNo, userId, claimId);
+
+                        if (result)
+                        {
+                            bool ActionResult = cex.PatientActionForCEXTrust(userId, claimId, nonTechChecklistRemarks);
+                            if (ActionResult)
+                            {
+                                strMessage = "window.alert('Saved Successfully.');window.location.reload();";
+                                ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                            }
+                        }
+                        else
+                        {
+                            strMessage = "window.alert('Something Went Wrong.');window.location.reload();";
+                            ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                        }
+                    }
+                }
+                else
+                {
+                    strMessage = "window.alert('Failed to Saved.');";
+                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
                 }
 
-                string successMessage = "window.alert('Saved Successfully!');window.location.reload();";
-                ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Success", successMessage, true);
+                //SqlParameter[] p1 = new SqlParameter[19];
+
+                //p1[0] = new SqlParameter("@CaseNo", hdCaseNo.Value) { DbType = DbType.String };
+                //p1[1] = new SqlParameter("@cardNumber", hdAbuaId.Value) { DbType = DbType.String };
+                //p1[2] = new SqlParameter("@UserId", hdUserId.Value) { DbType = DbType.String };
+                //p1[3] = new SqlParameter("@ClaimId", hdClaimId.Value) { DbType = DbType.String };
+                //p1[4] = new SqlParameter("@AddmissionId", hdAdmissionId.Value) { DbType = DbType.String };
+                //p1[5] = new SqlParameter("@IsNameCorrect", rbIsNameCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[6] = new SqlParameter("@IsGenderCorrect", rbIsGenderCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[7] = new SqlParameter("@DoesPhotoMatch", rbIsPhotoVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[8] = new SqlParameter("@AdmissionDateCS", tbCSAdmissionDate.Text) { DbType = DbType.String };
+                //p1[9] = new SqlParameter("@DoesAddDateMatchCS", rbIsAdmissionDateVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[10] = new SqlParameter("@SurgeryDateCS", tbCSTherepyDate.Text) { DbType = DbType.String };
+                //p1[11] = new SqlParameter("@DoesSurDateMatchCS", rbIsSurgeryDateVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[12] = new SqlParameter("@DischargeDateCS", lbNonTechDeathDate.Text) { DbType = DbType.String };
+                //p1[13] = new SqlParameter("@DoesDischDateMatchCS", rbIsDischargeDateCSVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[14] = new SqlParameter("@IsPatientSignVerified", rbIsSignVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[15] = new SqlParameter("@IsReportVerified", rbIsReportCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[16] = new SqlParameter("@IsDateAndNameCorrect", rbIsReportVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
+                //p1[17] = new SqlParameter("@NonTechChecklistRemarks", tbNonTechFormRemark.Text) { DbType = DbType.String };
+                //p1[18] = new SqlParameter("@RoleId", hdRoleId.Value) { DbType = DbType.String };
+                //DateTime admissionDate, surgeryDate, dischargeDate;
+
+
+
+                //// Validate and assign Admission Date
+                //if (DateTime.TryParse(tbCSAdmissionDate.Text, out admissionDate))
+                //{
+                //    p1[8] = new SqlParameter("@AdmissionDateCS", admissionDate) { DbType = DbType.DateTime };
+                //}
+                //else
+                //{
+                //    string errorMessage = "window.alert('Invalid Admission Date format. Please use yyyy-MM-dd.');";
+                //    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                //    return;
+                //}
+
+                //// Validate and assign Surgery Date
+                //if (DateTime.TryParse(tbCSTherepyDate.Text, out surgeryDate))
+                //{
+                //    p1[10] = new SqlParameter("@SurgeryDateCS", surgeryDate) { DbType = DbType.DateTime };
+                //}
+                //else
+                //{
+                //    string errorMessage = "window.alert('Invalid Surgery Date format. Please use yyyy-MM-dd.');";
+                //    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                //    return;
+                //}
+
+                //// Validate and assign Discharge Date
+                //if (DateTime.TryParse(lbNonTechDeathDate.Text, out dischargeDate))
+                //{
+                //    p1[12] = new SqlParameter("@DischargeDateCS", dischargeDate) { DbType = DbType.DateTime };
+                //}
+                //else
+                //{
+                //    string errorMessage = "window.alert('Invalid Discharge Date format. Please use yyyy-MM-dd.');";
+                //    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                //    return;
+                //}
+
+
+                //ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertCEXNonTechChecklist", p1);
+
+                //if (con.State == ConnectionState.Open)
+                //{
+                //    con.Close();
+                //}
+
+                //string successMessage = "window.alert('Saved Successfully!');window.location.reload();";
+                //ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Success", successMessage, true);
 
             }
         }
@@ -545,24 +749,24 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         GridICHIDetail.DataSource = dt;
         GridICHIDetail.DataBind();
     }
-    private void BindGridWorkflow()
-    {
-        DataTable dt = new DataTable();
-        dt.Columns.Add("S No");
-        dt.Columns.Add("Date and Time");
-        dt.Columns.Add("Role");
-        dt.Columns.Add("Remarks");
-        dt.Columns.Add("Action");
-        dt.Columns.Add("Amount");
-        dt.Columns.Add("Preauth Querry Rejection");
+    //private void BindGridWorkflow()
+    //{
+    //    DataTable dt = new DataTable();
+    //    dt.Columns.Add("S No");
+    //    dt.Columns.Add("Date and Time");
+    //    dt.Columns.Add("Role");
+    //    dt.Columns.Add("Remarks");
+    //    dt.Columns.Add("Action");
+    //    dt.Columns.Add("Amount");
+    //    dt.Columns.Add("Preauth Querry Rejection");
 
-        dt.Rows.Add("1", "14/06/2024 17:01:02", "MEDCO(MEDCO)", "NA", "Patient Regisered", "NA", "NA");
-        dt.Rows.Add("2", "18/06/2024 17:01:02", "MEDCO(MEDCO)", "Procedure Auto Approved", "Procedure auto approved insurance(insurance)", "2750", "NA");
-        dt.Rows.Add("3ss", "29/06/2024 17:01:02", "MEDCO(MEDCO)", "NA", "Discharge Date update by Medco(Insurance)", "2750", "NA");
+    //    dt.Rows.Add("1", "14/06/2024 17:01:02", "MEDCO(MEDCO)", "NA", "Patient Regisered", "NA", "NA");
+    //    dt.Rows.Add("2", "18/06/2024 17:01:02", "MEDCO(MEDCO)", "Procedure Auto Approved", "Procedure auto approved insurance(insurance)", "2750", "NA");
+    //    dt.Rows.Add("3ss", "29/06/2024 17:01:02", "MEDCO(MEDCO)", "NA", "Discharge Date update by Medco(Insurance)", "2750", "NA");
 
-        GridWorkflow.DataSource = dt;
-        GridWorkflow.DataBind();
-    }
+    //    GridWorkflow.DataSource = dt;
+    //    GridWorkflow.DataBind();
+    //}
     private void BindGridSurgeryDate()
     {
         DataTable dt = new DataTable();
@@ -575,24 +779,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         GridSurgeryDate.DataSource = dt;
         GridSurgeryDate.DataBind();
     }
-    private void BindGridWorkFlowClaim()
-    {
-        DataTable dt = new DataTable();
-        dt.Columns.Add("S No");
-        dt.Columns.Add("Date and Time");
-        dt.Columns.Add("Name");
-        dt.Columns.Add("Remarks");
-        dt.Columns.Add("Action");
-        dt.Columns.Add("Approved Amount");
-        dt.Columns.Add("Claim Querry Rejection");
-
-        dt.Rows.Add("1", "14/06/2024 17:01:02", "MEDCO(MEDCO)", "NA", "Claim Initiated by Medco(Insurance)", "2750", "NA");
-
-        GridWorkFlowClaim.DataSource = dt;
-        GridWorkFlowClaim.DataBind();
-    }
-
-
 
     [WebMethod]
     public static string NotifyInactivity(string message)
@@ -604,12 +790,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         }
         return System.Web.VirtualPathUtility.ToAbsolute("~/Unauthorize.aspx");
     }
-
-
-    
-
-
-
 
 
     protected void btnPastHistory_Click(object sender, EventArgs e)
@@ -771,34 +951,40 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         lnkFraudDocuments.CssClass = "btn btn-primary";
         lnkAuditDocuments.CssClass = "btn btn-warning";
     }
-    //private void BindGrid_TreatmentProtocol()
-    //{
-    //    string caseNo = Session["CaseNumber"] as string;
-
-    //    if (!string.IsNullOrEmpty(caseNo))
-    //    {
-    //        dt = cex.getTreatmentProtocol(caseNo);
-
-    //        // Bind the data to the grid
-    //        GridTreatmentProtocol.DataSource = dt;
-    //        GridTreatmentProtocol.DataBind();
-
-    //        // Handle empty data scenario
-    //        if (dt == null || dt.Rows.Count == 0)
-    //        {
-    //            GridTreatmentProtocol.EmptyDataText = "No Treatment Protocol found.";
-    //            GridTreatmentProtocol.DataBind();
-    //        }
-    //    }
-    //    else
-    //    {
-    //        // Handle case where session value is missing
-    //        GridTreatmentProtocol.EmptyDataText = "Session expired or Case Number is missing.";
-    //        GridTreatmentProtocol.DataBind();
-    //    }
-
-
-    //}
+    private void BindGrid_PreauthWorkFlow()
+    {
+        dt.Clear();
+        string caseNo = Session["CaseNumber"].ToString();
+        dt = cex.GetClaimWorkFlow(caseNo);
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            gvPreauthWorkFlow.DataSource = dt;
+            gvPreauthWorkFlow.DataBind();
+        }
+        else
+        {
+            gvPreauthWorkFlow.DataSource = null;
+            gvPreauthWorkFlow.EmptyDataText = "No record found.";
+            gvPreauthWorkFlow.DataBind();
+        }
+    }
+    private void BindClaimWorkflow()
+    {
+        dt.Clear();
+        string claimId = Session["ClaimId"].ToString();
+        dt = cex.GetClaimWorkFlow(claimId);
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            gvClaimWorkFlow.DataSource = dt;
+            gvClaimWorkFlow.DataBind();
+        }
+        else
+        {
+            gvClaimWorkFlow.DataSource = null;
+            gvClaimWorkFlow.EmptyDataText = "No record found.";
+            gvClaimWorkFlow.DataBind();
+        }
+    }
     protected void BindGrid_TreatmentProtocol()
     {
         try
