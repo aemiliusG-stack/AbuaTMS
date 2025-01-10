@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using AbuaTMS;
-using CareerPath.DAL;
-using Org.BouncyCastle.Crypto.General;
-using System.Web.Helpers;
-using System.Security.Cryptography;
 
 public partial class ADMIN_MapPackageAddon : System.Web.UI.Page
 {
@@ -162,43 +154,6 @@ public partial class ADMIN_MapPackageAddon : System.Web.UI.Page
                 ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
                 return;
             }
-            //else
-            //    goto Register; Register:;
-            //string StrPasswd;
-
-            //StrPasswd = Crypto.SHA256("TMS@123");
-            //SqlParameter[] p = new SqlParameter[2];
-            //p[0] = new SqlParameter("@PackageId", ddSpecialityName.SelectedValue.Trim());
-            //p[0].DbType = DbType.String;
-            //p[1] = new SqlParameter("@ProcedureId", ddProcedureCode.SelectedValue);
-            //p[1].DbType = DbType.String;
-
-            //ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_AddOrUpdatePackageAddOn", p);
-            //if (con.State == ConnectionState.Open)
-            //    con.Close();
-            //if (ds.Tables[0].Rows.Count > 0 & ds.Tables[0].Rows[0]["Id"].ToString() == "0")
-
-            //{
-            //    strMessage = "window.alert('AddOn is Already Registered!');";
-            //    ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
-            //}
-            //else if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
-            //{
-            //    ClearAll();
-            //    GetMapAddonDetails();
-            //    strMessage = "window.alert('Registered Successfully!');";
-            //    ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
-            //}
-            //else if (ds.Tables[0].Rows[0]["Id"].ToString() == "-99")
-            //{
-            //    string errorMessage = ds.Tables[0].Rows[0]["ErrorMessage"].ToString();
-            //    string errorNumber = ds.Tables[0].Rows[0]["ErrorNumber"].ToString();
-            //    string errorLine = ds.Tables[0].Rows[0]["ErrorLine"].ToString();
-
-            //    strMessage = "window.alert('SQL Error: " + errorMessage + " (Error #" + errorNumber + " at line " + errorLine + ")');";
-            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "Error", strMessage, true);
-            //}
-
             string packageId = ddSpecialityName.SelectedValue.Trim();
             string procedureId = ddProcedureCode.SelectedValue;
 
@@ -302,36 +257,6 @@ public partial class ADMIN_MapPackageAddon : System.Web.UI.Page
                 strMessage = "window.alert('Failed to Update the AddOn.');";
                 ScriptManager.RegisterStartupScript(btnUpdate, btnUpdate.GetType(), "Result", strMessage, true);
             }
-            //if (con.State == ConnectionState.Open)
-            //    con.Close();
-
-            //if (ds.Tables[0].Rows.Count > 0)
-            //{
-            //    string resultId = ds.Tables[0].Rows[0]["Id"].ToString();
-
-            //    if (resultId == "0")
-            //    {
-            //        strMessage = "window.alert('AddOn is Already Registered!');";
-            //        ScriptManager.RegisterStartupScript(btnUpdate, btnUpdate.GetType(), "Error", strMessage, true);
-            //    }
-            //    else if (resultId == "1")
-            //    {
-            //        ClearAll();
-            //        GetMapAddonDetails();
-            //        strMessage = "window.alert('Updated Successfully!');";
-            //        ScriptManager.RegisterStartupScript(btnUpdate, btnUpdate.GetType(), "Error", strMessage, true);
-            //    }
-            //    else if (resultId == "2")
-            //    {
-            //        strMessage = "window.alert('Please make any changes to update!');";
-            //        ScriptManager.RegisterStartupScript(btnUpdate, btnUpdate.GetType(), "Error", strMessage, true);
-            //    }
-            //    else
-            //    {
-            //        strMessage = "window.alert('Failed to update the AddOn.');";
-            //        ScriptManager.RegisterStartupScript(btnUpdate, btnUpdate.GetType(), "Error", strMessage, true);
-            //    }
-            //}
         }
         catch (Exception ex)
         {
@@ -419,7 +344,7 @@ public partial class ADMIN_MapPackageAddon : System.Web.UI.Page
         if (!string.IsNullOrEmpty(searchTerm))
         {
             DataView dv = dt.DefaultView;
-            dv.RowFilter = "Speciality LIKE '%" + searchTerm + "%'";
+            dv.RowFilter = "Speciality LIKE '%" + searchTerm + "%' OR ProcedureCode LIKE '%" + searchTerm + "%'";
             dt = dv.ToTable();
 
             lbRecordCount.Text = "Total No. of Record Related " + searchTerm + ": " + dt.Rows.Count.ToString();

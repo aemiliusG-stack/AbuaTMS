@@ -46,7 +46,7 @@
                             <div class="hr-line-dashed mt-4"></div>
                             <div class="col-md-12 text-center">
                                 <asp:Button ID="btnSubmit" runat="server" Text="Add " class="btn btn-primary btn-rounded" ValidationGroup="a" OnClick="btnSubmit_Click" />
-                                <asp:Button ID="btnUpdate" runat="server" Text="Update " class="btn btn-primary btn-rounded" ValidationGroup="a" Visible="false" OnClick="btnUpdate_Click" />
+                                <asp:Button ID="btnUpdate" runat="server" Text="Update " class="btn btn-warning btn-rounded" ValidationGroup="a" Visible="false" OnClick="btnUpdate_Click" />
                                 <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-danger btn-rounded" ValidationGroup="a" OnClick="btnReset_Click" />
                             </div>
                         </div>
@@ -84,42 +84,50 @@
                                                     <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex+1 %>'></asp:Label>
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="3%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="PopUp Description">
                                                 <itemtemplate>
                                                     <asp:Label ID="lbPopupDescription" runat="server" Text='<%# Eval("PopUpDescription") %>'></asp:Label>
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="26%" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="25%" />
                                             </asp:TemplateField>
+
                                             <asp:TemplateField HeaderText="Procedure Code">
                                                 <itemtemplate>
                                                     <asp:Label ID="lbProcedurecode" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="8%" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Procedure Name">
+                                                <itemtemplate>
+                                                    <asp:Label ID="lbProcedurename" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                                </itemtemplate>
+                                                <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="25%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Role Name">
                                                 <itemtemplate>
                                                     <asp:Label ID="lbRoleName" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="8%" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Created On">
                                                 <itemtemplate>
                                                     <asp:Label ID="lbCreatedDate" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="8%" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Package AddOn Status">
                                                 <itemtemplate>
                                                     <asp:Button ID="btnActiveStatus" runat="server" Text='<%# Eval("IsActive") %>' OnClientClick="return confirmAction();" CommandArgument='<%# Eval("ProcedurePopUpId") %>' CssClass='<%# Eval("IsActive").ToString() == "Active" ? "btn btn-success rounded-pill" : "btn btn-danger rounded-pill" %>' OnClick="btnActiveStatus_Click" />
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Edit">
                                                 <itemtemplate>
@@ -131,7 +139,7 @@
                                                     </asp:LinkButton>
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
                                             </asp:TemplateField>
                                         </columns>
                                     </asp:GridView>

@@ -5,7 +5,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <contenttemplate>
+        <ContentTemplate>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAddOnId" runat="server" Visible="false" />
             <div class="row">
@@ -16,9 +16,6 @@
                             <div class="ibox-tools">
                                 <a class="collapse-link">
                                     <i class="fa fa-chevron-up"></i>
-                                </a>
-                                <a class="close-link">
-                                    <i class="fa fa-times"></i>
                                 </a>
                             </div>
                         </div>
@@ -40,7 +37,7 @@
                             <div class="hr-line-dashed mt-4"></div>
                             <div class="col-md-12 text-center">
                                 <asp:Button ID="btnSubmit" runat="server" Text="Add " class="btn btn-primary btn-rounded" ValidationGroup="a" OnClick="btnSubmit_Click" />
-                                <asp:Button ID="btnUpdate" runat="server" Text="Update " class="btn btn-primary btn-rounded" ValidationGroup="a" Visible="false" OnClick="btnUpdate_Click" />
+                                <asp:Button ID="btnUpdate" runat="server" Text="Update " class="btn btn-warning btn-rounded" ValidationGroup="a" Visible="false" OnClick="btnUpdate_Click" />
                                 <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-danger btn-rounded" ValidationGroup="a" OnClick="btnReset_Click" />
                             </div>
                         </div>
@@ -53,9 +50,6 @@
                             <div class="ibox-tools">
                                 <a class="collapse-link">
                                     <i class="fa fa-chevron-up"></i>
-                                </a>
-                                <a class="close-link">
-                                    <i class="fa fa-times"></i>
                                 </a>
                             </div>
                         </div>
@@ -71,56 +65,63 @@
                                 <div class="col-md-12">
                                     <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
                                     <asp:GridView ID="gridPackageAddOn" runat="server" AutoGenerateColumns="False" AllowPaging="True" OnPageIndexChanging="gridPackageAddOn_PageIndexChanging" PageSize="10" OnRowCommand="gridPackageAddOn_RowCommand" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                        <alternatingrowstyle backcolor="Gainsboro" />
-                                        <columns>
+                                        <AlternatingRowStyle BackColor="Gainsboro" />
+                                        <Columns>
                                             <asp:TemplateField HeaderText="Sl No.">
-                                                <itemtemplate>
+                                                <ItemTemplate>
                                                     <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex+1 %>'></asp:Label>
-                                                </itemtemplate>
-                                                <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" CssClass="text-center" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Speciality">
-                                                <itemtemplate>
+                                                <ItemTemplate>
                                                     <asp:Label ID="lbSpeciality" runat="server" Text='<%# Eval("Speciality") %>'></asp:Label>
-                                                </itemtemplate>
-                                                <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="20%" />
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" CssClass="text-center" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Procedure Code">
-                                                <itemtemplate>
+                                                <ItemTemplate>
                                                     <asp:Label ID="lbActionName" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
-                                                </itemtemplate>
-                                                <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" CssClass="text-center" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Procedure Name">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="lbActionName" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" CssClass="text-center" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="30%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Created On">
-                                                <itemtemplate>
+                                                <ItemTemplate>
                                                     <asp:Label ID="Label2" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
-                                                </itemtemplate>
-                                                <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" CssClass="text-center" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Package AddOn Status">
-                                                <itemtemplate>
+                                                <ItemTemplate>
                                                     <asp:Button ID="btnActiveStatus" runat="server" Text='<%# Eval("IsActive") %>' OnClientClick="return confirmAction();" CommandArgument='<%# Eval("PackageAddOnId") %>' CssClass='<%# Eval("IsActive").ToString() == "Active" ? "btn btn-success rounded-pill" : "btn btn-danger rounded-pill" %>' OnClick="btnActiveStatus_Click" />
-                                                </itemtemplate>
-                                                <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" CssClass="text-center" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Edit">
-                                                <itemtemplate>
+                                                <ItemTemplate>
                                                     <asp:LinkButton ID="lnkEdit" runat="server"
                                                         CommandName="EditAddOn" CommandArgument='<%# Eval("PackageAddOnId") %>'
                                                         CssClass="btn btn-success btn-sm rounded-pill"
                                                         Style="font-size: 12px;">
                                                         <span class="bi bi-pencil"></span>
                                                     </asp:LinkButton>
-                                                </itemtemplate>
-                                                <headerstyle backcolor="#1E8C86" font-bold="True" cssclass="text-center" forecolor="White" />
-                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" CssClass="text-center" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
                                             </asp:TemplateField>
-                                        </columns>
+                                        </Columns>
                                     </asp:GridView>
                                 </div>
                             </div>
@@ -128,7 +129,7 @@
                     </div>
                 </div>
             </div>
-        </contenttemplate>
+        </ContentTemplate>
     </asp:UpdatePanel>
     <script type="text/javascript">
         function confirmAction() {

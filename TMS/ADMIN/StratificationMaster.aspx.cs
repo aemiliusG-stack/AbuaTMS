@@ -70,7 +70,7 @@ public partial class ADMIN_StratificationMaster : System.Web.UI.Page
         if (!string.IsNullOrEmpty(searchTerm))
         {
             DataView dv = dt.DefaultView;
-            dv.RowFilter = "StratificationName LIKE '%" + searchTerm + "%'";
+            dv.RowFilter = "StratificationName LIKE '%" + searchTerm + "%' OR StratificationCode LIKE '%" + searchTerm + "%' OR StratificationDetail LIKE '%" + searchTerm + "%'";
             dt = dv.ToTable();
 
             lbRecordCount.Text = "Total No. of Record Related " + searchTerm + ": " + dt.Rows.Count.ToString();

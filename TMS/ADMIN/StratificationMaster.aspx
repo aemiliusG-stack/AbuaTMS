@@ -46,7 +46,7 @@
 
                             <div class="col-md-12 text-center">
                                 <asp:Button ID="btnSubmit" runat="server" Text="Add " class="btn btn-primary btn-rounded" ValidationGroup="a" OnClick="btnSubmit_Click" />
-                                <asp:Button ID="btnUpdate" runat="server" Text="Update " class="btn btn-primary btn-rounded" ValidationGroup="a" Visible="false" OnClick="btnUpdate_Click" />
+                                <asp:Button ID="btnUpdate" runat="server" Text="Update " class="btn btn-warning btn-rounded" ValidationGroup="a" Visible="false" OnClick="btnUpdate_Click" />
                                 <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-danger btn-rounded" ValidationGroup="a" OnClick="btnReset_Click" />
                             </div>
                         </div>

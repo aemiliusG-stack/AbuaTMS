@@ -154,7 +154,7 @@ public partial class ADMIN_MapProcedurePopup : System.Web.UI.Page
         if (!string.IsNullOrEmpty(searchTerm))
         {
             DataView dv = dt.DefaultView;
-            dv.RowFilter = "PopUpDescription LIKE '%" + searchTerm + "%'";
+            dv.RowFilter = "PopUpDescription LIKE '%" + searchTerm + "%' OR ProcedureCode LIKE '%" + searchTerm + "%' OR ProcedureName LIKE '%" + searchTerm + "%'";
             dt = dv.ToTable();
 
             lbRecordCount.Text = "Total No. of Record Related " + searchTerm + ": " + dt.Rows.Count.ToString();

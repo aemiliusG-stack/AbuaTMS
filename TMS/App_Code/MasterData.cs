@@ -201,17 +201,18 @@ public class MasterData
         try
         {
             string Query = @"
-        SELECT 
-            ActionId, 
-            ActionName, 
-            CASE WHEN PPD = 1 THEN 'Active' ELSE 'Inactive' END AS PPD, 
-            CASE WHEN CEX = 1 THEN 'Active' ELSE 'Inactive' END AS CEX, 
-            CASE WHEN CPD = 1 THEN 'Active' ELSE 'Inactive' END AS CPD, 
-            CASE WHEN ACO = 1 THEN 'Active' ELSE 'Inactive' END AS ACO, 
-            CASE WHEN SHA = 1 THEN 'Active' ELSE 'Inactive' END AS SHA, 
-            CASE WHEN IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive, 
-            FORMAT(CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
-        FROM TMS_MasterActionMaster";
+    SELECT 
+        ActionId, 
+        ActionName, 
+        CASE WHEN PPD = 1 THEN 'Active' ELSE 'Inactive' END AS PPD, 
+        CASE WHEN CEX = 1 THEN 'Active' ELSE 'Inactive' END AS CEX, 
+        CASE WHEN CPD = 1 THEN 'Active' ELSE 'Inactive' END AS CPD, 
+        CASE WHEN ACO = 1 THEN 'Active' ELSE 'Inactive' END AS ACO, 
+        CASE WHEN SHA = 1 THEN 'Active' ELSE 'Inactive' END AS SHA, 
+        CASE WHEN IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive, 
+        FORMAT(CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
+    FROM TMS_MasterActionMaster
+        ORDER BY ActionName";
 
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
@@ -435,20 +436,22 @@ public class MasterData
         try
         {
             string Query = @"
-                     SELECT 
-                         A1.PackageAddOnId, 
-                         A2.SpecialityCode + '(' + A2.SpecialityName + ')' AS Speciality, 
-                         A3.ProcedureCode AS ProcedureCode,
-                         CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
-                         FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
-                     FROM  
-                     TMS_MapPackageAddOn A1 
-                     LEFT JOIN  
-                         TMS_MasterPackageMaster A2 
-                            ON A1.PackageId = A2.PackageId 
-                     LEFT JOIN 
-                         TMS_MasterPackageDetail A3  
-                             ON A1.ProcedureCode = A3.ProcedureId;";
+                 SELECT 
+                     A1.PackageAddOnId, 
+                     A2.SpecialityName + '(' + A2.SpecialityCode + ')' AS Speciality, 
+                     A3.ProcedureCode AS ProcedureCode,
+                     A3.ProcedureName,
+                     CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
+                     FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
+                 FROM  
+                 TMS_MapPackageAddOn A1 
+                 LEFT JOIN  
+                     TMS_MasterPackageMaster A2 
+                        ON A1.PackageId = A2.PackageId 
+                 LEFT JOIN 
+                     TMS_MasterPackageDetail A3  
+                         ON A1.ProcedureCode = A3.ProcedureId
+                 ORDER BY A2.SpecialityCode;";
 
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
@@ -695,11 +698,12 @@ public class MasterData
         try
         {
             string Query = @"
-        SELECT 
-             StratificationId,StratificationCode,StratificationName,StratificationDetail,StratificationAmount,
-             CASE WHEN IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive, 
-             FORMAT(CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
-        FROM TMS_MasterStratificationMaster";
+    SELECT 
+         StratificationId,StratificationCode,StratificationName,StratificationDetail,StratificationAmount,
+         CASE WHEN IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive, 
+         FORMAT(CreatedOn, 'dd-MMM-yyyy') AS CreatedOn 
+    FROM TMS_MasterStratificationMaster
+    ORDER BY StratificationName";
 
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
@@ -928,24 +932,28 @@ public class MasterData
         try
         {
             string Query = @"
-                    SELECT  A1.ProcedureFollowId,
-                            A1.ProcedureId,
-                            A2.ProcedureCode AS ProcedureCode, 
-                            A1.FollowUpId,
-                            A3.ProcedureCode AS ProcedureFollowUpCode,
-                    CASE 
-                            WHEN A1.IsActive = 1 THEN 'Active' 
-                            ELSE 'Inactive' 
-                            END AS IsActive,
-                    FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn
-                    FROM 
-                    TMS_MapProcedureFollowUp A1
-                    LEFT JOIN 
-                        TMS_MasterPackageDetail A2
-                            ON A1.ProcedureId = A2.ProcedureId
-                    LEFT JOIN 
-                        TMS_MasterPackageDetail A3
-                            ON A1.FollowUpId = A3.ProcedureId;";
+                
+    SELECT  A1.ProcedureFollowId,
+    A1.ProcedureId,
+    A2.ProcedureCode AS ProcedureCode, 
+	A2.ProcedureName AS ProcedureName,
+    A1.FollowUpId,
+    A3.ProcedureCode AS ProcedureFollowUpCode,
+	A3.ProcedureName AS ProcedureFollowUpName,
+    CASE 
+    WHEN A1.IsActive = 1 THEN 'Active' 
+    ELSE 'Inactive' 
+    END AS IsActive,
+    FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn
+    FROM 
+    TMS_MapProcedureFollowUp A1
+    LEFT JOIN 
+    TMS_MasterPackageDetail A2
+    ON A1.ProcedureId = A2.ProcedureId
+    LEFT JOIN 
+    TMS_MasterPackageDetail A3
+    ON A1.FollowUpId = A3.ProcedureId
+    ORDER BY A2.ProcedureCode;";
 
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
@@ -1185,10 +1193,10 @@ public class MasterData
     {
         try
         {
-            string Query = @"SELECT A1.ProcedurePopUpId,A2.PopUpDescription,A3.ProcedureCode, A4.RoleName, 
-                                CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
-                                FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn FROM TMS_MapProcedurePopUp A1 LEFT JOIN TMS_MasterPopUpMaster A2 ON A1.PopUpId=A2.PopUpId
-                           LEFT JOIN TMS_MasterPackageDetail A3 ON A1.ProcedureId = A3.ProcedureId LEFT JOIN TMS_Roles A4 ON A1.PopUpRoleId = A4.RoleId";
+            string Query = @"SELECT A1.ProcedurePopUpId,A2.PopUpDescription,A3.ProcedureCode,A3.ProcedureName , A4.RoleName, 
+                             CASE WHEN A1.IsActive = 1 THEN 'Active' ELSE 'Inactive' END AS IsActive,
+                             FORMAT(A1.CreatedOn, 'dd-MMM-yyyy') AS CreatedOn FROM TMS_MapProcedurePopUp A1 LEFT JOIN TMS_MasterPopUpMaster A2 ON A1.PopUpId=A2.PopUpId
+                        LEFT JOIN TMS_MasterPackageDetail A3 ON A1.ProcedureId = A3.ProcedureId LEFT JOIN TMS_Roles A4 ON A1.PopUpRoleId = A4.RoleId ORDER BY A2.PopUpDescription";
 
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
@@ -1221,7 +1229,7 @@ public class MasterData
         dt.Clear();
         try
         {
-            string Query = "select PopUpId,PopUpDescription from TMS_MasterPopUpMaster where IsActive=1 and IsDeleted=0";
+            string Query = "select PopUpId,PopUpDescription from TMS_MasterPopUpMaster where IsActive=1 and IsDeleted=0 ORDER BY PopUpDescriptions";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
             sd.Fill(ds);

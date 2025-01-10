@@ -36,7 +36,6 @@ public partial class ADMIN_MapProcedureFollowup : System.Web.UI.Page
                 if (Session["RoleId"].ToString() == "1" && Session["RoleName"].ToString() == "ADMIN")
                 {
                     getProcedureCode();
-                    getProcedureFollowUpCode();
                     GetMapProcedureFollowUpDetails();
                 }
                 else
@@ -72,31 +71,6 @@ public partial class ADMIN_MapProcedureFollowup : System.Web.UI.Page
             else
             {
                 ddProcedureCode.Items.Clear();
-            }
-        }
-        catch (Exception ex)
-        {
-
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
-    protected void getProcedureFollowUpCode()
-    {
-        try
-        {
-            dt = cex.GetProcedureCode();
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                ddProcedureFollowUpCode.Items.Clear();
-                ddProcedureFollowUpCode.DataValueField = "ProcedureId";
-                ddProcedureFollowUpCode.DataTextField = "ProcedureCode";
-                ddProcedureFollowUpCode.DataSource = dt;
-                ddProcedureFollowUpCode.DataBind();
-                ddProcedureFollowUpCode.Items.Insert(0, new ListItem("--Select--", "0"));
-            }
-            else
-            {
-                ddProcedureFollowUpCode.Items.Clear();
             }
         }
         catch (Exception ex)
@@ -368,6 +342,39 @@ public partial class ADMIN_MapProcedureFollowup : System.Web.UI.Page
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
             return;
+        }
+    }
+
+    protected void ddProcedureCode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            dt = cex.GetProcedureCode();
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                // Exclude the selected ProcedureCode
+                string selectedProcedureCode = ddProcedureCode.SelectedValue;
+
+                DataView dv = dt.DefaultView;
+                dv.RowFilter = "ProcedureId <> '" + selectedProcedureCode + "'";
+                DataTable filteredDt = dv.ToTable();
+
+                ddProcedureFollowUpCode.Items.Clear();
+                ddProcedureFollowUpCode.DataValueField = "ProcedureId";
+                ddProcedureFollowUpCode.DataTextField = "ProcedureCode";
+                ddProcedureFollowUpCode.DataSource = filteredDt;
+                ddProcedureFollowUpCode.DataBind();
+                ddProcedureFollowUpCode.Items.Insert(0, new ListItem("--Select--", "0"));
+            }
+            else
+            {
+                ddProcedureFollowUpCode.Items.Clear();
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 }
