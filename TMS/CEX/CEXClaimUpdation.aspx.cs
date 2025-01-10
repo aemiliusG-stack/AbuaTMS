@@ -259,7 +259,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             }
             else
             {
-                //lblMessage.Text = "No patient details available.";
+
             }
         }
         catch (Exception ex)
