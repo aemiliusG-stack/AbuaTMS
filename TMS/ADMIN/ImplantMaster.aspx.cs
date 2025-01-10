@@ -116,7 +116,7 @@ public partial class ADMIN_ImplantMaster : System.Web.UI.Page
                 {
                     if (dt.Rows.Count > 0 && dt.Rows[0]["ImplantId"].ToString().Trim() != null)
                     {
-                        strMessage = "window.alert('Duplicate Implant Found...!!');";
+                        strMessage = "window.alert('Implant Already Exist...!!');";
                         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     }
                     else
@@ -163,7 +163,7 @@ public partial class ADMIN_ImplantMaster : System.Web.UI.Page
                     {
                         if (dt.Rows.Count > 0 && dt.Rows[0]["ImplantId"].ToString().Trim() != null)
                         {
-                            strMessage = "window.alert('Duplicate Implant Found...!!');";
+                            strMessage = "window.alert('Implant Already Exist...!!');";
                             ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                         }
                         else

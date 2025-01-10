@@ -53,12 +53,12 @@ public partial class ADMIN_PreAuthDocumentMaster : System.Web.UI.Page
             {
 
                 DataTable dt = new DataTable();
-                dt = md.CheckExistingMandateDocument(DocumentName);
+                dt = md.CheckExistingMandateDocument(DocumentName, SelectedData);
                 if (dt != null)
                 {
                     if (dt.Rows.Count > 0 && dt.Rows[0]["DocumentId"].ToString().Trim() != null)
                     {
-                        strMessage = "window.alert('Duplicate Document Found...!!');";
+                        strMessage = "window.alert('Document Already Exist...!!');";
                         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     }
                     else
@@ -266,12 +266,12 @@ public partial class ADMIN_PreAuthDocumentMaster : System.Web.UI.Page
                 if (!DocumentName.Equals("") && SelectedData != null && !SelectedData.Equals("0"))
                 {
                     DataTable dt = new DataTable();
-                    dt = md.CheckExistingMandateDocument(DocumentName);
+                    dt = md.CheckExistingMandateDocument(DocumentName, SelectedData);
                     if (dt != null)
                     {
                         if (dt.Rows.Count > 0 && dt.Rows[0]["DocumentId"].ToString().Trim() != null)
                         {
-                            strMessage = "window.alert('Duplicate Document Found...!!');";
+                            strMessage = "window.alert('Document Alrady Exist...!!');";
                             ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                         }
                         else

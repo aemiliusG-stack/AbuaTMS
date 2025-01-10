@@ -60,7 +60,7 @@ public partial class ADMIN_MapProcedureAddOnPrimaryMaster : System.Web.UI.Page
                 {
                     if (dt.Rows.Count > 0 && dt.Rows[0]["ProcedurePrimaryId"].ToString().Trim() != null)
                     {
-                        strMessage = "window.alert('Duplicate Mapping Found...!!');";
+                        strMessage = "window.alert('Mapping Already Exist...!!');";
                         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     }
                     else
@@ -114,7 +114,7 @@ public partial class ADMIN_MapProcedureAddOnPrimaryMaster : System.Web.UI.Page
                     {
                         if (dt.Rows.Count > 0 && dt.Rows[0]["ProcedurePrimaryId"].ToString().Trim() != null)
                         {
-                            strMessage = "window.alert('Duplicate Mapping Found...!!');";
+                            strMessage = "window.alert('Mapping Already Exist...!!');";
                             ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                         }
                         else
@@ -131,7 +131,6 @@ public partial class ADMIN_MapProcedureAddOnPrimaryMaster : System.Web.UI.Page
                             GetProcedureAddOnPrimaryMasterData();
                         }
                     }
-                    
                 }
             }
         }

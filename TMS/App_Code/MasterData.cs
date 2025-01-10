@@ -1490,7 +1490,7 @@ public class MasterData
     */
     public DataTable CheckExistingImplant(string ImplantCode, string ImplantName)
     {
-        string Query = "SELECT ImplantId FROM TMS_MasterImplantMaster WHERE ImplantCode = @ImplantCode AND ImplantName = @ImplantName";
+        string Query = "SELECT ImplantId FROM TMS_MasterImplantMaster WHERE ImplantCode = @ImplantCode OR ImplantName = @ImplantName";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ImplantCode", ImplantCode);
         sd.SelectCommand.Parameters.AddWithValue("@ImplantName", ImplantName);
@@ -1582,11 +1582,12 @@ public class MasterData
         Table: TMS_MasterPreAuthMandatoryDocument.
         Checking duplicate record TMS_MasterPreAuthMandatoryDocument table.
     */
-    public DataTable CheckExistingMandateDocument(string DocumentName)
+    public DataTable CheckExistingMandateDocument(string DocumentName, string DocumentFor)
     {
-        string Query = "SELECT DocumentId FROM TMS_MasterPreAuthMandatoryDocument WHERE DocumentName = @DocumentName";
+        string Query = "SELECT DocumentId FROM TMS_MasterPreAuthMandatoryDocument WHERE DocumentName = @DocumentName AND DocumentFor = @DocumentFor";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@DocumentName", DocumentName);
+        sd.SelectCommand.Parameters.AddWithValue("@DocumentFor", DocumentFor);
         con.Open();
         sd.Fill(ds);
         con.Close();

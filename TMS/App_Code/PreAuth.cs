@@ -163,7 +163,7 @@ public class PreAuth
     {
         DataTable dtDocumentChild = new DataTable();
         // Dim Query As String = "Select PreInvestigationId, PreInvestigationName from TMS_MasterPackagePreInvestigation where PackageId = @PackageId And ProcedureId = @ProcedureId And IsActive = 1 And IsDeleted = 0"
-        string Query = "select t1.PackageId, t1.ProcedureId, t1.PreInvestigationId, t2.InvestigationName, t1.UploadStatus from TMS_PatientDocumentPreInvestigation t1 LEFT JOIN TMS_MasterInvestigationMaster t2 ON t1.PreInvestigationId = t2.InvestigationId where t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId AND t1.IsActive = 1";
+        string Query = "select t1.PackageId, t1.ProcedureId, t1.PreInvestigationId, t2.InvestigationName, t1.UploadStatus, t1.FolderName, t1.UploadedFileName from TMS_PatientDocumentPreInvestigation t1 LEFT JOIN TMS_MasterInvestigationMaster t2 ON t1.PreInvestigationId = t2.InvestigationId where t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId AND t1.IsActive = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
@@ -323,4 +323,18 @@ public class PreAuth
             return dtTemp;
         }
     }
+
+    public DataTable GetPatientManditoryDocument(string CardNumber)
+    {
+        dtTemp.Clear();
+        string Query = "SELECT DocumentId, DocumentFor, FolderName, UploadedFileName, UploadStatus FROM TMS_PatientMandatoryDocument WHERE CardNumber = @CardNumber AND IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dtTemp = ds.Tables[0];
+        return dtTemp;
+    }
+
 }

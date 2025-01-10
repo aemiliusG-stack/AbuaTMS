@@ -1491,13 +1491,20 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                 foreach (GridViewRow row in gridInvestigation.Rows)
                 {
                     Label lbUploadStatus = (Label)row.FindControl("lbUploadStatus");
+                    LinkButton btnUploadStatus = (LinkButton)row.FindControl("btnUploadStatus");
                     // Dim dropUpdate As DropDownList = DirectCast(row.FindControl("dropStatus"), DropDownList)
                     // dropUpdate.Text = lbCheckAI.Text
                     // dropUpdate.ForeColor = Drawing.Color.White
                     if (lbUploadStatus.Text == "Uploaded")
+                    {
                         lbUploadStatus.ForeColor = System.Drawing.Color.Green;
+                        btnUploadStatus.Enabled = true;
+                    }
                     else
+                    {
                         lbUploadStatus.ForeColor = System.Drawing.Color.Red;
+                        btnUploadStatus.Enabled = false;
+                    }
                 }
             }
         }
@@ -1511,6 +1518,36 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
+    protected void btnUploadStatus_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            LinkButton btn = (LinkButton)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbDocumentName = (Label)row.FindControl("lbPreInvestigationName");
+            Label lbFolderName = (Label)row.FindControl("lbFolder");
+            Label lbFileName = (Label)row.FindControl("lbUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbDocumentName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     protected void btnUploadPreInvestigation(object sender, EventArgs e)
     {
         try
@@ -1725,12 +1762,134 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
     protected void btnAddViewAttachment_Click(object sender, EventArgs e)
     {
-        attachmentPanel.Visible = true;
-        anamolyPanel.Visible = false;
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+        try
+        {
+            dt.Clear();
+            dt = preAuth.GetPatientManditoryDocument(hdAbuaId.Value.ToString());
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                attachmentPanel.Visible = true;
+                anamolyPanel.Visible = false;
+
+                // Check and handle the first row (index 0)
+                if (dt.Rows.Count > 0 && dt.Rows[0] != null)
+                {
+                    string DocumentId = dt.Rows[0]["DocumentId"].ToString().Trim();
+                    string FolderName = dt.Rows[0]["FolderName"].ToString().Trim();
+                    string UploadedFileName = dt.Rows[0]["UploadedFileName"].ToString().Trim();
+                    if (DocumentId.Equals("1"))
+                    {
+                        lbConsentStatus.Text = "View";
+                        lbConsentFolderName.Text = FolderName;
+                        lbConsentUploadedFileName.Text = UploadedFileName;
+                        lbConsentStatus.ForeColor = System.Drawing.Color.Green;
+                        btnConsentDocument.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("2"))
+                    {
+                        lbHealthStatus.Text = "View";
+                        lbHealthFolderName.Text = FolderName;
+                        lbHealthUploadedFileName.Text = UploadedFileName;
+                        lbHealthStatus.ForeColor = System.Drawing.Color.Green;
+                        btnHealthDocument.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("3"))
+                    {
+                        lbPatientPhotoStatus.Text = "View";
+                        lbPatientPhotoFolderName.Text = FolderName;
+                        lbPatientPhotoUploadedFileName.Text = UploadedFileName;
+                        lbPatientPhotoStatus.ForeColor = System.Drawing.Color.Green;
+                        btnPatientDocument.Enabled = true;
+                    }
+                }
+
+                // Check and handle the second row (index 1)
+                if (dt.Rows.Count > 1 && dt.Rows[1] != null)
+                {
+                    string DocumentId = dt.Rows[1]["DocumentId"].ToString().Trim();
+                    string FolderName = dt.Rows[1]["FolderName"].ToString().Trim();
+                    string UploadedFileName = dt.Rows[1]["UploadedFileName"].ToString().Trim();
+                    if (DocumentId.Equals("1"))
+                    {
+                        lbConsentStatus.Text = "View";
+                        lbConsentFolderName.Text = FolderName;
+                        lbConsentUploadedFileName.Text = UploadedFileName;
+                        lbConsentStatus.ForeColor = System.Drawing.Color.Green;
+                        btnConsentDocument.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("2"))
+                    {
+                        lbHealthStatus.Text = "View";
+                        lbHealthFolderName.Text = FolderName;
+                        lbHealthUploadedFileName.Text = UploadedFileName;
+                        lbHealthStatus.ForeColor = System.Drawing.Color.Green;
+                        btnHealthDocument.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("3"))
+                    {
+                        lbPatientPhotoStatus.Text = "View";
+                        lbPatientPhotoFolderName.Text = FolderName;
+                        lbPatientPhotoUploadedFileName.Text = UploadedFileName;
+                        lbPatientPhotoStatus.ForeColor = System.Drawing.Color.Green;
+                        btnPatientDocument.Enabled = true;
+                    }
+                }
+
+                // Check and handle the third row (index 2)
+                if (dt.Rows.Count > 2 && dt.Rows[2] != null)
+                {
+                    string DocumentId = dt.Rows[2]["DocumentId"].ToString().Trim();
+                    string FolderName = dt.Rows[2]["FolderName"].ToString().Trim();
+                    string UploadedFileName = dt.Rows[2]["UploadedFileName"].ToString().Trim();
+                    if (DocumentId.Equals("1"))
+                    {
+                        lbConsentStatus.Text = "View";
+                        lbConsentFolderName.Text = FolderName;
+                        lbConsentUploadedFileName.Text = UploadedFileName;
+                        lbConsentStatus.ForeColor = System.Drawing.Color.Green;
+                        btnConsentDocument.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("2"))
+                    {
+                        lbHealthStatus.Text = "View";
+                        lbHealthFolderName.Text = FolderName;
+                        lbHealthUploadedFileName.Text = UploadedFileName;
+                        lbHealthStatus.ForeColor = System.Drawing.Color.Green;
+                        btnHealthDocument.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("3"))
+                    {
+                        lbPatientPhotoStatus.Text = "View";
+                        lbPatientPhotoFolderName.Text = FolderName;
+                        lbPatientPhotoUploadedFileName.Text = UploadedFileName;
+                        lbPatientPhotoStatus.ForeColor = System.Drawing.Color.Green;
+                        btnPatientDocument.Enabled = true;
+                    }
+                }
+
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+            }
+            else
+            {
+                // Handle the case where no rows are returned
+                // You can either show a message or handle it in another way
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
+
 
     protected void btnAddViewDataAnamoly_Click(object sender, EventArgs e)
     {
@@ -2226,29 +2385,29 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                     }
                     else if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
                     {
-                    panelStratification.Visible = false;
-                    panelImplant.Visible = false;
-                    getRegisteredPatient();
-                    getPrimaryDiagnosis();
-                    getSecondaryDiagnosis();
-                    //ShowPreInvestigationDocuments();
-                    dropProcedure.Items.Clear();
-                    tbAdmissionDate.Text = "";
-                    tbProposedTreatmentDate.Text = "";
-                    lbPackageCost.Text = "";
-                    lbIncentiveAmount.Text = "";
-                    lbTotalPackageCost.Text = "";
-                    lbHospitalIncentivePercentage.Text = "";
-                    tbRemarks.Text = "";
-                    dropPackageMaster.SelectedValue = "0";
-                    dt.Clear();
-                    GridPackage.DataSource = dt;
-                    GridPackage.DataBind();
-                    MultiView1.SetActiveView(viewRegisteredPatient);
-                    MultiView2.SetActiveView(View1);
-                    string caseNumber = ds.Tables[0].Rows[0]["CaseNumber"].ToString();
-                    string strMessage = "window.alert('Admission Successful! Case No.: " + caseNumber.Replace("'", "\\'") + "');";
-                    ScriptManager.RegisterStartupScript(btnSubmitAdmission, btnSubmitAdmission.GetType(), "AlertMessage", strMessage, true);
+                        panelStratification.Visible = false;
+                        panelImplant.Visible = false;
+                        getRegisteredPatient();
+                        getPrimaryDiagnosis();
+                        getSecondaryDiagnosis();
+                        //ShowPreInvestigationDocuments();
+                        dropProcedure.Items.Clear();
+                        tbAdmissionDate.Text = "";
+                        tbProposedTreatmentDate.Text = "";
+                        lbPackageCost.Text = "";
+                        lbIncentiveAmount.Text = "";
+                        lbTotalPackageCost.Text = "";
+                        lbHospitalIncentivePercentage.Text = "";
+                        tbRemarks.Text = "";
+                        dropPackageMaster.SelectedValue = "0";
+                        dt.Clear();
+                        GridPackage.DataSource = dt;
+                        GridPackage.DataBind();
+                        MultiView1.SetActiveView(viewRegisteredPatient);
+                        MultiView2.SetActiveView(View1);
+                        string caseNumber = ds.Tables[0].Rows[0]["CaseNumber"].ToString();
+                        string strMessage = "window.alert('Admission Successful! Case No.: " + caseNumber.Replace("'", "\\'") + "');";
+                        ScriptManager.RegisterStartupScript(btnSubmitAdmission, btnSubmitAdmission.GetType(), "AlertMessage", strMessage, true);
                         //ShowPreInvestigationDocuments();
                     }
                 }
@@ -2270,6 +2429,78 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
             {
                 con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnConsentDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string folderName = lbConsentFolderName.Text;
+            string fileName = lbConsentUploadedFileName.Text + ".jpeg";
+            string DocumentName = "Consent Document";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnHealthDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string folderName = lbHealthFolderName.Text;
+            string fileName = lbHealthUploadedFileName.Text + ".jpeg";
+            string DocumentName = "Health Document";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnPatientDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string folderName = lbPatientPhotoFolderName.Text;
+            string fileName = lbPatientPhotoUploadedFileName.Text + ".jpeg";
+            string DocumentName = "Patient Document";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }

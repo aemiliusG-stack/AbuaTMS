@@ -3,7 +3,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
-    Welcome MEDCO
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox-title text-center">
