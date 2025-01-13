@@ -7,7 +7,7 @@
             $('.tab-pane').removeClass('active show');
             $(tabId).addClass('active show');
             return false; // Prevent postback if only client-side activation is needed
-        }
+        }        
     </script>
     <style>
         .span-title {
@@ -50,21 +50,105 @@
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAdmissionId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdClaimId" runat="server" Visible="false" />
-            <div class="modal fade" id="modalDocumentUpload" tabindex="-1" role="dialog" aria-labelledby="modal2Label" aria-hidden="true">
+            <div class="modal fade" id="modalAttachmentAnamoly" tabindex="-1" role="dialog" aria-labelledby="ViewDataAnamolyModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
-                        <div class="modal-header round" style="background-color: #007e72;">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <div class="modal-header round align-content-center" style="background-color: #007e72;">
+                            <h2 class="modal-title text-white" id="exampleModalLabel" style="margin: 0px !important;">Attachments</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="hideAttachmentAnamolyModal();">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            Rv
+                            <div class="tab-pane fade show active" id="attachment" role="tabpanel">
+                                <ul class="nav nav-tabs d-flex flex-row justify-content-around" id="attachTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active nav-attach" id="one-tab"
+                                            data-toggle="tab" href="#one" role="tab" aria-controls="one" aria-selected="true">
+                                            <span>Discharge</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="attachTabContent">
+                                    <div class="tab-pane fade show active" id="one" role="tabpanel">
+                                        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                            <div class="d-flex w-100 justify-content-center position-relative">
+                                                <h3 class="m-0">Discharge Documents</h3>
+                                            </div>
+                                        </div>
+                                        <div class="ibox-content">
+                                            <table class="table table-bordered table-striped" style="width: 100%;">
+                                                <thead>
+                                                    <tr class="table-primary">
+                                                        <th style="background-color: #007e72; color: white; width: 20%;">Attachment Name</th>
+                                                        <th style="background-color: #007e72; color: white; width: 20%;">View</th>
+                                                        <th style="background-color: #007e72; color: white; width: 40%;">Upload</th>
+                                                        <th style="background-color: #007e72; color: white; width: 20%;">Beneficiary Options</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Discharge Summary</td>
+                                                        <td></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <asp:FileUpload ID="fuConsent" runat="server" />
+                                                                <asp:Button ID="btnUploadDischargeSummary" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDischargeSummary_Click" />
+                                                            </div>
+                                                        </td>
+                                                        <td>NA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Operation Document</td>
+                                                        <td></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <asp:FileUpload ID="fuHealthCard" runat="server" />
+                                                                <asp:Button ID="btnUploadOperationDocument" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadOperationDocument_Click" />
+                                                            </div>
+                                                            <td>NA</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>After Discharge Photo<span class="text-danger">*</span></td>
+                                                        <td></td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <asp:FileUpload ID="fuPatientPhoto" runat="server" />
+                                                                <asp:Button ID="btnUploadAfterDischargePhoto" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadAfterDischargePhoto_Click" />
+                                                            </div>
+                                                        </td>
+                                                        <td>NA</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="container mt-4">
+
+                                        <strong class="text-danger">Note:</strong>
+                                        <ol class="text-danger font-weight-bold">
+                                            <li>File size should not exceded 500 kb</li>
+                                            <li>Attachment Names with blue color are related to notifications</li>
+                                            <li>Discharge Summary Document Quality and its notation
+                       
+                                        <ul class="text-danger">
+                                            <li>Document of Good Quality<i class="fa fa-check-circle text-info"></i></li>
+                                            <li>Document of Bad Quality<i class="fa fa-times-circle text-danger"></i> </li>
+                                            <li>Document which is not valid<i class="fa fa-check-circle text-info"></i></li>
+                                            <li>Document with error<i class="fa fa-times-circle text-danger"></i></li>
+                                        </ul>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                    <div class="col-md-12 mt-2 mb-2">
+                                        <button class="btn btn-primary rounded-pill" type="button">Download as one PDF<img src="../images/pdf-viewer-svgrepo-com.svg" width="15" class="ml-2" /></button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
-                            <asp:Button ID="Button6" CssClass="btn btn-secondary" Text="Close" runat="server" />
+                            <asp:Button ID="Button10" CssClass="btn btn-secondary" Text="Close" runat="server" OnClientClick="hideAttachmentAnamolyModal();" />
                         </div>
-
                     </div>
                 </div>
             </div>

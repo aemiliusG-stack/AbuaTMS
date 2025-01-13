@@ -110,11 +110,11 @@ public partial class MEDCO_MedcoHome : System.Web.UI.Page
                 lbTodayRefered.Text = dt.Rows[0]["PatientRefered_Today"].ToString();
                 lbTodayClaim.Text = dt.Rows[0]["ClaimInitiated_Today"].ToString();
 
-                lbTodayPatientRegistered.Text = dt.Rows[0]["PatientRegistered_Overall"].ToString();
-                lbTodayPreAuth.Text = dt.Rows[0]["PreAuthInitiated_Overall"].ToString();
-                lbTodayCancelled.Text = dt.Rows[0]["PatientCancelled_Overall"].ToString();
-                lbTodayRefered.Text = dt.Rows[0]["PatientRefered_Overall"].ToString();
-                lbTodayClaim.Text = dt.Rows[0]["ClaimInitiated_Overall"].ToString();
+                lbOverallPatientRegistered.Text = dt.Rows[0]["PatientRegistered_Overall"].ToString();
+                lbOverallPreAuth.Text = dt.Rows[0]["PreAuthInitiated_Overall"].ToString();
+                lbOverallCancelled.Text = dt.Rows[0]["PatientCancelled_Overall"].ToString();
+                lbOverallRefered.Text = dt.Rows[0]["PatientRefered_Overall"].ToString();
+                lbOverallClaim.Text = dt.Rows[0]["ClaimInitiated_Overall"].ToString();
             }
             else
             {

@@ -62,7 +62,7 @@
                         <div class="card-body">
                             <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
                             <div class="table-responsive mt-2">
-                                <table class="table table-bordered table-striped">
+                                <%--<table class="table table-bordered table-striped">
                                     <thead>
                                         <tr class="table-primary">
                                             <th scope="col" style="background-color: #007e72; color: white;">S.No</th>
@@ -88,61 +88,16 @@
                                             <td>16/07/2024</td>
                                         </tr>
                                     </tbody>
-                                </table>
-                                <%--<asp:GridView ID="gridCaseSearch" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
-                                <alternatingrowstyle backcolor="Gainsboro" />
-                                <columns>
-                                    <asp:TemplateField HeaderText="S.No.">
-                                        <itemtemplate>
-                                            <asp:Label ID="lbSlNo" runat="server" Text="1"></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Case No">
-                                        <itemtemplate>
-                                            <asp:Label ID="lbCaseNo" runat="server" Text="CASE/PS7"></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Claim No">
-                                        <itemtemplate>
-                                            <asp:Label ID="lbClaimNo" runat="server" Text="TRUST/RAN"></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Patient Name">
-                                        <itemtemplate>
-                                            <asp:Label ID="lbPatientName" runat="server" Text="Patient Name"></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Case Status">
-                                        <itemtemplate>
-                                            <asp:Label ID="lbCaseStatus" runat="server" Text="Case Status"></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Hospital Name">
-                                        <itemtemplate>
-                                            <asp:Label ID="lbHospitalName" runat="server" Text="Hospital Name"></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                    </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Registred Date">
-                                        <itemtemplate>
-                                            <asp:Label ID="lbRegisteredDate" runat="server" Text="Registred Date"></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                    </asp:TemplateField>
-                                </columns>
-                            </asp:GridView>--%>
+                                </table>--%>
+                                <asp:Panel ID="panelNoData" runat="server" Visible="true">
+                                    <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                        <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                            <img src="../images/search.svg" />
+                                            <span class="mt-2">No Record Found</span>
+                                            <span class="text-body-tertiary">Currently, no unspecified found at this moment.</span>
+                                        </div>
+                                    </div>
+                                </asp:Panel>
                             </div>
                         </div>
                     </div>

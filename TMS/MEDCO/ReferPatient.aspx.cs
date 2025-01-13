@@ -9,7 +9,6 @@ using System.Web;
 
 public partial class MEDCO_ReferPatient : System.Web.UI.Page
 {
-    private string strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();

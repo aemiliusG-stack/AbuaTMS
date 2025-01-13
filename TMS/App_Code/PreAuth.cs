@@ -58,7 +58,7 @@ public class PreAuth
     {
         dtTemp.Clear();
         //AND PDId NOT IN(select PDId from TMS_PatientSecondaryDiagnosis)
-        string Query = "select PDId, PrimaryDiagnosisName, ICDValue from TMS_MasterPrimaryDiagnosis where IsActive = 1 AND IsDeleted = 0";
+       string Query = "select PDId, PrimaryDiagnosisName, ICDValue from TMS_MasterPrimaryDiagnosis where IsActive = 1 AND IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(dtTemp);
@@ -202,19 +202,19 @@ public class PreAuth
         con.Close();
         return dtTemp;
     }
-    public int DeleteAddedProcedure(string CardNumber, string PatientRegId, int PackageId, int ProcedureId)
-    {
-        string Query = "delete from TMS_PatientTreatmentProtocol where CardNumber = @CardNumber AND PatientRegId = @PatientRegId AND PackageId = @PackageId AND ProcedureId = @ProcedureId AND IsActive = 1 AND IsDeleted = 0; delete from TMS_PatientDocumentPreInvestigation where CardNumber = @CardNumber AND PatientRegId = @PatientRegId AND PackageId = @PackageId AND ProcedureId = @ProcedureId AND IsActive = 1;";
-        SqlCommand cmd = new SqlCommand(Query, con);
-        cmd.Parameters.AddWithValue("@CardNumber", CardNumber);
-        cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-        cmd.Parameters.AddWithValue("@PackageId", PackageId);
-        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
-        con.Open();
-        int rowsAffected = cmd.ExecuteNonQuery();
-        con.Close();
-        return rowsAffected;
-    }
+    //public int DeleteAddedProcedure(string CardNumber, string PatientRegId, int PackageId, int ProcedureId)
+    //{
+    //    string Query = "delete from TMS_PatientTreatmentProtocol where CardNumber = @CardNumber AND PatientRegId = @PatientRegId AND PackageId = @PackageId AND ProcedureId = @ProcedureId AND IsActive = 1 AND IsDeleted = 0; delete from TMS_PatientDocumentPreInvestigation where CardNumber = @CardNumber AND PatientRegId = @PatientRegId AND PackageId = @PackageId AND ProcedureId = @ProcedureId AND IsActive = 1;";
+    //    SqlCommand cmd = new SqlCommand(Query, con);
+    //    cmd.Parameters.AddWithValue("@CardNumber", CardNumber);
+    //    cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+    //    cmd.Parameters.AddWithValue("@PackageId", PackageId);
+    //    cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+    //    con.Open();
+    //    int rowsAffected = cmd.ExecuteNonQuery();
+    //    con.Close();
+    //    return rowsAffected;
+    //}
     public DataTable checkProcedureDocumentUploadStatus(int HospitalId, string CardNumber, int PatientRegId)
     {
         dtTemp.Clear();
@@ -246,7 +246,7 @@ public class PreAuth
     public DataTable GetPatientForPreAuthCancellation(int HospitalId)
     {
         dtTemp.Clear();
-        string Query = "Select t1.CaseNumber, t1.HospitalId, t1.CardNumber, t1.PatientRegId, t2.PatientName, h1.HospitalName, FORMAT(t2.RegDate, 'dd-MMM-yyyy ') as RegDate from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_PatientRegistration t2 ON t1.PatientRegId = t2.PatientRegId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId where t1.HospitalId = @HospitalId AND t1.IsPreAuthInitiated = 1 AND t1.IsActive = 1 AND t1.IsDeleted = 0 ORDER BY t1.PatientRegId DESC";
+        string Query = "Select t1.CaseNumber, t1.HospitalId, t1.CardNumber, t1.PatientRegId, t2.PatientName, h1.HospitalName, FORMAT(t2.RegDate, 'dd-MMM-yyyy ') as RegDate from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_PatientRegistration t2 ON t1.PatientRegId = t2.PatientRegId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId where t1.HospitalId = @HospitalId AND t1.IsPreAuthInitiated = 1 AND t1.IsClaimInitiated = 0 AND t2.IsReferedBeforePreAuth = 0 AND t1.IsActive = 1 AND t1.IsDeleted = 0 ORDER BY t1.PatientRegId DESC";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
         con.Open();

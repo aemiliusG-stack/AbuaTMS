@@ -34,3 +34,13 @@ function hideAttachmentAnamolyModal() {
     $('.modal-backdrop').remove();
     $('#modalAttachmentAnamoly').modal('hide');
 }
+function showDocumentViewModal() {
+    $('#modalDocumentView').modal('hide');
+    $('.modal-backdrop').remove();
+    $('#modalDocumentView').modal('show');
+}
+function hideDocumentViewModal() {
+    $('#modalDocumentView').modal('hide');
+    $('.modal-backdrop').remove();
+    $('#modalDocumentView').modal('hide');
+}

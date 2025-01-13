@@ -641,6 +641,7 @@ RegisterPatient:
             MultiView1.SetActiveView(viewRetrieve);
             strMessage = "window.alert('Registered Successfully!');";
             ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
+            cbIfAddressSame.Checked = false;
         }
         catch (Exception ex)
         {

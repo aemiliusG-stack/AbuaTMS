@@ -12,7 +12,6 @@ using System.IO;
 
 public partial class MEDCO_PatientDischarge : System.Web.UI.Page
 {
-    private string strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
@@ -469,6 +468,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
             return;
         }
@@ -521,6 +521,10 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             divSpecialCaseValue.Visible = false;
         }
 
+    }
+    protected void btnAttachment_Click(object sender, EventArgs e)
+    {
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
@@ -641,7 +645,15 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
         }
     }
-    protected void btnAttachment_Click(object sender, EventArgs e)
+    protected void btnUploadDischargeSummary_Click(object sender, EventArgs e)
+    {
+
+    }
+    protected void btnUploadOperationDocument_Click(object sender, EventArgs e)
+    {
+
+    }
+    protected void btnUploadAfterDischargePhoto_Click(object sender, EventArgs e)
     {
 
     }

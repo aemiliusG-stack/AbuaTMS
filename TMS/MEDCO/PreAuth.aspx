@@ -2,15 +2,15 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <script type="text/javascript">
-        function showModal() {
-            $('#contentModal').modal('hide');
+        function showDocumentViewModal() {
+            $('#modalDocumentView').modal('hide');
             $('.modal-backdrop').remove();
-            $('#contentModal').modal('show');
+            $('#modalDocumentView').modal('show');
         }
-        function hideModal() {
-            $('#contentModal').modal('hide');
+        function hideDocumentViewModal() {
+            $('#modalDocumentView').modal('hide');
             $('.modal-backdrop').remove();
-            $('#contentModal').modal('hide');
+            $('#modalDocumentView').modal('hide');
         }
     </script>
 </asp:Content>
@@ -117,9 +117,9 @@
                                                     <thead>
                                                         <tr class="table-primary">
                                                             <th style="background-color: #007e72; color: white; width: 20%;">Attachment Name</th>
+                                                            <th style="background-color: #007e72; color: white; width: 20%;">Select File To Upload</th>
                                                             <th style="background-color: #007e72; color: white; width: 40%;">Upload</th>
                                                             <th style="background-color: #007e72; color: white; width: 20%;">Beneficiary Options</th>
-                                                            <th style="background-color: #007e72; color: white; width: 20%;">Status</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -180,29 +180,7 @@
                                                 </table>
                                             </div>
                                         </div>
-                                        <%--<div class="tab-pane fade" id="two" role="tabpanel">
-                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                                                <div class="d-flex w-100 justify-content-center position-relative">
-                                                    <h3 class="m-0">Discharge</h3>
-                                                </div>
-                                            </div>
-                                            <div class="ibox-content">
-                                                <table class="table table-bordered table-striped" style="width: 100%;">
-                                                    <thead>
-                                                        <tr class="table-primary">
-                                                            <th style="background-color: #007e72; color: white; width: 20%;">Attachment Name</th>
-                                                            <th style="background-color: #007e72; color: white; width: 20%;">View</th>
-                                                            <th style="background-color: #007e72; color: white; width: 40%;">Upload</th>
-                                                            <th style="background-color: #007e72; color: white; width: 20%;">Beneficiary Options</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                </table>
-                                            </div>
-                                        </div>--%>
-
                                         <div class="container mt-4">
-
                                             <strong class="text-danger">Note:</strong>
                                             <ol class="text-danger font-weight-bold">
                                                 <li>File size should not exceded 500 kb</li>
@@ -231,28 +209,27 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
+            <div class="modal fade" id="modalDocumentView" tabindex="-1" role="dialog" aria-labelledby="modal2Label" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title font-weight-bolder" style="font-size: 20px; color: black;"></asp:Label>
-                            <button type="button" class="btn" onclick="hideModal();">
-                                <img src="../img/bootstrapicons/x-lg.svg" />
+                        <div class="modal-header round" style="background-color: #007e72;">
+                            <h2 class="modal-title text-white" style="margin: 0px !important;"><asp:Label ID="lbTitle" runat="server" Text="" class="modal-title font-weight-bolder" style="font-size: 20px; color: white;"></asp:Label></h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <asp:MultiView ID="MultiView3" runat="server">
-                            <asp:View ID="viewPhoto" runat="server">
-                                <div class="modal-body">
-                                    <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
-                                        <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Patient Document" />
-                                    </div>
-                                </div>
-                            </asp:View>
-                        </asp:MultiView>
+                        <div class="modal-body">
+                            <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
+                                <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Document View" style="width:80%; height:80%;"></asp:Image>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <asp:Button ID="Button2" CssClass="btn btn-secondary" Text="Close" runat="server" OnClick="hideDocumentUploadModal_Click" />
+                        </div>
+
                     </div>
                 </div>
             </div>
-
             <asp:MultiView ID="MultiView1" runat="server">
                 <asp:View ID="viewRegisteredPatient" runat="server">
                     <div class="row">
@@ -1057,7 +1034,42 @@
                                                     </asp:DropDownList>
                                                 </div>
                                             </div>
-
+                                            <div class="col-lg-12">
+                                                <asp:Panel ID="panelUnspecified" runat="server" Visible="false">
+                                                    <div class="ibox">
+                                                        <div class="ibox-title text-center">
+                                                            <h3 class="text-white m-0">Unspecified Package Detail</h3>
+                                                        </div>
+                                                        <div class="ibox-content">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 mb-3">
+                                                                    <div class="form-group">
+                                                                        <span class="font-weight-bold text-dark">Procedure Name</span>
+                                                                        <span class="text-danger">*</span>
+                                                                        <asp:TextBox ID="tbUnspecifiedProcedureName" OnKeypress="return isAlphaNumeric(event);" runat="server" CssClass="form-control" Text=""></asp:TextBox>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4 mb-3">
+                                                                    <div class="form-group">
+                                                                        <span class="font-weight-bold text-dark">Procedure Amount</span>
+                                                                        <span class="text-danger">*</span>
+                                                                        <asp:TextBox ID="tbUnspecifiedProcedureAmount" OnKeypress="return isNumeric(event);" runat="server" TextMode="number" CssClass="form-control" Text="0"></asp:TextBox>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-8 mb-3">
+                                                                    <div class="form-group">
+                                                                        <span class="font-weight-bold text-dark">Investigation</span>
+                                                                        <span class="text-danger">*</span>
+                                                                        <asp:TextBox ID="tbUnspecifiedProcedureInvestigation" OnKeypress="return isAlphaNumeric(event);" runat="server" CssClass="form-control" Text="" TextMode="MultiLine"></asp:TextBox>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </asp:Panel>
+                                            </div>
                                             <div class="col-lg-12">
                                                 <asp:Panel ID="panelStratification" runat="server">
                                                     <div class="ibox">
