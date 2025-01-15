@@ -11,6 +11,7 @@ using WebGrease.Css.Ast;
 using Antlr.Runtime.Misc;
 using System.Collections.Generic;
 using iText.IO.Image;
+using System.Web.WebPages;
 
 public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
 {
@@ -1093,7 +1094,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         string caseNo = Session["CaseNumber"] as string;
         string cardNo = Session["CardNumber"] as string;
-        if (hfDeductedAmount.Value != null && hfFinalAmount.Value != null)
+        if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
         {
             decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
             decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
