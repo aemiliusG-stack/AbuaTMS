@@ -91,11 +91,11 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     string minDateDischargedate = DischargeDate.ToString("yyyy-MM-dd");
                     string maxDate = DateTime.Now.ToString("yyyy-MM-dd");
                     tbCSDischargeDate.Attributes["min"] = minDateDischargedate;
-                    //tbCSDischargeDate.Attributes["max"] = maxDate;
+                    tbCSDischargeDate.Attributes["max"] = maxDate;
                     tbCSTherepyDate.Attributes["min"] = minDateSurgerydate;
-                    //tbCSTherepyDate.Attributes["max"] = maxDate;
+                    tbCSTherepyDate.Attributes["max"] = maxDate;
                     tbCSAdmissionDate.Attributes["min"] = minDateadmission;
-                    //tbCSAdmissionDate.Attributes["max"] = maxDate;
+                    tbCSAdmissionDate.Attributes["max"] = maxDate;
                     Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
                     Session["ClaimId"] = dt.Rows[0]["ClaimId"].ToString().Trim();
                     hdClaimId.Value = dt.Rows[0]["ClaimId"].ToString().Trim();
@@ -502,12 +502,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
                     return;
                 }
-                if (cex.DoesNonTechChecklistExist(hdCaseNo.Value))
-                {
-                    string errorMessage = "window.alert('Record already exists.');";
-                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
-                    return;
-                }
+                
 
                 string caseNo = hdCaseNo.Value;
                 string cardNumber = hdAbuaId.Value;
@@ -536,6 +531,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                 int isDateAndNameCorrect = rbIsReportVerifiedYes.Checked ? 1 : 0;
 
                 string nonTechChecklistRemarks = tbNonTechFormRemark.Text;
+                string Role = hdRoleId.Value;
 
                 DateTime admissionDate;
                 if (DateTime.TryParse(tbCSAdmissionDate.Text, out admissionDate))
@@ -572,7 +568,16 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
                     return;
                 }
-                bool resultId = cex.InsertCEXNonTechChecklist(caseNo, cardNumber, userId, claimId, admissionId, isNameCorrect, isGenderCorrect, doesPhotoMatch, admissionDateCS, doesAddDateMatchCS, surgeryDateCS, doesSurDateMatchCS, dischargeDateCS, doesDischargeDateMatchCS, isPatientSignVerified, isReportVerified, isDateAndNameCorrect, nonTechChecklistRemarks);
+
+                bool checkDuplicate = cex.DoesNonTechChecklistExist(caseNo, Role);
+                if (checkDuplicate)
+                {
+                    string errorMessage = "window.alert('Record already exists.');";
+                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                    return;
+                }
+
+                bool resultId = cex.InsertCEXNonTechChecklist(caseNo, Role, cardNumber, userId, claimId, admissionId, isNameCorrect, isGenderCorrect, doesPhotoMatch, admissionDateCS, doesAddDateMatchCS, surgeryDateCS, doesSurDateMatchCS, dischargeDateCS, doesDischargeDateMatchCS, isPatientSignVerified, isReportVerified, isDateAndNameCorrect, nonTechChecklistRemarks);
 
                 if (resultId)
                 {

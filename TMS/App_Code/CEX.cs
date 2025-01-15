@@ -69,16 +69,17 @@ public class CEX
         }
         return dt;
     }
-    public bool InsertCEXNonTechChecklist(string caseNo, string cardNumber, string userId, string claimId, string admissionId, int isNameCorrect, int isGenderCorrect, int doesPhotoMatch, string admissionDateCS, int doesAddDateMatchCS, string surgeryDateCS, int doesSurDateMatchCS, string dischargeDateCS, int doesDischargeDateMatchCS, int isPatientSignVerified, int isReportVerified, int isDateAndNameCorrect, string nonTechChecklistRemarks)
+    public bool InsertCEXNonTechChecklist(string caseNo,string Role, string cardNumber, string userId, string claimId, string admissionId, int isNameCorrect, int isGenderCorrect, int doesPhotoMatch, string admissionDateCS, int doesAddDateMatchCS, string surgeryDateCS, int doesSurDateMatchCS, string dischargeDateCS, int doesDischargeDateMatchCS, int isPatientSignVerified, int isReportVerified, int isDateAndNameCorrect, string nonTechChecklistRemarks)
     {
         try
         {
-            string query = @"INSERT INTO TMS_CEXNonTechChecklist(CaseNo, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks, IsActive ,CreatedOn ,UpdatedOn)
-			VALUES(@CaseNo, @cardNumber, @UserId, @ClaimId, @AddmissionId, @IsNameCorrect, @IsGenderCorrect, @DoesPhotoMatch, @AdmissionDateCS, @DoesAddDateMatchCS, @SurgeryDateCS, @DoesSurDateMatchCS, @DischargeDateCS, @DoesDischDateMatchCS, @IsPatientSignVerified, @IsReportVerified, @IsDateAndNameCorrect, @NonTechChecklistRemarks, 1, GETDATE(), GETDATE())";
+            string query = @"INSERT INTO TMS_CEXNonTechChecklist(CaseNo,RoleId, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks, IsActive ,CreatedOn ,UpdatedOn)
+			VALUES(@CaseNo,@RoleId, @cardNumber, @UserId, @ClaimId, @AddmissionId, @IsNameCorrect, @IsGenderCorrect, @DoesPhotoMatch, @AdmissionDateCS, @DoesAddDateMatchCS, @SurgeryDateCS, @DoesSurDateMatchCS, @DischargeDateCS, @DoesDischDateMatchCS, @IsPatientSignVerified, @IsReportVerified, @IsDateAndNameCorrect, @NonTechChecklistRemarks, 1, GETDATE(), GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
             sd.InsertCommand.Parameters.AddWithValue("@CaseNo", caseNo);
+            sd.InsertCommand.Parameters.AddWithValue("@RoleId", Role);
             sd.InsertCommand.Parameters.AddWithValue("@CardNumber", cardNumber);
             sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
             sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
@@ -215,13 +216,14 @@ public class CEX
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,ActionDate,ActionTakenBy,ActionTaken,,Remarks,Amount, IsActive,CreatedOn)
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
 			VALUES( @ClaimId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,0.00, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
             sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
             sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
+            sd.InsertCommand.Parameters.AddWithValue("@Remarks", nonTechChecklistRemarks);
             if (con.State == ConnectionState.Open)
             {
                 con.Close();
@@ -241,15 +243,30 @@ public class CEX
             return false;
         }
     }
-    public bool DoesNonTechChecklistExist(string caseNumber)
+    public bool DoesNonTechChecklistExist(string caseNumber, string RoleId)
     {
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_CEXNonTechChecklist WHERE CaseNo = @CaseNo AND RoleId = @RoleId  AND IsActive = 1";
 
-        SqlParameter[] p1 = new SqlParameter[1];
-        p1[0] = new SqlParameter("@CaseNo", caseNumber);
-        p1[0].DbType = DbType.String;
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@CaseNo", caseNumber);
+            cmd.Parameters.AddWithValue("@RoleId", RoleId);
 
-        int recordExists = (int)SqlHelper.ExecuteScalar(con, CommandType.Text, "SELECT COUNT(*) FROM TMS_CEXNonTechChecklist WHERE CaseNo = @CaseNo AND IsActive = 1 AND IsDeleted = 0", p1);
-        return recordExists > 0;
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar(); // Retrieve the count of matching records
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
     }
     public string DisplayImage(string folderName, string imageFileName)
     {
