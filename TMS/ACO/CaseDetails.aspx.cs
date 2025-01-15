@@ -429,7 +429,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         aco.SaveDeductionAmount(userId, (int)finalDeductedAmount, caseNo, remarks);
         long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         long actionId = Convert.ToInt64(actionType.SelectedValue);
-
         // Optional fields
         long? reasonId = null;
         long? subReasonId = null;
