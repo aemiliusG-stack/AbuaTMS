@@ -385,7 +385,7 @@ public class CPD
         dt.Clear();
         try
         {
-            string Query = "select PackageId, SpecialityName from TMS_MasterPackageMaster where IsActive=1 and IsDeleted=0";
+            string Query = "select PackageId, concat(SpecialityName, ' (', SpecialityCode, ')') as SpecialityName from TMS_MasterPackageMaster where IsActive=1 and IsDeleted=0";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
             sd.Fill(ds);

@@ -19,7 +19,7 @@
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <span class="form-label fw-semibold">Primary Procedure Code</span>
-                                        <asp:DropDownList ID="ddPrimaryProcedureCode" runat="server" class="form-control mt-2">
+                                        <asp:DropDownList ID="ddPrimaryProcedureCode" runat="server" class="form-control mt-2" AutoPostBack="true" OnSelectedIndexChanged="ddPrimaryProcedureCode_SelectedIndexChanged">
                                             <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>
                                         </asp:DropDownList>
                                     </div>
@@ -35,8 +35,8 @@
                                     </div>
                                     <div class="col-lg-12 text-center mt-2">
                                         <asp:Button ID="btnAddProcedureNonRelated" runat="server" Text="ADD" class="btn btn-success rounded-pill" OnClick="btnAddProcedureNonRelated_Click" />
-                                        <asp:Button ID="btnReset" runat="server" Text="RESET" class="btn btn-danger rounded-pill" OnClick="btnReset_Click" />
                                         <asp:Button ID="btnUpdate" Visible="false" runat="server" Text="UPDATE" class="btn btn-warning rounded-pill" OnClick="btnUpdate_Click" />
+                                        <asp:Button ID="btnReset" runat="server" Text="RESET" class="btn btn-danger rounded-pill" OnClick="btnReset_Click" />
                                     </div>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                     <div class="col-lg-12">
                         <div class="ibox ">
                             <div class="ibox-title d-flex justify-content-center">
-                                <h5 style="text-align: center;">Pop Up Master Record</h5>
+                                <h5 style="text-align: center;">Procedure Non Related Mapping Record</h5>
                             </div>
                             <div class="ibox-content">
                                 <div class="form-group row">
@@ -75,7 +75,7 @@
                                                             <asp:Label ID="lbProcedureId" runat="server" Visible="false" Text='<%# Eval("ProcedureId") %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
-                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Procedure Code">
                                                         <ItemTemplate>
@@ -83,28 +83,28 @@
                                                             <asp:Label ID="lbNonRelatedId" runat="server" Visible="false" Text='<%# Eval("NonRelatedId") %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
-                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Remarks">
                                                         <ItemTemplate>
                                                             <asp:Label ID="lbRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
-                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="35%" />
+                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Created On">
                                                         <ItemTemplate>
                                                             <asp:Label ID="lbCreatedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
-                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Updated On">
                                                         <ItemTemplate>
                                                             <asp:Label ID="lbUpdatedOn" runat="server" Text='<%# Eval("UpdatedOn") %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
-                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Status">
                                                         <ItemTemplate>
@@ -121,7 +121,7 @@
                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                     </asp:TemplateField>
-                                                  <%--  <asp:TemplateField HeaderText="Action">
+                                                    <%--  <asp:TemplateField HeaderText="Action">
                                                         <ItemTemplate>
                                                             <asp:Label ID="lbProcedureNonRelatedId" runat="server" Text='<%# Eval("ProcedureNonRelatedId") %>' Visible="false"></asp:Label>
                                                             <asp:LinkButton ID="btnEdit" runat="server"
