@@ -10,7 +10,7 @@ using System.Collections;
 /// <summary>
 /// Summary description for ACOHelper
 /// </summary>
-public class ACOHelper
+public class SHAHelper
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
@@ -21,7 +21,7 @@ public class ACOHelper
     string pageName;
     public DataTable GetActionTypes()
     {
-        string query = "SELECT [ActionId], [ActionName] FROM [TMS_MasterActionMaster] WHERE [ACO] = 1";
+        string query = "SELECT [ActionId], [ActionName] FROM [TMS_MasterActionMaster] WHERE [SHA] = 1";
 
         try
         {
@@ -117,13 +117,28 @@ public class ACOHelper
             con.Close();
         }
         return dt;
+    }  public DataTable GetSHARemarks(string claimId)
+    {
+        string query = "SELECT \r\nt2.TotalPackageCost AS TotalClaims,\r\nISNULL(CONVERT(VARCHAR, t1.TrustClaimAmountApproved), 'NA') AS [Trust Liable]," +
+            "\r\nt2.TotalPackageCost AS [Final Approved Amount]\r\nFROM \r\n    TMS_ClaimMaster t1 \r\nINNER JOIN TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\n" +
+            "INNER JOIN TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nWHERE \r\nt1.ClaimId = @claimId\r\nAND t1.IsActive = 1 \r\nAND t1.IsDeleted = 0;";
+        SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.AddWithValue("@claimId", claimId);
+        con.Open();
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        return dt;
     }
-    public void SaveDeductionAmount(int userId, int acODeductionAmount, string caseNo, string remarks)
+    public void SaveDeductionAmount(int userId, int shaDeductionAmount, string caseNo, string remarks)
     {
         SqlCommand cmd = new SqlCommand("ACO_InsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@UserId", userId);
-        //cmd.Parameters.AddWithValue("@ACODeductionAmount", acODeductionAmount);
+        cmd.Parameters.AddWithValue("@SHADeductionAmount", shaDeductionAmount);
         cmd.Parameters.AddWithValue("@CaseNo", caseNo);
         cmd.Parameters.AddWithValue("@Remarks", remarks);
 

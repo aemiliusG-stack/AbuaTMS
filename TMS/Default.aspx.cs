@@ -175,7 +175,7 @@ partial class _Default : System.Web.UI.Page
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACO(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACO(TRUST)")
                         Response.Redirect("ACO/ACOHome.aspx", false);
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(TRUST)")
-                        Response.Redirect("SHA/SHAHome.aspx", false);
+                        Response.Redirect("SHA/Dashboard.aspx", false);
                     else
                         Response.Redirect("Default.aspx");
                 }
