@@ -1144,10 +1144,14 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
-        decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
-        decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
         string caseNo = Session["CaseNumber"] as string;
         string cardNo = Session["CardNumber"] as string;
+        if (hfDeductedAmount.Value != null && hfFinalAmount.Value != null)
+        {
+            decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
+            decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
+            cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+        }
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
@@ -1165,7 +1169,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 if (selectedValue.Equals("1"))
                 {
-                    cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
                     bool specialCase = tbSpecialCase.Text == "Yes";
                     bool diagnosisSupported = rbDiagnosisSupportedYes.Checked;
