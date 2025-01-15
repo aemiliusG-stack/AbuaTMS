@@ -181,15 +181,15 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     }
                     else if (hdRoleId.Value == "6")
                     {
-                        pnlInsuranceamount.Visible = true;
+                        pnlInsuranceamount.Visible = false;
                         pnlTrustAmount.Visible = true;
-                        PanelTotLiableInsurance.Visible = true;
-                        PanelTotLiableInsuranceIs.Visible = true;
+                        PanelTotLiableInsurance.Visible = false;
+                        PanelTotLiableInsuranceIs.Visible = false;
                         PanelTotLiableTrust.Visible = true;
                         PanelTotLiableTrustIs.Visible = true;
-                        lbpnlInsuranceAmount.Text = dt.Rows[0]["InsurerClaimAmountApproved"].ToString().Trim();
+                        //lbpnlInsuranceAmount.Text = dt.Rows[0]["InsurerClaimAmountApproved"].ToString().Trim();
                         lbpnlTrustAmount.Text = dt.Rows[0]["TrustClaimAmountApproved"].ToString().Trim();
-                        lbTotalLiableAmountByInsurer.Text = dt.Rows[0]["InsurerClaimAmountApproved"].ToString().Trim();
+                        //lbTotalLiableAmountByInsurer.Text = dt.Rows[0]["InsurerClaimAmountApproved"].ToString().Trim();
                         lbTotalLiableAmountByTrust.Text = dt.Rows[0]["TrustClaimAmountApproved"].ToString().Trim();
                     }
 

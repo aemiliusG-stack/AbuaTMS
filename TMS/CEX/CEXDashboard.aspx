@@ -125,7 +125,7 @@
                                 <asp:Label ID="lbTrustOverall" runat="server"></asp:Label>
                             </div>
                         </div>
-                        <div class="row bg-light text-dark  align-items-center">
+                        <%--<div class="row bg-light text-dark  align-items-center">
                             <div class="col">
                                 <h4>Claim Executive Insurer</h4>
                             </div>
@@ -135,7 +135,7 @@
                             <div class="col">
                                 <asp:Label ID="lbInsurerforOverall" runat="server"></asp:Label>
                             </div>
-                        </div>
+                        </div>--%>
                     </div>
                 </asp:View>
             </asp:MultiView>
