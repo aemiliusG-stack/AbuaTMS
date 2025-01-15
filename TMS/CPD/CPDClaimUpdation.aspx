@@ -63,6 +63,10 @@
             <asp:HiddenField ID="hdPackageId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfPDId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfAdmissionId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfInsurerApprovedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfTrustApprovedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfDeductedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfFinalAmount" runat="server" Visible="false" />
 
             <asp:MultiView ID="MultiViewMain" runat="server" ActiveViewIndex="0">
                 <asp:View ID="viewMain" runat="server">
@@ -171,10 +175,10 @@
                                                 </div>
                                                 <div class="row col-lg-3">
                                                     <div class="col-lg-6 align-items-center">
-                                                        <asp:Image ID="imgPatientPhoto" runat="server" ImageUrl="../images/user_img.jpeg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px; object-fit: cover;" AlternateText="Patient Photo" />
+                                                        <asp:Image ID="imgPatientPhoto" runat="server" ImageUrl="../img/profile.jpeg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px; object-fit: cover;" AlternateText="Patient Photo" />
                                                     </div>
                                                     <div class="col-lg-6 align-items-center">
-                                                        <asp:Image ID="imgPatientPhotosecond" runat="server" ImageUrl="../images/user_img.jpeg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px; object-fit: cover;" AlternateText="Patient Photo" />
+                                                        <asp:Image ID="imgPatientPhotosecond" runat="server" ImageUrl="../img/profile.jpeg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px; object-fit: cover;" AlternateText="Patient Photo" />
                                                     </div>
                                                 </div>
 
@@ -1741,7 +1745,7 @@
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Total Deduction Amount:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTotalDeductionAmt" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbTotalDeductionAmt" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
 
                                                                 <div class="col-md-4">

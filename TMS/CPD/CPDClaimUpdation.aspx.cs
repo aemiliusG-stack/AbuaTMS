@@ -27,7 +27,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     private string strMessage;
     protected void Page_Load(object sender, EventArgs e)
     {
-        
+        pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
         if (Session["UserId"] == null)
         {
             Response.Redirect("~/Unauthorize.aspx", false);
@@ -36,7 +36,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         else if (!IsPostBack)
         {
             hdUserId.Value = Session["UserId"].ToString();
-            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             string caseNo = Session["CaseNumber"] as string;
             string cardNo = Session["CardNumber"] as string;
             string claimId = Session["ClaimId"] as string;
@@ -132,14 +131,15 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         if (base64String != "")
                         {
                             imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
-                            imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64String;
+                            //imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64String;
                         }
 
                         else
                         {
                             imgPatientPhoto.ImageUrl = "~/img/profile.jpeg";
-                            imgPatientPhotosecond.ImageUrl = "~/img/profile.jpeg";
+                            //imgPatientPhotosecond.ImageUrl = "~/img/profile.jpeg";
                         }
+                        displayPatientAdmissionImage();
                         BindGrid_ICDDetails_Preauth();
                         BindGrid_TreatmentProtocol();
                         BindGrid_ICHIDetails();
@@ -183,6 +183,36 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             MultiViewMain.ActiveViewIndex = 1;
         }
     }
+
+    public void displayPatientAdmissionImage()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cpd.GetManditoryDocument(hdAbuaId.Value.ToString());
+            if (dt.Rows.Count > 0)
+            {
+                string DocumentId = dt.Rows[0]["DocumentId"].ToString().Trim();
+                string FolderName = dt.Rows[0]["FolderName"].ToString().Trim();
+                string UploadedFileName = dt.Rows[0]["UploadedFileName"].ToString().Trim() + ".jpeg";
+                string base64Image = preAuth.DisplayImage(FolderName, UploadedFileName);
+                if (base64Image != "")
+                {
+                    imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64Image;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     private void ClearLabels()
     {
         lbBeneficiaryId.Text = "";
@@ -569,6 +599,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
                 tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
                 tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
+                hfInsurerApprovedAmount.Value = row["InsurerClaimAmountApproved"].ToString();
+                hfTrustApprovedAmount.Value = row["TrustClaimAmountApproved"].ToString();
                 if (row["IsSpecialCase"] != DBNull.Value)
                 {
                     bool isSpecialCase = Convert.ToBoolean(row["IsSpecialCase"]);
@@ -582,58 +614,93 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             }
         }
     }
+
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
-        decimal totalClaims = 0;
-        decimal deductionAmount = 0;
-        decimal totalDeductionAmount = 0;
-        string caseNo = Session["CaseNumber"].ToString();
-        int parsedUserId;
-        int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
-        if (!decimal.TryParse(tbAmount.Text, out deductionAmount))
-        {
-            tbTotalDeductionAmt.Text = "Invalid input for deduction amount";
-            return;
-        }
-        string roleName = "";
         try
         {
-            roleName = cpd.GetUserRole(userId);
+            decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
+            string roleName = cpd.GetUserRole(Convert.ToInt32(Session["UserId"].ToString()));
             if (roleName == "CPD(INSURER)")
             {
-                if (!decimal.TryParse(tbInsuranceApprovedAmt.Text, out totalClaims))
+                totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value.ToString());
+                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
+                if (deductionAmount > totalClaims)
                 {
-                    tbTotalDeductionAmt.Text = "Invalid Insurance Approved Amount input";
+                    tbTotalDeductionAmt.Text = "Deduction cannot exceed total claims";
                     return;
                 }
+                totalDeductionAmount = totalClaims - deductionAmount;
+                tbTotalDeductionAmt.Text = totalDeductionAmount.ToString();
             }
             else if (roleName == "CPD(TRUST)")
             {
-                if (!decimal.TryParse(tbTrustApprovedAmt.Text, out totalClaims))
+                totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value.ToString());
+                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
+                if (deductionAmount > totalClaims)
                 {
-                    tbTotalDeductionAmt.Text = "Invalid Trust Approved Amount input";
+                    tbTotalDeductionAmt.Text = "Deduction cannot exceed total claims";
                     return;
                 }
+                totalDeductionAmount = totalClaims - deductionAmount;
+                tbTotalDeductionAmt.Text = totalDeductionAmount.ToString();
             }
-            else
-            {
-                tbTotalDeductionAmt.Text = "Unrecognized role";
-                return;
-            }
-            if (deductionAmount > totalClaims)
-            {
-                tbTotalDeductionAmt.Text = "Deduction cannot exceed total claims";
-                return;
-            }
-            totalDeductionAmount = totalClaims - deductionAmount;
-            tbTotalDeductionAmt.Text = totalDeductionAmount.ToString("C");
-            cpd.InsertDeductionAndUpdateClaimMaster(userId, dropDeductionType.SelectedItem.Value, deductionAmount, totalDeductionAmount, caseNo, tbDedRemarks.Text);
-            BindTechnicalChecklistData();
+            hfDeductedAmount.Value = deductionAmount.ToString();
+            hfFinalAmount.Value = totalDeductionAmount.ToString();
         }
         catch (Exception ex)
         {
-            tbTotalDeductionAmt.Text = "Error: " + ex.Message;
+            
         }
+
+
+        //string caseNo = Session["CaseNumber"].ToString();
+        //int parsedUserId;
+        //int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
+        //if (!decimal.TryParse(tbAmount.Text, out deductionAmount))
+        //{
+        //    tbTotalDeductionAmt.Text = "Invalid input for deduction amount";
+        //    return;
+        //}
+        //string roleName = "";
+        //try
+        //{
+        //roleName = cpd.GetUserRole(userId);
+        //if (roleName == "CPD(INSURER)")
+        //{
+        //    if (!decimal.TryParse(tbInsuranceApprovedAmt.Text, out totalClaims))
+        //    {
+        //        tbTotalDeductionAmt.Text = "Invalid Insurance Approved Amount input";
+        //        return;
+        //    }
+        //}
+        //else if (roleName == "CPD(TRUST)")
+        //{
+        //    if (!decimal.TryParse(tbTrustApprovedAmt.Text, out totalClaims))
+        //    {
+        //        tbTotalDeductionAmt.Text = "Invalid Trust Approved Amount input";
+        //        return;
+        //    }
+        //}
+        //else
+        //{
+        //    tbTotalDeductionAmt.Text = "Unrecognized role";
+        //    return;
+        //}
+        //if (deductionAmount > totalClaims)
+        //{
+        //    tbTotalDeductionAmt.Text = "Deduction cannot exceed total claims";
+        //    return;
+        //}
+        //totalDeductionAmount = totalClaims - deductionAmount;
+        //tbTotalDeductionAmt.Text = totalDeductionAmount.ToString("C");
+        //cpd.InsertDeductionAndUpdateClaimMaster(userId, dropDeductionType.SelectedItem.Value, deductionAmount, totalDeductionAmount, caseNo, tbDedRemarks.Text);
+        //BindTechnicalChecklistData();
+        //}
+        //catch (Exception ex)
+        //{
+        //    tbTotalDeductionAmt.Text = "Error: " + ex.Message;
+        //}
     }
 
     private void BindClaimWorkflow()
@@ -1077,6 +1144,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
+        decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
+        decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
         string caseNo = Session["CaseNumber"] as string;
         string cardNo = Session["CardNumber"] as string;
         if (!cbTerms.Checked)
@@ -1096,6 +1165,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 if (selectedValue.Equals("1"))
                 {
+                    cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
                     bool specialCase = tbSpecialCase.Text == "Yes";
                     bool diagnosisSupported = rbDiagnosisSupportedYes.Checked;
@@ -1103,7 +1173,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                     bool evidenceTherapyConducted = rbEvidenceTherapyYes.Checked;
                     bool mandatoryReports = rbMandatoryReportsYes.Checked;
                     string remarks = tbTechRemarks.Text.Trim();
-
                     if (!cpd.CheckCaseNumberExists(caseNo))
                     {
                         cpd.InsertTechnicalChecklist(caseNo, cardNo, diagnosisSupported, caseManagementSTP, evidenceTherapyConducted, mandatoryReports, remarks);
