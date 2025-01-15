@@ -81,8 +81,8 @@ public partial class CEX_CEXDashboard : System.Web.UI.Page
                 {
                     lbTrustToday.Text = trustTodayCount.ToString();
                     lbTrustOverall.Text = trustOverallCount.ToString();
-                    lbInsurerforToday.Text = " " + insurerTodayCount.ToString();
-                    lbInsurerforOverall.Text = insurerOverallCount.ToString();
+                    //lbInsurerforToday.Text = " " + insurerTodayCount.ToString();
+                    //lbInsurerforOverall.Text = insurerOverallCount.ToString();
                     MultiView1.SetActiveView(ViewForTrust);
                 }
                 else
