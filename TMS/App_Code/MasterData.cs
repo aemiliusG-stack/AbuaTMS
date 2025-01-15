@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using WebGrease.Css.Ast;
 
 public class MasterData
 {
@@ -2344,12 +2345,22 @@ public class MasterData
     //Package Detail by Harsha
     public DataTable GetPackageDetailsMasterData()
     {
-        string Query = "SELECT t1.PackageId, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.IsMultipleProcedure, t1.IsLevelApplied, t1.IsAutoApproved, t1.ProcedureType, t1.Reservance, t1.IsStratificationRequired, t1.MaxStratification, t1.IsImplantRequired, t1.MaxImplant, t1.IsSpecialCondition, t1.ReservationPublicHospital, t1.ReservationTertiaryHospital, t1.LevelOfCare, t1.LOS, PreInvestigation, t1.PostInvestigation, t1.ProcedureLabel, SpecialConditionPopUp, SpecialConditionRule, t1.IsEnhancementApplicable, t1.IsMedicalSurgical, t1.IsDayCare, t1.ClubbingId, t1.ClubbingRemarks, t1.IsCycleBased, t1.NoOfCycle, t1.CycleBasedRemarks, t1.IsSittingProcedure, t1.SittingNoOfDays, t1.SittingProcedureRemarks,  t1.IsActive, t1.CreatedOn, t1.UpdatedOn FROM TMS_MasterPackageDetail t1 inner join TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId ORDER BY t1.ProcedureId DESC";
+        string Query = "SELECT t1.PackageId, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.IsMultipleProcedure, t1.IsLevelApplied, t1.IsAutoApproved, t1.ProcedureType, t1.Reservance, t1.IsStratificationRequired, t1.MaxStratification, t1.IsImplantRequired, t1.MaxImplant, t1.IsSpecialCondition, t1.ReservationPublicHospital, t1.ReservationTertiaryHospital, t1.LevelOfCare, t1.LOS, PreInvestigation, t1.PostInvestigation, t1.ProcedureLabel, SpecialConditionPopUp, SpecialConditionRule, t1.IsEnhancementApplicable, t1.IsMedicalSurgical, t1.IsDayCare, t1.ClubbingId, t1.ClubbingRemarks, t1.IsCycleBased, t1.NoOfCycle, t1.CycleBasedRemarks, t1.IsSittingProcedure, t1.SittingNoOfDays, t1.SittingProcedureRemarks,  t1.IsActive, t1.CreatedOn, t1.UpdatedOn FROM TMS_MasterPackageDetail t1 inner join TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId ORDER BY t1.ProcedureId ASC";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
         con.Close();
         dt = ds.Tables[0];
+        foreach (DataRow row in dt.Rows)
+        {
+            foreach (DataColumn column in dt.Columns)
+            {
+                if (row[column] == DBNull.Value || string.IsNullOrWhiteSpace(row[column].ToString()))
+                {
+                    row[column] = "N/A";
+                }
+            }
+        }
         return dt;
     }
 
@@ -2467,10 +2478,73 @@ public class MasterData
         return dt;
 
     }
+    public bool CheckPackageDetailsExists(string packageId, string procedureCode)
+    {
+        string query = "SELECT COUNT(1) FROM TMS_MasterPackageDetail WHERE PackageId = @PackageId AND LTRIM(RTRIM(ProcedureCode)) = LTRIM(RTRIM(@ProcedureCode))";
+
+        SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.Add("@PackageId", SqlDbType.Int).Value = packageId; // Assuming PackageId is an integer
+        cmd.Parameters.Add("@ProcedureCode", SqlDbType.NVarChar).Value = procedureCode;
+
+        con.Open();
+        int count = (int)cmd.ExecuteScalar();
+        con.Close();
+
+        return count > 0;
+    }
+    public DataTable GetPackageDetailsSerachData(string searchTerm = "")
+    {
+        string query = @"
+        SELECT t1.PackageId, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, 
+               t1.IsMultipleProcedure, t1.IsLevelApplied, t1.IsAutoApproved, t1.ProcedureType, t1.Reservance, 
+               t1.IsStratificationRequired, t1.MaxStratification, t1.IsImplantRequired, t1.MaxImplant, 
+               t1.IsSpecialCondition, t1.ReservationPublicHospital, t1.ReservationTertiaryHospital, t1.LevelOfCare, 
+               t1.LOS, PreInvestigation, t1.PostInvestigation, t1.ProcedureLabel, SpecialConditionPopUp, 
+               SpecialConditionRule, t1.IsEnhancementApplicable, t1.IsMedicalSurgical, t1.IsDayCare, t1.ClubbingId, 
+               t1.ClubbingRemarks, t1.IsCycleBased, t1.NoOfCycle, t1.CycleBasedRemarks, t1.IsSittingProcedure, 
+               t1.SittingNoOfDays, t1.SittingProcedureRemarks, t1.IsActive, t1.CreatedOn, t1.UpdatedOn
+        FROM TMS_MasterPackageDetail t1
+        INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId
+        WHERE t1.IsDeleted = 0";
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query += @"
+            AND (
+                t1.PackageId LIKE @SearchTerm
+                OR t2.SpecialityName LIKE @SearchTerm
+                OR t1.ProcedureCode LIKE @SearchTerm
+                OR t1.ProcedureName LIKE @SearchTerm
+                OR t1.ProcedureAmount LIKE @SearchTerm
+                OR t1.LevelOfCare LIKE @SearchTerm
+                OR t1.LOS LIKE @SearchTerm
+                OR t1.PreInvestigation LIKE @SearchTerm
+                OR t1.PostInvestigation LIKE @SearchTerm
+                OR t1.ProcedureLabel LIKE @SearchTerm
+                OR t1.ClubbingRemarks LIKE @SearchTerm
+                OR t1.CycleBasedRemarks LIKE @SearchTerm
+            )";
+        }
+
+        SqlCommand cmd = new SqlCommand(query, con);
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            cmd.Parameters.Add("@SearchTerm", SqlDbType.NVarChar).Value = "%" + searchTerm + "%"; // Use '%' for partial search
+        }
+
+        SqlDataAdapter sda = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        con.Open();
+        sda.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
+
     //Master PopUp by Harsha 
     public DataTable GetMasterPopupMasterData()
     {
-        string Query = "SELECT PopUpId, PopUpDescription, IsActive, IsDeleted, CreatedOn, UpdatedOn FROM TMS_MasterPopUpMaster ORDER BY PopUpId DESC";
+        string Query = "SELECT PopUpId, PopUpDescription, IsActive, IsDeleted, CreatedOn, UpdatedOn FROM TMS_MasterPopUpMaster ORDER BY PopUpId ASC";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
@@ -2486,6 +2560,16 @@ public class MasterData
         con.Open();
         cmd.ExecuteNonQuery();
         con.Close();
+    }
+    public bool CheckPopUpExists(string PopUpDescription)
+    {
+        string query = "SELECT COUNT(1) FROM TMS_MasterPopUpMaster WHERE LTRIM(RTRIM(PopUpDescription)) = LTRIM(RTRIM(@PopUpDescription))";
+        SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.Add("@PopUpDescription", SqlDbType.NVarChar).Value = PopUpDescription;
+        con.Open();
+        int count = (int)cmd.ExecuteScalar();
+        con.Close();
+        return count > 0;
     }
     public void UpdateMasterPopup(string PopUpId, string PopUpDescription)
     {
@@ -2514,11 +2598,27 @@ public class MasterData
         cmd.ExecuteNonQuery();
         con.Close();
     }
+    public DataTable GetMasterPopupSerachData(string searchTerm = "")
+    {
+        string query = "SELECT PopUpId, PopUpDescription, CreatedOn, UpdatedOn, IsActive FROM TMS_MasterPopUpMaster WHERE IsDeleted = 0";
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query += " AND PopUpDescription LIKE '%" + searchTerm.Replace("'", "''") + "%'";
+        }
+        SqlDataAdapter sda = new SqlDataAdapter(query, con);
+        DataTable dt = new DataTable();
+        con.Open();
+        sda.Fill(dt);
+        con.Close();
+        return dt;
+    }
+
 
     //Map Procedure Non Related by Harsha 
     public DataTable GetMapProcedureNonRelatedData()
     {
-        string Query = "SELECT t1.ProcedureNonRelatedId, t1.ProcedureId, t1.NonRelatedId, p1.ProcedureCode AS ProcedureCode_ProcedureId, p2.ProcedureCode AS ProcedureCode_NonRelatedId, t1.Remarks, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn FROM TMS_MapProcedureNonRelated t1 LEFT JOIN TMS_MasterPackageDetail p1 ON t1.ProcedureId = p1.ProcedureId LEFT JOIN TMS_MasterPackageDetail p2 ON t1.NonRelatedId = p2.ProcedureId ORDER BY t1.ProcedureNonRelatedId DESC;";
+        string Query = "SELECT t1.ProcedureNonRelatedId, t1.ProcedureId, t1.NonRelatedId, p1.ProcedureCode AS ProcedureCode_ProcedureId, p2.ProcedureCode AS ProcedureCode_NonRelatedId, t1.Remarks, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn FROM TMS_MapProcedureNonRelated t1 LEFT JOIN TMS_MasterPackageDetail p1 ON t1.ProcedureId = p1.ProcedureId LEFT JOIN TMS_MasterPackageDetail p2 ON t1.NonRelatedId = p2.ProcedureId ORDER BY t1.ProcedureNonRelatedId ASC;";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
@@ -2549,7 +2649,45 @@ public class MasterData
         cmd.ExecuteNonQuery();
         con.Close();
     }
+    public DataTable GetMapProcedureNonRelatedSearchData(string searchTerm = "")
+    {
+        string query = "SELECT t1.ProcedureNonRelatedId, t1.ProcedureId, t1.NonRelatedId, " +
+                       "p1.ProcedureCode AS ProcedureCode_ProcedureId, " +
+                       "p2.ProcedureCode AS ProcedureCode_NonRelatedId, " +
+                       "t1.Remarks, t1.IsActive, t1.IsDeleted, t1.CreatedOn, t1.UpdatedOn " +
+                       "FROM TMS_MapProcedureNonRelated t1 " +
+                       "LEFT JOIN TMS_MasterPackageDetail p1 ON t1.ProcedureId = p1.ProcedureId " +
+                       "LEFT JOIN TMS_MasterPackageDetail p2 ON t1.NonRelatedId = p2.ProcedureId " +
+                       "WHERE t1.IsDeleted = 0";
 
+        // Add search condition
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query += " AND (p1.ProcedureCode LIKE '%" + searchTerm.Replace("'", "''") + "%' " +
+                     "OR p2.ProcedureCode LIKE '%" + searchTerm.Replace("'", "''") + "%' " +
+                     "OR t1.Remarks LIKE '%" + searchTerm.Replace("'", "''") + "%')";
+        }
+
+        query += " ORDER BY t1.ProcedureNonRelatedId ASC;";
+
+        SqlDataAdapter sda = new SqlDataAdapter(query, con);
+        DataTable dt = new DataTable();
+        con.Open();
+        sda.Fill(dt);
+        con.Close();
+        return dt;
+    }
+    public bool CheckMapProcedureNonRelatedExists(string ProcedureId, string NonRelatedId)
+    {
+        string query = "SELECT COUNT(1) FROM TMS_MapProcedureNonRelated WHERE ProcedureId = @ProcedureId AND NonRelatedId = @NonRelatedId";
+        SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.Add("@ProcedureId", SqlDbType.NVarChar).Value = ProcedureId;
+        cmd.Parameters.Add("@NonRelatedId", SqlDbType.NVarChar).Value = NonRelatedId;
+        con.Open();
+        int count = (int)cmd.ExecuteScalar();
+        con.Close();
+        return count > 0;
+    }
     public void StatusMapProcedureNonRelated(string ProcedureNonRelatedId, bool Status)
     {
         string Query;
@@ -2579,4 +2717,5 @@ public class MasterData
         return dt;
 
     }
+
 }

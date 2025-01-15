@@ -37,6 +37,20 @@
             });
         }
     </script>
+    <script>
+        $(document).ready(function () {
+            let activeTab = sessionStorage.getItem("activeTab");
+            if (activeTab) {
+                $(`[href="${activeTab}"]`).tab('show');
+            }
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                let tabName = $(e.target).attr('href');
+                sessionStorage.setItem("activeTab", tabName);
+            });
+        });
+    </script>
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
@@ -1081,6 +1095,16 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <div class="col-md-3 mb-3">
+                                                                <div class="form-group">
+                                                                    <asp:Label ID="lbDischargeTypeRemarks" runat="server" class="font-weight-bold text-dark" Text="Discharge Type Remarks" Visible="false"></asp:Label><br />
+                                                                    <asp:TextBox ID="tbDischargeTypeRemarks" runat="server" CssClass="form-control d-block border-bottom p-1 mt-1" Visible="false"></asp:TextBox>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3 mb-3 mt-4">
+                                                                <asp:Button ID="btnUpdateDischarge" runat="server" CssClass="btn btn-primary rounded-pill" Text="Update Discharge" OnClick="btnUpdateDischarge_Click" />
+                                                            </div>
+
                                                             <div class="col-md-12 mb-3">
                                                                 <asp:CheckBox ID="cbDischarge" CssClass="text-dark font-weight-bold" Text="&nbsp;&nbsp;&nbsp;I hereby declare that the discharge type selected is correct" runat="server" />
                                                             </div>
@@ -1685,7 +1709,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="form-group row mb-3">
                                                                 <div class="col-md-4">
-                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Type</span><span class="text-danger">*</span><br />
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Type</span><br />
                                                                     <asp:DropDownList runat="server" ID="dropDeductionType" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;">
                                                                         <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>
                                                                         <asp:ListItem Text="Consultations" Value="Consultation"></asp:ListItem>
@@ -1699,11 +1723,11 @@
                                                                     </asp:DropDownList>
                                                                 </div>
                                                                 <div class="col-md-4">
-                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Amount</span><span class="text-danger">*</span><br />
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Amount</span><br />
                                                                     <asp:TextBox runat="server" ID="tbAmount" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
-                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Remarks</span><span class="text-danger">*</span><br />
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Remarks</span><br />
                                                                     <asp:TextBox runat="server" ID="tbDedRemarks" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
@@ -1894,6 +1918,12 @@
                                                             <asp:Panel ID="pRemarks" runat="server" Visible="false" CssClass="col-md-3 mb-3">
                                                                 <span class="form-label fw-semibold">Remarks</span>
                                                                 <asp:TextBox runat="server" ID="tbRejectRemarks" class="form-control mt-2"></asp:TextBox>
+                                                            </asp:Panel>
+                                                            <asp:Panel ID="pTriggerType" runat="server" Visible="false" CssClass="col-md-3 mb-3">
+                                                                <span class="form-label fw-semibold">Select Trigger Type<span class="text-danger">*</span></span>
+                                                                <asp:DropDownList ID="ddTriggerType" runat="server" CssClass="form-control mt-2" AutoPostBack="True">
+                                                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                                                </asp:DropDownList>
                                                             </asp:Panel>
                                                         </div>
 

@@ -386,8 +386,8 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     private void BindGrid_PreauthWorkFlow()
     {
         dt.Clear();
-        string caseNo = Session["CaseNumber"].ToString();
-        dt = cpd.GetClaimWorkFlow(caseNo);
+        string claimId = Session["ClaimId"].ToString();
+        dt = cpd.GetClaimWorkFlow(claimId);
         if (dt != null && dt.Rows.Count > 0)
         {
             dt.Columns.Add("SlNo", typeof(int));

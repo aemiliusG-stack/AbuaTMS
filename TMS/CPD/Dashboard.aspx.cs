@@ -60,7 +60,10 @@ public partial class CPD_Dashboard : System.Web.UI.Page
             int insurerOverallCount = Convert.ToInt32(row["CPDInsurerOverall"]);
             int trustTodayCount = Convert.ToInt32(row["CPDTrustToday"]);
             int trustOverallCount = Convert.ToInt32(row["CPDTrustOverall"]);
-
+            int insurerTodayCountAssigned = Convert.ToInt32(row["CPDInsurerTodayAssigned"]);
+            int insurerOverallCountAssigned = Convert.ToInt32(row["CPDInsurerOverallAssigned"]);
+            int trustTodayCountAssigned = Convert.ToInt32(row["CPDTrustTodayAssigned"]);
+            int trustOverallCountAssigned = Convert.ToInt32(row["CPDTrustOverallAssigned"]);
             //// Bind Insurer data to labels
             //lbTodayPendency.Text = row["CPDInsurerToday"].ToString();
             //lbOverallPendency.Text = row["CEXInsurerOverall"].ToString();
@@ -78,19 +81,20 @@ public partial class CPD_Dashboard : System.Web.UI.Page
                 // Show only Insurer counts
                 lbTodayPendency.Text = " " + insurerTodayCount.ToString();
                 lbOverallPendency.Text = insurerOverallCount.ToString();
-
+                lbTodayPendencyAssigned.Text = " " + insurerTodayCountAssigned.ToString();
+                lbOverallPendencyAssigned.Text = insurerOverallCountAssigned.ToString();
                 MultiView1.SetActiveView(ViewForInsurer);
             }
             else if (hdRoleId.Value == "8") // Trust Role
             {
                 // Show both Insurer and Trust counts
                 lbTrustToday.Text = trustTodayCount.ToString();
-
                 lbTrustOverall.Text = trustOverallCount.ToString();
+                lbTrustTodayAssigned.Text = trustTodayCountAssigned.ToString();
+                lbTrustOverallAssigned.Text = trustOverallCountAssigned.ToString();
+                //lbInsurerforToday.Text = " " + insurerTodayCount.ToString();
 
-                lbInsurerforToday.Text = " " + insurerTodayCount.ToString();
-
-                lbInsurerforOverall.Text = insurerOverallCount.ToString();
+                //lbInsurerforOverall.Text = insurerOverallCount.ToString();
 
                 MultiView1.SetActiveView(ViewForTrust);
             }
@@ -107,8 +111,8 @@ public partial class CPD_Dashboard : System.Web.UI.Page
             lbOverallPendency.Text = "0";
             lbTrustToday.Text = "0";
             lbTrustOverall.Text = "0";
-            lbInsurerforToday.Text = "0";
-            lbInsurerforOverall.Text = "0";
+            //lbInsurerforToday.Text = "0";
+            //lbInsurerforOverall.Text = "0";
         }
     }
 

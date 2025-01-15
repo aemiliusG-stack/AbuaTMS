@@ -171,7 +171,7 @@ partial class _Default : System.Web.UI.Page
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CEX(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CEX(TRUST)")
                         Response.Redirect("CEX/CEXHome.aspx", false);
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CPD(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CPD(TRUST)")
-                        Response.Redirect("CPD/CPDClaimUpdation.aspx", false);
+                        Response.Redirect("CPD/CPDCaseSearch.aspx", false);
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACO(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACO(TRUST)")
                         Response.Redirect("ACO/ACOHome.aspx", false);
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(TRUST)")

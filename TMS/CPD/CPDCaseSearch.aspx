@@ -6,13 +6,13 @@
             var today = new Date().toISOString().split('T')[0];
             document.getElementById('<%= tbToDate.ClientID %>').setAttribute('max', today);
         };
-</script>
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />
     </asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <contenttemplate>
+        <ContentTemplate>
             <div class="row">
                 <div class="col-lg-12">
                     <form role="form" id="CPDCaseSearchForm">
@@ -150,51 +150,51 @@
                         <div class="card-body table-responsive">
                             <h5 class="card-title">Total No Of Records</h5>
                             <asp:GridView ID="gvCaseSearch" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%" OnRowDataBound="gvCaseSearch_RowDataBound">
-                                <alternatingrowstyle backcolor="Gainsboro" />
-                                <columns>
+                                <AlternatingRowStyle BackColor="Gainsboro" />
+                                <Columns>
                                     <asp:TemplateField HeaderText="Sl.No.">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:Label ID="lbSlNo" runat="server" />
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Case No">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:HyperLink ID="hyperlinkCaseNo" runat="server"
                                                 Text='<%# Eval("CaseNumber") %>'
-                                                NavigateUrl='<%# "CPDcaseSearchPatientDetail.aspx?CaseNo=" + Convert.ToString(Eval("CaseNumber")) %>' />
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                NavigateUrl='<%# "CPDcaseSearchPatientDetail.aspx?CaseNo=" + Eval("CaseNumber") %>' />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Claim No">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:Label ID="lbClaimNo" runat="server" Text='<%# Eval("ClaimNumber") %>'></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Patient Name">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:Label ID="lbPatientName" runat="server" Text='<%# Eval("PatientName") %>'></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Contact No">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:Label ID="lbContactNo" runat="server" Text='<%# Eval("ContactNumber") %>'></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Beneficiary Card Number">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:Label ID="lbBeneficiaryNo" runat="server" Text='<%# Eval("BeneficiaryCardNo") %>'></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
                                     <%--<asp:TemplateField HeaderText="Case Status">
                                 <ItemTemplate>
@@ -204,20 +204,20 @@
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>--%>
                                     <asp:TemplateField HeaderText="Hospital Name">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Patient Registration Date">
-                                        <itemtemplate>
+                                        <ItemTemplate>
                                             <asp:Label ID="lbPatientRegDate" runat="server" Text='<%# Eval("PatientRegistrationDate") %>'></asp:Label>
-                                        </itemtemplate>
-                                        <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                        <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
-                                </columns>
+                                </Columns>
                             </asp:GridView>
                             <asp:Panel ID="paginationPanel" runat="server" Visible="false">
                                 <nav aria-label="Page navigation example">
@@ -238,7 +238,7 @@
                     </div>
                 </div>
             </div>
-        </contenttemplate>
+        </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>
 

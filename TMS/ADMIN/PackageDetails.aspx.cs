@@ -103,12 +103,19 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
         }
     }
 
-    public void GetPackageDetailsMasterData()
+    public void GetPackageDetailsMasterData(string searchTerm = "")
     {
         try
         {
             dt.Clear();
-            dt = md.GetPackageDetailsMasterData();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                dt = md.GetPackageDetailsSerachData(searchTerm);
+            }
+            else
+            {
+                dt = md.GetPackageDetailsMasterData();
+            }
             if (dt != null && dt.Rows.Count > 0)
             {
                 lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
@@ -122,6 +129,7 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
                 gridMasterPackage.DataBind();
             }
         }
+
         catch (Exception ex)
         {
             if (con.State == ConnectionState.Open)
@@ -132,12 +140,11 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
-
     protected void gridMasterPackage_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gridMasterPackage.PageIndex = e.NewPageIndex;
-        GetPackageDetailsMasterData();
+        string searchTerm = txtSearch.Text.Trim();
+        GetPackageDetailsMasterData(searchTerm);
     }
 
     protected void gridPackage_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -167,8 +174,6 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
             }
         }
     }
-
-
     protected void btnAddProcedure_Click(object sender, EventArgs e)
     {
         try
@@ -193,14 +198,14 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
             string MaxStratification = tbMaxStratification.Text;
             string MaxImplant = tbMaxImplant.Text;
             int ReservationPublicHospital = ddReservationPublicHospital.Text.ToLower() == "yes" ? 1 : 0;
-            int ReservationTertiaryHospital = ddReservationPublicHospital.Text.ToLower() == "yes" ? 1 : 0;
+            int ReservationTertiaryHospital = ddReservationTertiaryHospital.Text.ToLower() == "yes" ? 1 : 0;
             string LevelOfCare = tbLevelOfCare.Text;
             string LOS = tbLOS.Text;
             string PreInvestigation = tbPreInvestigation.Text;
             string PostInvestigation = tbPostInvestigation.Text;
             string ProcedureLabel = tbProcedureLabel.Text;
             int SpecialConditionPopUp = ddSpecialConditionPopUp.Text.ToLower() == "yes" ? 1 : 0;
-            int SpecialConditionRule = ddSpecialConditionRule.Text.ToLower() == "yes" ? 1 : 0; ;
+            int SpecialConditionRule = ddSpecialConditionRule.Text.ToLower() == "yes" ? 1 : 0;
             string ClubbingId = ddClubbingRemarks.SelectedValue;
             string ClubbingRemarks = string.Empty;
             string NoOfCycle = tbNoOfCycle.Text;
@@ -216,45 +221,24 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", "window.alert('Invalid Clubbing Remarks selected.');", true);
                 return;
             }
+            if (md.CheckPackageDetailsExists(PackageId, ProcedureCode))
+            {
+                strMessage = "window.alert('This package and procedure combination already exists.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "DuplicateAlert", strMessage, true);
+                return; 
+            }
             if (!PackageId.Equals("") && !ProcedureCode.Equals("") && !ProcedureName.Equals("") && !ProcedureAmount.Equals("") && !ProcedureType.Equals("") && !Reservance.Equals("") && !MaxStratification.Equals("") && !MaxImplant.Equals("") && !ProcedureCode.Equals("") && !LevelOfCare.Equals("") && !LOS.Equals("") && !PreInvestigation.Equals("") && !PostInvestigation.Equals("") && !ProcedureLabel.Equals("") && !ClubbingId.Equals("") && !ClubbingRemarks.Equals("") && !NoOfCycle.Equals("") && !CycleBasedRemarks.Equals("") && !SittingNoOfDays.Equals("") && !SittingProcedureRemarks.Equals(""))
             {
                 md.InsertPackageDetailsMaster(PackageId, ProcedureCode, ProcedureName, ProcedureAmount, IsMultipleProcedure.ToString(), IsLevelApplied.ToString(), IsAutoApproved.ToString(), ProcedureType, Reservance, IsStratificationRequired.ToString(), MaxStratification, IsImplantRequired.ToString(), MaxImplant, IsSpecialCondition.ToString(), ReservationPublicHospital.ToString(), ReservationTertiaryHospital.ToString(), LevelOfCare, LOS, PreInvestigation, PostInvestigation, ProcedureLabel, SpecialConditionPopUp.ToString(), SpecialConditionRule.ToString(), IsEnhancementApplicable.ToString(), IsMedicalSurgical.ToString(),
                   IsDayCare.ToString(), ClubbingId, ClubbingRemarks, IsCycleBased.ToString(), NoOfCycle, CycleBasedRemarks, IsSittingProcedure.ToString(), SittingNoOfDays, SittingProcedureRemarks);
-                tbProcedureCode.Text = "";
-                tbProcedureName.Text = "";
-                tbProcedureAmount.Text = "";
-                ddIsMultipleProcedure.SelectedIndex = 0;
-                ddIsLevelApplied.SelectedIndex = 0;
-                ddIsAutoApproved.SelectedIndex = 0;
-                tbProcedureType.Text = "";
-                tbReservance.Text = "";
-                ddIsStratificationRequired.SelectedIndex = 0;
-                tbMaxStratification.Text = "";
-                ddIsImplantRequired.SelectedIndex = 0;
-                tbMaxImplant.Text = "";
-                ddIsSpecialCondition.Text = "";
-                ddReservationPublicHospital.SelectedIndex = 0;
-                ddReservationTertiaryHospital.SelectedIndex = 0;
-                tbLevelOfCare.Text = "";
-                tbLOS.Text = "";
-                tbPreInvestigation.Text = "";
-                tbPostInvestigation.Text = "";
-                tbProcedureLabel.Text = "";
-                ddSpecialConditionPopUp.SelectedIndex = 0;
-                ddSpecialConditionRule.SelectedIndex = 0;
-                ddIsEnhancementApplicable.SelectedIndex = 0;
-                ddIsMedicalSurgical.SelectedIndex = 0;
-                ddIsDayCare.SelectedIndex = 0;
-                ddClubbingRemarks.SelectedIndex = 0;
-                ddIsCycleBased.SelectedIndex = 0;
-                tbNoOfCycle.Text = "";
-                tbCycleBasedRemarks.Text = "";
-                ddIsSittingProcedure.SelectedIndex = 0;
-                tbSittingNoOfDays.Text = "";
-                tbSittingProcedureRemarks.Text = "";
                 strMessage = "window.alert('Procedure Added Successfully...!!');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                ResetFields();
                 GetPackageDetailsMasterData();
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", "window.alert('Please fill all required fields.');", true);
             }
         }
         catch (Exception ex)
@@ -267,6 +251,42 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    private void ResetFields()
+    {
+        tbProcedureCode.Text = "";
+        tbProcedureName.Text = "";
+        tbProcedureAmount.Text = "";
+        ddIsMultipleProcedure.SelectedIndex = 0;
+        ddIsLevelApplied.SelectedIndex = 0;
+        ddIsAutoApproved.SelectedIndex = 0;
+        tbProcedureType.Text = "";
+        tbReservance.Text = "";
+        ddIsStratificationRequired.SelectedIndex = 0;
+        tbMaxStratification.Text = "";
+        ddIsImplantRequired.SelectedIndex = 0;
+        tbMaxImplant.Text = "";
+        ddIsSpecialCondition.Text = "";
+        ddReservationPublicHospital.SelectedIndex = 0;
+        ddReservationTertiaryHospital.SelectedIndex = 0;
+        tbLevelOfCare.Text = "";
+        tbLOS.Text = "";
+        tbPreInvestigation.Text = "";
+        tbPostInvestigation.Text = "";
+        tbProcedureLabel.Text = "";
+        ddSpecialConditionPopUp.SelectedIndex = 0;
+        ddSpecialConditionRule.SelectedIndex = 0;
+        ddIsEnhancementApplicable.SelectedIndex = 0;
+        ddIsMedicalSurgical.SelectedIndex = 0;
+        ddIsDayCare.SelectedIndex = 0;
+        ddClubbingRemarks.SelectedIndex = 0;
+        ddIsCycleBased.SelectedIndex = 0;
+        tbNoOfCycle.Text = "";
+        tbCycleBasedRemarks.Text = "";
+        ddIsSittingProcedure.SelectedIndex = 0;
+        tbSittingNoOfDays.Text = "";
+        tbSittingProcedureRemarks.Text = "";
+    }
+
     protected void btnUpdate_Click(object sender, EventArgs e)
     {
         try
@@ -316,43 +336,15 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", "window.alert('Invalid Clubbing Remarks selected.');", true);
                     return;
                 }
+                if (!md.CheckPackageDetailsExists(PackageId, ProcedureCode))
+                {
+                    ScriptManager.RegisterStartupScript(this, GetType(), "DuplicateAlert", "window.alert('Duplicate entry found for the given Speciality Name and Procedure Code.');", true);
+                    return;
+                }
                 if (!PackageId.Equals("") && !ProcedureCode.Equals("") && !ProcedureName.Equals("") && !ProcedureAmount.Equals("") && !IsMultipleProcedure.Equals("") && !IsLevelApplied.Equals("") && !IsAutoApproved.Equals("") && !ProcedureType.Equals("") && !Reservance.Equals("") && !IsStratificationRequired.Equals("") && !MaxStratification.Equals("") && !IsImplantRequired.Equals("") && !MaxImplant.Equals("") && !IsSpecialCondition.Equals("") && !ReservationPublicHospital.Equals("") && !ReservationTertiaryHospital.Equals("") && !LevelOfCare.Equals("") && !LOS.Equals("") && !PreInvestigation.Equals("") && !PostInvestigation.Equals("") && !ProcedureLabel.Equals("") && !SpecialConditionPopUp.Equals("") && !SpecialConditionRule.Equals("") && !IsEnhancementApplicable.Equals("") && !IsMedicalSurgical.Equals("") && !IsDayCare.Equals("") && !ClubbingId.Equals("") && !ClubbingRemarks.Equals("") && !IsCycleBased.Equals("") && !NoOfCycle.Equals("") && !CycleBasedRemarks.Equals("") && !IsSittingProcedure.Equals("") && !SittingNoOfDays.Equals("") && !SittingProcedureRemarks.Equals(""))
                 {
                     md.UpdatePackageDetailsMaster(hdProcedureId.Value, PackageId, ProcedureCode, ProcedureName, ProcedureAmount, IsMultipleProcedure, IsLevelApplied, IsAutoApproved, ProcedureType, Reservance, IsStratificationRequired, MaxStratification, IsImplantRequired, MaxImplant, IsSpecialCondition, ReservationPublicHospital, ReservationTertiaryHospital, LevelOfCare, LOS, PreInvestigation, PostInvestigation, ProcedureLabel, SpecialConditionPopUp, SpecialConditionRule, IsEnhancementApplicable, IsMedicalSurgical, IsDayCare, ClubbingId, ClubbingRemarks, IsCycleBased, NoOfCycle, CycleBasedRemarks, IsSittingProcedure, SittingNoOfDays, SittingProcedureRemarks);
-                    ddSpecialityName.SelectedIndex = 0;
-                    tbProcedureCode.Text = "";
-                    tbProcedureName.Text = "";
-                    tbProcedureAmount.Text = "";
-                    ddIsMultipleProcedure.SelectedIndex = 0;
-                    ddIsLevelApplied.SelectedIndex = 0;
-                    ddIsAutoApproved.SelectedIndex = 0;
-                    tbProcedureType.Text = "";
-                    tbReservance.Text = "";
-                    ddIsStratificationRequired.SelectedIndex = 0;
-                    tbMaxStratification.Text = "";
-                    ddIsImplantRequired.SelectedIndex = 0;
-                    tbMaxImplant.Text = "";
-                    ddIsSpecialCondition.SelectedIndex = 0;
-                    ddReservationPublicHospital.SelectedIndex = 0;
-                    ddReservationTertiaryHospital.SelectedIndex = 0;
-                    tbLevelOfCare.Text = "";
-                    tbLOS.Text = "";
-                    tbPreInvestigation.Text = "";
-                    tbPostInvestigation.Text = "";
-                    tbProcedureLabel.Text = "";
-                    ddSpecialConditionPopUp.SelectedIndex = 0;
-                    ddSpecialConditionRule.SelectedIndex = 0;
-                    ddIsEnhancementApplicable.SelectedIndex = 0;
-                    ddIsMedicalSurgical.SelectedIndex = 0;
-                    ddIsDayCare.SelectedIndex = 0;
-                    ddClubbingRemarks.SelectedIndex = 0;
-                    ddIsCycleBased.SelectedIndex = 0;
-                    tbNoOfCycle.Text = "";
-                    tbCycleBasedRemarks.Text = "";
-                    ddIsSittingProcedure.SelectedIndex = 0;
-                    tbSittingNoOfDays.Text = "";
-                    tbSittingProcedureRemarks.Text = "";
-                    hdProcedureId.Value = null;
+                    ResetFields();
                     strMessage = "window.alert('Procedure Updated Successfully...!!');";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     btnUpdate.Visible = false;
@@ -371,12 +363,14 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-   
 
     protected void btnEdit_Click(object sender, EventArgs e)
     {
-        LinkButton btn = (LinkButton)sender;
+        // Ensure the sender is a Button and cast it accordingly
+        Button btn = (Button)sender;
         GridViewRow row = (GridViewRow)btn.NamingContainer;
+
+        // Find and retrieve values from labels
         Label lbProcedureId = (Label)row.FindControl("lbProcedureId");
         Label lbPackageId = (Label)row.FindControl("lbPackageId");
         Label lbProcedureCode = (Label)row.FindControl("lbProcedureCode");
@@ -412,79 +406,45 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
         Label lbSittingNoOfDays = (Label)row.FindControl("lbSittingNoOfDays");
         Label lbSittingProcedureRemarks = (Label)row.FindControl("lbSittingProcedureRemarks");
 
-        hdProcedureId.Value = lbProcedureId.Text.ToString();
-        string PackageId = lbPackageId.Text.ToString();
-        string ProcedureCode = lbProcedureCode.Text.ToString();
-        string ProcedureName = lbProcedureName.Text.ToString();
-        string ProcedureAmount = lbProcedureAmount.Text;
-        string IsMultipleProcedure = lbIsMultipleProcedure.Text.ToString() == "True" ? "Yes" : "No";
-        string IsLevelApplied = lbIsLevelApplied.Text.ToString() == "True" ? "Yes" : "No";
-        string IsAutoApproved = lbIsAutoApproved.Text.ToString() == "True" ? "Yes" : "No";
-        string ProcedureType = lbProcedureType.Text.ToString();
-        string Reservance = lbReservance.Text.ToString();
-        string IsStratificationRequired = lbIsStratificationRequired.Text.ToString() == "True" ? "Yes" : "No";
-        string MaxStratification = lbMaxStratification.Text.ToString();
-        string IsImplantRequired = lbIsImplantRequired.Text.ToString() == "True" ? "Yes" : "No";
-        string MaxImplant = lbMaxImplant.Text.ToString();
-        string IsSpecialCondition = lbIIsSpecialCondition.Text.ToString() == "True" ? "Yes" : "No";
-        string ReservationPublicHospital = lbReservationPublicHospital.Text.ToString() == "True" ? "Yes" : "No";
-        string ReservationTertiaryHospital = lbReservationTertiaryHospital.Text.ToString() == "True" ? "Yes" : "No";
-        string LevelOfCare = lbLevelOfCare.Text.ToString();
-        string LOS = lbLOS.Text.ToString();
-        string PreInvestigation = lbPreInvestigation.Text.ToString();
-        string PostInvestigation = lbPostInvestigation.Text.ToString();
-        string ProcedureLabel = lbProcedureLabel.Text.ToString();
-        string SpecialConditionPopUp = lbSpecialConditionPopUp.Text.ToString() == "True" ? "Yes" : "No";
-        string SpecialConditionRule = lbSpecialConditionRule.Text.ToString() == "True" ? "Yes" : "No";
-        string IsEnhancementApplicable = lbIsEnhancementApplicable.Text.ToString() == "True" ? "Yes" : "No";
-        string IsMedicalSurgical = lbIsMedicalSurgical.Text.ToString() == "True" ? "Yes" : "No";
-        string IsDayCare = lbIsDayCare.Text.ToString() == "True" ? "Yes" : "No";
-        string ClubbingId = lbClubbingId.Text.ToString();
-        string IsCycleBased = lbIsCycleBased.Text.ToString() == "True" ? "Yes" : "No";
-        string NoOfCycle = lbNoOfCycle.Text.ToString();
-        string CycleBasedRemarks = lbCycleBasedRemarks.Text.ToString();
-        string IsSittingProcedure = lbIsSittingProcedure.Text.ToString() == "True" ? "Yes" : "No";
-        string SittingNoOfDays = lbSittingNoOfDays.Text.ToString();
-        string SittingProcedureRemarks = lbSittingProcedureRemarks.Text.ToString();
+        // Assign values to form fields (make sure to trim the strings for safety)
+        hdProcedureId.Value = lbProcedureId.Text;
+        ddSpecialityName.SelectedValue = lbPackageId.Text;
+        tbProcedureCode.Text = lbProcedureCode.Text;
+        tbProcedureName.Text = lbProcedureName.Text;
+        tbProcedureAmount.Text = lbProcedureAmount.Text;
+        ddIsMultipleProcedure.SelectedValue = lbIsMultipleProcedure.Text == "True" ? "Yes" : "No";
+        ddIsLevelApplied.SelectedValue = lbIsLevelApplied.Text == "True" ? "Yes" : "No";
+        ddIsAutoApproved.SelectedValue = lbIsAutoApproved.Text == "True" ? "Yes" : "No";
+        tbProcedureType.Text = lbProcedureType.Text;
+        tbReservance.Text = lbReservance.Text;
+        ddIsStratificationRequired.SelectedValue = lbIsStratificationRequired.Text == "True" ? "Yes" : "No";
+        tbMaxStratification.Text = lbMaxStratification.Text;
+        ddIsImplantRequired.SelectedValue = lbIsImplantRequired.Text == "True" ? "Yes" : "No";
+        tbMaxImplant.Text = lbMaxImplant.Text;
+        ddIsSpecialCondition.Text = lbIIsSpecialCondition.Text == "True" ? "Yes" : "No";
+        ddReservationPublicHospital.SelectedValue = lbReservationPublicHospital.Text == "True" ? "Yes" : "No";
+        ddReservationTertiaryHospital.SelectedValue = lbReservationTertiaryHospital.Text == "True" ? "Yes" : "No";
+        tbLevelOfCare.Text = lbLevelOfCare.Text;
+        tbLOS.Text = lbLOS.Text;
+        tbPreInvestigation.Text = lbPreInvestigation.Text;
+        tbPostInvestigation.Text = lbPostInvestigation.Text;
+        tbProcedureLabel.Text = lbProcedureLabel.Text;
+        ddSpecialConditionPopUp.SelectedValue = lbSpecialConditionPopUp.Text == "True" ? "Yes" : "No";
+        ddSpecialConditionRule.SelectedValue = lbSpecialConditionRule.Text == "True" ? "Yes" : "No";
+        ddIsEnhancementApplicable.SelectedValue = lbIsEnhancementApplicable.Text == "True" ? "Yes" : "No";
+        ddIsMedicalSurgical.SelectedValue = lbIsMedicalSurgical.Text == "True" ? "Yes" : "No";
+        ddIsDayCare.SelectedValue = lbIsDayCare.Text == "True" ? "Yes" : "No";
+        ddClubbingRemarks.SelectedValue = lbClubbingId.Text;
+        ddIsCycleBased.SelectedValue = lbIsCycleBased.Text == "True" ? "Yes" : "No";
+        tbNoOfCycle.Text = lbNoOfCycle.Text;
+        tbCycleBasedRemarks.Text = lbCycleBasedRemarks.Text;
+        ddIsSittingProcedure.SelectedValue = lbIsSittingProcedure.Text == "True" ? "Yes" : "No";
+        tbSittingNoOfDays.Text = lbSittingNoOfDays.Text;
+        tbSittingProcedureRemarks.Text = lbSittingProcedureRemarks.Text;
 
-
-        ddSpecialityName.SelectedValue = PackageId;
-        tbProcedureCode.Text = ProcedureCode;
-        tbProcedureName.Text = ProcedureName;
-        tbProcedureAmount.Text = ProcedureAmount;
-        ddIsMultipleProcedure.SelectedValue = IsMultipleProcedure;
-        ddIsLevelApplied.SelectedValue = IsLevelApplied;
-        ddIsAutoApproved.SelectedValue = IsAutoApproved;
-        tbProcedureType.Text = ProcedureType;
-        tbReservance.Text = Reservance;
-        ddIsStratificationRequired.SelectedValue = IsStratificationRequired;
-        tbMaxStratification.Text = MaxStratification;
-        ddIsImplantRequired.SelectedValue = IsImplantRequired;
-        tbMaxImplant.Text = MaxImplant;
-        ddIsSpecialCondition.Text = IsSpecialCondition;
-        ddReservationPublicHospital.SelectedValue = ReservationPublicHospital;
-        ddReservationTertiaryHospital.SelectedValue = ReservationTertiaryHospital;
-        tbLevelOfCare.Text = LevelOfCare;
-        tbLOS.Text = LOS;
-        tbPreInvestigation.Text = PreInvestigation;
-        tbPostInvestigation.Text = PostInvestigation;
-        tbProcedureLabel.Text = ProcedureLabel;
-        ddSpecialConditionPopUp.SelectedValue = SpecialConditionPopUp;
-        ddSpecialConditionRule.SelectedValue = SpecialConditionRule;
-        ddIsEnhancementApplicable.SelectedValue = IsEnhancementApplicable;
-        ddIsMedicalSurgical.SelectedValue = IsMedicalSurgical;
-        ddIsDayCare.SelectedValue = IsDayCare;
-        ddClubbingRemarks.SelectedValue = ClubbingId;
-        ddIsCycleBased.SelectedValue = IsCycleBased;
-        tbNoOfCycle.Text = NoOfCycle;
-        tbCycleBasedRemarks.Text = CycleBasedRemarks;
-        ddIsSittingProcedure.SelectedValue = IsSittingProcedure;
-        tbSittingNoOfDays.Text = SittingNoOfDays;
-        tbSittingProcedureRemarks.Text = SittingProcedureRemarks;
+        // Show update button and hide add button
         btnUpdate.Visible = true;
         btnAddProcedure.Visible = false;
-
-
     }
 
     protected void btnStatus_Click(object sender, EventArgs e)
@@ -502,8 +462,14 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
         GetPackageDetailsMasterData();
     }
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        string searchTerm = txtSearch.Text.Trim();
+        GetPackageDetailsMasterData(searchTerm);
+    }
     protected void btnReset_Click(object sender, EventArgs e)
     {
+        ddSpecialityName.SelectedIndex = 0;
         tbProcedureCode.Text = "";
         tbProcedureName.Text = "";
         tbProcedureAmount.Text = "";
@@ -515,6 +481,7 @@ public partial class ADMIN_PackageDetails : System.Web.UI.Page
         ddIsStratificationRequired.SelectedIndex = 0;
         tbMaxStratification.Text = "";
         ddIsImplantRequired.SelectedIndex = 0;
+        ddIsSpecialCondition.SelectedIndex = 0;
         tbMaxImplant.Text = "";
         ddIsSpecialCondition.Text = "";
         ddReservationPublicHospital.SelectedIndex = 0;

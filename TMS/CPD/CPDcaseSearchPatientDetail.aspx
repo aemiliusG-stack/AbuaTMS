@@ -216,7 +216,7 @@
                                         <asp:Button ID="btnTreatment" runat="server" Text="Treatment And Discharge" OnClick="btnTreatment_Click" class="nav-link d-flex flex-column align-items-center" />
                                         <asp:Button ID="btnClaims" runat="server" Text="Claims" OnClick="btnClaims_Click" class="nav-link d-flex flex-column align-items-center" />
                                         <asp:Button ID="btnAttachments" runat="server" Text="Attachments" OnClick="btnAttachments_Click" class="nav-link d-flex flex-column align-items-center" />
-                                        <asp:Button ID="btnCaseSheet" runat="server" Text="Case Sheet" OnClick="btnAttachments_Click" class="nav-link d-flex flex-column align-items-center" />
+                                        <asp:Button ID="btnCaseSheet" runat="server" Text="Case Sheet" OnClick="btnCasSheet_Click" class="nav-link d-flex flex-column align-items-center" />
                                     </div>
 
                                     <div class="tab-content mt-4" id="myTabContent">

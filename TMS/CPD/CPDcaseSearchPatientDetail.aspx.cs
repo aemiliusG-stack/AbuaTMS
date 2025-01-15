@@ -19,16 +19,13 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        mvCPDTabs.SetActiveView(ViewClaims);
         if (!IsPostBack)
         {
-            string caseNo = Session["CaseNumber"] as string;
+            string caseNo = Request.QueryString["CaseNo"];
             if (!string.IsNullOrEmpty(caseNo))
             {
+                Session["CaseNumber"] = caseNo;
                 BindPatientName(caseNo);
-                getNetworkHospitalDetails(caseNo);
-                BindClaimsDetails();
-                BindTechnicalChecklistData();
             }
             else
             {
@@ -36,11 +33,8 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 ClearLabels();
             }
         }
-        BindGrid_ICDDetails_Preauth();
-        BindGrid_TreatmentProtocol();
-        BindGrid_ICHIDetails();
-        BindPreauthAdmissionDetails();
     }
+
     private void BindPatientName(string caseNo)
     {
         try
@@ -58,12 +52,23 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDCaseSearchPatientDetails", parameters);
             if (ds.Tables[0].Rows.Count > 0)
             {
+                mvCPDTabs.SetActiveView(ViewClaims);
+                btnAttachments.CssClass = "btn btn-primary ";
+                btnPreauth.CssClass = "btn btn-primary ";
+                btnPastHistory.CssClass = "btn btn-primary ";
+                btnTreatment.CssClass = "btn btn-primary ";
+                btnClaims.CssClass = "btn btn-warning";
+                btnCaseSheet.CssClass = "btn btn-primary ";
                 dt = ds.Tables[0];
                 lbCaseNoHead.Text = dt.Rows[0]["CaseNumber"].ToString();
                 lbName.Text = dt.Rows[0]["PatientName"].ToString();
                 lbBeneficiaryId.Text = dt.Rows[0]["CardNumber"].ToString();
                 hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString();
+                string cardNo = dt.Rows[0]["CardNumber"].ToString();
+                Session["CardNumber"] = cardNo;
                 lbRegNo.Text = dt.Rows[0]["PatientRegId"].ToString();
+                string patientRedgNo = dt.Rows[0]["PatientRegId"].ToString();
+                Session["PatientRegId"] = patientRedgNo;
                 caseNo = dt.Rows[0]["CaseNumber"].ToString();
                 lbCaseNo.Text = caseNo;
                 Session["CaseNumber"] = caseNo;
@@ -104,6 +109,13 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     imgPatientPhotosecond.ImageUrl = "~/img/profile.jpeg";
                 }
                 BindGrid_PICDDetails_Claims();
+                getNetworkHospitalDetails(caseNo);
+                BindClaimsDetails();
+                BindTechnicalChecklistData();
+                BindGrid_ICDDetails_Preauth();
+                BindGrid_TreatmentProtocol();
+                BindGrid_ICHIDetails();
+                BindPreauthAdmissionDetails();
             }
             else
             {
@@ -426,29 +438,70 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     protected void btnPastHistory_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewPast);
+        btnAttachments.CssClass = "btn btn-primary";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-warning ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-primary ";
+        btnCaseSheet.CssClass = "btn btn-primary ";
     }
 
     protected void btnPreauth_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewPreauth);
+        btnAttachments.CssClass = "btn btn-primary ";
+        btnPreauth.CssClass = "btn btn-warning";
+        btnPastHistory.CssClass = "btn btn-primary";
+        btnTreatment.CssClass = "btn btn-primary";
+        btnClaims.CssClass = "btn btn-primary";
+        btnCaseSheet.CssClass = "btn btn-primary ";
     }
 
     protected void btnTreatment_Click(object sender, EventArgs e)
     {
          mvCPDTabs.SetActiveView(ViewTreatmentDischarge);
+        btnAttachments.CssClass = "btn btn-primary ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary";
+        btnTreatment.CssClass = "btn btn-warning";
+        btnClaims.CssClass = "btn btn-primary";
+        btnCaseSheet.CssClass = "btn btn-primary ";
     }
 
     protected void btnClaims_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewClaims);
+        btnAttachments.CssClass = "btn btn-primary ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-warning";
+        btnCaseSheet.CssClass = "btn btn-primary ";
     }
 
     protected void btnAttachments_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewAttachment);
+        btnAttachments.CssClass = "btn btn-warning ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-primary ";
+        btnCaseSheet.CssClass = "btn btn-primary ";
     }
 
-    
+    protected void btnCasSheet_Click(object sender, EventArgs e)
+    {
+        mvCPDTabs.SetActiveView(ViewAttachment);
+        btnAttachments.CssClass = "btn btn-primary ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-primary ";
+        btnCaseSheet.CssClass = "btn btn-warning ";
+    }
+
+
 
     private void getNetworkHospitalDetails(string caseNo)
     {

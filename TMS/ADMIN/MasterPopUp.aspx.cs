@@ -42,13 +42,19 @@ public partial class ADMIN_MasterPopUp : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
-    public void GetMasterPopupMasterData()
+    public void GetMasterPopupMasterData(string searchTerm = "")
     {
         try
         {
             dt.Clear();
-            dt = md.GetMasterPopupMasterData();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                dt = md.GetMasterPopupSerachData(searchTerm); 
+            }
+            else
+            {
+                dt = md.GetMasterPopupMasterData(); 
+            }
             if (dt != null && dt.Rows.Count > 0)
             {
                 lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
@@ -72,12 +78,12 @@ public partial class ADMIN_MasterPopUp : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
-
     protected void gridPopUp_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gridPopUp.PageIndex = e.NewPageIndex;
-        GetMasterPopupMasterData();
+
+        string searchTerm = txtSearch.Text.Trim(); 
+        GetMasterPopupMasterData(searchTerm); 
     }
     protected void gridPopUp_RowDataBound(object sender, GridViewRowEventArgs e)
     {
@@ -101,48 +107,68 @@ public partial class ADMIN_MasterPopUp : System.Web.UI.Page
             }
         }
     }
-
-
     protected void btnAddPopUp_Click(object sender, EventArgs e)
     {
         try
         {
-            string PopUpDescription = tbPopUpDescription.Text;
-            if (!PopUpDescription.Equals(""))
+            string PopUpDescription = tbPopUpDescription.Text.Trim(); 
+            if (!string.IsNullOrEmpty(PopUpDescription))  
             {
-                md.InsertMasterPopup(PopUpDescription);
-                tbPopUpDescription.Text = "";
-                strMessage = "window.alert('POP UP Added Successfully...!!');";
+                bool popupExists = md.CheckPopUpExists(PopUpDescription);
+                if (popupExists)
+                {
+                    strMessage = "window.alert('The Pop Up Description already exists. Please provide a different description.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else
+                {
+                    md.InsertMasterPopup(PopUpDescription);
+                    tbPopUpDescription.Text = ""; 
+                    strMessage = "window.alert('POP UP Added Successfully...!!');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);  
+                    GetMasterPopupMasterData(); 
+                }
+            }
+            else
+            {
+                strMessage = "window.alert('Please provide a valid PopUp Description.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetMasterPopupMasterData();
             }
         }
         catch (Exception ex)
         {
             if (con.State == ConnectionState.Open)
             {
-                con.Close();
+                con.Close(); 
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
-
     }
-
     protected void btnUpdate_Click(object sender, EventArgs e)
     {
         try
         {
-            if (hdPopUpId.Value != null)
+            if (!string.IsNullOrEmpty(hdPopUpId.Value))
             {
-               
-                string PopUpDescription = tbPopUpDescription.Text;
-                if (!PopUpDescription.Equals(""))
+                string popUpDescription = tbPopUpDescription.Text.Trim();
+                if (!string.IsNullOrEmpty(popUpDescription))
                 {
-                    md.UpdateMasterPopup(hdPopUpId.Value, PopUpDescription);
+                    // Check if the popup description already exists
+                    if (md.CheckPopUpExists(popUpDescription))
+                    {
+                        strMessage = "window.alert('Duplicate PopUp Description. Please enter a unique value.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "DuplicateAlert", strMessage, true);
+                        return; // Stop further execution
+                    }
+
+                    // Update the popup description
+                    md.UpdateMasterPopup(hdPopUpId.Value, popUpDescription);
                     tbPopUpDescription.Text = "";
+
                     strMessage = "window.alert('POP UP Updated Successfully...!!');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    ScriptManager.RegisterStartupScript(this, GetType(), "SuccessAlert", strMessage, true);
+
                     btnUpdate.Visible = false;
                     GetMasterPopupMasterData();
                     btnAddPopUp.Visible = true;
@@ -159,15 +185,14 @@ public partial class ADMIN_MasterPopUp : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
     protected void btnEdit_Click(object sender, EventArgs e)
     {
-        LinkButton btn = (LinkButton)sender;
+        Button btn = (Button)sender; 
         GridViewRow row = (GridViewRow)btn.NamingContainer;
         Label lbPopUpId = (Label)row.FindControl("lbPopUpId");
         Label lbPopUpDescription = (Label)row.FindControl("lbPopUpDescription");
-        hdPopUpId.Value = lbPopUpId.Text.ToString();
-        string PopUpDescription = lbPopUpDescription.Text.ToString();
+        hdPopUpId.Value = lbPopUpId.Text;
+        string PopUpDescription = lbPopUpDescription.Text;
         tbPopUpDescription.Text = PopUpDescription;
         btnUpdate.Visible = true;
         btnAddPopUp.Visible = false;
@@ -179,16 +204,17 @@ public partial class ADMIN_MasterPopUp : System.Web.UI.Page
         Label lbPopUpId = (Label)row.FindControl("lbPopUpId");
         string popupId = lbPopUpId.Text;
         bool isActive = btn.Text == "Active";
-
-        // Toggle status
         md.StatusMasterPopup(popupId, !isActive);
 
         strMessage = "window.alert('POP UP Status Updated Successfully...!!');";
         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
         GetMasterPopupMasterData();
     }
-
-
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        string searchTerm = txtSearch.Text.Trim();
+        GetMasterPopupMasterData(searchTerm);
+    }
     protected void btnReset_Click(object sender, EventArgs e)
     {
         tbPopUpDescription.Text = "";

@@ -141,12 +141,12 @@
 
                             </a>
                         </li>
-                        <%--      <li>
-                            <a href="#">
+                              <li>
+                            <a href="../CPD/CPDClaimUpdateFraudulent.aspx">
                                 <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Claim Update For Fraudulent/Partial Amount Cases</span>
                             </a>
-                        </li>--%>
+                        </li>
                         <li>
                             <a href="../CPD/CPDCaseSearch.aspx">
                                 <i class="bi bi-search"></i>

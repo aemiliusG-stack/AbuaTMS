@@ -75,7 +75,11 @@ public class CPD
             (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByInsurer = 5 AND ForwardedToInsurer = 7 AND CAST(UpdatedOn AS DATE) = CAST(GETDATE() AS DATE)) AS CPDInsurerToday,
             (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByInsurer = 5 AND ForwardedToInsurer = 7) AS CPDInsurerOverall,
             (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByTrust = 6 AND ForwardedToTrust = 8 AND CAST(UpdatedOn AS DATE) = CAST(GETDATE() AS DATE)) AS CPDTrustToday,
-            (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByTrust = 6 AND ForwardedToTrust = 8) AS CPDTrustOverall";
+            (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByTrust = 6 AND ForwardedToTrust = 8) AS CPDTrustOverall,
+	        (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByInsurer = 7 AND ForwardedToInsurer = 7 AND CAST(UpdatedOn AS DATE) = CAST(GETDATE() AS DATE)) AS CPDInsurerTodayAssigned,
+	        (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByInsurer = 7 AND ForwardedToInsurer = 7) AS CPDInsurerOverallAssigned,
+            (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByTrust = 8 AND ForwardedToTrust = 8 AND CAST(UpdatedOn AS DATE) = CAST(GETDATE() AS DATE)) AS CPDTrustTodayAssigned,
+            (SELECT COUNT(*) FROM TMS_ClaimMaster WHERE ForwardedByTrust = 8 AND ForwardedToTrust = 8) AS CPDTrustOverallAssigned";
 
         SqlCommand cmd = new SqlCommand(query, con);
         SqlDataAdapter sd = new SqlDataAdapter(cmd);
@@ -108,6 +112,17 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
+    public DataTable GetCaseStatus()
+    {
+        dt.Clear();
+        string Query = "select CaseStatusId, ClaimStatusId, CaseStatus from TMS_MasterCaseStatus where IsActive = 1 and IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
     //public DataTable GetAdvanceSearch()
     //{
     //    string Query = "select Id, Title from TMS_AdvanceSearchParameter";
@@ -132,19 +147,61 @@ public class CPD
         return dt;
     }
 
+    //public DataTable GetNetworkHospitalDetails(string CaseNo)
+    //{
+    //    dt.Clear();
+    //    string Query = @"select t1.HospitalName, t3.Title, t1.Address from HEM_HospitalDetails t1
+    //                         inner join  TMS_PatientAdmissionDetail t2 on t1.HospitalId=t2.HospitalId
+    //                         inner join HEM_MasterHospitalTypes t3 on t1.HospitalTypeId= t3.Id
+    //                         where t2.CaseNumber= @CaseNo and t2.IsActive=1 and t2.IsDeleted=0";
+    //    SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+    //    sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+    //    con.Open();
+    //    sd.Fill(ds);
+    //    con.Close();
+    //    dt = ds.Tables[0];
+    //    return dt;
+    //}
     public DataTable GetNetworkHospitalDetails(string CaseNo)
     {
-        dt.Clear();
-        string Query = @"select t1.HospitalName, t3.Title, t1.Address from HEM_HospitalDetails t1
-                             inner join  TMS_PatientAdmissionDetail t2 on t1.HospitalId=t2.HospitalId
-                             inner join HEM_MasterHospitalTypes t3 on t1.HospitalTypeId= t3.Id
-                             where t2.CaseNumber= @CaseNo and t2.IsActive=1 and t2.IsDeleted=0";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
-        con.Open();
-        sd.Fill(ds);
-        con.Close();
-        dt = ds.Tables[0];
+        dt.Clear(); // Clears any existing data in the DataTable
+        string Query = @"SELECT t1.HospitalName, t3.Title, t1.Address 
+                     FROM HEM_HospitalDetails t1
+                     INNER JOIN TMS_PatientAdmissionDetail t2 ON t1.HospitalId = t2.HospitalId
+                     INNER JOIN HEM_MasterHospitalTypes t3 ON t1.HospitalTypeId = t3.Id
+                     WHERE t2.CaseNumber = @CaseNo AND t2.IsActive = 1 AND t2.IsDeleted = 0";
+
+        try
+        {
+            // Initialize SqlDataAdapter with query and connection
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            // Add parameter
+            sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+
+            // Use DataSet directly with the adapter to fill data
+            ds.Clear();
+            sd.Fill(ds);
+
+            // Ensure we return a valid DataTable
+            if (ds.Tables.Count > 0)
+            {
+                dt = ds.Tables[0];
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exception here
+            throw new Exception("An error occurred while fetching network hospital details.", ex);
+        }
+        finally
+        {
+            // Ensure connection is closed even if an exception occurs
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+
         return dt;
     }
 
@@ -283,6 +340,16 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@RoleId", RoleId);
         sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+    public DataTable GetTriggerType()
+    {
+        dt.Clear();
+        string Query = "SELECT Id, TriggerType FROM TMS_MasterTriggerType WHERE IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(dt);
         con.Close();
@@ -455,7 +522,7 @@ public class CPD
     }
     public DataTable GetClaimWorkFlow(string claimId)
     {
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId WHERE t1.ClaimId = 1";
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId WHERE t1.ClaimId = @claimId";
         //DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
@@ -510,7 +577,7 @@ public class CPD
             }
         }
     }
-   
+
     public DataTable getPrimaryDiagnosis(string CaseNo)
     {
         dtTemp.Clear();
@@ -581,7 +648,7 @@ public class CPD
         con.Close();
         return dtTemp;
     }
-    public void InsertTechnicalChecklist(string caseNumber, string cardNumber,  bool diagnosisSupported, bool caseManagementSTP, bool evidenceTherapyConducted, bool mandatoryReports, string remarks)
+    public void InsertTechnicalChecklist(string caseNumber, string cardNumber, bool diagnosisSupported, bool caseManagementSTP, bool evidenceTherapyConducted, bool mandatoryReports, string remarks)
     {
         string query = "INSERT INTO TMS_CPDTechnicalCkecklist (CaseNumber, CardNumber, DiagnosisSupportedEvidence, CaseManagementSTP, EvidenceTherapyConducted, MandatoryReports, Remarks, IsActive, IsDeleted, CreatedOn, UpdatedOn) " +
                            "VALUES (@CaseNumber, @CardNumber, @DiagnosisSupportedEvidence, @CaseManagementSTP, @EvidenceTherapyConducted, @MandatoryReports, @Remarks, @IsActive, @IsDeleted, @CreatedOn, @UpdatedOn)";
@@ -809,6 +876,27 @@ public class CPD
         con.Close();
         dt = ds.Tables[0];
         return dt;
+    }
+    public bool UpdateDischarge(string ClaimId, int DischargeStatus, string Remarks)
+    {
+        string Query = "UPDATE TMS_DischargeDetail SET IsDischarged = @DischargeStatus, Remarks = @Remarks WHERE ClaimId = @ClaimId";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
+        cmd.Parameters.AddWithValue("@DischargeStatus", DischargeStatus);
+        cmd.Parameters.AddWithValue("@Remarks", Remarks);
+
+        try
+        {
+            con.Open();
+            int rowsAffected = cmd.ExecuteNonQuery();
+            con.Close();
+            return rowsAffected > 0; // Return true if at least one row was updated
+        }
+        catch (Exception ex)
+        {
+            con.Close(); // Ensure the connection is closed in case of an error
+            throw new Exception("Error updating discharge details: {ex.Message}");
+        }
     }
 
     public byte[] CreatePdfWithImagesInMemory(string[] images)

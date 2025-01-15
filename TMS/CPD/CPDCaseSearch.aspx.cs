@@ -28,7 +28,8 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
             //GetCaseTypes();
             GetHospitalName();
             getSpecialityName();
-            LoadData(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+            LoadData(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+            getCaseStatus();
         }
     }
     protected void GetPatientStates()
@@ -122,7 +123,7 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
         try
         {
             dt.Clear();
-            int stateId = int.Parse(ddHospitalState.SelectedValue); 
+            int stateId = int.Parse(ddHospitalState.SelectedValue);
             dt = md.GetDistrictStateWise(stateId);
 
             if (dt.Rows.Count > 0)
@@ -199,7 +200,7 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
             return;
         }
     }
-    private void LoadData(string caseNumber, string cardNumber, string patientStateId, string patientDistrictId, string packageId, string procedureId)
+    private void LoadData(string caseNumber, string cardNumber, string patientStateId, string patientDistrictId, string packageId, string procedureId, string caseType)
     {
         try
         {
@@ -209,7 +210,9 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
             CreateSqlParameter("@PStateId", patientStateId),
             CreateSqlParameter("@PDistrictId", patientDistrictId),
             CreateSqlParameter("@PackageId", packageId),
-            CreateSqlParameter("@ProcedureId", procedureId)  
+            CreateSqlParameter("@ProcedureId", procedureId),
+            CreateSqlParameter("@CaseType", caseType)
+
         };
 
             if (con.State == ConnectionState.Closed)
@@ -253,7 +256,9 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
             string patientDistrictId = ddPatientDistrict.Text;
             string packageId = ddCategory.SelectedValue;
             string procedureId = ddProcedureName.SelectedValue;
-            LoadData(caseNumber, cardNumber, patientStateId, patientDistrictId, packageId, procedureId);
+            string caseType = ddCaseType.SelectedItem.Text;
+
+            LoadData(caseNumber, cardNumber, patientStateId, patientDistrictId, packageId, procedureId, caseType);
         }
         catch (Exception ex)
         {
@@ -262,7 +267,7 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
     }
     private SqlParameter CreateSqlParameter(string parameterName, string value)
     {
-        SqlParameter param = new SqlParameter(parameterName, SqlDbType.NVarChar); 
+        SqlParameter param = new SqlParameter(parameterName, SqlDbType.NVarChar);
         if (string.IsNullOrEmpty(value) || value == "0")
         {
             param.Value = DBNull.Value;
@@ -305,7 +310,7 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
             {
                 ResetControls(childCtrl);
             }
-            LoadData(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+            LoadData(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
         }
     }
     protected void getSpecialityName()
@@ -367,6 +372,31 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
         {
             Response.Redirect("~/Unauthorize.aspx", false);
             return;
+        }
+    }
+    protected void getCaseStatus()
+    {
+        try
+        {
+            dt = cpd.GetCaseStatus();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                ddCaseStatus.Items.Clear();
+                ddCaseStatus.DataValueField = "CaseStatusId";
+                ddCaseStatus.DataTextField = "CaseStatus";
+                ddCaseStatus.DataSource = dt;
+                ddCaseStatus.DataBind();
+                ddCaseStatus.Items.Insert(0, new ListItem("--Select--", "0"));
+            }
+            else
+            {
+                ddCaseStatus.Items.Clear();
+                ddCaseStatus.Items.Insert(0, new ListItem("--No Status Available--", "0"));
+            }
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 }

@@ -27,7 +27,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     private string strMessage;
     protected void Page_Load(object sender, EventArgs e)
     {
-        mvCPDTabs.SetActiveView(ViewClaims);
+        
         if (Session["UserId"] == null)
         {
             Response.Redirect("~/Unauthorize.aspx", false);
@@ -80,6 +80,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
 
                     if (ds.Tables[0].Rows.Count > 0)
                     {
+                        mvCPDTabs.SetActiveView(ViewClaims);
                         btnAttachments.CssClass = "btn btn-primary ";
                         btnPreauth.CssClass = "btn btn-primary ";
                         btnPastHistory.CssClass = "btn btn-primary ";
@@ -323,8 +324,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     private void BindGrid_PreauthWorkFlow()
     {
         dt.Clear();
-        string caseNo = Session["CaseNumber"].ToString();
-        dt = cpd.GetClaimWorkFlow(caseNo);
+        string claimId = Session["ClaimId"].ToString();
+        dt = cpd.GetClaimWorkFlow(claimId);
         if (dt != null && dt.Rows.Count > 0)
         {
             dt.Columns.Add("SlNo", typeof(int));
@@ -741,6 +742,22 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             ddlUserToAssign.Items.Insert(0, new ListItem("--Select--", "0"));
         }
     }
+    private void BindTriggerType()
+    {
+        try
+        {
+            DataTable dt = cpd.GetTriggerType();
+            ddTriggerType.DataSource = dt;
+            ddTriggerType.DataTextField = "TriggerType";
+            ddTriggerType.DataValueField = "Id";
+            ddTriggerType.DataBind();
+            ddTriggerType.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
     protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
     {
         string selectedValue = ddlReason.SelectedItem.Value;
@@ -767,6 +784,11 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             pUserToAssign.Visible = true;
             getForwardUsers();
         }
+        else if (ddlActionType.SelectedValue == "3")
+        {
+            pTriggerType.Visible = true;
+            BindTriggerType();
+        }
         else if (ddlActionType.SelectedValue == "4")
         {
             pReason.Visible = true;
@@ -783,6 +805,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             pRemarks.Visible = false;
             pUserRole.Visible = false;
             pUserToAssign.Visible = false;
+            pTriggerType.Visible = false;
+
 
         }
     }
@@ -932,12 +956,10 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         try
         {
             string caseNo = Session["CaseNumber"] as string;
-
             if (!string.IsNullOrEmpty(caseNo))
             {
                 dt.Clear();
                 dt = cpd.GetPatientPrimaryDiagnosis(caseNo);
-
                 if (dt.Rows.Count > 0)
                 {
                     gridPrimaryDiagnosis.DataSource = dt;
@@ -1519,10 +1541,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
-
-
-
     protected void btnDownloadPdf_Click(object sender, EventArgs e)
     {
         try
@@ -1563,4 +1581,59 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    protected void btnUpdateDischarge_Click(object sender, EventArgs e)
+    {
+        if (!tbDischargeTypeRemarks.Visible)
+        {
+            tbDischargeTypeRemarks.Visible = true;
+            lbDischargeTypeRemarks.Visible = true;
+            rbDischarge.Enabled = true;
+            rbDeath.Enabled = true;
+            mvCPDTabs.SetActiveView(ViewTreatmentDischarge);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please enter Discharge/Death type update remarks.');", true);
+        }
+        else
+        {
+            string remarks = tbDischargeTypeRemarks.Text.Trim();
+            bool isDischarge = rbDischarge.Checked;
+            bool isDeath = rbDeath.Checked;
+            if (string.IsNullOrEmpty(remarks))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Remarks are required.');", true);
+                return;
+            }
+            if (!isDischarge && !isDeath)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please select either Discharge or Death.');", true);
+                return;
+            }
+            int dischargeStatus = isDischarge ? 1 : 0;
+            string claimId = Session["ClaimId"] as string;
+
+            try
+            {
+                bool isUpdated = cpd.UpdateDischarge(claimId, dischargeStatus, remarks);
+                if (isUpdated)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Discharge/Death type updated successfully.');", true);
+                    tbDischargeTypeRemarks.Text = string.Empty;
+                    tbDischargeTypeRemarks.Visible = false;
+                    lbDischargeTypeRemarks.Visible = false;
+                    rbDischarge.Enabled = false;
+                    rbDeath.Enabled = false;
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Update failed. Please try again.');", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Error: {ex.Message}');", true);
+            }
+        }
+    }
+
 }
+
+

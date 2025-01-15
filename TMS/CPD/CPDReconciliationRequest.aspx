@@ -78,7 +78,7 @@
                                         <ItemTemplate>
                                             <asp:HyperLink ID="hyperlinkCaseNo" runat="server"
                                                 Text='<%# Eval("CaseNumber") %>'
-                                                NavigateUrl='<%# "CPDReconciliationPatientDetail.aspx?CaseNumber=" + Convert.ToString(Eval("CaseNumber")) %>' />
+                                                NavigateUrl='<%# "CPDReconciliationPatientDetail.aspx?CaseNo=" + Eval("CaseNumber") %>' />
                                         </ItemTemplate>
                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
