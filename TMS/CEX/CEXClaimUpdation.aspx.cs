@@ -21,6 +21,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
+    private PreAuth preAuth = new PreAuth();
     private MasterData md = new MasterData();
     private static CEX cex = new CEX();
     string pageName;
@@ -121,13 +122,13 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     if (base64String != "")
                     {
                         imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
-                        imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64String;
+                        //imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64String;
                     }
 
                     else
                     {
                         imgPatientPhoto.ImageUrl = "~/img/profile.jpg";
-                        imgPatientPhotosecond.ImageUrl = "~/img/profile.jpg";
+                        //imgPatientPhotosecond.ImageUrl = "~/img/profile.jpg";
                     }
 
 
@@ -160,6 +161,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     lbTotalPackageCostShow.Text = dt.Rows[0]["TotalPackageCost"].ToString().Trim();
                     lbNonTechDeathDate.Text = DischargeDate.ToString("dd-MM-yyyy");
 
+                    displayPatientAdmissionImage();
                     BindGrid_TreatmentProtocol();
                     BindGrid_PreauthWorkFlow();
                     BindClaimWorkflow();
@@ -220,6 +222,36 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
+    public void displayPatientAdmissionImage()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cex.GetManditoryDocument(hdAbuaId.Value.ToString());
+            if (dt.Rows.Count > 0)
+            {
+                string DocumentId = dt.Rows[0]["DocumentId"].ToString().Trim();
+                string FolderName = dt.Rows[0]["FolderName"].ToString().Trim();
+                string UploadedFileName = dt.Rows[0]["UploadedFileName"].ToString().Trim() + ".jpeg";
+                string base64Image = preAuth.DisplayImage(FolderName, UploadedFileName);
+                if (base64Image != "")
+                {
+                    imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64Image;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     private void getTreatmentDischarge()
     {
         string claimId = Session["ClaimId"] as string;

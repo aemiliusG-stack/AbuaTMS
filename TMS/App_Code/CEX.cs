@@ -504,4 +504,17 @@ public class CEX
         return ms.ToArray();
     }
 
+    public DataTable GetManditoryDocument(string CardNumber)
+    {
+        dt.Clear();
+        string Query = "SELECT DocumentId, DocumentFor, FolderName, UploadedFileName, UploadStatus FROM TMS_PatientMandatoryDocument WHERE CardNumber = @CardNumber AND DocumentId = 3 AND IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
+
 }
