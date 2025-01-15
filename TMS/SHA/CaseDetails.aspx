@@ -591,7 +591,8 @@
                         <div class="col-md-3 mt-3">
                             <span class="font-weight-bold">Final Approved Amount (Rs):</span><br />
                             <%--<asp:TextBox ID="TextBoxFinalApprovedAmount" runat="server" CssClass="form-control" AutoPostBack="True" OnTextChanged="TextBoxFinalApprovedAmount_TextChanged"></asp:TextBox>--%>
-                            <asp:TextBox ID="tbFinalAmountByAco" runat="server" CssClass="form-control"></asp:TextBox>
+                            <asp:TextBox ID="tbFinalAmountByAco" runat="server" CssClass="form-control" Enabled="false"></asp:TextBox>
+                            <%--<asp:Label ID="lbFinalApprovedAmount" runat="server"></asp:Label>--%>
                         </div>
                     </div>
                     <div class="row">

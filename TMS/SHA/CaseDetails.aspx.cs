@@ -18,6 +18,7 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
     private DataSet ds = new DataSet();
     private PreAuth preAuth = new PreAuth();
     CPD cpd = new CPD();
+    ACOHelper aco = new ACOHelper();
     SHAHelper shahelper = new SHAHelper();
     string pageName;
     protected void Page_Load(object sender, EventArgs e)
@@ -125,7 +126,9 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
         {
             DataRow row = dt.Rows[0];
             Label8.Text = row["TotalClaims"].ToString();
-            Label9.Text = row["Trust Liable"].ToString();
+            Label1.Text = row["TotalClaims"].ToString();
+            Label9.Text = row["TrustLiable"].ToString();
+            Label2.Text = row["TrustLiable"].ToString();
             //Label10.Text = row["Final Approved Amount"].ToString();
             tbFinalAmountByAco.Text = row["Final Approved Amount"].ToString();
         }
@@ -137,6 +140,7 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
             tbFinalAmountByAco.Text = "N/A";
         }
     }
+
     private void BindSHARemarks()
     {
         dt.Clear();
@@ -152,7 +156,7 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
         {
             DataRow row = dt.Rows[0];
             Label8.Text = row["TotalClaims"].ToString();
-            Label9.Text = row["Trust Liable"].ToString();
+            Label9.Text = row["TrustLiable"].ToString();
             //Label10.Text = row["Final Approved Amount"].ToString();
             tbFinalAmountByAco.Text = row["Final Approved Amount"].ToString();
         }
@@ -194,7 +198,6 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
 
         if (!string.IsNullOrEmpty(caseNo))
         {
-
             dt = shahelper.GetTechnicalChecklist(caseNo);
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -203,6 +206,21 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
                 tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
                 tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
+                //rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                //rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                //rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
+                //rbCaseManagementNo.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
+                //rbEvidenceTherapyYes.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                //rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                //rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
+                //rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
+
+
+                rbDiagnosisSupportedYes.Checked = Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                rbCaseManagementYes.Checked = Convert.ToBoolean(row["CaseManagementSTP"]);
+                rbEvidenceTherapyYes.Checked = Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                rbMandatoryReportsYes.Checked = Convert.ToBoolean(row["MandatoryReports"]);
+
                 if (row["IsSpecialCase"] != DBNull.Value)
                 {
                     bool isSpecialCase = Convert.ToBoolean(row["IsSpecialCase"]);
@@ -356,7 +374,7 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
                 if (long.TryParse(Session["UserId"].ToString(), out userId))
                 {
                     //using (SqlCommand cmd = new SqlCommand("ACOInsurer_ClaimUpdationDeatilsByCaseNumber", con))
-                    using (SqlCommand cmd = new SqlCommand("SHAInsurer_ClaimUpdationDeatilsByCaseNumber", con))
+                    using (SqlCommand cmd = new SqlCommand("SHAInsurer_ClaimUpdationDetailsByCaseNumber", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
