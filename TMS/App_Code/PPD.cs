@@ -145,7 +145,7 @@ public class PPDHelper
     public DataTable GetPreauthQuery(string ClaimId)
     {
         DataTable dt = new DataTable();
-        string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, t1.Remarks, t1.IsQueryReplied, t1.QueryReply, t1.QueryReplyDate FROM TMS_ClaimQuery t1 inner join TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId inner join TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, t1.Remarks, t1.IsQueryReplied, t1.QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 inner join TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId inner join TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();

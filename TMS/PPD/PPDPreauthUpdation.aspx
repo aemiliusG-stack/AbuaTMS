@@ -149,18 +149,6 @@
                                                     <span class="form-label span-title">Case No:</span><br />
                                                     <asp:Label ID="lbCaseNo" runat="server" Text="" Style="font-size: 12px;"></asp:Label>
                                                 </div>
-                                                <%--<div class="col-md-3 mb-3">
-                                            <span class="form-label span-title">Case Status:</span><br />
-                                            <asp:Label ID="lbCaseStatus" runat="server" Text="Procedure Insurance" Style="font-size: 12px;"></asp:Label>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <span class="form-label span-title">IP No:</span><br />
-                                            <asp:Label ID="lbIpNo" runat="server" Text="NA" Style="font-size: 12px;"></asp:Label>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <span class="form-label span-title">IP Registered Date:</span><br />
-                                            <asp:Label ID="lbIpRegisteredDate" runat="server" Text="06/04/2024" Style="font-size: 12px;"></asp:Label>
-                                        </div>--%>
                                                 <div class="col-md-3 mb-3">
                                                     <span class="form-label span-title">Actual Registration Date:</span><br />
                                                     <asp:Label ID="lbActualRegistrationDate" runat="server" Text="" Style="font-size: 12px;"></asp:Label>
@@ -972,51 +960,53 @@
                                                 <h3 class="text-white">Preauth Query/ Rejection Reason</h3>
                                             </div>
                                             <div class="ibox-content table-responsive">
-                                                <asp:GridView ID="gridPreauthQueryRejectionReason" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                    <alternatingrowstyle backcolor="Gainsboro" />
+                                                <asp:GridView ID="gridPreauthQueryRejectionReason" OnRowDataBound="gridPreauthQueryRejectionReason_RowDataBound" runat="server" AutoGenerateColumns="false" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                    <alternatingrowstyle backcolor="gainsboro" />
                                                     <columns>
                                                         <asp:TemplateField HeaderText="Sl. No.">
                                                             <itemtemplate>
-                                                                <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                <asp:Label ID="label1" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                             </itemtemplate>
-                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="5%" />
+                                                            <headerstyle backcolor="#1e8c86" font-bold="true" forecolor="white" />
+                                                            <itemstyle horizontalalign="left" verticalalign="middle" width="5%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Query Date">
                                                             <itemtemplate>
                                                                 <asp:Label ID="lbQueryDate" runat="server" Text='<%# Eval("QueryRaisedDate") %>'></asp:Label>
                                                             </itemtemplate>
-                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                            <headerstyle backcolor="#1e8c86" font-bold="true" forecolor="white" />
+                                                            <itemstyle horizontalalign="left" verticalalign="middle" width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Main Reason">
                                                             <itemtemplate>
                                                                 <asp:Label ID="lbMainReason" runat="server" Text='<%# Eval("ReasonName") %>'></asp:Label>
                                                             </itemtemplate>
-                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
+                                                            <headerstyle backcolor="#1e8c86" font-bold="true" forecolor="white" />
+                                                            <itemstyle horizontalalign="left" verticalalign="middle" width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Sub Reason">
                                                             <itemtemplate>
                                                                 <asp:Label ID="lbSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
                                                             </itemtemplate>
-                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="30%" />
+                                                            <headerstyle backcolor="#1e8c86" font-bold="true" forecolor="white" />
+                                                            <itemstyle horizontalalign="left" verticalalign="middle" width="30%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PPD Query">
                                                             <itemtemplate>
-                                                                <asp:Label ID="lbPPDQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                <asp:Label ID="lbPpdQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
                                                             </itemtemplate>
-                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="25%" />
+                                                            <headerstyle backcolor="#1e8c86" font-bold="true" forecolor="white" />
+                                                            <itemstyle horizontalalign="left" verticalalign="middle" width="25%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Audit">
                                                             <itemtemplate>
-                                                                <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" />
-                                                                <%--OnClick="btnViewAudit_Click"--%>
+                                                                <asp:Label ID="lbIsQueryReplied" Visible="false" runat="server" Text='<%# Eval("IsQueryReplied") %>'></asp:Label>
+                                                                <asp:Label ID="lbQueryFolder" Visible="false" runat="server" Text='<%# Eval("QueryFolderName") %>'></asp:Label>
+                                                                <asp:Label ID="lbQueryUploadedFileName" Visible="false" runat="server" Text='<%# Eval("QueryUploadedFileName") %>'></asp:Label>
+                                                                <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewAudit_Click" />
                                                             </itemtemplate>
-                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
+                                                            <headerstyle backcolor="#1e8c86" font-bold="true" forecolor="white" />
+                                                            <itemstyle horizontalalign="left" verticalalign="middle" width="10%" />
                                                         </asp:TemplateField>
                                                     </columns>
                                                 </asp:GridView>
@@ -1266,7 +1256,7 @@
                                                     </div>
                                                 </asp:View>
                                             </asp:MultiView>
-                                            <div class="col-md-12 mt-3">
+                                            <%--<div class="col-md-12 mt-3">
                                                 <span class="text-danger font-weight-bold">Note:</span><br />
                                                 <span class="text-danger">1. File size should not exceed 500kb.</span><br />
                                                 <span class="text-danger">2. Attachment names with blue color are related to notification.</span><br />
@@ -1287,7 +1277,7 @@
                                                     <i class="bi bi-exclamation-triangle-fill text-black"></i>
                                                 </span>
                                                 <br />
-                                            </div>
+                                            </div>--%>
                                             <div class="col-md-12 mt-2 mb-2">
                                                 <asp:Button ID="btnDownloadPdf" runat="server" Text="Download as one PDF" class="btn btn-primary rounded-pill" OnClick="btnDownloadPdf_Click" />
                                             </div>
@@ -1303,7 +1293,7 @@
                                     <div class="modal-header">
                                         <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title fs-5 font-weight-bolder"></asp:Label>
                                         <button type="button" class="btn" onclick="hideModal();">
-                                            <img src="../img/bootstrapicons/x-lg.svg"/>
+                                            <img src="../img/bootstrapicons/x-lg.svg" />
                                         </button>
                                     </div>
                                     <asp:MultiView ID="MultiView3" runat="server">
@@ -1443,8 +1433,8 @@
                                         </asp:View>
                                         <asp:View ID="viewJustification" runat="server">
                                             <div class="modal-body">
-                                                <div class="ratio ratio-16x9">
-                                                    <iframe src="https://www.antennahouse.com/hubfs/xsl-fo-sample/pdf/basic-link-1.pdf" title="Justification Document"></iframe>
+                                                <div class="row table-responsive" style="height: 700px; overflow-y: scroll;">
+                                                    <asp:Image ID="imgJustification" runat="server" class="img-fluid" ImageUrl="https://plus.unsplash.com/premium_photo-1664304370934-b21ea9e0b1f5?q=80&w=1883&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" AlternateText="Justification Document" />
                                                 </div>
                                             </div>
                                         </asp:View>

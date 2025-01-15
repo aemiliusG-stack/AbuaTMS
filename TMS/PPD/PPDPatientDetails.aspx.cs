@@ -155,13 +155,6 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     }
 
-    protected void btnViewAudit_Click(object sender, EventArgs e)
-    {
-        lbTitle.Text = "Raise Query Audit";
-        MultiView3.SetActiveView(viewAudit);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
-    }
-
     protected void dlAction_SelectedIndexChanged(object sender, EventArgs e)
     {
         string selectedValue = dlAction.SelectedItem.Value;
@@ -810,6 +803,58 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
     }
 
+    protected void gridPreauthQueryRejectionReason_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Button btnViewaudit = (Button)e.Row.FindControl("btnViewaudit");
+            Label lbIsQueryReplied = (Label)e.Row.FindControl("lbIsQueryReplied");
+            string IsQueryReplied = lbIsQueryReplied.Text.ToString();
+            if (IsQueryReplied != null && !IsQueryReplied.Equals(""))
+            {
+                btnViewaudit.Text = "View Audit";
+                btnViewaudit.Enabled = true;
+                btnViewaudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+            }
+            else
+            {
+                btnViewaudit.Text = "Query Pending";
+                btnViewaudit.Enabled = false;
+                btnViewaudit.CssClass = "btn btn-warning btn-sm rounded-pill";
+            }
+        }
+    }
+
+    protected void btnViewAudit_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbMainReason = (Label)row.FindControl("lbMainReason");
+            Label lbSubReason = (Label)row.FindControl("lbSubReason");
+            Label lbFolderName = (Label)row.FindControl("lbQueryFolderName");
+            Label lbFileName = (Label)row.FindControl("lbQueryUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbMainReason.Text.ToString() + " (" + lbSubReason.Text.ToString() + ")";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     public void GetForwardUsers()
     {
         DataTable dt = new DataTable();
@@ -963,7 +1008,8 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 dlAction.SelectedIndex = 0;
                 strMessage = "window.alert('Query Raised Successfully.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                getPreauthQuery(ClaimId);
+                //getPreauthQuery(ClaimId);
+                GetPatientForPreAuthApproval();
             }
             else if (ActionId.Equals("5"))
             {
