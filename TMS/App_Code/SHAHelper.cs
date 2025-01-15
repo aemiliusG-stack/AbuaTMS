@@ -121,7 +121,7 @@ public class SHAHelper
         dt = GetACORemarks(claimId);
         return dt;
     }
-    public void SaveDeductionAmount(int userId, int shaDeductionAmount, string caseNo, string remarks)
+    public void SaveDeductionAmount(int userId, int shaDeductionAmount, string caseNo, string remarks) 
     {
         SqlCommand cmd = new SqlCommand("ACO_InsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
