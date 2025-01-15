@@ -164,7 +164,7 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                         imgPatientPhoto.ImageUrl = "~/img/profile.jpeg";
 
                     //Child Details
-                    if (dt.Rows[0]["IsChild"].ToString() == "True")
+                    if (dt.Columns.Contains("IsChild") && dt.Rows[0]["IsChild"].ToString() == "True")
                     {
                         lbChildName.Text = dt.Rows[0]["ChildName"].ToString();
                         lbChildDOB.Text = dt.Rows[0]["ChildDOB"].ToString();

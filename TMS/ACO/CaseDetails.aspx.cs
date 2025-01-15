@@ -122,7 +122,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             DataRow row = dt.Rows[0];
             Label8.Text = row["TotalClaims"].ToString();
-            Label9.Text = row["Trust Liable"].ToString();
+            Label9.Text = row["TrustLiable"].ToString();
             //Label10.Text = row["Final Approved Amount"].ToString();
             tbFinalAmountByAco.Text = row["Final Approved Amount"].ToString();
         }
@@ -173,6 +173,21 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
                 tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
                 tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
+                //rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                //rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                //rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
+                //rbCaseManagementNo.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
+                //rbEvidenceTherapyYes.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                //rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                //rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
+                //rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
+
+
+                rbDiagnosisSupportedYes.Checked = Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                rbCaseManagementYes.Checked = Convert.ToBoolean(row["CaseManagementSTP"]);
+                rbEvidenceTherapyYes.Checked = Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                rbMandatoryReportsYes.Checked = Convert.ToBoolean(row["MandatoryReports"]);
+
                 if (row["IsSpecialCase"] != DBNull.Value)
                 {
                     bool isSpecialCase = Convert.ToBoolean(row["IsSpecialCase"]);
@@ -426,7 +441,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         // Save the deduction amount to the database
         //string remarks = "ACO Deduction"; // Define remarks
         string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
-        aco.SaveDeductionAmount(userId, (int)finalDeductedAmount, caseNo, remarks);
+        aco.SaveDeductionAmount(userId, (int)finalDeductedAmount,(int)totalFinalAmountByAco, caseNo, remarks);
         long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         long actionId = Convert.ToInt64(actionType.SelectedValue);
         // Optional fields
