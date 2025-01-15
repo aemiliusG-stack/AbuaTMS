@@ -180,7 +180,7 @@
                                                 <img style="width: 48px; height: 48px;" alt="" class="rounded-circle" src="../img/profile.jpg">
                                             </div>
                                             <div class="context">
-                                                <span class="user-title block m-t-xs font-bold"><%=hdUserName.Value %></span>
+                                                <span class="user-title block m-t-xs font-bold"><%=hdUserName.Value %></span> 
                                                 <span class="user-sub-title text-xs block"><%=hdUserRole.Value %></span>
                                             </div>
                                             <ul class="dropdown-menu m-t-xs">

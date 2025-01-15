@@ -30,7 +30,7 @@ public partial class ADMIN_MapProcedureNonRelated : System.Web.UI.Page
                 hdUserId.Value = Session["UserId"].ToString();
                 GetMapProcedureNonRelatedData();
                 getPrimaryProcedureCode();
-                getProcedureCode();
+                //getProcedureCode();
             }
         }
         catch (Exception ex)
@@ -70,19 +70,39 @@ public partial class ADMIN_MapProcedureNonRelated : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    protected void getProcedureCode()
+
+    protected void getProcedureCode(string excludedProcedureId)
     {
         try
         {
-            dt = md.GetProcedureCode();
-
+            DataTable dt = md.GetProcedureCode();
             ddProcedureCode.Items.Clear();
-
             if (dt != null && dt.Rows.Count > 0)
             {
+                if (!string.IsNullOrEmpty(excludedProcedureId) && excludedProcedureId != "0")
+                {
+                    long excludedId;
+                    if (long.TryParse(excludedProcedureId, out excludedId))
+                    {
+                        DataRow[] rows = dt.Select("ProcedureId <> " + excludedId);
+                        if (rows.Length > 0)
+                        {
+                            DataTable filteredDt = rows.CopyToDataTable();
+                            ddProcedureCode.DataSource = filteredDt;
+                        }
+                        else
+                        {
+                            ddProcedureCode.DataSource = null;
+                        }
+                    }
+                }
+                else
+                {
+                    ddProcedureCode.DataSource = dt;
+                }
+
                 ddProcedureCode.DataValueField = "ProcedureId";
                 ddProcedureCode.DataTextField = "ProcedureCode";
-                ddProcedureCode.DataSource = dt;
                 ddProcedureCode.DataBind();
                 ddProcedureCode.Items.Insert(0, new ListItem("--Select--", "0"));
             }
@@ -97,6 +117,12 @@ public partial class ADMIN_MapProcedureNonRelated : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    protected void ddPrimaryProcedureCode_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string selectedProcedureId = ddPrimaryProcedureCode.SelectedValue;
+        getProcedureCode(selectedProcedureId);
+    }
+
     public void GetMapProcedureNonRelatedData(string searchTerm = "")
     {
         try
