@@ -12,6 +12,10 @@ using Antlr.Runtime.Misc;
 using System.Collections.Generic;
 using iText.IO.Image;
 using System.Web.WebPages;
+<<<<<<< Updated upstream
+=======
+using System.Web.Security;
+>>>>>>> Stashed changes
 
 public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
 {
@@ -614,6 +618,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
 
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
+        hdUserId.Value = Session["UserId"].ToString();
+        hdRoleId.Value = Session["RoleId"].ToString();
         try
         {
             decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
@@ -644,6 +650,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             }
             hfDeductedAmount.Value = deductionAmount.ToString();
             hfFinalAmount.Value = totalDeductionAmount.ToString();
+            
         }
         catch (Exception ex)
         {
@@ -1094,6 +1101,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         string caseNo = Session["CaseNumber"] as string;
         string cardNo = Session["CardNumber"] as string;
+<<<<<<< Updated upstream
+=======
+        string selectedReason = ddlReason.SelectedItem.Value;
+        string selectedSubReason = ddlSubReason.SelectedItem.Value;
+        
+>>>>>>> Stashed changes
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
@@ -1106,7 +1119,11 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
                 decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
+<<<<<<< Updated upstream
                 cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+=======
+                cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+>>>>>>> Stashed changes
             }
             if (selectedValue.Equals("0"))
             {
@@ -1149,7 +1166,24 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                 }
                 else if (selectedValue.Equals("4"))
                 {
-
+                    
+                    if (selectedReason.Equals("0"))
+                    {
+                        strMessage = "window.alert('Please select query reason.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        if (selectedSubReason.Equals("0"))
+                        {
+                            strMessage = "window.alert('Please select query sub reason.');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, selectedReason, selectedSubReason, "", tbRejectRemarks.Text.ToString() + "");
+                        }
+                    }
                 }
                 else if (selectedValue.Equals("5"))
                 {
@@ -1195,32 +1229,33 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 if (Session["RoleId"].ToString() == "7")
                 {
-                    strMessage = "window.alert('Claim has been approved by CPD(Insurer). " + caseNo + "');";
+                    strMessage = "window.alert('Claim has been approved by CPD(Insurer). " + caseNo + "');window.location.reload();";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
                 else if (Session["RoleId"].ToString() == "8")
                 {
-                    strMessage = "window.alert('Claim has been approved by CPD(Trust). " + caseNo + "');";
+                    strMessage = "window.alert('Claim has been approved by CPD(Trust). " + caseNo + "');window.location.reload();";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
                 BindPatientName();
             }
             else if (ActionId.Equals("2"))
             {
-                strMessage = "window.alert('Case Successfully Forwarded To " + ForwardedToUser + "');";
+                strMessage = "window.alert('Case Successfully Forwarded To " + ForwardedToUser + "');window.location.reload();";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 BindPatientName();
             }
             else if (ActionId.Equals("4"))
             {
-                strMessage = "window.alert('Query Raised Successfully.');";
+                strMessage = "window.alert('Query Raised Successfully.');window.location.reload();";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                getClaimQuery(ClaimId);
+                //getClaimQuery(ClaimId);
+                BindPatientName();
 
             }
             else if (ActionId.Equals("5"))
             {
-                strMessage = "window.alert('Case Rejected Successfully.');";
+                strMessage = "window.alert('Case Rejected Successfully.');window.location.reload();";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 BindPatientName();
             }

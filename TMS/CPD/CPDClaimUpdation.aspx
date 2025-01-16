@@ -57,6 +57,7 @@
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
@@ -67,7 +68,6 @@
             <asp:HiddenField ID="hfTrustApprovedAmount" runat="server" Visible="false" />
             <asp:HiddenField ID="hfDeductedAmount" runat="server" Visible="false" />
             <asp:HiddenField ID="hfFinalAmount" runat="server" Visible="false" />
-
             <asp:MultiView ID="MultiViewMain" runat="server" ActiveViewIndex="0">
                 <asp:View ID="viewMain" runat="server">
                     <div class="row">
@@ -350,15 +350,15 @@
                                                         <div class="row">
                                                             <div class="col-md-3">
                                                                 <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Hospital Name</span>
-                                                                <asp:TextBox ID="tbHospitalName" runat="server" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
+                                                                <asp:TextBox ID="tbHospitalName" runat="server" Enabled="false" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Type</span>
-                                                                <asp:TextBox ID="tbType" runat="server" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
+                                                                <asp:TextBox ID="tbType" runat="server" Enabled="false" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Address</span>
-                                                                <asp:TextBox ID="tbAddress" runat="server" CssClass="form-control" value="Ranchi, Jharkhand" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
+                                                                <asp:TextBox ID="tbAddress" runat="server" Enabled="false" CssClass="form-control" value="Ranchi, Jharkhand" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1613,21 +1613,21 @@
                                                             <div class="form-group row mb-3">
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Total Claims (Rs):</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTotalClaims" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" EnableViewState="true"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbTotalClaims" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" EnableViewState="true"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Insurance Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbInsuranceApprovedAmt" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbInsuranceApprovedAmt" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Trust Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTrustApprovedAmt" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbTrustApprovedAmt" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row mb-3">
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Special Case:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbSpecialCase" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbSpecialCase" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                 </div>

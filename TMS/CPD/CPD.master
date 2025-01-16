@@ -135,7 +135,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="../CPD/Dashboard.aspx">
+                            <a href="../CPD/CPDDashboard.aspx">
                                 <i class="bi bi-bar-chart"></i>
                                 <span class="nav-label">Dashboard</span>
 

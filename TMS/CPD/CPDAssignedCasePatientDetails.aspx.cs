@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.WebPages;
 
 
 
@@ -645,58 +646,43 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     }
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
-        decimal totalClaims = 0;
-        decimal deductionAmount = 0;
-        decimal totalDeductionAmount = 0;
-        string caseNo = Session["CaseNumber"].ToString();
-        int parsedUserId;
-        int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
-        if (!decimal.TryParse(tbAmount.Text, out deductionAmount))
-        {
-            tbTotalDeductionAmt.Text = "Invalid input for deduction amount";
-            return;
-        }
-        string roleName = "";
         try
         {
-            roleName = cpd.GetUserRole(userId);
+            decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
+            string roleName = cpd.GetUserRole(Convert.ToInt32(Session["UserId"].ToString()));
             if (roleName == "CPD(INSURER)")
             {
-                if (!decimal.TryParse(tbInsuranceApprovedAmt.Text, out totalClaims))
+                totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value.ToString());
+                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
+                if (deductionAmount > totalClaims)
                 {
-                    tbTotalDeductionAmt.Text = "Invalid Insurance Approved Amount input";
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
                     return;
                 }
+                totalDeductionAmount = totalClaims - deductionAmount;
+                tbTotalDeductionAmt.Text = totalDeductionAmount.ToString();
             }
             else if (roleName == "CPD(TRUST)")
             {
-                if (!decimal.TryParse(tbTrustApprovedAmt.Text, out totalClaims))
+                totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value.ToString());
+                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
+                if (deductionAmount > totalClaims)
                 {
-                    tbTotalDeductionAmt.Text = "Invalid Trust Approved Amount input";
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
                     return;
                 }
+                totalDeductionAmount = totalClaims - deductionAmount;
+                tbTotalDeductionAmt.Text = totalDeductionAmount.ToString();
             }
-            else
-            {
-                tbTotalDeductionAmt.Text = "Unrecognized role";
-                return;
-            }
-            if (deductionAmount > totalClaims)
-            {
-                tbTotalDeductionAmt.Text = "Deduction cannot exceed total claims";
-                return;
-            }
-            totalDeductionAmount = totalClaims - deductionAmount;
-            tbTotalDeductionAmt.Text = totalDeductionAmount.ToString("C");
-            cpd.InsertDeductionAndUpdateClaimMaster(userId, dropDeductionType.SelectedItem.Value, deductionAmount, totalDeductionAmount, caseNo, tbDedRemarks.Text);
-            BindTechnicalChecklistData();
+            hfDeductedAmount.Value = deductionAmount.ToString();
+            hfFinalAmount.Value = totalDeductionAmount.ToString();
+            hfRoleId.Value = roleName.ToString();
         }
         catch (Exception ex)
         {
-            tbTotalDeductionAmt.Text = "Error: " + ex.Message;
+
         }
     }
-
     private void BindClaimWorkflow()
     {
         dt.Clear();
@@ -1181,6 +1167,13 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     {
         string caseNo = Session["CaseNumber"] as string;
         string cardNo = Session["CardNumber"] as string;
+        if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
+        {
+            decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
+            decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
+            string roleId = hfRoleId.Value;
+            cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(roleId), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+        }
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
