@@ -1094,12 +1094,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         string caseNo = Session["CaseNumber"] as string;
         string cardNo = Session["CardNumber"] as string;
-        if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
-        {
-            decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
-            decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
-            cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
-        }
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
@@ -1108,6 +1102,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         else
         {
             string selectedValue = ddlActionType.SelectedItem.Value;
+            if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
+            {
+                decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
+                decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
+                cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+            }
             if (selectedValue.Equals("0"))
             {
                 strMessage = "window.alert('Case action is required.');";
