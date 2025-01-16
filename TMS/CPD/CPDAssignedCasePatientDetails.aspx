@@ -167,7 +167,7 @@
                 }
             });
         }
-</script>
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
@@ -180,7 +180,11 @@
             <asp:HiddenField ID="hdPackageId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfPDId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfAdmissionId" runat="server" Visible="false" />
-
+            <asp:HiddenField ID="hfInsurerApprovedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfTrustApprovedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfDeductedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfFinalAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfRoleId" runat="server" Visible="false" />
             <asp:MultiView ID="MultiViewMain" runat="server" ActiveViewIndex="0">
                 <asp:View ID="viewMain" runat="server">
                     <div class="row">

@@ -57,6 +57,7 @@
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
@@ -67,7 +68,6 @@
             <asp:HiddenField ID="hfTrustApprovedAmount" runat="server" Visible="false" />
             <asp:HiddenField ID="hfDeductedAmount" runat="server" Visible="false" />
             <asp:HiddenField ID="hfFinalAmount" runat="server" Visible="false" />
-
             <asp:MultiView ID="MultiViewMain" runat="server" ActiveViewIndex="0">
                 <asp:View ID="viewMain" runat="server">
                     <div class="row">
@@ -350,15 +350,15 @@
                                                         <div class="row">
                                                             <div class="col-md-3">
                                                                 <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Hospital Name</span>
-                                                                <asp:TextBox ID="tbHospitalName" runat="server" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
+                                                                <asp:TextBox ID="tbHospitalName" runat="server" Enabled="false" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Type</span>
-                                                                <asp:TextBox ID="tbType" runat="server" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
+                                                                <asp:TextBox ID="tbType" runat="server" Enabled="false" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Address</span>
-                                                                <asp:TextBox ID="tbAddress" runat="server" CssClass="form-control" value="Ranchi, Jharkhand" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
+                                                                <asp:TextBox ID="tbAddress" runat="server" Enabled="false" CssClass="form-control" value="Ranchi, Jharkhand" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                         </div>
                                                     </div>

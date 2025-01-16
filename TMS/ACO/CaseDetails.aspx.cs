@@ -484,7 +484,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         catch (Exception ex)
         {
             lblError.Text = "Error processing action: " + ex.Message;
-            lblError.Visible = true;
+            lblError.Visible = true; 
         }
     }
     protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)

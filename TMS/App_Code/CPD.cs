@@ -485,10 +485,11 @@ public class CPD
         }
         return roleName;
     }
-    public void InsertDeductionAndUpdateClaimMaster(int userId, string deductionType, decimal deductionAmount, decimal totalDeductionAmount, string caseNo, string remarks)
+    public void InsertDeductionAndUpdateClaimMaster(int userId, int roleId, string deductionType, decimal deductionAmount, decimal totalDeductionAmount, string caseNo, string remarks)
     {
         SqlCommand cmd = new SqlCommand("TMS_CPDInsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@RoleId", roleId);
         cmd.Parameters.AddWithValue("@UserId", userId);
         cmd.Parameters.AddWithValue("@DeductionType", deductionType);
         cmd.Parameters.AddWithValue("@DeductionAmount", deductionAmount);
