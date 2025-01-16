@@ -1293,7 +1293,7 @@
                                     <div class="modal-header">
                                         <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title fs-5 font-weight-bolder"></asp:Label>
                                         <button type="button" class="btn" onclick="hideModal();">
-                                            <img src="../img/bootstrapicons/x-lg.svg" />
+                                            <i class="fa fa-times"></i>
                                         </button>
                                     </div>
                                     <asp:MultiView ID="MultiView3" runat="server">

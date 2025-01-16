@@ -36,39 +36,39 @@
                                 <img src="../images/JSAS.png" alt="JSAS Logo" width="52" />
                             </div>
                         </li>
-                        <li>
+                        <%--<li>
                             <asp:LinkButton ID="btnAssignedCases" runat="server" OnClick="btnAssignedCases_Click">
-                                <img src="../img/bootstrapicons/file-check-fill.svg" class="mr-2" style="filter: invert(100%) brightness(100%)"/>
+                                <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Assigned Cases</span>
                             </asp:LinkButton>
                         </li>
                         <li>
                             <asp:LinkButton ID="btnDashboard" runat="server" OnClick="btnDashboard_Click">
-                                <img src="../img/bootstrapicons/house-check-fill.svg" class="mr-2" style="filter: invert(100%) brightness(100%)"/>
+                                <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Dashboard</span>
                             </asp:LinkButton>
                         </li>
                         <li>
                             <asp:LinkButton ID="btnPreauthUpdation" runat="server" OnClick="btnPreauthUpdation_Click">
-                                <img src="../img/bootstrapicons/pencil-fill.svg" class="mr-2" style="filter: invert(100%) brightness(100%)"/>
+                                <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Preauth Updation</span>
                             </asp:LinkButton>
                         </li>
                         <li>
                             <asp:LinkButton ID="btnCaseSearch" runat="server" OnClick="btnCaseSearch_Click">
-                                <img src="../img/bootstrapicons/search.svg" class="mr-2" style="filter: invert(100%) brightness(100%)"/>
+                                <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Case Search</span>
                             </asp:LinkButton>
                         </li>
                         <li>
                             <asp:LinkButton ID="btnUnspecifiedCases" runat="server" OnClick="btnUnspecifiedCases_Click">
-                                <img src="../img/bootstrapicons/exclamation-triangle-fill.svg" class="mr-2" style="filter: invert(100%) brightness(100%)"/>
+                                <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Unspecified Cases</span>
                             </asp:LinkButton>
                         </li>
                         <li>
                             <a href="#">
-                                <img src="../img/bootstrapicons/gear-fill.svg" class="mr-2" style="filter: invert(100%) brightness(100%)"/>
+                                <i class="fa fa-th-large"></i>
                                 <span class="nav-label">MIS</span>
                                 <span class="fa arrow"></span>
                             </a>
@@ -79,7 +79,60 @@
                                     </asp:LinkButton>
                                 </li>
                             </ul>
+                        </li>--%>
+
+                        <li>
+                            <asp:LinkButton ID="btnAssignedCases" runat="server" OnClick="btnAssignedCases_Click">
+        <i class="fa fa-th-large"></i> <!-- Assigned Cases uses 'fa-th-large' -->
+        <span class="nav-label">Assigned Cases</span>
+    </asp:LinkButton>
                         </li>
+
+                        <li>
+                            <asp:LinkButton ID="btnDashboard" runat="server" OnClick="btnDashboard_Click">
+        <i class="fa fa-dashboard"></i> <!-- Dashboard uses 'fa-dashboard' -->
+        <span class="nav-label">Dashboard</span>
+    </asp:LinkButton>
+                        </li>
+
+                        <li>
+                            <asp:LinkButton ID="btnPreauthUpdation" runat="server" OnClick="btnPreauthUpdation_Click">
+        <i class="fa fa-check"></i> <!-- Preauth Updation uses 'fa-check' -->
+        <span class="nav-label">Preauth Updation</span>
+    </asp:LinkButton>
+                        </li>
+
+                        <li>
+                            <asp:LinkButton ID="btnCaseSearch" runat="server" OnClick="btnCaseSearch_Click">
+        <i class="fa fa-search"></i> <!-- Case Search uses 'fa-search' -->
+        <span class="nav-label">Case Search</span>
+    </asp:LinkButton>
+                        </li>
+
+                        <li>
+                            <asp:LinkButton ID="btnUnspecifiedCases" runat="server" OnClick="btnUnspecifiedCases_Click">
+        <i class="fa fa-list-ul"></i> <!-- Unspecified Cases uses 'fa-list-ul' -->
+        <span class="nav-label">Unspecified Cases</span>
+    </asp:LinkButton>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-folder"></i>
+                                <!-- MIS uses 'fa-folder' -->
+                                <span class="nav-label">MIS</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li>
+                                    <asp:LinkButton ID="btnPackageMaster" runat="server" OnClick="btnPackageMaster_Click">
+                <i class="fa fa-file"></i> <!-- Package Master uses 'fa-file' -->
+                <span class="nav-label">Package Master</span>
+            </asp:LinkButton>
+                                </li>
+                            </ul>
+                        </li>
+
                     </ul>
 
                 </div>
@@ -152,7 +205,7 @@
         <asp:HiddenField ID="hdUserName" runat="server" Visible="false" />
         <asp:HiddenField ID="hdRoleName" runat="server" Visible="false" />
     </form>
-    
+
     <script src="../js/jquery-3.1.1.min.js"></script>
     <script src="../js/plugins/sweetalert/sweetalert.min.js"></script>
     <script src="../lib/modules/global-function.min.js"></script>
