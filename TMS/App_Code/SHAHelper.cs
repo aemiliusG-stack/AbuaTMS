@@ -104,7 +104,7 @@ public class SHAHelper
     }
     public DataTable GetACORemarks(string claimId)
     {
-        string query = "SELECT\r\n    t2.TotalPackageCost as TotalClaims,\r\n    t1.TrustClaimAmountApproved AS TrustLiable,\r\n    t5.TotalAmtAfterDeduction AS [Final Approved Amount]\r\nFROM\r\n    TMS_ClaimMaster t1\r\nINNER JOIN\r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN\r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nLEFT JOIN\r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber \r\n    AND t5.IsActive = 1 \r\n    AND t5.IsDeleted = 0\r\nWHERE\r\n    t1.ClaimId = 1\r\n    AND t5.RoleId = 9\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0;\r\n";
+        string query = "SELECT \r\n\tt2.TotalPackageCost as TotalClaims,\r\n    t1.TrustClaimAmountApproved AS TrustLiable,\r\n\tcase\r\n\t   when t5.CaseNumber is not null then t5.TotalAmtAfterDeduction\r\n\t   else convert(bigint, t2.TotalPackageCost)\r\n\tend as [Final Approved Amount]\r\n    --t2.TotalPackageCost AS [Final Approved Amount]\r\nFROM \r\n    TMS_ClaimMaster t1\r\nINNER JOIN \r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN \r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nLEFT JOIN \r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber AND t5.IsActive = 1 AND t5.IsDeleted = 0\r\nWHERE \r\n    --t1.ClaimId = @claimId\r\n\tt1.ClaimId = @claimId\r\n    AND t1.IsActive = 1\r\n\tAnd t5.RoleId=9\r\n    AND t1.IsDeleted = 0;";
         SqlCommand cmd = new SqlCommand(query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
         con.Open();
@@ -123,7 +123,7 @@ public class SHAHelper
     }
     public void SaveDeductionAmount(int userId, int shaDeductionAmount, string caseNo, string remarks) 
     {
-        SqlCommand cmd = new SqlCommand("ACO_InsertDeductionAndUpdateClaimMaster", con);
+        SqlCommand cmd = new SqlCommand("SHA_InsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@UserId", userId);
         cmd.Parameters.AddWithValue("@SHADeductionAmount", shaDeductionAmount);

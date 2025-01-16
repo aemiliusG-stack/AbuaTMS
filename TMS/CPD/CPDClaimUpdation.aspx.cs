@@ -226,6 +226,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         lbAadharVerified.Text = "";
         lbActualRegDate.Text = "";
         lbAge.Text = "";
+        tbTotalClaims.Text = "";
+        tbInsuranceApprovedAmt.Text = "";
+        tbTrustApprovedAmt.Text = "";
+        tbSpecialCase.Text = "";
+       
+
     }
 
 
@@ -611,7 +617,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             }
         }
     }
-
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
         try
@@ -650,7 +655,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             
         }
     }
-
     private void BindClaimWorkflow()
     {
         dt.Clear();
@@ -673,7 +677,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             gvClaimWorkFlow.DataBind();
         }
     }
-
     private void BindActionType()
     {
         try
