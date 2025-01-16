@@ -1103,7 +1103,10 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         string cardNo = Session["CardNumber"] as string;
         string selectedReason = ddlReason.SelectedItem.Value;
         string selectedSubReason = ddlSubReason.SelectedItem.Value;
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
@@ -1116,9 +1119,13 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
                 decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
+<<<<<<< Updated upstream
 
                 cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
 
+=======
+                cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+>>>>>>> Stashed changes
             }
             if (selectedValue.Equals("0"))
             {

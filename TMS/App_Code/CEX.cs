@@ -181,17 +181,18 @@ public class CEX
             return false;
         }
     }
-    public bool PatientActionForCEXInsurer(string userId, string claimId, string nonTechChecklistRemarks)
+    public bool PatientActionForCEXInsurer(string userId, string claimId, int amount, string nonTechChecklistRemarks)
     {
         try
         {
             string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
-			VALUES( @ClaimId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,0.00, 1, GETDATE())";
+	VALUES( @ClaimId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
             sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
             sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
+            sd.InsertCommand.Parameters.AddWithValue("@Amount", amount);
             sd.InsertCommand.Parameters.AddWithValue("@Remarks", nonTechChecklistRemarks);
             if (con.State == ConnectionState.Open)
             {
@@ -212,12 +213,12 @@ public class CEX
             return false;
         }
     }
-    public bool PatientActionForCEXTrust(string userId, string claimId, string nonTechChecklistRemarks)
+    public bool PatientActionForCEXTrust(string userId, string claimId, int amount, string nonTechChecklistRemarks)
     {
         try
         {
             string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
-			VALUES( @ClaimId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,0.00, 1, GETDATE())";
+	VALUES( @ClaimId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);

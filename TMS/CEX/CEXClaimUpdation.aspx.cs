@@ -534,7 +534,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
                     return;
                 }
-                
+
 
                 string caseNo = hdCaseNo.Value;
                 string cardNumber = hdAbuaId.Value;
@@ -564,6 +564,13 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
 
                 string nonTechChecklistRemarks = tbNonTechFormRemark.Text;
                 string Role = hdRoleId.Value;
+
+                //DataTable dt = new DataTable();
+                dt = ds.Tables[0];
+                //DataRow row = dt.Rows[0];
+                string demo = dt.Rows[0]["TotalPackageCost"].ToString().Trim();
+                int amount = Convert.ToInt32(Convert.ToDecimal(dt.Rows[0]["TotalPackageCost"].ToString().Trim()));
+
 
                 DateTime admissionDate;
                 if (DateTime.TryParse(tbCSAdmissionDate.Text, out admissionDate))
@@ -619,7 +626,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
 
                         if (result)
                         {
-                            bool ActionResult = cex.PatientActionForCEXInsurer(userId, claimId, nonTechChecklistRemarks);
+                            bool ActionResult = cex.PatientActionForCEXInsurer(userId, claimId, amount, nonTechChecklistRemarks);
                             if (ActionResult)
                             {
                                 string strMessage = "window.alert('Saved Successfully!');window.location.reload();";
@@ -638,7 +645,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
 
                         if (result)
                         {
-                            bool ActionResult = cex.PatientActionForCEXTrust(userId, claimId, nonTechChecklistRemarks);
+                            bool ActionResult = cex.PatientActionForCEXTrust(userId, claimId, amount, nonTechChecklistRemarks);
                             if (ActionResult)
                             {
                                 strMessage = "window.alert('Saved Successfully.');window.location.reload();";
@@ -657,78 +664,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     strMessage = "window.alert('Failed to Saved.');";
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
                 }
-
-                //SqlParameter[] p1 = new SqlParameter[19];
-
-                //p1[0] = new SqlParameter("@CaseNo", hdCaseNo.Value) { DbType = DbType.String };
-                //p1[1] = new SqlParameter("@cardNumber", hdAbuaId.Value) { DbType = DbType.String };
-                //p1[2] = new SqlParameter("@UserId", hdUserId.Value) { DbType = DbType.String };
-                //p1[3] = new SqlParameter("@ClaimId", hdClaimId.Value) { DbType = DbType.String };
-                //p1[4] = new SqlParameter("@AddmissionId", hdAdmissionId.Value) { DbType = DbType.String };
-                //p1[5] = new SqlParameter("@IsNameCorrect", rbIsNameCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[6] = new SqlParameter("@IsGenderCorrect", rbIsGenderCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[7] = new SqlParameter("@DoesPhotoMatch", rbIsPhotoVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[8] = new SqlParameter("@AdmissionDateCS", tbCSAdmissionDate.Text) { DbType = DbType.String };
-                //p1[9] = new SqlParameter("@DoesAddDateMatchCS", rbIsAdmissionDateVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[10] = new SqlParameter("@SurgeryDateCS", tbCSTherepyDate.Text) { DbType = DbType.String };
-                //p1[11] = new SqlParameter("@DoesSurDateMatchCS", rbIsSurgeryDateVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[12] = new SqlParameter("@DischargeDateCS", lbNonTechDeathDate.Text) { DbType = DbType.String };
-                //p1[13] = new SqlParameter("@DoesDischDateMatchCS", rbIsDischargeDateCSVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[14] = new SqlParameter("@IsPatientSignVerified", rbIsSignVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[15] = new SqlParameter("@IsReportVerified", rbIsReportCorrectYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[16] = new SqlParameter("@IsDateAndNameCorrect", rbIsReportVerifiedYes.Checked ? 1 : 0) { DbType = DbType.Int32 };
-                //p1[17] = new SqlParameter("@NonTechChecklistRemarks", tbNonTechFormRemark.Text) { DbType = DbType.String };
-                //p1[18] = new SqlParameter("@RoleId", hdRoleId.Value) { DbType = DbType.String };
-                //DateTime admissionDate, surgeryDate, dischargeDate;
-
-
-
-                //// Validate and assign Admission Date
-                //if (DateTime.TryParse(tbCSAdmissionDate.Text, out admissionDate))
-                //{
-                //    p1[8] = new SqlParameter("@AdmissionDateCS", admissionDate) { DbType = DbType.DateTime };
-                //}
-                //else
-                //{
-                //    string errorMessage = "window.alert('Invalid Admission Date format. Please use yyyy-MM-dd.');";
-                //    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
-                //    return;
-                //}
-
-                //// Validate and assign Surgery Date
-                //if (DateTime.TryParse(tbCSTherepyDate.Text, out surgeryDate))
-                //{
-                //    p1[10] = new SqlParameter("@SurgeryDateCS", surgeryDate) { DbType = DbType.DateTime };
-                //}
-                //else
-                //{
-                //    string errorMessage = "window.alert('Invalid Surgery Date format. Please use yyyy-MM-dd.');";
-                //    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
-                //    return;
-                //}
-
-                //// Validate and assign Discharge Date
-                //if (DateTime.TryParse(lbNonTechDeathDate.Text, out dischargeDate))
-                //{
-                //    p1[12] = new SqlParameter("@DischargeDateCS", dischargeDate) { DbType = DbType.DateTime };
-                //}
-                //else
-                //{
-                //    string errorMessage = "window.alert('Invalid Discharge Date format. Please use yyyy-MM-dd.');";
-                //    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
-                //    return;
-                //}
-
-
-                //ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertCEXNonTechChecklist", p1);
-
-                //if (con.State == ConnectionState.Open)
-                //{
-                //    con.Close();
-                //}
-
-                //string successMessage = "window.alert('Saved Successfully!');window.location.reload();";
-                //ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Success", successMessage, true);
 
             }
         }
