@@ -479,7 +479,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
 
             lblSuccess.Text = "Action processed successfully!";
             lblSuccess.Visible = true;
-
+            Response.Redirect("~/ClaimUpdationaspx.aspx", false);
         }
         catch (Exception ex)
         {

@@ -67,6 +67,13 @@
                             </a>
                         </li>
                         <li>
+                            <a href="ACOHome.aspx">
+                                <%--<i class="fa fa-th-large"></i>--%>
+                                <i class="fa fa-address-book" aria-hidden="true"></i>
+                                <span class="nav-label">Case Search</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="Dashboard.aspx">
                                 <%--<i class="fa fa-th-large"></i>--%>
                                 <i class="fa fa-address-book" aria-hidden="true"></i>
@@ -98,7 +105,7 @@
                                 <li><a href="/Master/Block">View Offline Recovery Cases</a></li>
                             </ul>
                         </li>
-<%--                        <li>
+                        <%--                        <li>
                             <a href="#">
                                 <i class="fa fa-wifi" aria-hidden="true"></i>
                                 <span class="nav-label">Offline Cases</span>
@@ -180,7 +187,7 @@
                                                 <img style="width: 48px; height: 48px;" alt="" class="rounded-circle" src="../img/profile.jpg">
                                             </div>
                                             <div class="context">
-                                                <span class="user-title block m-t-xs font-bold"><%=hdUserName.Value %></span> 
+                                                <span class="user-title block m-t-xs font-bold"><%=hdUserName.Value %></span>
                                                 <span class="user-sub-title text-xs block"><%=hdUserRole.Value %></span>
                                             </div>
                                             <ul class="dropdown-menu m-t-xs">

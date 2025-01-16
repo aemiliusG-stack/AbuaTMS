@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ClaimUpdationaspx.aspx.cs" Inherits="ACO_ClaimUpdationaspx" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ClaimUpdation.aspx.cs" Inherits="ACO_ClaimUpdationaspx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <title>Claim Cases For Approval</title>
@@ -59,7 +59,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox">
-                <div class="ibox-title text-center" style="background-color: #31859c; color: white;">
+                <div class="ibox-title d-flex justify-content-between text-white align-items-center  bg-primary">
                     <h4 class="m-0">Claim Cases For Approval</h4>
                 </div>
                 <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
@@ -124,7 +124,7 @@
             </div>
         </div>
     </div>
-    <div class="total-info row text-center">
+    <div class="total-info row text-center bg-primary">
         <div class="col-md-6">
             <p>
                 Total Number of Cases:
