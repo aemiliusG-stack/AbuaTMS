@@ -36,84 +36,39 @@
                                 <img src="../images/JSAS.png" alt="JSAS Logo" width="52" />
                             </div>
                         </li>
-                        <%--<li>
-                            <asp:LinkButton ID="btnAssignedCases" runat="server" OnClick="btnAssignedCases_Click">
-                                <i class="fa fa-th-large"></i>
-                                <span class="nav-label">Assigned Cases</span>
-                            </asp:LinkButton>
-                        </li>
-                        <li>
-                            <asp:LinkButton ID="btnDashboard" runat="server" OnClick="btnDashboard_Click">
-                                <i class="fa fa-th-large"></i>
-                                <span class="nav-label">Dashboard</span>
-                            </asp:LinkButton>
-                        </li>
-                        <li>
-                            <asp:LinkButton ID="btnPreauthUpdation" runat="server" OnClick="btnPreauthUpdation_Click">
-                                <i class="fa fa-th-large"></i>
-                                <span class="nav-label">Preauth Updation</span>
-                            </asp:LinkButton>
-                        </li>
-                        <li>
-                            <asp:LinkButton ID="btnCaseSearch" runat="server" OnClick="btnCaseSearch_Click">
-                                <i class="fa fa-th-large"></i>
-                                <span class="nav-label">Case Search</span>
-                            </asp:LinkButton>
-                        </li>
-                        <li>
-                            <asp:LinkButton ID="btnUnspecifiedCases" runat="server" OnClick="btnUnspecifiedCases_Click">
-                                <i class="fa fa-th-large"></i>
-                                <span class="nav-label">Unspecified Cases</span>
-                            </asp:LinkButton>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-th-large"></i>
-                                <span class="nav-label">MIS</span>
-                                <span class="fa arrow"></span>
-                            </a>
-                            <ul class="nav nav-second-level collapse">
-                                <li>
-                                    <asp:LinkButton ID="btnPackageMaster" runat="server" OnClick="btnPackageMaster_Click">
-                                        <span class="nav-label">Package Master</span>
-                                    </asp:LinkButton>
-                                </li>
-                            </ul>
-                        </li>--%>
-
                         <li>
                             <asp:LinkButton ID="btnAssignedCases" runat="server" OnClick="btnAssignedCases_Click">
         <i class="fa fa-th-large"></i> <!-- Assigned Cases uses 'fa-th-large' -->
         <span class="nav-label">Assigned Cases</span>
-    </asp:LinkButton>
+                            </asp:LinkButton>
                         </li>
 
                         <li>
                             <asp:LinkButton ID="btnDashboard" runat="server" OnClick="btnDashboard_Click">
         <i class="fa fa-dashboard"></i> <!-- Dashboard uses 'fa-dashboard' -->
         <span class="nav-label">Dashboard</span>
-    </asp:LinkButton>
+                            </asp:LinkButton>
                         </li>
 
                         <li>
                             <asp:LinkButton ID="btnPreauthUpdation" runat="server" OnClick="btnPreauthUpdation_Click">
         <i class="fa fa-check"></i> <!-- Preauth Updation uses 'fa-check' -->
         <span class="nav-label">Preauth Updation</span>
-    </asp:LinkButton>
+                            </asp:LinkButton>
                         </li>
 
                         <li>
                             <asp:LinkButton ID="btnCaseSearch" runat="server" OnClick="btnCaseSearch_Click">
         <i class="fa fa-search"></i> <!-- Case Search uses 'fa-search' -->
         <span class="nav-label">Case Search</span>
-    </asp:LinkButton>
+                            </asp:LinkButton>
                         </li>
 
                         <li>
                             <asp:LinkButton ID="btnUnspecifiedCases" runat="server" OnClick="btnUnspecifiedCases_Click">
         <i class="fa fa-list-ul"></i> <!-- Unspecified Cases uses 'fa-list-ul' -->
         <span class="nav-label">Unspecified Cases</span>
-    </asp:LinkButton>
+                            </asp:LinkButton>
                         </li>
 
                         <li>
@@ -128,13 +83,11 @@
                                     <asp:LinkButton ID="btnPackageMaster" runat="server" OnClick="btnPackageMaster_Click">
                 <i class="fa fa-file"></i> <!-- Package Master uses 'fa-file' -->
                 <span class="nav-label">Package Master</span>
-            </asp:LinkButton>
+                                    </asp:LinkButton>
                                 </li>
                             </ul>
                         </li>
-
                     </ul>
-
                 </div>
             </nav>
 

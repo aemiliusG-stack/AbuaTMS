@@ -958,7 +958,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
     {
         try
         {
-            SqlParameter[] p = new SqlParameter[8];
+            SqlParameter[] p = new SqlParameter[9];
             p[0] = new SqlParameter("@ClaimId", ClaimId);
             p[0].DbType = DbType.String;
             p[1] = new SqlParameter("@UserId", UserId);
@@ -975,6 +975,8 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             p[6].DbType = DbType.String;
             p[7] = new SqlParameter("@Remarks", Remarks);
             p[7].DbType = DbType.String;
+            p[8] = new SqlParameter("@Amount", Convert.ToDecimal(tbAmountLiable.Text.ToString()));
+            p[8].DbType = DbType.Decimal;
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_InsertActions", p);
             if (con.State == ConnectionState.Open)
                 con.Close();

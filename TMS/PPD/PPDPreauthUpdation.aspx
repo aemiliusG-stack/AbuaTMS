@@ -107,14 +107,8 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="text-center">
-                                        <h2 class="d-flex justify-content-center align-items-center gap-2 m-0">
-                                            <span class="display-1 fw-bold">4</span>
-                                            <span class="display-1 fw-bold">0</span>
-                                            <span class="display-1 fw-bold">4</span>
-                                        </h2>
                                         <h3 class="h2 m-0">No Pending Cases</h3>
                                         <p class="mb-4">We’re sorry, but there is no pending cases available at this time.</p>
-                                        <asp:LinkButton ID="lnkBackToHome" runat="server" CssClass="btn bsb-btn-5xl btn-primary rounded-pill px-5 m-0" OnClientClick="location.reload(); return false;">New Case</asp:LinkButton>
                                     </div>
                                 </div>
                             </div>
