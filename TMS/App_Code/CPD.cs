@@ -496,6 +496,9 @@ public class CPD
         cmd.Parameters.AddWithValue("@TotalDeductionAmount", totalDeductionAmount);
         cmd.Parameters.AddWithValue("@CaseNo", caseNo);
         cmd.Parameters.AddWithValue("@Remarks", remarks);
+
+
+
         SqlParameter roleParam = new SqlParameter("@RoleName", SqlDbType.NVarChar, 50) { Direction = ParameterDirection.Output };
         cmd.Parameters.Add(roleParam);
         try

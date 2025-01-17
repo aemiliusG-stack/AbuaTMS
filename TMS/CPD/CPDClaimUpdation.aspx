@@ -1613,21 +1613,21 @@
                                                             <div class="form-group row mb-3">
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Total Claims (Rs):</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTotalClaims" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" EnableViewState="true"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbTotalClaims" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" EnableViewState="true"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Insurance Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbInsuranceApprovedAmt" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbInsuranceApprovedAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Trust Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTrustApprovedAmt" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbTrustApprovedAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row mb-3">
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Special Case:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbSpecialCase" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbSpecialCase" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                 </div>
@@ -1734,21 +1734,26 @@
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Remarks</span><br />
                                                                     <asp:TextBox runat="server" ID="tbDedRemarks" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
-                                                                <div class="col-md-4">
-                                                                </div>
+                                                                <div class="w-100 my-1"></div>
+                                                                <div class="col-md-4"></div>
                                                                 <div class="col-md-4">
                                                                     <div class="col-lg-12 text-start">
                                                                         <asp:Button runat="server" Text="Add Deduction" ID="btnAddDeduction" class="btn btn-primary rounded-pill mt-3" OnClick="AddDeduction_Click" />
                                                                     </div>
                                                                 </div>
+                                                                <div class="col-md-4"></div>
+                                                                <div class="w-100 my-2"></div>
                                                                 <div class="col-md-4">
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Total Deducted Amount:</span><br />
+                                                                    <asp:TextBox runat="server" ID="tbTotalDeductedAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
-                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Total Deduction Amount:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTotalDeductionAmt" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Claim Amount:</span><br />
+                                                                    <asp:TextBox runat="server" ID="tbFinalAmt" ReadOnly="true" CssClass="border-bottom" Style="border-color: transparent; outline: none;"></asp:TextBox>
                                                                 </div>
-
                                                                 <div class="col-md-4">
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Final Amount After Deduction:</span><br />
+                                                                    <asp:TextBox runat="server" ID="tbFinalAmtAfterDeduction" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                             </div>
                                                         </div>
