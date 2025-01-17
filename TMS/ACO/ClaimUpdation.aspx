@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ClaimUpdation.aspx.cs" Inherits="ACO_ClaimUpdationaspx" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ClaimUpdation.aspx.cs" Inherits="ACO_ClaimUpdation" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <title>Claim Cases For Approval</title>

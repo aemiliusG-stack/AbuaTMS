@@ -7,9 +7,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using WebGrease.Css.Ast;
 
-public partial class ACO_ClaimUpdationaspx : System.Web.UI.Page
+public partial class ACO_ClaimUpdation : System.Web.UI.Page
 {
     private string strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
