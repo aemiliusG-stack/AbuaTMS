@@ -808,7 +808,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" />
+                                                                <i class="fa fa-inr"></i>
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbPackageCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -820,7 +820,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" />
+                                                                <i class="fa fa-inr"></i>
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbIncentiveCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -833,7 +833,7 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="input-group">
                                                                 <div class="input-group-text">
-                                                                    <img src="../images/rupee.svg" />
+                                                                    <i class="fa fa-inr"></i>
                                                                 </div>
                                                                 <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbImplantCost" class="form-control"></asp:TextBox>
                                                             </div>
@@ -847,7 +847,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" />
+                                                                <i class="fa fa-inr"></i>
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbTotalPackageCost" class="form-control"></asp:TextBox>
                                                         </div>
@@ -866,7 +866,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
                                                             <div class="input-group-text">
-                                                                <img src="../images/rupee.svg" />
+                                                                <i class="fa fa-inr"></i>
                                                             </div>
                                                             <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbAmountLiable" class="form-control"></asp:TextBox>
                                                         </div>
