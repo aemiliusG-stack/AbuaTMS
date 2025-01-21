@@ -12,6 +12,7 @@ using System.Web.UI.WebControls;
 public partial class CPD_CPD : System.Web.UI.MasterPage
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
+    CPD cpd = new CPD();
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Session["UserId"] == null)
@@ -38,6 +39,10 @@ public partial class CPD_CPD : System.Web.UI.MasterPage
 
     protected void lnkLogout_Click(object sender, EventArgs e)
     {
+        if (Session["ClaimId"] != null)
+        {
+            int affectedRows = cpd.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+        }
         SqlParameter[] p = new SqlParameter[1];
         p[0] = new SqlParameter("@UserId", hdUserId.Value);
         p[0].DbType = DbType.String;
@@ -57,4 +62,17 @@ public partial class CPD_CPD : System.Web.UI.MasterPage
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         Response.Redirect("~/Default.aspx");
     }
+    public void transferCase()
+    {
+        if (Session["ClaimId"] != null)
+        {
+            int affectedRows = cpd.TransferCase(Session["ClaimId"].ToString(), Session["RoleId"].ToString());
+        }
+    }
+    protected void btnDashboard_Click(object sender, EventArgs e)
+    {
+        transferCase();
+        Response.Redirect("CPDHome.aspx", false);
+    }
 }
+

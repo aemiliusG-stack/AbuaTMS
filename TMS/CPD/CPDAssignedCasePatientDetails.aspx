@@ -174,6 +174,7 @@
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
@@ -1848,14 +1849,19 @@
                                                                         <asp:Button runat="server" Text="Add Deduction" ID="btnAddDeduction" class="btn btn-primary rounded-pill mt-3" OnClick="AddDeduction_Click" />
                                                                     </div>
                                                                 </div>
+                                                                <div class="col-md-4"></div>
+                                                                <div class="w-100 my-2"></div>
                                                                 <div class="col-md-4">
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Total Deducted Amount:</span><br />
+                                                                    <asp:TextBox runat="server" ID="tbTotalDeductedAmt" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
-                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Total Deduction Amount:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTotalDeductionAmt" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Total Claim Amount:</span><br />
+                                                                    <asp:TextBox runat="server" ID="tbFinalAmt" Enabled="false" CssClass="border-bottom" Style="border-color: transparent; outline: none;"></asp:TextBox>
                                                                 </div>
-
                                                                 <div class="col-md-4">
+                                                                    <span class="form-label fw-bold" style="font-weight: 800;">Final Amount To Be Paid:</span><br />
+                                                                    <asp:TextBox runat="server" ID="tbFinalAmtAfterDeduction" Enabled="false" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
                                                                 </div>
                                                             </div>
                                                         </div>

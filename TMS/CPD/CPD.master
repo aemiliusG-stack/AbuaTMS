@@ -110,7 +110,7 @@
         getSpecialInvestigation();
         getFraudDocuments();
         getAuditDocuments();
-</script>
+    </script>
 
 </head>
 <body class="asby-theme">
@@ -134,14 +134,20 @@
                                 <span class="nav-label">Assigned Cases</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="../CPD/CPDDashboard.aspx">
+                        <%--<li>
+                            <a href="../CPD/CPDHome.aspx">
                                 <i class="bi bi-bar-chart"></i>
                                 <span class="nav-label">Dashboard</span>
 
                             </a>
+                        </li>--%>
+                        <li>
+                            <asp:LinkButton ID="btnDashboard" runat="server" OnClick="btnDashboard_Click">
+    <i class="fa fa-dashboard"></i> <!-- Dashboard uses 'fa-dashboard' -->
+    <span class="nav-label">Dashboard</span>
+                            </asp:LinkButton>
                         </li>
-                              <li>
+                        <li>
                             <a href="../CPD/CPDClaimUpdateFraudulent.aspx">
                                 <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Claim Update For Fraudulent/Partial Amount Cases</span>
@@ -153,6 +159,20 @@
                                 <span class="nav-label">Cases Search</span>
 
                             </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="bi bi-coin"></i>
+                                <span class="nav-label">Offline Cases</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="../CPD/CPDReconciliationRequest.aspx">Offline Cases Search(COVID)</a></li>
+                                <li><a href="../CPD/CPDClaimUpdation.aspx">Offline Claim Updation</a></li>
+                                <li><a href="../CPD/CPDClaimUpdation.aspx">Offline Claim Updation(COVID)</a></li>
+                                <li><a href="../CPD/CPDClaimUpdation.aspx">Offline Cases Search</a></li>
+
+                            </ul>
                         </li>
                         <li>
                             <a href="#">
@@ -175,7 +195,7 @@
                                 <li><a href="../CPD/CPDPackageMaster.aspx">Packange Master</a></li>
                             </ul>
                         </li>
-                        
+
                     </ul>
 
                 </div>

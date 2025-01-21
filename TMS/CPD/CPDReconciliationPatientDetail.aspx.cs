@@ -37,7 +37,6 @@ public partial class CPD_CPDReconciliationPatientDetail : System.Web.UI.Page
         {
             hdUserId.Value = Session["UserId"].ToString();
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
-            //string caseNo = Session["CaseNumber"] as string;
             string cardNo = Session["CardNumber"] as string;
             string claimId = Session["ClaimId"] as string;
             string patientRedgNo = Session["PatientRegId"] as string;
@@ -50,33 +49,9 @@ public partial class CPD_CPDReconciliationPatientDetail : System.Web.UI.Page
             }
             else
             {
-                lbName.Text = "No CaseNo provided.";
-                lbBeneficiaryId.Text = "";
-                lbCaseNo.Text = "";
-
-
+                lbName.Text = "No CaseNo provided.";              
             }
 
-            //if (!IsPostBack)
-            //{
-            //    BindGrid_ICDDetails();
-            //    BindGrid_TreatmentProtocol();
-            //    BindGrid_ICHIDetails();
-            //    BindGrid_PreauthWorkFlow();
-
-            //    string caseNo = Request.QueryString["CaseNo"];
-            //    if (!string.IsNullOrEmpty(caseNo))
-            //    {
-            //        lbName.Text = "Received CaseNo: " + caseNo;
-            //        BindPatientName(caseNo);
-            //    }
-            //    else
-            //    {
-            //        lbName.Text = "No CaseNo provided.";
-            //        lbBeneficiaryId.Text = "";
-            //        lbCaseNo.Text = "";
-            //    }
-            //}
         }
     }
     private void BindGrid_ICDDetails_Preauth()

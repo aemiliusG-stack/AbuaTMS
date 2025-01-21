@@ -328,9 +328,8 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ReasonId", ReasonId);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         con.Close();
-        dt = ds.Tables[0];
         return dt;
     }
     public DataTable GetUsersByRole(string RoleId, string UserId)
@@ -370,7 +369,7 @@ public class CPD
     public DataTable GetTechnicalChecklist(string CaseNo)
     {
         dt.Clear();
-        string Query = "select t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountApproved, t1.TrustClaimAmountApproved\r\n, t3.IsSpecialCase from TMS_ClaimMaster t1 inner join TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId inner join TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId where t1.CaseNumber = @CaseNo and t1.IsActive = 1 and t1.IsDeleted = 0";
+        string Query = "select t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountRequested, t1.TrustClaimAmountRequested, t3.IsSpecialCase from TMS_ClaimMaster t1 inner join TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId inner join TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId where t1.CaseNumber = @CaseNo and t1.IsActive = 1 and t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
@@ -462,6 +461,17 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
+    public DataTable GetDeductionType()
+    {
+        dt.Clear();
+        string Query = "select DeductionTypeId, DeductionType from TMS_MasterDeductionTypeMaster where IsActive = 1 and IsDeleted = 0 and IsCPD = 1\r\n";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dt = ds.Tables[0];
+        return dt;
+    }
     public string GetUserRole(int userId)
     {
         string roleName = string.Empty;
@@ -526,7 +536,7 @@ public class CPD
     }
     public DataTable GetClaimWorkFlow(string claimId)
     {
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId WHERE t1.ClaimId = @claimId";
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId INNER JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId";
         //DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
@@ -709,16 +719,34 @@ public class CPD
 
         return exists;
     }
-    public int TransferCase(string CaseNo)
+    public int TransferCase(string ClaimId, string RoleId)
     {
-        string Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE CaseNumber = @CaseNo AND IsActive = 1 AND IsDeleted = 0";
+        string Query = "";
+        if (RoleId == "3")
+        {
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+        }
+        else if (RoleId == "4")
+        {
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+        }
         SqlCommand cmd = new SqlCommand(Query, con);
-        cmd.Parameters.AddWithValue("@CaseNo", CaseNo);
+        cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
         int rowsAffected = cmd.ExecuteNonQuery();
         con.Close();
         return rowsAffected;
     }
+    //public int TransferCase(string CaseNo)
+    //{
+    //    string Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE CaseNumber = @CaseNo AND IsActive = 1 AND IsDeleted = 0";
+    //    SqlCommand cmd = new SqlCommand(Query, con);
+    //    cmd.Parameters.AddWithValue("@CaseNo", CaseNo);
+    //    con.Open();
+    //    int rowsAffected = cmd.ExecuteNonQuery();
+    //    con.Close();
+    //    return rowsAffected;
+    //}
     public DataTable GetRecociliationClaimUpdation()
     {
         string Query = "SELECT t1.CaseNumber, t1.ClaimNumber, CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, t3.HospitalName, t2.AdmissionDate, (t1.InsurerClaimAmountRequested+t1.TrustClaimAmountRequested) as ClaimInitiatedAmt, (t1.InsurerClaimAmountApproved + t1.TrustClaimAmountApproved) AS ClaimApprovedAmt FROM TMS_ClaimMaster t1 INNER JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber =t2.CaseNumber INNER JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId INNER JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId INNER JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId";

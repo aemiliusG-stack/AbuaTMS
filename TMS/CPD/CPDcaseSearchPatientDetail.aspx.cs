@@ -570,8 +570,8 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             {
                 DataRow row = dt.Rows[0];
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
-                tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
-                tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
+                tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountRequested"].ToString();
+                tbTrustApprovedAmt.Text = row["TrustClaimAmountRequested"].ToString();
                 //if (row["IsSpecialCase"] != DBNull.Value)
                 //{
                 //    bool isSpecialCase = Convert.ToBoolean(row["IsSpecialCase"]);

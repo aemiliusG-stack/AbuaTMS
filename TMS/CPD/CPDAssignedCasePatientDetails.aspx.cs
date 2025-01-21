@@ -56,16 +56,16 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     }
 
     [System.Web.Services.WebMethod]
-    public static void HandleWindowClose()
-    {
-        var session = HttpContext.Current.Session;
-        CPD cpd = new CPD();
-        if (session["CaseNumber"] != null)
-        {
-            int affectedRows = cpd.TransferCase(session["CaseNumber"].ToString());
-        }
-        HttpContext.Current.Response.Redirect(System.Web.VirtualPathUtility.ToAbsolute("~/Unauthorize.aspx"));
-    }
+    //public static void HandleWindowClose()
+    //{
+    //    var session = HttpContext.Current.Session;
+    //    CPD cpd = new CPD();
+    //    if (session["CaseNumber"] != null)
+    //    {
+    //        int affectedRows = cpd.TransferCase(session["CaseNumber"].ToString());
+    //    }
+    //    HttpContext.Current.Response.Redirect(System.Web.VirtualPathUtility.ToAbsolute("~/Unauthorize.aspx"));
+    //}
 
     private void BindPatientName(string caseNo)
     {
@@ -646,6 +646,8 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     }
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
+        hdUserId.Value = Session["UserId"].ToString();
+        hdRoleId.Value = Session["RoleId"].ToString();
         try
         {
             decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
@@ -660,7 +662,10 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     return;
                 }
                 totalDeductionAmount = totalClaims - deductionAmount;
-                tbTotalDeductionAmt.Text = totalDeductionAmount.ToString();
+                tbTotalDeductedAmt.Text = deductionAmount.ToString();
+                tbFinalAmt.Text = totalClaims.ToString();
+                tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
+
             }
             else if (roleName == "CPD(TRUST)")
             {
@@ -672,11 +677,13 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     return;
                 }
                 totalDeductionAmount = totalClaims - deductionAmount;
-                tbTotalDeductionAmt.Text = totalDeductionAmount.ToString();
+                tbTotalDeductedAmt.Text = deductionAmount.ToString();
+                tbFinalAmt.Text = totalClaims.ToString();
+                tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
             }
             hfDeductedAmount.Value = deductionAmount.ToString();
             hfFinalAmount.Value = totalDeductionAmount.ToString();
-            hfRoleId.Value = roleName.ToString();
+
         }
         catch (Exception ex)
         {
@@ -1167,13 +1174,9 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     {
         string caseNo = Session["CaseNumber"] as string;
         string cardNo = Session["CardNumber"] as string;
-        if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
-        {
-            decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
-            decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
-            string roleId = hfRoleId.Value;
-            cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(roleId), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
-        }
+        string selectedReason = ddlReason.SelectedItem.Value;
+        string selectedSubReason = ddlSubReason.SelectedItem.Value;
+
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
@@ -1182,6 +1185,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
         else
         {
             string selectedValue = ddlActionType.SelectedItem.Value;
+
             if (selectedValue.Equals("0"))
             {
                 strMessage = "window.alert('Case action is required.');";
@@ -1191,6 +1195,14 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             {
                 if (selectedValue.Equals("1"))
                 {
+                    if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
+                    {
+                        decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
+                        decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
+
+                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+
+                    }
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
                     bool specialCase = tbSpecialCase.Text == "Yes";
                     bool diagnosisSupported = rbDiagnosisSupportedYes.Checked;
@@ -1198,7 +1210,6 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     bool evidenceTherapyConducted = rbEvidenceTherapyYes.Checked;
                     bool mandatoryReports = rbMandatoryReportsYes.Checked;
                     string remarks = tbTechRemarks.Text.Trim();
-
                     if (!cpd.CheckCaseNumberExists(caseNo))
                     {
                         cpd.InsertTechnicalChecklist(caseNo, cardNo, diagnosisSupported, caseManagementSTP, evidenceTherapyConducted, mandatoryReports, remarks);
@@ -1225,6 +1236,23 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                 else if (selectedValue.Equals("4"))
                 {
 
+                    if (selectedReason.Equals("0"))
+                    {
+                        strMessage = "window.alert('Please select query reason.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        if (selectedSubReason.Equals("0"))
+                        {
+                            strMessage = "window.alert('Please select query sub reason.');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, selectedReason, selectedSubReason, "", tbRejectRemarks.Text.ToString() + "");
+                        }
+                    }
                 }
                 else if (selectedValue.Equals("5"))
                 {
@@ -1246,6 +1274,9 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     {
         try
         {
+            string finalAmount = !string.IsNullOrEmpty(tbFinalAmtAfterDeduction.Text)
+                                         ? tbFinalAmtAfterDeduction.Text
+                                         : tbInsuranceApprovedAmt.Text;
             SqlParameter[] p = new SqlParameter[8];
             p[0] = new SqlParameter("@ClaimId", ClaimId);
             p[0].DbType = DbType.String;
@@ -1263,6 +1294,8 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             p[6].DbType = DbType.String;
             p[7] = new SqlParameter("@Remarks", Remarks);
             p[7].DbType = DbType.String;
+            p[8] = new SqlParameter("@Amount", finalAmount);
+            p[8].DbType = DbType.String;
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDInsertActions", p);
             if (con.State == ConnectionState.Open)
                 con.Close();

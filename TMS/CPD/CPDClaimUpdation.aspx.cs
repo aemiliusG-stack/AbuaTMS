@@ -44,6 +44,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             string patientRedgNo = Session["PatientRegId"] as string;
 
             BindPatientName();
+            gvQuestionnaire.DataSource = CreateQuestionnaireData();
+            gvQuestionnaire.DataBind();
 
 
         }
@@ -87,6 +89,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         btnPastHistory.CssClass = "btn btn-primary ";
                         btnTreatment.CssClass = "btn btn-primary ";
                         btnClaims.CssClass = "btn btn-warning";
+                        btnQuestionnaire.CssClass = "btn btn-primary";
                         dt = ds.Tables[0];
                         string claimId = dt.Rows[0]["ClaimId"].ToString();
                         Session["ClaimId"] = claimId;
@@ -160,7 +163,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         BindActionType();
                         BindNonTechnicalChecklist(caseNo);
                         getTreatmentDischarge();
-
+                        BindDeductionType();
                     }
                     else
                     {
@@ -419,6 +422,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             lbAdmissionDate_Preauth.Text = "No data found";
         }
     }
+    protected void btnTransactionDataReferences_Click(object sender, EventArgs e)
+    {
+        lbTitle.Text = "Transaction Data References";
+        //MultiView3.SetActiveView(viewEnhancement);
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+    }
     protected void btnPastHistory_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewPast);
@@ -427,6 +436,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnPastHistory.CssClass = "btn btn-warning ";
         btnTreatment.CssClass = "btn btn-primary ";
         btnClaims.CssClass = "btn btn-primary ";
+        btnQuestionnaire.CssClass = "btn btn-primary";
+
     }
 
     protected void btnPreauth_Click(object sender, EventArgs e)
@@ -437,26 +448,57 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnPastHistory.CssClass = "btn btn-primary";
         btnTreatment.CssClass = "btn btn-primary";
         btnClaims.CssClass = "btn btn-primary";
+        btnQuestionnaire.CssClass = "btn btn-primary";
+
     }
 
     protected void btnTreatment_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewTreatmentDischarge);
-        btnAttachments.CssClass = "btn btn-primary ";
+        btnAttachments.CssClass = "btn btn-primary";
         btnPreauth.CssClass = "btn btn-primary ";
         btnPastHistory.CssClass = "btn btn-primary";
         btnTreatment.CssClass = "btn btn-warning";
         btnClaims.CssClass = "btn btn-primary";
+        btnQuestionnaire.CssClass = "btn btn-primary";
+
     }
     protected void btnClaims_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewClaims);
+        btnAttachments.CssClass = "btn btn-primary";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary";
+        btnTreatment.CssClass = "btn btn-primary";
+        btnClaims.CssClass = "btn btn-warning";
+        btnQuestionnaire.CssClass = "btn btn-primary";
+
+    }
+
+    protected void btnQuestionnaire_Click(object sender, EventArgs e)
+    {
+        mvCPDTabs.SetActiveView(ViewQuestionnaire);
         btnAttachments.CssClass = "btn btn-primary ";
         btnPreauth.CssClass = "btn btn-primary ";
-        btnPastHistory.CssClass = "btn btn-primary ";
-        btnTreatment.CssClass = "btn btn-primary ";
-        btnClaims.CssClass = "btn btn-warning";
+        btnPastHistory.CssClass = "btn btn-primary";
+        btnTreatment.CssClass = "btn btn-primary";
+        btnClaims.CssClass = "btn btn-primary";
+        btnQuestionnaire.CssClass = "btn btn-warning";
+
     }
+    private DataTable CreateQuestionnaireData()
+    {
+        DataTable dt = new DataTable();
+        dt.Columns.Add("Question", typeof(string)); // Column for questions
+
+        // Add sample questions
+        dt.Rows.Add("Investigation reports (if done) submitted?");
+        dt.Rows.Add("Are the detailed procedure notes with indication available (optional)?");
+        dt.Rows.Add("Is the Discharge summary with follow-up advice at the time of discharge?");
+
+        return dt;
+    }
+
     //Claims Updation Tab
     public void BindClaimsDetails()
     {
@@ -601,10 +643,10 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 DataRow row = dt.Rows[0];
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
-                tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
-                tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
-                hfInsurerApprovedAmount.Value = row["InsurerClaimAmountApproved"].ToString();
-                hfTrustApprovedAmount.Value = row["TrustClaimAmountApproved"].ToString();
+                tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountRequested"].ToString();
+                tbTrustApprovedAmt.Text = row["TrustClaimAmountRequested"].ToString();
+                hfInsurerApprovedAmount.Value = row["InsurerClaimAmountRequested"].ToString();
+                hfTrustApprovedAmount.Value = row["TrustClaimAmountRequested"].ToString();
                 if (row["IsSpecialCase"] != DBNull.Value)
                 {
                     bool isSpecialCase = Convert.ToBoolean(row["IsSpecialCase"]);
@@ -617,6 +659,22 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
 
             }
         }
+    }
+    private void BindDeductionType()
+    {
+        try
+        {
+            DataTable dt = cpd.GetDeductionType();
+            dropDeductionType.DataSource = dt;
+            dropDeductionType.DataTextField = "DeductionType";
+            dropDeductionType.DataValueField = "DeductionTypeId";
+            dropDeductionType.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+        dropDeductionType.Items.Insert(0, new ListItem("--Select--", ""));
     }
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
@@ -733,21 +791,46 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         {
             Console.WriteLine("Error: " + ex.Message);
         }
+
     }
-    private void BindQuerySubReason(string ReasonId)
+
+    protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
     {
         try
         {
-            DataTable dt = cpd.GetQuerySubReason(ReasonId);
-            ddlSubReason.DataSource = dt;
-            ddlSubReason.DataTextField = "SubReasonName";
-            ddlSubReason.DataValueField = "SubReasonId";
-            ddlSubReason.DataBind();
-            ddlSubReason.Items.Insert(0, new ListItem("--Select--", ""));
+            dt.Clear();
+
+            int ReasonId = 0;
+
+            if (int.TryParse(ddlReason.SelectedValue, out ReasonId) && ReasonId > 0)
+            {
+                dt = cpd.GetQuerySubReason(ReasonId.ToString());
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    ddlSubReason.Items.Clear();
+                    ddlSubReason.DataValueField = "SubReasonId";
+                    ddlSubReason.DataTextField = "SubReasonName";
+                    ddlSubReason.DataSource = dt;
+                    ddlSubReason.DataBind();
+                    ddlSubReason.Items.Insert(0, new ListItem("--Select--", "0"));
+                }
+                else
+                {
+                    ddlSubReason.Items.Clear();
+                    ddlSubReason.Items.Insert(0, new ListItem("--No Sub Reason Available--", "0"));
+                }
+            }
+            else
+            {
+                ddlSubReason.Items.Clear();
+                ddlSubReason.Items.Insert(0, new ListItem("--Select Reason First--", "0"));
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error: " + ex.Message);
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     public void getForwardUsers()
@@ -785,11 +868,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             Console.WriteLine("Error: " + ex.Message);
         }
     }
-    protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        string selectedValue = ddlReason.SelectedItem.Value;
-        BindQuerySubReason(selectedValue);
-    }
+    
     protected void ddlActionType_SelectedIndexChanged(object sender, EventArgs e)
     {
         pUserRole.Visible = false;
@@ -821,9 +900,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             pReason.Visible = true;
             pSubReason.Visible = true;
             pRemarks.Visible = true;
-            BindQueryReason();
-            BindQuerySubReason("1");
-
+            pTriggerType.Visible = false;
+            BindQueryReason();          
         }
         else
         {
@@ -1108,7 +1186,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         string cardNo = Session["CardNumber"] as string;
         string selectedReason = ddlReason.SelectedItem.Value;
         string selectedSubReason = ddlSubReason.SelectedItem.Value;
-
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
@@ -1117,14 +1194,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         else
         {
             string selectedValue = ddlActionType.SelectedItem.Value;
-            if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
-            {
-                decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
-                decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
-
-                cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
-
-            }
+            
             if (selectedValue.Equals("0"))
             {
                 strMessage = "window.alert('Case action is required.');";
@@ -1134,6 +1204,14 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 if (selectedValue.Equals("1"))
                 {
+                    if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
+                    {
+                        decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
+                        decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
+
+                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+
+                    }
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
                     bool specialCase = tbSpecialCase.Text == "Yes";
                     bool diagnosisSupported = rbDiagnosisSupportedYes.Checked;
@@ -1195,17 +1273,20 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                     }
                     else
                     {
-                        doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", ddlReason.SelectedItem.Text.ToString(), tbRejectRemarks.Text.ToString() + "");
+                        doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", ddlReason.SelectedItem.Value.ToString(), tbRejectRemarks.Text.ToString() + "");
                     }
                 }
             }
         }
     }
-    public void doAction(string ClaimId, string UserId, string ForwardedToId, string ForwardedToUser, string ActionId, string ReasonId, string SubReasonId, string RejectReason, string Remarks)
+    public void doAction(string ClaimId, string UserId, string ForwardedToId, string ForwardedToUser, string ActionId, string ReasonId, string SubReasonId, string RejectReasonId, string Remarks)
     {
         try
         {
-            SqlParameter[] p = new SqlParameter[8];
+            string finalAmount = !string.IsNullOrEmpty(tbFinalAmtAfterDeduction.Text)
+                                         ? tbFinalAmtAfterDeduction.Text
+                                         : tbInsuranceApprovedAmt.Text;
+            SqlParameter[] p = new SqlParameter[9];
             p[0] = new SqlParameter("@ClaimId", ClaimId);
             p[0].DbType = DbType.String;
             p[1] = new SqlParameter("@UserId", UserId);
@@ -1218,10 +1299,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             p[4].DbType = DbType.String;
             p[5] = new SqlParameter("@SubReasonId", SubReasonId);
             p[5].DbType = DbType.String;
-            p[6] = new SqlParameter("@RejectReason", RejectReason);
+            p[6] = new SqlParameter("@RejectReasonId", RejectReasonId);
             p[6].DbType = DbType.String;
             p[7] = new SqlParameter("@Remarks", Remarks);
             p[7].DbType = DbType.String;
+            p[8] = new SqlParameter("@Amount", finalAmount); 
+            p[8].DbType = DbType.String;
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDInsertActions", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
@@ -1276,6 +1359,90 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
         }
     }
+    //public void doAction(string ClaimId, string UserId, string ForwardedToId, string ForwardedToUser, string ActionId, string ReasonId, string SubReasonId, string RejectReason, string Remarks)
+    //{
+    //    try
+    //    {
+    //        // Determine the amount to insert based on the conditions
+    //        string finalAmount = !string.IsNullOrEmpty(tbFinalAmtAfterDeduction.Text)
+    //                             ? tbFinalAmtAfterDeduction.Text
+    //                             : tbInsuranceApprovedAmt.Text;
+
+    //        SqlParameter[] p = new SqlParameter[9]; // Add one more parameter
+    //        p[0] = new SqlParameter("@ClaimId", ClaimId);
+    //        p[0].DbType = DbType.String;
+    //        p[1] = new SqlParameter("@UserId", UserId);
+    //        p[1].DbType = DbType.String;
+    //        p[2] = new SqlParameter("@ForwardedToId", ForwardedToId);
+    //        p[2].DbType = DbType.String;
+    //        p[3] = new SqlParameter("@ActionId", ActionId);
+    //        p[3].DbType = DbType.String;
+    //        p[4] = new SqlParameter("@ReasonId", ReasonId);
+    //        p[4].DbType = DbType.String;
+    //        p[5] = new SqlParameter("@SubReasonId", SubReasonId);
+    //        p[5].DbType = DbType.String;
+    //        p[6] = new SqlParameter("@RejectReason", RejectReason);
+    //        p[6].DbType = DbType.String;
+    //        p[7] = new SqlParameter("@Remarks", Remarks);
+    //        p[7].DbType = DbType.String;
+    //        p[8] = new SqlParameter("@Amount", finalAmount); // Add new parameter for the amount
+    //        p[8].DbType = DbType.String;
+
+    //        ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDInsertActions", p);
+
+    //        if (con.State == ConnectionState.Open)
+    //            con.Close();
+
+    //        if (ActionId.Equals("1"))
+    //        {
+    //            if (Session["RoleId"].ToString() == "7")
+    //            {
+    //                strMessage = "window.alert('Claim has been approved by CPD(Insurer). " + caseNo + "');window.location.reload();";
+    //                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+    //            }
+    //            else if (Session["RoleId"].ToString() == "8")
+    //            {
+    //                strMessage = "window.alert('Claim has been approved by CPD(Trust). " + caseNo + "');window.location.reload();";
+    //                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+    //            }
+    //            BindPatientName();
+    //        }
+    //        else if (ActionId.Equals("2"))
+    //        {
+    //            strMessage = "window.alert('Case Successfully Forwarded To " + ForwardedToUser + "');window.location.reload();";
+    //            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+    //            BindPatientName();
+    //        }
+    //        else if (ActionId.Equals("4"))
+    //        {
+    //            strMessage = "window.alert('Query Raised Successfully.');window.location.reload();";
+    //            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+    //            BindPatientName();
+    //        }
+    //        else if (ActionId.Equals("5"))
+    //        {
+    //            strMessage = "window.alert('Case Rejected Successfully.');window.location.reload();";
+    //            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+    //            BindPatientName();
+    //        }
+
+    //        cbTerms.Checked = false;
+    //        tbRejectRemarks.Text = "";
+    //        pUserRole.Visible = false;
+    //        pReason.Visible = false;
+    //        pSubReason.Visible = false;
+    //        pRemarks.Visible = false;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        if (con.State == ConnectionState.Open)
+    //        {
+    //            con.Close();
+    //        }
+    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+    //    }
+    //}
+
     public void getClaimQuery(string ClaimId)
     {
         try
@@ -1401,6 +1568,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnPastHistory.CssClass = "btn btn-primary ";
         btnTreatment.CssClass = "btn btn-primary ";
         btnClaims.CssClass = "btn btn-primary ";
+        btnQuestionnaire.CssClass = "btn btn-primary";
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkSpecialInvestigation.CssClass = "btn btn-primary";
         getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
