@@ -26,7 +26,7 @@ public class Discharge
     public DataTable getPatientTotalPackageCost(int HospitalId, string CardNumber, int PatientRegId)
     {
         dtTemp.Clear();
-        string Query = "select t1.AdmissionId, t1.AdmissionType, FORMAT (t1.AdmissionDate, 'dd-MM-yyyy ') as AdmissionDate, t1.IncentivePercentage, SUM(t1.PackageCost) as PackageCost, SUM(t1.IncentiveAmount) as IncentiveAmount, (CASE WHEN t1.IsEnhancementTaken = 1 THEN (SUM(t1.TotalPackageCost) + SUM(EnhancementAmount)) ELSE SUM(t1.TotalPackageCost) END) AS TotalPackageCost from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_PatientTreatmentProtocol t2 ON t1.HospitalId = t2.HospitalId AND t1.PatientRegId = t2.PatientRegId where t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0 GROUP BY t1.AdmissionId, t1.AdmissionType, t1.AdmissionDate, t1.IncentivePercentage, t1.IsEnhancementTaken";
+        string Query = "select t1.AdmissionId, t1.AdmissionType, FORMAT (t1.AdmissionDate, 'dd-MM-yyyy ') as AdmissionDate, t1.IncentivePercentage, SUM(t1.PackageCost) as PackageCost, SUM(t1.IncentiveAmount) as IncentiveAmount, (CASE WHEN t1.IsEnhancementTaken = 1 THEN (SUM(t1.TotalPackageCost) + SUM(EnhancementAmount)) ELSE SUM(t1.TotalPackageCost) END) AS TotalPackageCost from TMS_PatientAdmissionDetail t1 where t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0 GROUP BY t1.AdmissionId, t1.AdmissionType, t1.AdmissionDate, t1.IncentivePercentage, t1.IsEnhancementTaken";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
@@ -73,6 +73,19 @@ public class Discharge
         dtTemp.Clear();
         string Query = "select DISTINCT Id, Name from HEM_HospitalManPowers where MedicalSubExpertiseId = (Select Id from HEM_MasterMedicalExpertiseSubTypes where Title = 'Anesthetist') ORDER BY Name";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
+    }
+    public DataTable checkIsEnhancementApplicable(int HospitalId, string CardNumber, int PatientRegId)
+    {
+        dtTemp.Clear();
+        string Query = "if exists(select t2.IsEnhancementApplicable from TMS_PatientTreatmentProtocol t1 LEFT JOIN TMS_MasterPackageDetail t2 ON t1.PackageId = t2.PackageId AND t1.ProcedureId = t2.ProcedureId where t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegid AND t2.IsEnhancementApplicable = 1 AND t1.IsActive = 1 AND t1.IsDeleted = 0) BEGIN select 1 as checkId END ELSE BEGIN select 0 as checkId END";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
         con.Open();
         sd.Fill(dtTemp);
         con.Close();

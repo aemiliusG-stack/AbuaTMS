@@ -9,6 +9,7 @@ using System.Web;
 using CareerPath.DAL;
 using iText.IO.Image;
 using System.IO;
+using AbuaTMS;
 
 public partial class MEDCO_PatientDischarge : System.Web.UI.Page
 {
@@ -18,6 +19,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     private MasterData md = new MasterData();
     private PreAuth preAuth = new PreAuth();
     private Discharge dis = new Discharge();
+    private static CEX cex = new CEX();
     private TextboxValidation validateTB = new TextboxValidation();
     string pageName;
     protected void Page_Load(object sender, EventArgs e)
@@ -93,6 +95,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 lbFamilyId.Text = dt.Rows[0]["PatientFamilyId"].ToString().Trim();
                 lbRegistrationNo.Text = dt.Rows[0]["PatientRegId"].ToString().Trim();
                 lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
+                lbDisplayCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
                 lbActualRegistrationDate.Text = dt.Rows[0]["RegDate"].ToString();
                 lbContactNo.Text = dt.Rows[0]["MobileNumber"].ToString().Trim();
                 lbHospitalType.Text = dt.Rows[0]["HospitalType"].ToString().Trim();
@@ -139,6 +142,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                         imgChild.Visible = false;
                     }
                 }
+                BindClaimWorkflow(lbClaimId.Text);
             }
             MultiView1.SetActiveView(viewDischarge);
         }
@@ -151,6 +155,23 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             MultiView1.SetActiveView(viewPatientList);
             ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Something Went Wrong! Please Retry.');", true);
+        }
+    }
+    private void BindClaimWorkflow(string claimIds)
+    {
+        dt.Clear();
+        string claimId = claimIds.ToString();
+        dt = preAuth.GetClaimWorkFlow(Convert.ToInt32(hdClaimId.Value));
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            gridWorkFlow.DataSource = dt;
+            gridWorkFlow.DataBind();
+        }
+        else
+        {
+            gridWorkFlow.DataSource = null;
+            gridWorkFlow.EmptyDataText = "No record found.";
+            gridWorkFlow.DataBind();
         }
     }
     protected void btnInitialAssessment_Click(object sender, EventArgs e)
@@ -210,6 +231,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 t3lbHospitalIncentive.Text = dt.Rows[0]["IncentivePercentage"].ToString();
             }
             getAddedProcedure();
+            checkForEnhancement();
             MultiView2.SetActiveView(viewPreAuth);
             btnInitialAssessment.CssClass = "btn btn-primary p-3";
             btnPastHistory.CssClass = "btn btn-primary p-3";
@@ -227,9 +249,30 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    protected void checkForEnhancement()
+    {
+        dt.Clear();
+        dt = dis.checkIsEnhancementApplicable(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, Convert.ToInt32(hdPatientRegId.Value));
+        if (dt.Rows.Count > 0)
+        {
+            if (dt.Rows[0]["checkId"].ToString() == "1")
+            {
+                btnRequestEnhancement.Visible = true;
+            }
+            else
+            {
+                btnRequestEnhancement.Visible = false;
+            }
+        }
+        else
+        {
+            btnRequestEnhancement.Visible = false;
+        }
+    }
 
     protected void btnRequestEnhancement_Click(object sender, EventArgs e)
     {
+
         MultiView3.SetActiveView(viewEnhancement);
     }
 
@@ -323,6 +366,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 dropAnesName.Items.Insert(0, new ListItem("--SELECT--", "0"));
                 dropAnesName.Items.Clear();
             }
+            getAddedProcedureForDischarge();
             MultiView2.SetActiveView(viewTreatmentDischarge);
             btnInitialAssessment.CssClass = "btn btn-primary p-3";
             btnPastHistory.CssClass = "btn btn-primary p-3";
@@ -338,6 +382,21 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void getAddedProcedureForDischarge()
+    {
+        DataTable dt = null;
+        dt = preAuth.getPatientAddedProcedureForDischarge(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, hdPatientRegId.Value);
+        if (dt.Rows.Count > 0)
+        {
+            t4gridAddedProcedure.DataSource = dt;
+            t4gridAddedProcedure.DataBind();
+        }
+        else
+        {
+            t4gridAddedProcedure.DataSource = "";
+            t4gridAddedProcedure.DataBind();
         }
     }
     protected void dropDroctorType_SelectedIndexChanged(object sender, EventArgs e)
@@ -424,6 +483,25 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnSaveSurgeryDate_Click(object sender, EventArgs e)
+    {
+        foreach (GridViewRow row in t4gridAddedProcedure.Rows)
+        {
+            Label lbProcedureId = row.FindControl("lbProcedureId") as Label;
+            TextBox tbSurgeryDateTime = row.FindControl("tbSurgeryDateTime") as TextBox;
+
+            if (lbProcedureId != null && tbSurgeryDateTime.Text != null && tbSurgeryDateTime.Text != "")
+            {
+                string procedureId = lbProcedureId.Text;
+                string surgeryDate = tbSurgeryDateTime.Text;
+                int res = preAuth.UpdateTreatmentStartDate(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbProcedureId.Text), Convert.ToDateTime(surgeryDate.ToString()));
+                if (res != 0)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Update Successfully!');", true);
+                }
+            }
         }
     }
     protected void btnAttachments_Click(object sender, EventArgs e)
@@ -656,5 +734,18 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     protected void btnUploadAfterDischargePhoto_Click(object sender, EventArgs e)
     {
 
+    }
+
+    protected void lnkBackToList_Click(object sender, EventArgs e)
+    {
+        btnRequestEnhancement.Visible = false;
+        MultiView2.ActiveViewIndex = -1;
+        MultiView3.ActiveViewIndex = -1;
+        btnInitialAssessment.CssClass = "btn btn-primary p-3";
+        btnPastHistory.CssClass = "btn btn-primary p-3";
+        btnPreAutoriztion.CssClass = "btn btn-primary p-3";
+        btnTreatment.CssClass = "btn btn-primary p-3";
+        btnAttachments.CssClass = "btn btn-primary p-3";
+        MultiView1.SetActiveView(viewPatientList);
     }
 }

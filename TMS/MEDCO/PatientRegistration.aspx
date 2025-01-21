@@ -99,11 +99,7 @@
                             </div>
                             <div class="hr-line-dashed"></div>
                             <p>
-                                Note: *<b>ID Number could be Ayushman Card ID/Mobile No/ABUA No.</b><br />
-                                To Register patient in Portability Mode, Please check <a href="#">here</a>
-                                Portability Mode'P' may be used while registering the patient under:<br />
-                                1. From other state beneficiary<br />
-                                2. From Other Central sponsored scheme beneficiary.<br />
+                                Note: *<b>ID Number should be ABUA Card Number</b><br />
                                 Please select "Child Below 5 years" option if ABUA ID is not available for the child.
                             </p>
                             <div class="col-md-12 text-center">
@@ -458,10 +454,6 @@
                                                                             <div class="col-md-12 mt-3 d-flex align-items-center">
                                                                                 <div class="form-group col-lg-8 mb-0 d-flex align-items-center ml-2">
                                                                                     <div class="form-check form-check-inline">
-                                                                                        <asp:RadioButton ID="rbFaceAuth" runat="server" CssClass="form-check-input" GroupName="authMode" Value="Face" />
-                                                                                        <asp:Label ID="lblFaceAuth" runat="server" CssClass="form-check-label font-weight-bold mb-0" Text="Face Authentication" AssociatedControlID="rbFaceAuth" />
-                                                                                    </div>
-                                                                                    <div class="form-check form-check-inline">
                                                                                         <asp:RadioButton ID="rbFingerprintAuth" runat="server" CssClass="form-check-input" GroupName="authMode" Value="Fingerprint" />
                                                                                         <asp:Label ID="lblFingerprintAuth" runat="server" CssClass="form-check-label font-weight-bold mb-0" Text="Fingerprint Authentication" AssociatedControlID="rbFingerprintAuth" />
                                                                                     </div>
@@ -475,7 +467,6 @@
                                                                             </div>
                                                                         </asp:View>
                                                                         <asp:View ID="View2" runat="server">
-                                                                            Rv
                                                                         </asp:View>
                                                                         <asp:View ID="View3" runat="server">
                                                                             Registered Successfully!

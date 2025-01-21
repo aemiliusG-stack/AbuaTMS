@@ -401,42 +401,6 @@ partial class MEDCO_PatientRegistration : System.Web.UI.Page
             return;
         }
     }
-
-    // Protected Sub btnShowModal_Click(ByVal sender As Object, ByVal e As EventArgs)
-    // Try
-    // If dropState.SelectedValue <> 0 Then
-    // If dropDistrict.SelectedValue <> 0 Then
-    // If dropMobileBelongsTo.SelectedValue <> 0 Then
-    // If dropMobileBelongsTo.SelectedValue = 1 Then
-    // ScriptManager.RegisterStartupScript(Me, Me.[GetType](), "showModal", "showModal();", True)
-    // Else
-    // If dropMobileBelongsTo.SelectedValue = 2 Or dropMobileBelongsTo.SelectedValue = 3 Then
-    // If dropRelation.SelectedValue <> 0 Then
-    // ScriptManager.RegisterStartupScript(Me, Me.[GetType](), "showModal", "showModal();", True)
-    // Else
-    // strMessage = "window.alert('Please Select Relation!');"
-    // ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, True)
-    // End If
-    // End If
-    // End If
-    // Else
-    // strMessage = "window.alert('Please Select Mobile Belongs To!');"
-    // ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, True)
-    // End If
-    // Else
-    // strMessage = "window.alert('Please Select District!');"
-    // ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, True)
-    // End If
-    // Else
-    // strMessage = "window.alert('Please Select State!');"
-    // ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, True)
-    // End If
-    // Catch ex As Exception
-    // Response.Redirect("~/Unauthorize.aspx", False)
-    // Exit Sub
-    // End Try
-    // End Sub
-
     protected void btnHideModal_Click(object sender, EventArgs e)
     {
         try

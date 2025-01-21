@@ -3,6 +3,7 @@ using System.IO;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using AbuaTMS;
 
 public class PreAuth
 {
@@ -202,19 +203,33 @@ public class PreAuth
         con.Close();
         return dtTemp;
     }
-    //public int DeleteAddedProcedure(string CardNumber, string PatientRegId, int PackageId, int ProcedureId)
-    //{
-    //    string Query = "delete from TMS_PatientTreatmentProtocol where CardNumber = @CardNumber AND PatientRegId = @PatientRegId AND PackageId = @PackageId AND ProcedureId = @ProcedureId AND IsActive = 1 AND IsDeleted = 0; delete from TMS_PatientDocumentPreInvestigation where CardNumber = @CardNumber AND PatientRegId = @PatientRegId AND PackageId = @PackageId AND ProcedureId = @ProcedureId AND IsActive = 1;";
-    //    SqlCommand cmd = new SqlCommand(Query, con);
-    //    cmd.Parameters.AddWithValue("@CardNumber", CardNumber);
-    //    cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-    //    cmd.Parameters.AddWithValue("@PackageId", PackageId);
-    //    cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
-    //    con.Open();
-    //    int rowsAffected = cmd.ExecuteNonQuery();
-    //    con.Close();
-    //    return rowsAffected;
-    //}
+    public DataTable getPatientAddedProcedureForDischarge(int HospitalId, string CardNumber, string PatientRegId)
+    {
+        dtTemp.Clear();
+        string Query = "select t1.PatientRegId, t1.ProcedureId, t2.ProcedureCode, t2.ProcedureName, CONVERT(VARCHAR, TreatmentStartDate, 23) as TreatmentStartDate from TMS_PatientTreatmentProtocol t1 LEFT JOIN TMS_MasterPackageDetail t2 ON t1.ProcedureId = t2.ProcedureId where t1.HospitalId = @HospitalId AND t1.PatientRegId = @PatientRegId AND t1.CardNumber = @CardNumber AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
+    }
+    public int UpdateTreatmentStartDate(int HospitalId, string CardNumber, string PatientRegId, int ProcedureId, DateTime SurgeryStartDate)
+    {
+        string Query = "update TMS_PatientTreatmentProtocol SET TreatmentStartDate = @SurgeryStartDate where HospitalId = @HospitalId AND CardNumber = @CardNumber AND PatientRegId = @PatientRegId AND ProcedureId = @ProcedureId AND IsActive = 1 AND IsDeleted = 0;";
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@HospitalId", HospitalId);
+        cmd.Parameters.AddWithValue("@CardNumber", CardNumber);
+        cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        cmd.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        cmd.Parameters.AddWithValue("@SurgeryStartDate", SurgeryStartDate);
+        con.Open();
+        int rowsAffected = cmd.ExecuteNonQuery();
+        con.Close();
+        return rowsAffected;
+    }
     public DataTable checkProcedureDocumentUploadStatus(int HospitalId, string CardNumber, int PatientRegId)
     {
         dtTemp.Clear();
@@ -336,5 +351,16 @@ public class PreAuth
         dtTemp = ds.Tables[0];
         return dtTemp;
     }
-
+    public DataTable GetClaimWorkFlow(int ClaimId)
+    {
+        dtTemp.Clear();
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId WHERE t1.ClaimId = @ClaimId";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        dtTemp = ds.Tables[0];
+        return dtTemp;
+    }
 }

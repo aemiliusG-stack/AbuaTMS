@@ -183,17 +183,7 @@
                                         <div class="container mt-4">
                                             <strong class="text-danger">Note:</strong>
                                             <ol class="text-danger font-weight-bold">
-                                                <li>File size should not exceded 500 kb</li>
-                                                <li>Attachment Names with blue color are related to notifications</li>
-                                                <li>Discharge Summary Document Quality and its notation
-                                   
-                                                    <ul class="text-danger">
-                                                        <li>Document of Good Quality<i class="fa fa-check-circle text-info"></i></li>
-                                                        <li>Document of Bad Quality<i class="fa fa-times-circle text-danger"></i> </li>
-                                                        <li>Document which is not valid<i class="fa fa-check-circle text-info"></i></li>
-                                                        <li>Document with error<i class="fa fa-times-circle text-danger"></i></li>
-                                                    </ul>
-                                                </li>
+                                                <li>File size should not exceed 500 kb</li>
                                             </ol>
                                         </div>
                                         <div class="col-md-12 mt-2 mb-2">
@@ -373,7 +363,7 @@
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Cancel">
                                                 <itemtemplate>
-                                                    <asp:LinkButton ID="lnkDeletePatient" runat="server" CssClass="text-danger" OnClick="lnkDeletePatient_Click">Remove</asp:LinkButton>
+                                                    <asp:LinkButton ID="lnkDeletePatient" runat="server" CssClass="text-danger" OnClick="lnkDeletePatient_Click">Cancel</asp:LinkButton>
                                                 </itemtemplate>
                                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
                                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />

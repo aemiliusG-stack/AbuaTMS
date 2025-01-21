@@ -164,7 +164,7 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                         imgPatientPhoto.ImageUrl = "~/img/profile.jpeg";
 
                     //Child Details
-                    if (dt.Columns.Contains("IsChild") && dt.Rows[0]["IsChild"].ToString() == "True")
+                    if (dt.Rows[0]["IsChild"].ToString() == "True")
                     {
                         lbChildName.Text = dt.Rows[0]["ChildName"].ToString();
                         lbChildDOB.Text = dt.Rows[0]["ChildDOB"].ToString();
@@ -1249,7 +1249,8 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                             return;
                         }
                     }
-                 
+                    //if (tbInvestigation.Text != "")
+                    //{
                     int stratificationId = 0, implantId = 0;
                     if (dropStratificationOption.SelectedValue != "0")
                     {
@@ -1330,7 +1331,12 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                         strMessage = "window.alert('Package details missing!');";
                         ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "Error", strMessage, true);
                     }
-                
+                    //}
+                    //else
+                    //{
+                    //    strMessage = "window.alert('Please provide investigation remarks!');";
+                    //    ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "Error", strMessage, true);
+                    //}
                 }
                 else
                 {
@@ -1392,7 +1398,8 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
             i = row.RowIndex;
             Label lbPackageId = (Label)gridAddedpackageProcedure.Rows[i].FindControl("lbPackageId");
             Label lbProcedureId = (Label)gridAddedpackageProcedure.Rows[i].FindControl("lbProcedureId");
-          
+            //int rowsAffected = 0;
+            //rowsAffected = preAuth.DeleteAddedProcedure(hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbPackageId.Text), Convert.ToInt32(lbProcedureId.Text));
             SqlParameter[] p = new SqlParameter[5];
             p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
             p[0].DbType = DbType.String;
