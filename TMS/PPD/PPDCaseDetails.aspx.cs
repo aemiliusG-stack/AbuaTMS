@@ -10,7 +10,7 @@ using CareerPath.DAL;
 
 public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 {
-    private string pageName, childImageUrl, caseNumber, admissionId, claimId;
+    private string pageName, childImageUrl, caseNumber, admissionId, claimId, strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
@@ -133,30 +133,152 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void btnTransactionDataReferences_Click(object sender, EventArgs e)
     {
-        lbTitle.Text = "Transaction Data References";
-        MultiView3.SetActiveView(viewEnhancement);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetEnhancementDetails(Session["AdmissionId"].ToString());
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridTransactionDataReferences.DataSource = dt;
+                gridTransactionDataReferences.DataBind();
+                lbTitle.Text = "Transaction Data References";
+                MultiView3.SetActiveView(viewEnhancement);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+            }
+            else
+            {
+                gridTransactionDataReferences.DataSource = null;
+                gridTransactionDataReferences.DataBind();
+                strMessage = "window.alert('There is no enhancement available at the moment.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridTransactionDataReferences_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Label lbEnhancementStatus = (Label)e.Row.FindControl("lbEnhancementStatus");
+            Label lbEnhancementApprovedDate = (Label)e.Row.FindControl("lbEnhancementApprovedDate");
+            Label lbEnhancementRejectedDate = (Label)e.Row.FindControl("lbEnhancementRejectedDate");
+            Label lbPatientFolderName = (Label)e.Row.FindControl("lbPatientFolderName");
+            Label lbJustificationFolderName = (Label)e.Row.FindControl("lbJustificationFolderName");
+            LinkButton lnkPhoto = (LinkButton)e.Row.FindControl("lnkPhoto");
+            LinkButton lnkDocument = (LinkButton)e.Row.FindControl("lnkDocument");
+            string EnhancementStatus = lbEnhancementStatus.Text.ToString();
+            string ApprovedDate = lbEnhancementApprovedDate.Text.ToString();
+            string RejectedDate = lbEnhancementRejectedDate.Text.ToString();
+            string PatientFolderName = lbPatientFolderName.Text.ToString();
+            string JustificationFolderName = lbJustificationFolderName.Text.ToString();
+            if (EnhancementStatus != null)
+            {
+                if (EnhancementStatus.Equals("0"))
+                {
+                    lbEnhancementStatus.Text = "Pending";
+                    lbEnhancementApprovedDate.Text = "NA";
+                    lbEnhancementApprovedDate.Visible = true;
+                }
+                else if (EnhancementStatus.Equals("1"))
+                {
+                    lbEnhancementStatus.Text = "Approved";
+                    lbEnhancementApprovedDate.Text = ApprovedDate;
+                    lbEnhancementApprovedDate.Visible = true;
+                }
+                else if (EnhancementStatus.Equals("2"))
+                {
+                    lbEnhancementStatus.Text = "Query Raised";
+                    lbEnhancementApprovedDate.Text = "NA";
+                    lbEnhancementApprovedDate.Visible = true;
+                }
+                else if (EnhancementStatus.Equals("3"))
+                {
+                    lbEnhancementStatus.Text = "Reject";
+                    lbEnhancementRejectedDate.Text = RejectedDate;
+                    lbEnhancementRejectedDate.Visible = true;
+                }
+            }
+            if (PatientFolderName.Equals("NA"))
+            {
+                lnkPhoto.Enabled = false;
+                lnkPhoto.CssClass = "text-danger";
+            }
+            if (JustificationFolderName.Equals("NA"))
+            {
+                lnkDocument.Enabled = false;
+                lnkDocument.CssClass = "text-danger";
+            }
+        }
     }
 
     protected void lnkPhoto_Click(object sender, EventArgs e)
     {
-        lbTitle.Text = "Patient Photo";
-        MultiView3.SetActiveView(viewPhoto);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        try
+        {
+            LinkButton btn = (LinkButton)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbPatientFolderName = (Label)row.FindControl("lbPatientFolderName");
+            Label lbPatientUploadedFileName = (Label)row.FindControl("lbPatientUploadedFileName");
+            string PatientFolderName = lbPatientFolderName.Text.ToString();
+            string PatientUploadedFileName = lbPatientUploadedFileName.Text.ToString() + ".jpeg";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(PatientFolderName, PatientUploadedFileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = "Patient Photo";
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkDocument_Click(object sender, EventArgs e)
     {
-        lbTitle.Text = "Enhancement Justification";
-        MultiView3.SetActiveView(viewJustification);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        try
+        {
+            LinkButton btn = (LinkButton)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbJustificationFolderName = (Label)row.FindControl("lbJustificationFolderName");
+            Label lbJustificationUploadedFileName = (Label)row.FindControl("lbJustificationUploadedFileName");
+            string JustificationFolderName = lbJustificationFolderName.Text.ToString();
+            string JustificationUploadedFileName = lbJustificationUploadedFileName.Text.ToString() + ".jpeg";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(JustificationFolderName, JustificationUploadedFileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = "Enhancement Justification";
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+
     }
 
     protected void lnkChildPhoto_Click(object sender, EventArgs e)
     {
         try
         {
-            string childImageBase64 = childImageUrl;
             string childfolderName = hdAbuaId.Value;
             string childImageFileName = hdAbuaId.Value + "_Profile_Image_Child.jpeg";
             string childBase64String = "";
@@ -206,6 +328,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     string IsDischarged = dt.Rows[0]["IsDischarged"].ToString().Trim();
                     Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
                     Session["ClaimId"] = dt.Rows[0]["ClaimId"].ToString().Trim();
+                    hdEnhancementId.Value = dt.Rows[0]["EnhancementId"].ToString().Trim();
                     hdCaseId.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
                     hdPatientRegId.Value = dt.Rows[0]["PatientRegId"].ToString().Trim();
@@ -249,7 +372,6 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     {
                         rbEmergency.Checked = true;
                     }
-
                     string patientImageBase64 = Convert.ToString(dt.Rows[0]["ImageURL"].ToString().Trim());
                     string folderName = hdAbuaId.Value;
                     string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
@@ -284,7 +406,6 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                         lbFatherName.Text = dt.Rows[0]["ChildFatherName"].ToString().Trim();
                         lbMotherName.Text = dt.Rows[0]["ChildMotherName"].ToString().Trim();
                         childImageUrl = Convert.ToString(dt.Rows[0]["ChildImageURL"].ToString().Trim());
-                        string childImageBase64 = Convert.ToString(dt.Rows[0]["ChildImageURL"].ToString().Trim());
                         string childfolderName = hdAbuaId.Value;
                         string childImageFileName = hdAbuaId.Value + "_Profile_Image_Child.jpeg";
                         string childBase64String = "";
@@ -314,7 +435,6 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     getAdmissionDetails();
                     getWorkFlow(dt.Rows[0]["ClaimId"].ToString().Trim());
                     getPreauthQuery(dt.Rows[0]["ClaimId"].ToString().Trim());
-                    getCaseCurrentAction(dt.Rows[0]["ClaimId"].ToString().Trim());
                 }
                 else
                 {
@@ -948,53 +1068,6 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
         return "Unknown";
-    }
-
-    public void getCaseCurrentAction(string ClaimId)
-    {
-        try
-        {
-            DataTable dt = new DataTable();
-            string ActionId = null;
-            dt = ppdHelper.GetCaseCurrentAction(ClaimId);
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                if (Session["RoleId"].ToString() == "3")
-                {
-                    ActionId = dt.Rows[0]["ForwardActionInsurer"].ToString().Trim();
-                }
-                else if (Session["RoleId"].ToString() == "4")
-                {
-                    ActionId = dt.Rows[0]["ForwardActionTrust"].ToString().Trim();
-                }
-                switch (ActionId)
-                {
-                    case "1":
-                        tbAction.Text = "Approve";
-                        break;
-                    case "2":
-                        tbAction.Text = "Assigned To";
-                        break;
-                    case "4":
-                        tbAction.Text = "Raise Query";
-                        break;
-                    case "5":
-                        tbAction.Text = "Reject";
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
     }
 
     protected void btnDownloadPdf_Click(object sender, EventArgs e)

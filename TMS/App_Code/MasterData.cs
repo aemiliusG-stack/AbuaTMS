@@ -1442,15 +1442,22 @@ public class MasterData
     }
 
 
-
     /*
         Added by Nirmal.
         Table: TMS_MasterActionMaster.
         Selecting TMS_MasterActionMaster data for PPD.
     */
-    public DataTable GetMasterActions()
+    public DataTable GetMasterActions(bool EnhancementTaken)
     {
-        string Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1";
+        string Query;
+        if (EnhancementTaken)
+        {
+            Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1";
+        }
+        else
+        {
+            Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement'";
+        }
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);

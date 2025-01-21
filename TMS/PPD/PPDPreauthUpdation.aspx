@@ -99,6 +99,7 @@
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdCaseId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdEnhancementId" runat="server" Visible="false" />
 
             <asp:MultiView ID="MultiViewMain" runat="server">
                 <asp:View ID="viewNoContent" runat="server">
@@ -882,7 +883,6 @@
                                                     <div class="col-lg-12 mt-4">
                                                         <asp:Button ID="btnTransactionDataReferences" runat="server" class="btn btn-primary rounded-pill" Text="Transaction Data References" OnClick="btnTransactionDataReferences_Click" />
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -916,13 +916,6 @@
                                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
                                                             <itemstyle horizontalalign="Left" verticalalign="Middle" width="15%" />
                                                         </asp:TemplateField>
-                                                        <asp:TemplateField HeaderText="Remarks">
-                                                            <itemtemplate>
-                                                                <asp:Label ID="lbRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
-                                                            </itemtemplate>
-                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
-                                                        </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Action">
                                                             <itemtemplate>
                                                                 <asp:Label ID="lbAction" runat="server" Text='<%# Eval("Action") %>'></asp:Label>
@@ -937,9 +930,16 @@
                                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
                                                             <itemstyle horizontalalign="Left" verticalalign="Middle" width="10%" />
                                                         </asp:TemplateField>
-                                                        <asp:TemplateField HeaderText="Preauth Query/ Rejection Reason">
+                                                        <asp:TemplateField HeaderText="Rejection Reason">
                                                             <itemtemplate>
-                                                                <asp:Label ID="lbPreauthQueryRejection" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
+                                                                <asp:Label ID="lbPreauthQueryRejection" runat="server" Text='<%# Eval("RejectedReason") %>'></asp:Label>
+                                                            </itemtemplate>
+                                                            <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                            <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Remarks">
+                                                            <itemtemplate>
+                                                                <asp:Label ID="Label4" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
                                                             </itemtemplate>
                                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
                                                             <itemstyle horizontalalign="Left" verticalalign="Middle" width="20%" />
@@ -1297,131 +1297,108 @@
                                                     <h3 class="m-0">Enhancement</h3>
                                                 </div>
                                                 <div class="ibox-content table-responsive">
-                                                    <table class="table table-bordered table-striped">
-                                                        <thead>
-                                                            <tr class="table-primary">
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Enhancement Initiate Date</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Enhancement From Date</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Enhancement To Date</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Admission Unit</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">No Of Days</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Enhancement Amount(Rs.)</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Remarks</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Enhancement Rejected</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Enhancement Approved/Rejected Date</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Attachments</th>
-                                                                <th scope="col" style="background-color: #007e72; color: white;">Enhancement Rejected Reason</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>17-08-2024 12:30:00</td>
-                                                                <td>17-08-2024</td>
-                                                                <td>17-08-2024</td>
-                                                                <td>HDU</td>
-                                                                <td>5</td>
-                                                                <td>23123</td>
-                                                                <td>Patient require further stay for treatement please find attached request for enhancement along with the indoor...</td>
-                                                                <td>YES</td>
-                                                                <td>17-08-2024 12:30:00</td>
-                                                                <td>
-                                                                    <asp:LinkButton ID="lnkPhoto" runat="server" OnClick="lnkPhoto_Click">Patient Photo</asp:LinkButton>
-                                                                    <asp:LinkButton ID="lnkDocument" runat="server" OnClick="lnkDocument_Click">Enhancement Justification</asp:LinkButton>
-                                                                </td>
-                                                                <td>NA</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                    <%--<asp:GridView ID="gridTransactionDataReferences" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
-                                                                                  <alternatingrowstyle backcolor="Gainsboro" />
-                                                                                  <columns>
-                                                                                      <asp:TemplateField HeaderText="Enhancement Initiate Date">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbEnhancementInitiateDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Enhancement From Date">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbEnhancementFromDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Enhancement To Date">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbEnhancementToDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Admission Unit">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbAdmissionUnit" runat="server" Text="HDU"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="No Of Days">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbNoOfDays" runat="server" Text="5"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Enhancement Amount(₹)">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbEnhancementAmount" runat="server" Text="0.00"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Remarks">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbRemarks" runat="server" Text="Patient require further stay for treatement"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Enhancement Rejected">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbEnhancementRejected" runat="server" Text="YES"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Enhancement Approved/Rejected Date">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbEnhancementApprovedRejectedDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Attachments">
-                                                                                          <asp:LinkButton ID="lnkPatientPhoto" runat="server">Patient Photo
-                                                                                          </asp:LinkButton>
-                                                                                          <asp:LinkButton ID="lnkEnhancementJustification" runat="server">Enhancement Justification
-                                                                                          </asp:LinkButton>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                      <asp:TemplateField HeaderText="Enhancement Rejected Reason">
-                                                                                          <itemtemplate>
-                                                                                              <asp:Label ID="lbEnhancementRejectedReason" runat="server" Text="NA"></asp:Label>
-                                                                                          </itemtemplate>
-                                                                                          <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                                                          <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                                                      </asp:TemplateField>
-                                                                                   </columns>
-                                                                            </asp:GridView>--%>
+                                                    <asp:GridView ID="gridTransactionDataReferences" runat="server" AutoGenerateColumns="False" OnRowDataBound="gridTransactionDataReferences_RowDataBound" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="150%" CssClass="table table-bordered table-striped">
+                                                        <alternatingrowstyle backcolor="Gainsboro" />
+                                                        <columns>
+                                                            <asp:TemplateField HeaderText="Enhancement Initiate Date">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancementInitiateDate" runat="server" Text='<%# Eval("EnhancementInitiateDate") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Enhancement From Date">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancementFromDate" runat="server" Text='<%# Eval("EnhancementFrom") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Enhancement To Date">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancementToDate" runat="server" Text='<%# Eval("EnhancementTo") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Admission Unit">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbAdmissionUnit" runat="server" Text="NA"></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="15%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="No Of Days">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbNoOfDays" runat="server" Text='<%# Eval("EnhancementDays") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Enhancement Amount(Rs.)">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancementAmount" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Remarks">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" cssclass="text-center" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="15%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Enhancement Status">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancementStatus" runat="server" Text='<%# Eval("EnhancementStatus") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Enhancement Approved/Rejected Date">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancementApprovedDate" Visible="false" runat="server" Text='<%# Eval("ApprovedDate") %>'></asp:Label>
+                                                                    <asp:Label ID="lbEnhancementRejectedDate" Visible="false" runat="server" Text='<%# Eval("RejectedDate") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Attachments">
+                                                                <itemtemplate>
+                                                                    <asp:Label Visible="false" ID="lbPatientFolderName" runat="server" Text='<%# Eval("PatientFolderName") %>'></asp:Label>
+                                                                    <asp:Label Visible="false" ID="lbPatientUploadedFileName" runat="server" Text='<%# Eval("PatientUploadedFileName") %>'></asp:Label>
+                                                                    <asp:Label Visible="false" ID="lbJustificationFolderName" runat="server" Text='<%# Eval("JustificationFolderName") %>'></asp:Label>
+                                                                    <asp:Label Visible="false" ID="lbJustificationUploadedFileName" runat="server" Text='<%# Eval("JustificationFileName") %>'></asp:Label>
+                                                                    <asp:LinkButton ID="lnkPhoto" runat="server" OnClick="lnkPhoto_Click" Enabled="true">Patient Photo</asp:LinkButton><br />
+                                                                    <asp:LinkButton ID="lnkDocument" runat="server" OnClick="lnkDocument_Click" Enabled="true">Enhancement Justification</asp:LinkButton>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Enhancement Rejected Reason">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancementRejectedReason" runat="server" Text='<%# Eval("RejectedReason") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                            </asp:TemplateField>
+                                                            <asp:TemplateField HeaderText="Rejected Remarks">
+                                                                <itemtemplate>
+                                                                    <asp:Label ID="lbEnhancemenRemarks" runat="server" Text='<%# Eval("RejectedRemarks") %>'></asp:Label>
+                                                                </itemtemplate>
+                                                                <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                                                                <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                                                            </asp:TemplateField>
+                                                        </columns>
+                                                    </asp:GridView>
                                                 </div>
                                             </div>
                                         </asp:View>
                                         <asp:View ID="viewPhoto" runat="server">
                                             <div class="modal-body">
                                                 <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
-                                                    <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Patient Document" />
+                                                    <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Patient Document" ImageUrl="https://plus.unsplash.com/premium_photo-1664304370934-b21ea9e0b1f5?q=80&w=1883&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
                                                 </div>
                                             </div>
                                         </asp:View>
@@ -1499,7 +1476,7 @@
                                                                                         </asp:TemplateField>
                                                                                         <asp:TemplateField HeaderText="Date">
                                                                                             <itemtemplate>
-                                                                                                <asp:Label ID="lbDate" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
+                                                                                                <asp:Label ID="lbDateQuery" runat="server" Text="17-08-2024 12:30:00"></asp:Label>
                                                                                             </itemtemplate>
                                                                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
                                                                                             <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
