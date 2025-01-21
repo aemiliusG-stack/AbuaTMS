@@ -202,11 +202,11 @@
             </div>
         </div>
         <div class="ibox mt-4">
-            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+            <%--<div class="ibox-title d-flex justify-content-between text-white align-items-center">
                 <div class="d-flex w-100 justify-content-center position-relative">
                     <h3 class="m-0">Claims Details</h3>
                 </div>
-            </div>
+            </div>--%>
             <div class="ibox-content">
                 <div class="ibox-content text-dark">
                     <div class="col-lg-12">
@@ -596,6 +596,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 mb-3">
+                            <span class="font-weight-bold text-dark">Deduction Type</span><br />
+                            <asp:DropDownList runat="server" ID="dropDeductionTypeACO" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;">
+                                <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>
+                            </asp:DropDownList>
+                        </div>
+                        <div class="col-md-12 mb-3">
                             <span class="font-weight-bold text-dark">Remarks</span>
                             <asp:TextBox ID="TextBox1" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
                             <asp:Button ID="btnAddDeduction" OnClick="btnAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-2" runat="server" Text="Add Deduction" />
@@ -708,6 +714,22 @@
                         <asp:DropDownList ID="actionType" runat="server" CssClass="form-control" name="actionType" AutoPostBack="True" OnSelectedIndexChanged="ActionType_SelectedIndexChanged">
                         </asp:DropDownList>
                     </div>
+                    <asp:Panel ID="pReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
+                        <span class="form-label fw-semibold">Reason<span class="text-danger">*</span></span>
+                        <asp:DropDownList ID="ddlReason" runat="server" CssClass="form-control mt-2" AutoPostBack="true" OnSelectedIndexChanged="ddlReason_SelectedIndexChanged">
+                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                        </asp:DropDownList>
+                    </asp:Panel>
+                    <asp:Panel ID="pSubReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
+                        <span class="form-label fw-semibold">Sub Reason<span class="text-danger">*</span></span>
+                        <asp:DropDownList ID="ddlSubReason" runat="server" CssClass="form-control mt-2">
+                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                        </asp:DropDownList>
+                    </asp:Panel>
+                    <%--<asp:Panel ID="pRemarks" runat="server" Visible="false" CssClass="col-md-3 mb-3">
+                        <span class="form-label fw-semibold">Remarks</span>
+                        <asp:TextBox runat="server" ID="tbRejectRemarks" class="form-control mt-2"></asp:TextBox>
+                    </asp:Panel>--%>
                     <div class="form-group">
                         <label for="txtRemarks">Remarks:</label>
                         <asp:TextBox ID="txtRemarks" runat="server" CssClass="form-control" Visible="false"></asp:TextBox>

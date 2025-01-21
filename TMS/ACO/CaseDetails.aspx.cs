@@ -1,4 +1,5 @@
 ﻿using AbuaTMS;
+using CareerPath.DAL;
 using System;
 using System.Configuration;
 using System.Data;
@@ -50,6 +51,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             BindTechnicalChecklistData();
             BindClaimWorkflow();
             BindACORemarks();
+            BindDeductionTypes();
         }
 
     }
@@ -107,6 +109,28 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     //        LabelTotalDeduction.Text = "Error calculating deduction.";
     //    }
     //}
+    private void BindDeductionTypes()
+    {
+        dropDeductionTypeACO.Items.Clear();
+        dropDeductionTypeACO.Items.Add(new ListItem("--Select--", "Select"));
+        DataTable dt = aco.GetDeductionTypesForACO(); // Get the DataTable from the GetDeductionTypesForACO method
+        if (dt.Rows.Count > 0)
+        {
+            foreach (DataRow row in dt.Rows)
+            {
+                string deductionTypeId = row["DeductionTypeId"].ToString();
+                string deductionType = row["DeductionType"].ToString();
+
+                // Add items to the DropDownList
+                dropDeductionTypeACO.Items.Add(new ListItem(deductionType, deductionTypeId));
+            }
+        }
+        else
+        {
+            lblError.Text = "No deduction types found for ACO.";
+            lblError.Visible = true;
+        }
+    }
 
     private void BindACORemarks()
     {
@@ -418,7 +442,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     protected void btnAddDeduction_Click(object sender, EventArgs e)
     {
         decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-        decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
+        //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
+        decimal totalClaimAmount = Convert.ToDecimal(tbInsuranceApprovedAmt.Text.ToString().Trim());
         decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
         lbFinalAmount.Text = finalDeductedAmount.ToString();
     }
@@ -429,39 +454,56 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             return;
         }
-        //Add Deduction method down here
-        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-        decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
-        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-        lbFinalAmount.Text = finalDeductedAmount.ToString();
-        string caseNo = Session["CaseNumber"].ToString();
         int parsedUserId;
         int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
         string roleName = "";
         roleName = cpd.GetUserRole(userId);
-        // Save the deduction amount to the database
-        //string remarks = "ACO Deduction"; // Define remarks
+        string caseNo = Session["CaseNumber"].ToString();
+        string deductionType = dropDeductionTypeACO.SelectedItem.Text;
         string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
-        aco.SaveDeductionAmount(userId, (int)finalDeductedAmount,(int)totalFinalAmountByAco, caseNo, remarks);
+        //Add Deduction method down here
+        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
+        decimal totalClaimAmount = Convert.ToDecimal(tbInsuranceApprovedAmt.Text.ToString().Trim());
+        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
+        if (finalDeductedAmount > 0)
+        {
+            aco.SaveDeductionAmount(userId, (int)finalDeductedAmount, (int)totalFinalAmountByAco, caseNo, remarks, deductionType);
+
+        }
+        lbFinalAmount.Text = finalDeductedAmount.ToString();
+        // Save the deduction amount to the database
         long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         long actionId = Convert.ToInt64(actionType.SelectedValue);
-        // Optional fields
-        long? reasonId = null;
-        long? subReasonId = null;
-        string rejectReason = null;
-
-        //if (actionId == 4) // Raise Query Action
-        //{
-        //    reasonId = Convert.ToInt64(reasonDropdown.SelectedValue); // Assuming a dropdown for reasons exists
-        //    subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue); // Assuming a dropdown for sub-reasons exists
-        //}
-        //else if (actionId == 5) // Reject Action
-        //{
-        //    rejectReason = txtRejectReason.Text.Trim(); // Assuming a textbox for rejection reason exists
-        //}
-
+        string selectedReason = ddlReason.SelectedValue;
+        string selectedSubReason =ddlSubReason.SelectedValue;
+        switch (actionId)
+        {
+            case 1: // Approve
+                DoAction(claimId, userId, actionId, " ", "", "", remarks,(int) totalFinalAmountByAco);
+                Response.Redirect("~/ACO/ClaimUpdation.aspx");
+                break;
+            case 4: // Raise Query
+                //long reasonId = Convert.ToInt64(reasonDropdown.SelectedValue);
+                //long subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue);
+                DoAction(claimId, userId, actionId, selectedReason, selectedSubReason, null, remarks,0);
+                Response.Redirect("~/ACO/ClaimUpdation.aspx");
+                break;
+            case 5: // Reject
+                string rejectReason = ddlReason.SelectedItem.Value;
+                DoAction(claimId, userId, actionId, "", "", rejectReason, remarks,0);
+                Response.Redirect("~/ACO/ClaimUpdation.aspx");
+                break;
+            default:
+                lblError.Text = "Invalid action selected.";
+                lblError.Visible = true;
+                break;
+        }
+    }
+    protected void DoAction(long claimId, long userId, long actionId, string reasonId, string subReasonId, string rejectReason,string remarks,int? totalFinalAmountByAco)
+    {
         try
         {
+            //reasonId = (long?)(selectedReason ?? (object)DBNull.Value) ?? 0;
             using (SqlCommand cmd = new SqlCommand("TMS_ACO_InsertActions", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -469,34 +511,123 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@ActionId", actionId);
                 cmd.Parameters.AddWithValue("@ReasonId", reasonId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@SubReasonId", subReasonId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@RejectReason", string.IsNullOrEmpty(rejectReason) ? (object)DBNull.Value : rejectReason);
-                cmd.Parameters.AddWithValue("@Remarks", remarks);
-
+                cmd.Parameters.AddWithValue("@SubReasonId", subReasonId);
+                cmd.Parameters.AddWithValue("@RejectReason", rejectReason);
+                cmd.Parameters.AddWithValue("@Remarks", remarks ?? "");
+                //cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco ?? "");
+                // Only add the Amount parameter when actionId is 1 (Approve)
+                if (totalFinalAmountByAco.HasValue)
+                {
+                    cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco.Value);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@Amount", 0); // Or omit this parameter entirely if you prefer
+                }
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
 
             lblSuccess.Text = "Action processed successfully!";
             lblSuccess.Visible = true;
-            Response.Redirect("~/ClaimUpdationaspx.aspx", false);
+            //Response.Redirect("~/ACO/ClaimUpdation.aspx");
         }
         catch (Exception ex)
         {
             lblError.Text = "Error processing action: " + ex.Message;
-            lblError.Visible = true; 
+            lblError.Visible = true;
+        }
+        finally
+        {
+            con.Close();
+        }
+    }
+
+    private void BindRejectReason()
+    {
+        try
+        {
+            DataTable dt = cpd.GetRejectReason();
+            ddlReason.DataSource = dt;
+            ddlReason.DataTextField = "RejectName";
+            ddlReason.DataValueField = "RejectId";
+            ddlReason.DataBind();
+            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+    private void BindQueryReason()
+    {
+        try
+        {
+            DataTable dt = cpd.GetQueryReason();
+            ddlReason.DataSource = dt;
+            ddlReason.DataTextField = "ReasonName";
+            ddlReason.DataValueField = "ReasonId";
+            ddlReason.DataBind();
+            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+    private void BindQuerySubReason(string ReasonId)
+    {
+        try
+        {
+            DataTable dt = cpd.GetQuerySubReason(ReasonId);
+            ddlSubReason.DataSource = dt;
+            ddlSubReason.DataTextField = "SubReasonName";
+            ddlSubReason.DataValueField = "SubReasonId";
+            ddlSubReason.DataBind();
+            ddlSubReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
         }
     }
     protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)
     {
+        pReason.Visible = false;
+        //pRemarks.Visible = false;
+        pSubReason.Visible = false;
         // Show/hide the remarks TextBox based on selected value
         if (actionType.SelectedValue == "1") // Assuming "1" is for "Approve"
         {
             txtRemarks.Visible = true; // Show remarks section
         }
+        else if (actionType.SelectedValue == "5")
+        {
+            pReason.Visible = true;
+            //pRemarks.Visible = true;
+            txtRemarks.Visible = true;
+            BindRejectReason();
+        }
+        else if (actionType.SelectedValue == "4")
+        {
+            pReason.Visible = true;
+            pSubReason.Visible = true;
+            //pRemarks.Visible = true;
+            txtRemarks.Visible = true;
+            BindQueryReason();
+            BindQuerySubReason("1");
+
+        }
         else
         {
             txtRemarks.Visible = false; // Hide remarks section
+            pReason.Visible = false;
+            pSubReason.Visible = false;
         }
+    }
+    protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string selectedValue = ddlReason.SelectedItem.Value;
+        BindQuerySubReason(selectedValue);
     }
 }

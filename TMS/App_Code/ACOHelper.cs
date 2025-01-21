@@ -22,7 +22,6 @@ public class ACOHelper
     public DataTable GetActionTypes()
     {
         string query = "SELECT [ActionId], [ActionName] FROM [TMS_MasterActionMaster] WHERE [ACO] = 1";
-
         try
         {
             // Use the existing connection field
@@ -157,13 +156,44 @@ public class ACOHelper
         }
         return dt;
     }
-    public void SaveDeductionAmount(int userId, int acODeductionAmount, int totalFinalAmountByAco, string caseNo, string remarks)
+    public DataTable GetDeductionTypesForACO()
+    {
+        string query = "SELECT DeductionTypeId, DeductionType FROM TMS_MasterDeductionTypeMaster WHERE IsACO = 1";
+        try
+        {
+            // Use the existing connection field
+            if (con.State == ConnectionState.Closed)
+                con.Open();
+
+            using (SqlCommand command = new SqlCommand(query, con))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    dt.Clear(); // Clear any previous data in the shared DataTable
+                    adapter.Fill(dt);
+                }
+            }
+            return dt; // Return the shared DataTable
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exception as needed
+            throw new Exception("Error fetching action types: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+    }
+    public void SaveDeductionAmount(int userId, int acODeductionAmount, int totalFinalAmountByAco, string caseNo, string remarks, string deductionType)
     {
         SqlCommand cmd = new SqlCommand("ACO_InsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@UserId", userId);
         //cmd.Parameters.AddWithValue("@ACODeductionAmount", acODeductionAmount);
         cmd.Parameters.AddWithValue("@deductionAmount", acODeductionAmount);
+        cmd.Parameters.AddWithValue("@DeductionType",deductionType);
         cmd.Parameters.AddWithValue("@totalFinalAmountByAco", totalFinalAmountByAco);
         cmd.Parameters.AddWithValue("@CaseNo", caseNo);
         cmd.Parameters.AddWithValue("@Remarks", remarks);
