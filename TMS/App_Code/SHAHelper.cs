@@ -104,7 +104,7 @@ public class SHAHelper
     }
     public DataTable GetACORemarks(string claimId)
     {
-        string query = "SELECT \r\n\tt2.TotalPackageCost as TotalClaims,\r\n    t1.TrustClaimAmountApproved AS TrustLiable,\r\n\tcase\r\n\t   when t5.CaseNumber is not null then t5.TotalAmtAfterDeduction\r\n\t   else convert(bigint, t2.TotalPackageCost)\r\n\tend as [Final Approved Amount]\r\n    --t2.TotalPackageCost AS [Final Approved Amount]\r\nFROM \r\n    TMS_ClaimMaster t1\r\nINNER JOIN \r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN \r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nLEFT JOIN \r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber AND t5.IsActive = 1 AND t5.IsDeleted = 0\r\nWHERE \r\n    --t1.ClaimId = @claimId\r\n\tt1.ClaimId = @claimId\r\n    AND t1.IsActive = 1\r\n\tAnd t5.RoleId=9\r\n    AND t1.IsDeleted = 0;";
+        string query = "SELECT \r\n    t2.TotalPackageCost AS TotalClaims,\r\n    t1.TrustClaimAmountApproved AS TrustLiable,\r\n    CASE\r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t2.TotalPackageCost)\r\n    END AS [Final Approved Amount]\r\nFROM \r\n    TMS_ClaimMaster t1\r\nINNER JOIN \r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN \r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nLEFT JOIN \r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber \r\n    AND t5.IsActive = 1 \r\n    AND t5.IsDeleted = 0\r\nWHERE \r\n    t1.ClaimId = @claimId -- Replace @claimId with your claim ID value\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0\r\n    AND t5.RoleId = 9;";
         SqlCommand cmd = new SqlCommand(query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
         con.Open();
@@ -118,8 +118,45 @@ public class SHAHelper
     }
     public DataTable GetSHARemarks(string claimId)
     {
-        dt = GetACORemarks(claimId);
+        string query = "SELECT \r\n    t2.TotalPackageCost AS TotalClaims,\r\n    t1.TrustClaimAmountApproved AS TrustLiable,\r\n    CASE\r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t2.TotalPackageCost)\r\n    END AS [Final Approved Amount]\r\nFROM \r\n    TMS_ClaimMaster t1\r\nINNER JOIN \r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN \r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nLEFT JOIN \r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber \r\n    AND t5.IsActive = 1 \r\n    AND t5.IsDeleted = 0\r\nWHERE \r\n    t1.ClaimId = @claimId -- Replace @claimId with your claim ID value\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0\r\n    AND t5.RoleId = 9;";
+        SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.AddWithValue("@claimId", claimId);
+        con.Open();
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
+    }
+    public void SaveDeductionAmount(int userId, int acODeductionAmount, int totalFinalAmountBySha, string caseNo, string remarks)
+    {
+        SqlCommand cmd = new SqlCommand("SHA_InsertDeductionAndUpdateClaimMaster", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Parameters.AddWithValue("@UserId", userId);
+        //cmd.Parameters.AddWithValue("@ACODeductionAmount", acODeductionAmount);
+        cmd.Parameters.AddWithValue("@deductionAmount", acODeductionAmount);
+        cmd.Parameters.AddWithValue("@totalFinalAmountBySha", totalFinalAmountBySha);
+        cmd.Parameters.AddWithValue("@CaseNo", caseNo);
+        cmd.Parameters.AddWithValue("@Remarks", remarks);
+
+        try
+        {
+            con.Open();
+            cmd.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while saving deduction amount: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
     }
     public void SaveDeductionAmount(int userId, int shaDeductionAmount, string caseNo, string remarks) 
     {

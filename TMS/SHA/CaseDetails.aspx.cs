@@ -53,64 +53,139 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
             BindTechnicalChecklistData();
             BindClaimWorkflow();
             BindACORemarks();
+            BindSHARemarks();
+            //BindSHADeductions(caseNumber);
         }
 
     }
-    //protected void TextBoxFinalApprovedAmount_TextChanged(object sender, EventArgs e)
-    //{
-    //    try
-    //    {
-    //        // Retrieve Total Claims amount (assume it's already set in Label8.Text)
-    //        decimal totalClaims = Convert.ToDecimal(Label8.Text);
-    //        string caseNo = Session["CaseNumber"].ToString();
-    //        int parsedUserId;
-    //        int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
-    //        string roleName = "";
-    //        roleName = cpd.GetUserRole(userId);
 
-    //        if (roleName == "ACO(INSURER)")
-    //        {
-    //            if (!decimal.TryParse(tbInsuranceApprovedAmt.Text, out totalClaims))
-    //            {
-    //                LabelTotalDeduction.Text = "Invalid Insurance Approved Amount input";
-    //                return;
-    //            }
-    //        }
-    //        else if (roleName == "ACO(TRUST)")
-    //        {
-    //            if (!decimal.TryParse(tbTrustApprovedAmt.Text, out totalClaims))
-    //            {
-    //                LabelTotalDeduction.Text = "Invalid Trust Approved Amount input";
-    //                return;
-    //            }
-    //        }
 
-    //        // Get the entered Final Approved Amount
-    //        decimal finalApprovedAmount = 0;
-    //        if (!string.IsNullOrEmpty(TextBoxFinalApprovedAmount.Text))
-    //        {
-    //            finalApprovedAmount = Convert.ToDecimal(TextBoxFinalApprovedAmount.Text);
-    //        }
 
-    //        // Calculate the difference (deduction amount)
-    //        decimal deductionAmount = totalClaims - finalApprovedAmount;
 
-    //        // Update the Total Deduction Amount label
-    //        LabelTotalDeduction.Text = deductionAmount.ToString("N2");
 
-    //        // Save the deduction amount to the database
-    //        string remarks = "ACO Deduction"; // Define remarks
-    //        //aco.SaveDeductionAmount(userId, deductionAmount.ToString(), caseNo, TextBoxFinalApprovedAmount.Text);
-    //        aco.SaveDeductionAmount(userId, (int)deductionAmount, caseNo, TextBoxFinalApprovedAmount.Text);
 
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // Handle exceptions (e.g., invalid input)
-    //        LabelTotalDeduction.Text = "Error calculating deduction.";
-    //    }
-    //}
 
+    protected void btnAddDeduction_Click(object sender, EventArgs e)
+    {
+        decimal totalFinalAmountBySha = Convert.ToDecimal(tbFinalAmountBySha.Text.ToString().Trim());
+        //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
+        decimal totalClaimAmount = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
+        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountBySha ;
+        tbDeductionAmount.Text = finalDeductedAmount.ToString();
+    }
+    private void BindRejectReason()
+    {
+        try
+        {
+            DataTable dt = cpd.GetRejectReason();
+            ddlReason.DataSource = dt;
+            ddlReason.DataTextField = "RejectName";
+            ddlReason.DataValueField = "RejectId";
+            ddlReason.DataBind();
+            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+    private void BindQueryReason()
+    {
+        try
+        {
+            DataTable dt = cpd.GetQueryReason();
+            ddlReason.DataSource = dt;
+            ddlReason.DataTextField = "ReasonName";
+            ddlReason.DataValueField = "ReasonId";
+            ddlReason.DataBind();
+            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+    private void BindQuerySubReason(string ReasonId)
+    {
+        try
+        {
+            DataTable dt = cpd.GetQuerySubReason(ReasonId);
+            ddlSubReason.DataSource = dt;
+            ddlSubReason.DataTextField = "SubReasonName";
+            ddlSubReason.DataValueField = "SubReasonId";
+            ddlSubReason.DataBind();
+            ddlSubReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+    protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        pReason.Visible = false;
+        //pRemarks.Visible = false;
+        pSubReason.Visible = false;
+        // Show/hide the remarks TextBox based on selected value
+        if (actionType.SelectedValue == "2") // Assuming "1" is for "Approve"
+        {
+            txtRemarks.Visible = true; // Show remarks section
+        }
+        else if (actionType.SelectedValue == "6")
+        {
+            pReason.Visible = true;
+            //pRemarks.Visible = true;
+            txtRemarks.Visible = true;
+            BindRejectReason();
+        }
+        else if (actionType.SelectedValue == "5")
+        {
+            pReason.Visible = true;
+            pSubReason.Visible = true;
+            //pRemarks.Visible = true;
+            txtRemarks.Visible = true;
+            BindQueryReason();
+            BindQuerySubReason("1");
+
+        }
+        else
+        {
+            txtRemarks.Visible = false; // Hide remarks section
+            pReason.Visible = false;
+            pSubReason.Visible = false;
+        }
+    }
+    protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string selectedValue = ddlReason.SelectedItem.Value;
+        BindQuerySubReason(selectedValue);
+    }
+    private void BindSHARemarks()
+    {
+        //dt = shahelper.GetSHARemarks(caseNo);
+        dt.Clear();
+        string claimId = Session["ClaimId"].ToString();
+        if (string.IsNullOrEmpty(claimId))
+        {
+            lblError.Text = "Claim ID is missing!";
+            lblError.Visible = true;
+            return;
+        }
+        shahelper.GetSHARemarks(claimId);
+        if (dt.Rows.Count > 0)
+        {
+            DataRow row = dt.Rows[0];
+            lbTotalClaims.Text = row["TotalClaims"].ToString();
+            lbTrustLiable.Text = row["TrustLiable"].ToString();
+            tbFinalAmountBySha.Text = row["Final Approved Amount"].ToString();
+        }
+        else
+        {
+            lbTotalClaims.Text = "N/A";
+            lbTrustLiable.Text = "N/A";
+            tbFinalAmountBySha.Text = "N/A";
+        }
+    }
     private void BindACORemarks()
     {
         dt.Clear();
@@ -121,15 +196,12 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
             lblError.Visible = true;
             return;
         }
-        dt = shahelper.GetACORemarks(claimId);
+         shahelper.GetACORemarks(claimId);
         if (dt.Rows.Count > 0)
         {
             DataRow row = dt.Rows[0];
             Label8.Text = row["TotalClaims"].ToString();
-            Label1.Text = row["TotalClaims"].ToString();
             Label9.Text = row["TrustLiable"].ToString();
-            Label2.Text = row["TrustLiable"].ToString();
-            //Label10.Text = row["Final Approved Amount"].ToString();
             tbFinalAmountByAco.Text = row["Final Approved Amount"].ToString();
         }
         else
@@ -141,33 +213,60 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
         }
     }
 
-    private void BindSHARemarks()
-    {
-        dt.Clear();
-        string claimId = Session["ClaimId"].ToString();
-        if (string.IsNullOrEmpty(claimId))
-        {
-            lblError.Text = "Claim ID is missing!";
-            lblError.Visible = true;
-            return;
-        }
-        dt = shahelper.GetSHARemarks(claimId);
-        if (dt.Rows.Count > 0)
-        {
-            DataRow row = dt.Rows[0];
-            Label8.Text = row["TotalClaims"].ToString();
-            Label9.Text = row["TrustLiable"].ToString();
-            //Label10.Text = row["Final Approved Amount"].ToString();
-            tbFinalAmountByAco.Text = row["Final Approved Amount"].ToString();
-        }
-        else
-        {
-            Label8.Text = "N/A";
-            Label9.Text = "N/A";
-            //Label10.Text = "N/A";
-            tbFinalAmountByAco.Text = "N/A";
-        }
-    }
+    //private void BindSHARemarks()
+    //{
+    //    dt.Clear();
+    //    string claimId = Session["ClaimId"].ToString();
+    //    if (string.IsNullOrEmpty(claimId))
+    //    {
+    //        lblError.Text = "Claim ID is missing!";
+    //        lblError.Visible = true;
+    //        return;
+    //    }
+    //    dt = shahelper.GetSHARemarks(claimId);
+    //    if (dt.Rows.Count > 0)
+    //    {
+    //        DataRow row = dt.Rows[0];
+    //        Label8.Text = row["TotalClaims"].ToString();
+    //        Label9.Text = row["TrustLiable"].ToString();
+    //        //Label10.Text = row["Final Approved Amount"].ToString();
+    //        tbFinalAmountByAco.Text = row["Final Approved Amount"].ToString();
+    //    }
+    //    else
+    //    {
+    //        Label8.Text = "N/A";
+    //        Label9.Text = "N/A";
+    //        //Label10.Text = "N/A";
+    //        tbFinalAmountByAco.Text = "N/A";
+    //    }
+    //}
+    //protected void btnSHAAddDeduction_Click(object sender, EventArgs e)
+    //{
+    //    try
+    //    {
+    //        // Fetching values from form inputs
+    //        int totalFinalAmountBySha = int.Parse(tbFinalAmountBySha.Text);
+    //        int deductionAmount = int.Parse(tbDeductionAmount.Text);
+    //        string caseNo = Session["CaseNo"].ToString(); // Assuming CaseNo is in the session
+    //        string remarks = tbRemarks.Text;
+    //        int userId = int.Parse(Session["UserId"].ToString());
+    //        int? roleId = null; // Optional, can be fetched from the stored procedure if null
+
+    //        // Create an instance of SHAHelper and save the deduction
+    //        //SHAHelper shahelper = new SHAHelper(new SqlConnection(ConfigurationManager.ConnectionStrings["YourConnectionString"].ToString()));
+    //        shahelper.SaveSHADeduction(userId, totalFinalAmountBySha, deductionAmount, caseNo, remarks, roleId);
+
+    //        // Optionally, display success message
+    //        lblMessage.Text = "SHA deduction saved successfully!";
+    //        lblMessage.CssClass = "text-success";
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        lblMessage.Text = "Error: " + ex.Message;
+    //        lblMessage.CssClass = "text-danger";
+    //    }
+    //}
+
     private void BindClaimWorkflow()
     {
         dt.Clear();
@@ -198,7 +297,8 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
 
         if (!string.IsNullOrEmpty(caseNo))
         {
-            dt = shahelper.GetTechnicalChecklist(caseNo);
+
+            dt = aco.GetTechnicalChecklist(caseNo);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -206,16 +306,6 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
                 tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
                 tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
-                //rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
-                //rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
-                //rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
-                //rbCaseManagementNo.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
-                //rbEvidenceTherapyYes.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
-                //rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
-                //rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
-                //rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
-
-
                 rbDiagnosisSupportedYes.Checked = Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
                 rbCaseManagementYes.Checked = Convert.ToBoolean(row["CaseManagementSTP"]);
                 rbEvidenceTherapyYes.Checked = Convert.ToBoolean(row["EvidenceTherapyConducted"]);
@@ -234,6 +324,8 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
             }
         }
     }
+    
+
     public void BindNonTechnicalChecklist(string caseNo)
     {
         try
@@ -374,7 +466,7 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
                 if (long.TryParse(Session["UserId"].ToString(), out userId))
                 {
                     //using (SqlCommand cmd = new SqlCommand("ACOInsurer_ClaimUpdationDeatilsByCaseNumber", con))
-                    using (SqlCommand cmd = new SqlCommand("SHAInsurer_ClaimUpdationDetailsByCaseNumber", con))
+                    using (SqlCommand cmd = new SqlCommand("SHAInsurer_ClaimUpdationDeatilsByCaseNumberUpdated", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
@@ -445,22 +537,6 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
             }
         }
     }
-
-
-    protected void btnAddDeduction_Click(object sender, EventArgs e)
-    {
-        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-        decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
-        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-        lbFinalAmount.Text = finalDeductedAmount.ToString();
-    }
-    protected void btnSHAAddDeduction_Click(object sender, EventArgs e)
-    {
-        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountBySha.Text.ToString().Trim());
-        decimal totalClaimAmount = Convert.ToDecimal(Label1.Text.ToString().Trim());
-        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-        lbFinalAmount.Text = finalDeductedAmount.ToString();
-    }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
         if (Session["UserId"] == null)
@@ -468,78 +544,91 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             return;
         }
-        //Add Deduction method down here
-        //Add Deduction method down here
-        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountBySha.Text.ToString().Trim());
-        decimal totalClaimAmount = Convert.ToDecimal(Label1.Text.ToString().Trim());
-        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-        lbFinalAmount.Text = finalDeductedAmount.ToString();
-        string caseNo = Session["CaseNumber"].ToString();
         int parsedUserId;
         int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
         string roleName = "";
         roleName = cpd.GetUserRole(userId);
-        // Save the deduction amount to the database
-        //string remarks = "ACO Deduction"; // Define remarks
+        string caseNo = Session["CaseNumber"].ToString();
         string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
-        shahelper.SaveDeductionAmount(userId, (int)finalDeductedAmount, caseNo, remarks);
+        //Add Deduction method down here
+        decimal totalFinalAmountBySha = Convert.ToDecimal(tbFinalAmountBySha.Text.ToString().Trim());
+        //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
+        decimal totalClaimAmount = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
+        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountBySha;
+        if (finalDeductedAmount > 0)
+        {
+            shahelper.SaveDeductionAmount(userId, (int)finalDeductedAmount, (int)totalFinalAmountBySha, caseNo, remarks);
+
+        }
+        // Save the deduction amount to the database
         long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         long actionId = Convert.ToInt64(actionType.SelectedValue);
-
-        // Optional fields
-        long? reasonId = null;
-        long? subReasonId = null;
-        string rejectReason = null;
-
-        //if (actionId == 4) // Raise Query Action
-        //{
-        //    reasonId = Convert.ToInt64(reasonDropdown.SelectedValue); // Assuming a dropdown for reasons exists
-        //    subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue); // Assuming a dropdown for sub-reasons exists
-        //}
-        //else if (actionId == 5) // Reject Action
-        //{
-        //    rejectReason = txtRejectReason.Text.Trim(); // Assuming a textbox for rejection reason exists
-        //}
-
+        string selectedReason = ddlReason.SelectedValue;
+        string selectedSubReason = ddlSubReason.SelectedValue;
+        switch (actionId)
+        {
+            case 2: // Approve
+                DoAction(claimId, userId, actionId, " ", "", "", remarks, (int)totalFinalAmountBySha);
+                Response.Redirect("~/SHA/ClaimUpdation.aspx");
+                break;
+            case 5: // Raise Query
+                //long reasonId = Convert.ToInt64(reasonDropdown.SelectedValue);
+                //long subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue);
+                DoAction(claimId, userId, actionId, selectedReason, selectedSubReason, null, remarks, 0);
+                Response.Redirect("~/SHA/ClaimUpdation.aspx");
+                break;
+            case 6: // Reject
+                string rejectReason = ddlReason.SelectedItem.Value;
+                DoAction(claimId, userId, actionId, "", "", rejectReason, remarks, 0);
+                Response.Redirect("~/SHA/ClaimUpdation.aspx");
+                break;
+            default:
+                lblError.Text = "Invalid action selected.";
+                lblError.Visible = true;
+                break;
+        }
+    }
+    protected void DoAction(long claimId, long userId, long actionId, string reasonId, string subReasonId, string rejectReason, string remarks, int? totalFinalAmountByAco)
+    {
         try
         {
-            using (SqlCommand cmd = new SqlCommand("TMS_ACO_InsertActions", con))
+            //reasonId = (long?)(selectedReason ?? (object)DBNull.Value) ?? 0;
+            using (SqlCommand cmd = new SqlCommand("TMS_SHA_InsertActions", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@ClaimId", claimId);
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@ActionId", actionId);
                 cmd.Parameters.AddWithValue("@ReasonId", reasonId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@SubReasonId", subReasonId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@RejectReason", string.IsNullOrEmpty(rejectReason) ? (object)DBNull.Value : rejectReason);
-                cmd.Parameters.AddWithValue("@Remarks", remarks);
-
+                cmd.Parameters.AddWithValue("@SubReasonId", subReasonId);
+                cmd.Parameters.AddWithValue("@RejectReason", rejectReason);
+                cmd.Parameters.AddWithValue("@Remarks", remarks ?? "");
+                //cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco ?? "");
+                // Only add the Amount parameter when actionId is 1 (Approve)
+                if (totalFinalAmountByAco.HasValue)
+                {
+                    cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco.Value);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@Amount", 0); // Or omit this parameter entirely if you prefer
+                }
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
 
             lblSuccess.Text = "Action processed successfully!";
             lblSuccess.Visible = true;
-
+            //Response.Redirect("~/ACO/ClaimUpdation.aspx");
         }
         catch (Exception ex)
         {
             lblError.Text = "Error processing action: " + ex.Message;
             lblError.Visible = true;
         }
-    }
-    protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        // Show/hide the remarks TextBox based on selected value
-        if (actionType.SelectedValue == "1") // Assuming "1" is for "Approve"
+        finally
         {
-            txtRemarks.Visible = true; // Show remarks section
-        }
-        else
-        {
-            txtRemarks.Visible = false; // Hide remarks section
+            con.Close();
         }
     }
-
-
 }

@@ -102,7 +102,7 @@
                                 <span class="fa arrow"></span>
                             </a>
                             <ul class="nav nav-second-level collapse">
-                                <li><a href="SHAClaimUpdation.aspx">Claim Updation</a></li>
+                                <li><a href="ClaimUpdation.aspx">Claim Updation</a></li>
                             </ul>
                         </li>       
                         <li>

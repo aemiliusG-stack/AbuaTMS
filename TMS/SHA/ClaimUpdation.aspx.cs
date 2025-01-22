@@ -1,13 +1,14 @@
-﻿
-using AbuaTMS;
-using CareerPath.DAL;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
+public partial class SHA_ClaimUpdation : System.Web.UI.Page
 {
     private string strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
@@ -28,8 +29,6 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
             LoadClaimDetails();
         }
     }
-
-    
     private void LoadClaimDetails()
     {
         DataTable dt = new DataTable();
@@ -46,28 +45,31 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
                     {
                     new SqlParameter("@UserId", userId)
                     };
+                    //using (SqlCommand cmd = new SqlCommand("sp_GetClaimDetails", con))
                     using (SqlCommand cmd = new SqlCommand("SHA_GetClaimDetailsUpdated", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
+                        // Add parameters to the command
                         cmd.Parameters.AddRange(parameters);
                         using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                         {
                             da.Fill(dt);
                         }
                     }
+                    // Check if there is data
                     if (dt.Rows.Count > 0)
                     {
-                        gridClaimCases.DataSource = dt;
-                        gridClaimCases.DataBind();
+                        rptClaimCases.DataSource = dt;
+                        rptClaimCases.DataBind();
                     }
                     else
                     {
-                        gridClaimCases.DataSource = null;
-                        gridClaimCases.DataBind();
+                        // If no data, clear the repeater
+                        rptClaimCases.DataSource = null;
+                        rptClaimCases.DataBind();
                     }
                 }
             }
-
         }
         catch (Exception ex)
         {
@@ -84,37 +86,26 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
     }
     protected void btnReset_Click(object sender, EventArgs e)
     {
-        //ddlTypeS.SelectedIndex = 0;
-        //ddlScheme.SelectedIndex = 0;
-        //ddlPhase.SelectedIndex = 0;
-        //ddlFinancialYear.SelectedIndex = 0;
+        ddlTypeS.SelectedIndex = 0;
+        ddlScheme.SelectedIndex = 0;
+        ddlPhase.SelectedIndex = 0;
+        ddlFinancialYear.SelectedIndex = 0;
 
-        //rptClaimCases.DataSource = null;
-        //rptClaimCases.DataBind();
+        rptClaimCases.DataSource = null;
+        rptClaimCases.DataBind();
 
-        //lblTotalCases.Text = "0";
-        //lblSelectedCases.Text = "0";
-        //lblTotalAmount.Text = "Rs 0";
-        //lblAmountApproved.Text = "Rs 0";
+        lblTotalCases.Text = "0";
+        lblSelectedCases.Text = "0";
+        lblTotalAmount.Text = "Rs 0";
+        lblAmountApproved.Text = "Rs 0";
 
         lblError.Visible = false;
     }
 
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+    }
     protected void SearchSubmit_Click(object sender, EventArgs e)
     {
-    }
-
-    protected void gridClaimCases_PageIndexChanging(object sender, System.Web.UI.WebControls.GridViewPageEventArgs e)
-    {
-
-    }
-
-    protected void lnkCaseNo_Click(object sender, EventArgs e)
-    {
-        LinkButton btn = (LinkButton)sender;
-        GridViewRow row = (GridViewRow)btn.NamingContainer;
-        LinkButton lnkCaseNo = (LinkButton)row.FindControl("lnkCaseNo");
-        string CaseNumber = lnkCaseNo.Text.ToString();
-        Response.Redirect("CaseDetails.aspx?CaseNumber=" + CaseNumber, false);
     }
 }

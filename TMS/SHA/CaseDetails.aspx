@@ -9,15 +9,14 @@
         function toggleRemarks() {
             debugger;
             var actionTypeDropdown = document.getElementById('<%= actionType.ClientID %>');
-            var remarksSection = document.getElementById('remarksSection');
+             var remarksSection = document.getElementById('remarksSection');
 
-            if (actionTypeDropdown.value === '1') { // Assuming 1 is the value for "Approve"
-                remarksSection.style.display = 'block'; // Show the remarks section
-            } else {
-                remarksSection.style.display = 'none'; // Hide the remarks section
-            }
-        }
-
+             if (actionTypeDropdown.value === '2') { // Assuming 1 is the value for "Approve"
+                 remarksSection.style.display = 'block'; // Show the remarks section
+             } else {
+                 remarksSection.style.display = 'none'; // Hide the remarks section
+             }
+         }
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
@@ -27,6 +26,11 @@
                 <h3 class="m-0">Patient Details</h3>
             </div>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfInsurerApprovedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfTrustApprovedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfDeductedAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfFinalAmount" runat="server" Visible="false" />
             <div class="text-white text-nowrap">
                 <span>Case No: </span>
                 <asp:Label ID="lbCaseNoHead" runat="server"></asp:Label>
@@ -569,6 +573,7 @@
             </div>
         </div>
     </div>
+
     <%-- ACO Remarks --%>
     <div class="ibox">
         <div class="ibox-title d-flex justify-content-between text-white align-items-center">
@@ -606,7 +611,7 @@
             </div>
         </div>
     </div>
-    <%-- SHA Remarks --%>
+    <!-- SHA Remarks Section -->
     <div class="ibox">
         <div class="ibox-title d-flex justify-content-between text-white align-items-center">
             <div class="d-flex w-100 justify-content-center position-relative">
@@ -619,45 +624,48 @@
                     <div class="row">
                         <div class="col-md-3 mt-3">
                             <span class="font-weight-bold">Total Claims (Rs):</span><br />
-                            <asp:Label ID="Label1" runat="server"></asp:Label>
+                            <asp:Label ID="lbTotalClaims" runat="server" CssClass="form-control text-muted"></asp:Label>
                         </div>
                         <div class="col-md-3 mt-3">
                             <span class="font-weight-bold">Trust Liable (Rs):</span><br />
-                            <asp:Label ID="Label2" runat="server"></asp:Label>
+                            <asp:Label ID="lbTrustLiable" runat="server" CssClass="form-control text-muted"></asp:Label>
                         </div>
                         <div class="col-md-3 mt-3">
                             <span class="font-weight-bold">Final Approved Amount (Rs):</span><br />
-                            <%--<asp:TextBox ID="TextBoxFinalApprovedAmount" runat="server" CssClass="form-control" AutoPostBack="True" OnTextChanged="TextBoxFinalApprovedAmount_TextChanged"></asp:TextBox>--%>
                             <asp:TextBox ID="tbFinalAmountBySha" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <span class="font-weight-bold text-dark">Remarks</span>
-                            <asp:TextBox ID="TextBox4" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
-                            <asp:Button ID="Button1" OnClick="btnSHAAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-2" runat="server" Text="Add Deduction" />
+                            <span class="font-weight-bold text-dark">Remarks:</span>
+                            <asp:TextBox ID="tbSHARemarks" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
+                            <asp:Button ID="Button1" OnClick="btnAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-2" runat="server" Text="Add Deduction" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <%-- Add Deduction --%>
+
+    <!-- SHA Deduction Section -->
     <div class="ibox">
-        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-            <div class="d-flex w-100 justify-content-center position-relative">
-                <h3 class="m-0">Add Deduction</h3>
-            </div>
+        <div class="ibox-title">
+            <h3 class="text-white">SHA Deduction</h3>
         </div>
         <div class="ibox-content">
-            <div class="text-end mt-2">
-                <strong>Total Amount Deducted (Rs):</strong>
-                <br />
-                <asp:Label ID="lbFinalAmount" runat="server"></asp:Label>
+            <div class="row text-dark">
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-md-3 mt-3">
+                            <span class="font-weight-bold">Deduction Amount (Rs):</span><br />
+                            <asp:TextBox ID="tbDeductionAmount" runat="server" CssClass="form-control"></asp:TextBox>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-
     <%--Work Flow--%>
     <div class="ibox mt-4">
         <div class="ibox-title d-flex justify-content-between text-white align-items-center">
@@ -744,6 +752,18 @@
                         <asp:DropDownList ID="actionType" runat="server" CssClass="form-control" name="actionType" AutoPostBack="True" OnSelectedIndexChanged="ActionType_SelectedIndexChanged">
                         </asp:DropDownList>
                     </div>
+                    <asp:Panel ID="pReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
+                        <span class="form-label fw-semibold">Reason<span class="text-danger">*</span></span>
+                        <asp:DropDownList ID="ddlReason" runat="server" CssClass="form-control mt-2" AutoPostBack="true" OnSelectedIndexChanged="ddlReason_SelectedIndexChanged">
+                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                        </asp:DropDownList>
+                    </asp:Panel>
+                    <asp:Panel ID="pSubReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
+                        <span class="form-label fw-semibold">Sub Reason<span class="text-danger">*</span></span>
+                        <asp:DropDownList ID="ddlSubReason" runat="server" CssClass="form-control mt-2">
+                            <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                        </asp:DropDownList>
+                    </asp:Panel>
                     <div class="form-group">
                         <label for="txtRemarks">Remarks:</label>
                         <asp:TextBox ID="txtRemarks" runat="server" CssClass="form-control" Visible="false"></asp:TextBox>
@@ -753,6 +773,9 @@
             <asp:Button ID="submitButton" runat="server" Text="Submit" CssClass="btn btn-primary" OnClick="btnSubmit_Click" AutoPostBack="True" />
         </div>
     </div>
+    <asp:Button ID="btnApproveAndPay" runat="server" Text="Approve and Initiate Payment" CssClass="btn btn-primary" OnClick="btnApproveAndPay_Click" />
+<asp:Label ID="Label1" runat="server" Visible="false"></asp:Label>
+<asp:Label ID="Label2" runat="server" Visible="false"></asp:Label>
     <!-- Note -->
     <div class="text-end mt-2">
         <strong style="color: red;">Insurance Wallet Amount Rs.
