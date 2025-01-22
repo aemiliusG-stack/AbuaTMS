@@ -90,10 +90,9 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Case No" HeaderStyle-CssClass="text-center">
                             <ItemTemplate>
-                                <asp:HyperLink ID="lnkCaseNo" runat="server"
-                                    Text='<%# Eval("CaseNumber") %>'
-                                    NavigateUrl='<%# "CPDAssignedCasePatientDetails.aspx?CaseNo=" + Eval("CaseNumber") %>'>
-                                </asp:HyperLink>
+                                <asp:Label Visible="false" ID="lbAdmissionId" runat="server" Text='<%# Eval("AdmissionId") %>'></asp:Label>
+                                <asp:Label Visible="false" ID="lbClaimId" runat="server" Text='<%# Eval("ClaimId") %>'></asp:Label>
+                                <asp:LinkButton ID="lnkCaseNo" runat="server" OnClick="lnkCaseNo_Click" Text='<%# Eval("CaseNumber") %>'></asp:LinkButton>
                             </ItemTemplate>
                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />

@@ -152,17 +152,27 @@ public partial class CPD_CPDAssignedCases : System.Web.UI.Page
         }
     }
 
+    protected void lnkCaseNo_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+        GridViewRow row = (GridViewRow)btn.NamingContainer;
+        Label lbAdmissionId = (Label)row.FindControl("lbAdmissionId");
+        Label lbClaimId = (Label)row.FindControl("lbClaimId");
+        LinkButton lnkCaseNo = (LinkButton)row.FindControl("lnkCaseNo");
 
-    //protected void lnkCaseNo_Click(object sender, EventArgs e)
-    //{
-    //    LinkButton btn = (LinkButton)sender;
-    //    GridViewRow row = (GridViewRow)btn.NamingContainer;
-    //    Label lbAdmissionId = (Label)row.FindControl("lbAdmissionId");
-    //    Label lbClaimId = (Label)row.FindControl("lbClaimId");
-    //    LinkButton lnkCaseNo = (LinkButton)row.FindControl("lnkCaseNo");
-    //    string CaseNumber = lnkCaseNo.Text.ToString();
-    //    string AdmissionId = lbAdmissionId.Text.ToString();
-    //    Response.Redirect("PPDPatientDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
-    //}
+        // Get the values from the row
+        string caseNumber = lnkCaseNo.Text.ToString();
+        string admissionId = lbAdmissionId.Text.ToString();
+        string claimId = lbClaimId.Text.ToString();
+
+        // Store the values in the session
+        Session["CaseNumber"] = caseNumber;
+        Session["AdmissionId"] = admissionId;
+        Session["ClaimId"] = claimId;
+
+        // Redirect without query string parameters
+        Response.Redirect("CPDAssignedCasePatientDetails.aspx", false);
+    }
+
 
 }

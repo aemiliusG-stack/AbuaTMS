@@ -108,7 +108,10 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -119,7 +122,10 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -142,7 +148,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -213,7 +222,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@PatientRedgNo", PatientRedgNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -225,7 +237,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@PatientRedgNo", PatientRedgNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -237,7 +252,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -249,7 +267,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -262,7 +283,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -290,11 +314,14 @@ public class CPD
     public DataTable GetActionType()
     {
         dt.Clear();
-        string Query = "select ActionId, ActionName from TMS_MasterActionMaster where IsActive = 1";
+        string Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE CPD = 1 AND IsActive = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -306,7 +333,10 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -317,7 +347,10 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -329,7 +362,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@ReasonId", ReasonId);
         con.Open();
         sd.Fill(dt);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
     }
     public DataTable GetUsersByRole(string RoleId, string UserId)
@@ -341,7 +377,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
         con.Open();
         sd.Fill(dt);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
     }
     public DataTable GetTriggerType()
@@ -351,7 +390,10 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(dt);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
     }
     public DataTable GetNonTechnicalChecklist(string CaseNo)
@@ -362,7 +404,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -374,7 +419,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -404,9 +452,6 @@ public class CPD
     {
         dt.Clear();
         string Query = "";
-
-        try
-        {
             if (!string.IsNullOrEmpty(PackageId) && !string.IsNullOrEmpty(ProcedureId))
             {
                 Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
@@ -423,9 +468,7 @@ public class CPD
                 Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
                 FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId";
             }
-
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-
             if (!string.IsNullOrEmpty(PackageId))
             {
                 sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
@@ -434,20 +477,13 @@ public class CPD
             {
                 sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
             }
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-
-        }
-        catch (SqlException ex)
-        {
             if (con.State == ConnectionState.Open)
             {
                 con.Close();
             }
-        }
+            sd.Fill(dt);
+            con.Close();
         return dt;
-
     }
     public DataTable GetProcedureName(int PackageId)
     {
@@ -457,18 +493,24 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
     public DataTable GetDeductionType()
     {
         dt.Clear();
-        string Query = "select DeductionTypeId, DeductionType from TMS_MasterDeductionTypeMaster where IsActive = 1 and IsDeleted = 0 and IsCPD = 1\r\n";
+        string Query = "select DeductionTypeId, DeductionType from TMS_MasterDeductionTypeMaster where IsActive = 1 and IsDeleted = 0 and IsCPD = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -506,9 +548,6 @@ public class CPD
         cmd.Parameters.AddWithValue("@TotalDeductionAmount", totalDeductionAmount);
         cmd.Parameters.AddWithValue("@CaseNo", caseNo);
         cmd.Parameters.AddWithValue("@Remarks", remarks);
-
-
-
         SqlParameter roleParam = new SqlParameter("@RoleName", SqlDbType.NVarChar, 50) { Direction = ParameterDirection.Output };
         cmd.Parameters.Add(roleParam);
         try
@@ -534,7 +573,7 @@ public class CPD
             }
         }
     }
-    public DataTable GetClaimWorkFlow(string claimId)
+    public DataTable GetClaimWorkFlow(int claimId)
     {
         string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId";
         //DataTable dt = new DataTable();
@@ -557,7 +596,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
         sd.Fill(dt);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
     }
 
@@ -591,7 +633,6 @@ public class CPD
             }
         }
     }
-
     public DataTable getPrimaryDiagnosis(string CaseNo)
     {
         dtTemp.Clear();
@@ -602,7 +643,6 @@ public class CPD
         con.Close();
         return dtTemp;
     }
-
     public DataTable GetPatientPrimaryDiagnosis(string CaseNo)
     {
         dtTemp.Clear();
@@ -616,7 +656,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(dtTemp);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dtTemp;
     }
     public int DeletePrimaryDiagnosis(string CaseNo, int PDId)
@@ -627,7 +670,10 @@ public class CPD
         cmd.Parameters.AddWithValue("@PDId", PDId);
         con.Open();
         int rowsAffected = cmd.ExecuteNonQuery();
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return rowsAffected;
     }
     public int DeleteSecondaryDiagnosis(string CaseNo, int PDId)
@@ -638,7 +684,10 @@ public class CPD
         cmd.Parameters.AddWithValue("@PDId", PDId);
         con.Open();
         int rowsAffected = cmd.ExecuteNonQuery();
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return rowsAffected;
     }
     public DataTable getSecondaryDiagnosis(string CaseNo)
@@ -648,7 +697,10 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(dtTemp);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dtTemp;
     }
     public DataTable GetPatientSecondaryDiagnosis(string CaseNo)
@@ -659,7 +711,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(dtTemp);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dtTemp;
     }
     public void InsertTechnicalChecklist(string caseNumber, string cardNumber, bool diagnosisSupported, bool caseManagementSTP, bool evidenceTherapyConducted, bool mandatoryReports, string remarks)
@@ -679,7 +734,6 @@ public class CPD
         cmd.Parameters.AddWithValue("@IsDeleted", 0);
         cmd.Parameters.AddWithValue("@CreatedOn", DateTime.Now);
         cmd.Parameters.AddWithValue("@UpdatedOn", DateTime.Now);
-
         if (con.State == ConnectionState.Open)
         {
             con.Close();
@@ -695,65 +749,61 @@ public class CPD
         string query = "SELECT COUNT(1) FROM TMS_CPDTechnicalCkecklist WHERE CaseNumber = @CaseNumber";
         SqlCommand cmd = new SqlCommand(query, con);
         cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
-        try
-        {
             if (con.State == ConnectionState.Closed)
             {
                 con.Open();
             }
-
             int count = (int)cmd.ExecuteScalar();
             exists = count > 0;
-        }
-        catch (Exception ex)
-        {
-
-        }
-        finally
-        {
             if (con.State == ConnectionState.Open)
             {
                 con.Close();
             }
-        }
-
         return exists;
     }
     public int TransferCase(string ClaimId, string RoleId)
     {
-        string Query = "";
-        if (RoleId == "3")
+        try
         {
-            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+            string Query = "";
+            if (RoleId == "7")
+            {
+                Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+            }
+            else if (RoleId == "8")
+            {
+                Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+            }
+            SqlCommand cmd = new SqlCommand(Query, con);
+            cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
+            con.Open();
+            int rowsAffected = cmd.ExecuteNonQuery();
+            con.Close();
+            return rowsAffected;
         }
-        else if (RoleId == "4")
+        catch (Exception ex)
         {
-            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+            throw new Exception("An error occurred while fetching assigned cases", ex);
         }
-        SqlCommand cmd = new SqlCommand(Query, con);
-        cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
-        con.Open();
-        int rowsAffected = cmd.ExecuteNonQuery();
-        con.Close();
-        return rowsAffected;
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
     }
-    //public int TransferCase(string CaseNo)
-    //{
-    //    string Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE CaseNumber = @CaseNo AND IsActive = 1 AND IsDeleted = 0";
-    //    SqlCommand cmd = new SqlCommand(Query, con);
-    //    cmd.Parameters.AddWithValue("@CaseNo", CaseNo);
-    //    con.Open();
-    //    int rowsAffected = cmd.ExecuteNonQuery();
-    //    con.Close();
-    //    return rowsAffected;
-    //}
     public DataTable GetRecociliationClaimUpdation()
     {
         string Query = "SELECT t1.CaseNumber, t1.ClaimNumber, CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, t3.HospitalName, t2.AdmissionDate, (t1.InsurerClaimAmountRequested+t1.TrustClaimAmountRequested) as ClaimInitiatedAmt, (t1.InsurerClaimAmountApproved + t1.TrustClaimAmountApproved) AS ClaimApprovedAmt FROM TMS_ClaimMaster t1 INNER JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber =t2.CaseNumber INNER JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId INNER JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId INNER JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -895,7 +945,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
         sd.Fill(dt);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
     }
     public DataTable GetTreatmentDischarge(string ClaimId)
@@ -905,7 +958,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dt = ds.Tables[0];
         return dt;
     }
@@ -979,7 +1035,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
         con.Open();
         sd.Fill(dt);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return dt;
     }
     //public byte[] CreatePdfWithImagesInMemory(List<string> images)
@@ -1022,7 +1081,10 @@ public class CPD
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
         con.Open();
         sd.Fill(ds);
-        con.Close();
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         dtTemp = ds.Tables[0];
         return dtTemp;
     }

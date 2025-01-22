@@ -185,7 +185,6 @@
             <asp:HiddenField ID="hfTrustApprovedAmount" runat="server" Visible="false" />
             <asp:HiddenField ID="hfDeductedAmount" runat="server" Visible="false" />
             <asp:HiddenField ID="hfFinalAmount" runat="server" Visible="false" />
-            <asp:HiddenField ID="hfRoleId" runat="server" Visible="false" />
             <asp:MultiView ID="MultiViewMain" runat="server" ActiveViewIndex="0">
                 <asp:View ID="viewMain" runat="server">
                     <div class="row">
@@ -259,6 +258,10 @@
                                                             <span class="form-label fw-semibold" style="font-weight: bold;">Family ID:</span><br />
                                                             <asp:Label ID="lbFamilyId" runat="server" Text="N/A"></asp:Label>
                                                         </div>
+                                                        <div class="col-md-3 mb-3">
+                                                            <span class="form-label span-title">New Born Baby Case:</span><br />
+                                                            <asp:Label ID="lbIsChild" runat="server" Text="" Style="font-size: 12px;"></asp:Label>
+                                                        </div>
                                                         <div class="col-md-3">
                                                             <span class="form-label fw-semibold" style="font-weight: bold;">Age:</span><br />
                                                             <asp:Label ID="lbAge" runat="server" Text="N/A"></asp:Label>
@@ -268,6 +271,10 @@
                                                             <span class="form-label fw-semibold" style="font-weight: bold;">Aadhar Verified:</span><br />
                                                             <asp:Label ID="lbAadharVerified" runat="server" Text="N/A"></asp:Label>
 
+                                                        </div>
+                                                        <div class="col-md-3 mb-3">
+                                                            <span class="form-label span-title">Biometric Verified:</span><br />
+                                                            <asp:Label ID="lbBiometricVerified" runat="server" Text="" Style="font-size: 12px;"></asp:Label>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <span class="form-label fw-semibold" style="font-weight: bold;">Authentication at Reg/Dis:</span><br />

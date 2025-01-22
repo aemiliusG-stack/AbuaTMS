@@ -8,6 +8,37 @@
         }
     </script>
     <script type="text/javascript">
+        var inactivityTimeout;
+        var activityInterval;
+        let count = 0;
+
+        function startActivityTimer() {
+            activityInterval = setInterval(function () {
+                count += 1;
+                console.log(`Counting: ${count}`);
+            }, 1000);
+        }
+
+        function resetInactivityTimer() {
+            if (count > 180) {
+                callServerMethod();
+            }
+            clearTimeout(inactivityTimeout);
+            clearInterval(activityInterval);
+            count = 0;
+            inactivityTimeout = setTimeout(function () {
+                startActivityTimer();
+            }, 3000);
+        }
+
+        function callServerMethod() {
+            PageMethods.NotifyInactivity("", (result) => {
+                window.location.href = result;
+            }, (error) => {
+                console.error("Error calling server method: " + error);
+            });
+        }
+
         function showModal() {
             $('#contentModal').modal('hide');
             $('.modal-backdrop').remove();
@@ -18,37 +49,21 @@
             $('.modal-backdrop').remove();
             $('#contentModal').modal('hide');
         }
-        window.onbeforeunload = function (event) {
-            notifyServerOnTabClose();
-        };
 
-        function notifyServerOnTabClose() {
-            $.ajax({
-                type: "POST",
-                url: "CPDClaimUpdation.aspx/HandleWindowClose",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    console.log("Window close event handled.");
-                },
-                failure: function (response) {
-                    console.log("Failed to handle window close event.");
-                }
-            });
-        }
-    </script>
-    <script>
-        $(document).ready(function () {
-            let activeTab = sessionStorage.getItem("activeTab");
-            if (activeTab) {
-                $(`[href="${activeTab}"]`).tab('show');
-            }
+        window.onmousemove = resetInactivityTimer;
+        window.onkeypress = resetInactivityTimer;
+        resetInactivityTimer();
 
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                let tabName = $(e.target).attr('href');
-                sessionStorage.setItem("activeTab", tabName);
-            });
-        });
+        //window.onbeforeunload = function () {
+        //    sendDataToServer();
+        //};
+
+        //function sendDataToServer() {
+        //    var xhr = new XMLHttpRequest();
+        //    xhr.open("POST", "PPDPreauthUpdation.aspx/NotifyInactivity", true);
+        //    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+        //    xhr.send(JSON.stringify({ message: "User closed the tab/window." }));
+        //}
     </script>
 
 </asp:Content>
@@ -676,31 +691,20 @@
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
-
-                                                                    <asp:TemplateField HeaderText="Role Name">
+                                                                    <asp:TemplateField HeaderText="Acted By Role">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="lbPreRoleName" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                     </asp:TemplateField>
-
-                                                                    <asp:TemplateField HeaderText="Remarks">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="lbPreRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
-                                                                    </asp:TemplateField>
-
-                                                                    <asp:TemplateField HeaderText="Action">
+                                                                    <asp:TemplateField HeaderText="Action Taken">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="lbPreActionTaken" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
-
                                                                     <asp:TemplateField HeaderText="Approved Amount(Rs.)">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="lbPreAmount" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
@@ -708,7 +712,13 @@
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
-
+                                                                    <asp:TemplateField HeaderText="Remarks">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPreRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                    </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="PreAuth Query/Rejection Reasons">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="lbPreRejectionReason" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
@@ -745,31 +755,31 @@
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Doctor Type</span><br />
-                                                                <asp:Label ID="lbDoctorType" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="1759"></asp:Label>
+                                                                <asp:Label ID="lbDoctorType" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="NA"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Name</span><br />
-                                                                <asp:Label ID="lbDoctorName" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="1759"></asp:Label>
+                                                                <asp:Label ID="lbDoctorName" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="NA"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Regn No</span><br />
-                                                                <asp:Label ID="lbDocRegnNo" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="1759"></asp:Label>
+                                                                <asp:Label ID="lbDocRegnNo" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="NA"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Qualification</span><br />
-                                                                <asp:Label ID="lbDocQualification" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="&nbsp;"></asp:Label>
+                                                                <asp:Label ID="lbDocQualification" runat="server" CssClass="d-block w-100 border-bottom p-1" Text="NA"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Contact No</span><br />
-                                                                <asp:Label ID="lbDocContactNo" runat="server" CssClass="d-block w-50 border-bottom p-1" Text="&nbsp;"></asp:Label>
+                                                                <asp:Label ID="lbDocContactNo" runat="server" CssClass="d-block w-50 border-bottom p-1" Text="NA"></asp:Label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1784,24 +1794,14 @@
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
-
-                                                                    <asp:TemplateField HeaderText="Name">
+                                                                    <asp:TemplateField HeaderText="Acted By Role">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="Label10" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                     </asp:TemplateField>
-
-                                                                    <asp:TemplateField HeaderText="Remarks">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="Label11" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
-                                                                    </asp:TemplateField>
-
-                                                                    <asp:TemplateField HeaderText="Action">
+                                                                    <asp:TemplateField HeaderText="Action Taken">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="Label13" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
                                                                         </ItemTemplate>
@@ -1816,7 +1816,13 @@
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
-
+                                                                    <asp:TemplateField HeaderText="Remarks">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label11" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                                    </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Claim Query/Rejection Reasons">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="Label16" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
@@ -2260,7 +2266,7 @@
                                                         GridLines="None" Width="100%">
                                                         <AlternatingRowStyle BackColor="Gainsboro" />
                                                         <Columns>
-                                                          
+
                                                             <asp:TemplateField HeaderText="S.No.">
                                                                 <ItemTemplate>
                                                                     <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
@@ -2277,7 +2283,7 @@
                                                                 <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="60%" />
                                                             </asp:TemplateField>
 
-                                                       
+
                                                             <asp:TemplateField HeaderText="Options">
                                                                 <ItemTemplate>
                                                                     <asp:RadioButton ID="rbYes" runat="server" GroupName='<%# "Option" + Container.DataItemIndex %>' Text="Yes" />
@@ -2321,7 +2327,7 @@
                 </asp:View>
                 <asp:View ID="viewNoDataPending" runat="server">
                     <div class="d-flex align-items-center justify-content-center m-5">
-                        <asp:Label ID="lbNodataPending" runat="server" CssClass="font-weight-bold text-danger fs-2" Font-Size="Larger" Text="No records found."></asp:Label>
+                        <asp:Label ID="lbNodataPending" runat="server" CssClass="font-weight-bold text-danger fs-2" Font-Size="Larger" Text="There Is No Pending Case Right Now."></asp:Label>
                     </div>
                 </asp:View>
             </asp:MultiView>
