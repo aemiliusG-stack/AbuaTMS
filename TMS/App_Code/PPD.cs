@@ -179,7 +179,7 @@ public class PPDHelper
         try
         {
             DataTable dt = new DataTable();
-            string Query = "SELECT t1.ActionDate, CONCAT(t2.FullName,' ',t2.RoleName) AS Role, t1.Remarks, t1.ActionTaken AS Action, t1.Amount, ISNULL(t3.RejectName, 'NA') AS RejectedReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Users t2 ON t1.ActionTakenBy = t2.UserId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1";
+            string Query = "SELECT t1.ActionDate, t2.RoleName AS Role, t1.Remarks, t1.ActionTaken AS Action, t1.Amount, ISNULL(t3.RejectName, 'NA') AS RejectedReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Users t2 ON t1.ActionTakenBy = t2.UserId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
             con.Open();
