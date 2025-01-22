@@ -54,10 +54,10 @@ public class CEX
         return dt;
     }
 
-    public DataTable GetClaimWorkFlow(string claimId)
+    public DataTable GetClaimWorkFlow(int claimId)
     {
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId WHERE t1.ClaimId = 1";
-        //DataTable dt = new DataTable();
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId";
+     
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
         con.Open();
@@ -511,6 +511,7 @@ public class CEX
         string Query = "SELECT DocumentId, DocumentFor, FolderName, UploadedFileName, UploadStatus FROM TMS_PatientMandatoryDocument WHERE CardNumber = @CardNumber AND DocumentId = 3 AND IsActive = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        con.Close();
         con.Open();
         sd.Fill(ds);
         con.Close();

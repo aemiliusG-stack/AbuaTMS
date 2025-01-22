@@ -926,8 +926,8 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
     private void BindGrid_PreauthWorkFlow()
     {
         dt.Clear();
-        string caseNo = Session["CaseNumber"].ToString();
-        dt = cex.GetClaimWorkFlow(caseNo);
+        string claimId = Session["ClaimId"].ToString();
+        dt = cex.GetClaimWorkFlow(Convert.ToInt32(claimId));
         if (dt != null && dt.Rows.Count > 0)
         {
             gvPreauthWorkFlow.DataSource = dt;
@@ -944,7 +944,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
     {
         dt.Clear();
         string claimId = Session["ClaimId"].ToString();
-        dt = cex.GetClaimWorkFlow(claimId);
+        dt = cex.GetClaimWorkFlow(Convert.ToInt32(claimId));
         if (dt != null && dt.Rows.Count > 0)
         {
             gvClaimWorkFlow.DataSource = dt;
