@@ -1,15 +1,16 @@
 ﻿using CareerPath.DAL;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
+using System.Linq;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Collections.Generic;
 
-public partial class PPD_PPDPatientDetails : System.Web.UI.Page
+public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
 {
     private string strMessage, caseNumber, admissionId, claimId;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
@@ -364,7 +365,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             p[2].DbType = DbType.String;
             p[3] = new SqlParameter("@ClaimId", claimId);
             p[3].DbType = DbType.String;
-            DataSet ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetAssignedCaseForPreAuthApproval", p);
+            DataSet ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetUnspecifiedCaseDetails", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
             if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
@@ -1372,47 +1373,6 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         return System.Web.VirtualPathUtility.ToAbsolute("~/Unauthorize.aspx");
     }
 
-    //protected void btnDownloadPdf_Click(object sender, EventArgs e)
-    //{
-    //    try
-    //    {
-    //        DataTable dt = new DataTable();
-    //        List<string> images = new List<string>();
-    //        dt = ppdHelper.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
-    //        if (dt != null && dt.Rows.Count > 0)
-    //        {
-    //            foreach (DataRow row in dt.Rows)
-    //            {
-    //                string folderName = row["FolderName"].ToString().Trim();
-    //                string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
-    //                if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
-    //                {
-    //                    string base64Image = preAuth.DisplayImage(folderName, fileName);
-    //                    if (!string.IsNullOrEmpty(base64Image))
-    //                    {
-    //                        images.Add("data:image/jpeg;base64," + base64Image);
-    //                    }
-    //                }
-    //            }
-    //            if (images.Count > 0)
-    //            {
-    //                byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
-    //                Response.Clear();
-    //                Response.ContentType = "application/pdf";
-    //                Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
-    //                Response.BinaryWrite(pdfBytes);
-    //                Response.Flush();
-    //                HttpContext.Current.ApplicationInstance.CompleteRequest();
-    //            }
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-    //        Response.Redirect("~/Unauthorize.aspx", false);
-    //    }
-    //}
-
     protected void btnDownloadPdf_Click(object sender, EventArgs e)
     {
         try
@@ -1471,5 +1431,4 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
 }

@@ -5,11 +5,12 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
     <asp:ScriptManager runat="server"></asp:ScriptManager>
     <asp:UpdatePanel runat="server">
-        <contenttemplate>
+        <ContentTemplate>
+            <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ibox-title text-center">
-                        <h3 class="text-white">Assigned Cases</h3>
+                        <h3 class="text-white">Unspecified Cases</h3>
                     </div>
                     <div class="ibox-content">
                         <div class="row">
@@ -62,34 +63,70 @@
                         <div class="card-body">
                             <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
                             <div class="table-responsive mt-2">
-                                <%--<table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr class="table-primary">
-                                            <th scope="col" style="background-color: #007e72; color: white;">S.No</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Case No</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Claim No</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Patient Name</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Card Number</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Case Status</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Hospital Name</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Registred Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td><a href="#" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
-                                            <td>TRUST/RAN/2024/3393003210/1</td>
-                                            <td>SEETA KUMARI</td>
-                                            <td>MD02V937R</td>
-                                            <td>Procedure auto approved insurance (Insurance)
-                                            </td>
-                                            <td>CHC NAMKUM</td>
-                                            <td>16/07/2024</td>
-                                        </tr>
-                                    </tbody>
-                                </table>--%>
-                                <asp:Panel ID="panelNoData" runat="server" Visible="true">
+                                <asp:GridView ID="gridUnspecifiedCases" runat="server" AllowPaging="True" OnPageIndexChanging="gridUnspecifiedCases_PageIndexChanging" PageSize="10" AutoGenerateColumns="False" Width="100%" CssClass="table table-bordered table-striped">
+                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                    <Columns>
+                                        <asp:TemplateField HeaderText="Sl. No.">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Case No">
+                                            <ItemTemplate>
+                                                <asp:Label Visible="false" ID="lbAdmissionId" runat="server" Text='<%# Eval("AdmissionId") %>'></asp:Label>
+                                                <asp:Label Visible="false" ID="lbClaimId" runat="server" Text='<%# Eval("ClaimId") %>'></asp:Label>
+                                                <asp:LinkButton ID="lnkCaseNo" runat="server" OnClick="lnkCaseNo_Click" Text='<%# Eval("CaseNumber") %>'></asp:LinkButton>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Claim No">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbClaimNo" runat="server" Text='<%# Eval("ClaimNumber") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Patient Name">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbPatientName" runat="server" Text='<%# Eval("PatientName") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Beneficiary Card Number">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbBeneficiaryCardNo" runat="server" Text='<%# Eval("CardNumber") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Case Status">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbCaseStatus" runat="server" Text="Procedure auto approved insurance (Insurance)"></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Hospital Name">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Registred Date">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbRegisteredDate" runat="server" Text='<%# Eval("RegDate") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                        </asp:TemplateField>
+                                    </Columns>
+                                </asp:GridView>
+                                <asp:Panel ID="panelNoData" runat="server" Visible="false">
                                     <div class="row ibox-content" style="background-color: #f0f0f0;">
                                         <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
                                             <img src="../images/search.svg" />
@@ -103,7 +140,7 @@
                     </div>
                 </div>
             </div>
-        </contenttemplate>
+        </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>
 
