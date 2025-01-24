@@ -90,19 +90,33 @@ public class PPDHelper
         }
     }
 
-    public DataTable GetMasterActions(bool EnhancementTaken)
+    public DataTable GetMasterActions(bool EnhancementTaken, bool IsUnspecified)
     {
         try
         {
             DataTable dt = new DataTable();
-            string Query;
-            if (EnhancementTaken)
+            string Query = "";
+            if (IsUnspecified)
             {
-                Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1";
+                if (EnhancementTaken)
+                {
+                    Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Approve'";
+                }
+                else
+                {
+                    Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement' AND ActionName NOT LIKE 'Approve'";
+                }
             }
             else
             {
-                Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement'";
+                if (EnhancementTaken)
+                {
+                    Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Send To Medical Audit";
+                }
+                else
+                {
+                    Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement' AND ActionName NOT LIKE 'Send To Medical Audit'";
+                }
             }
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();

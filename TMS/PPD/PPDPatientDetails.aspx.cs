@@ -804,7 +804,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetMasterActions(hdEnhancementId.Value.ToString() == "0" ? false : true);
+            dt = ppdHelper.GetMasterActions(hdEnhancementId.Value.ToString() == "0" ? false : true, false);
             if (dt != null && dt.Rows.Count > 0)
             {
                 dlAction.Items.Clear();

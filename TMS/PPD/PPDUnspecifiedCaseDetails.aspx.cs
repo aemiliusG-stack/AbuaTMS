@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Org.BouncyCastle.Asn1.IsisMtt.X509;
 
 public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
 {
@@ -290,15 +291,6 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             pRemarks.Visible = false;
             pAddReason.Visible = false;
         }
-        // Approve Case
-        else if (selectedValue.Equals("2"))
-        {
-            pUserRole.Visible = false;
-            pReason.Visible = false;
-            pSubReason.Visible = false;
-            pRemarks.Visible = true;
-            pAddReason.Visible = false;
-        }
         // Forward Case
         else if (selectedValue.Equals("3"))
         {
@@ -308,6 +300,15 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             pRemarks.Visible = true;
             pAddReason.Visible = false;
             GetForwardUsers();
+        }
+        // Send To Medical Audit
+        else if (selectedValue.Equals("4"))
+        {
+            pUserRole.Visible = false;
+            pReason.Visible = false;
+            pSubReason.Visible = false;
+            pRemarks.Visible = true;
+            pAddReason.Visible = false;
         }
         // Query Raise Case
         else if (selectedValue.Equals("5"))
@@ -805,7 +806,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetMasterActions(hdEnhancementId.Value.ToString() == "0" ? false : true);
+            dt = ppdHelper.GetMasterActions(hdEnhancementId.Value.ToString() == "0" ? false : true, true);
             if (dt != null && dt.Rows.Count > 0)
             {
                 dlAction.Items.Clear();
@@ -849,13 +850,8 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             }
             else
             {
-                // For Case Approval
-                if (selectedValue.Equals("2"))
-                {
-                    doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
-                }
                 // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
-                else if (selectedValue.Equals("3"))
+                if (selectedValue.Equals("3"))
                 {
                     string selectedUserId = dlUserRole.SelectedItem.Value;
                     string selectedUserName = dlUserRole.SelectedItem.Text;
@@ -868,6 +864,11 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
                     {
                         doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), selectedUserId, selectedUserName, selectedValue, "", "", tbRemark.Text.ToString() + "");
                     }
+                }
+                // For Send To Medical Audit
+                else if (selectedValue.Equals("4"))
+                {
+                    doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
                 }
                 // For Case Raising Query
                 else if (selectedValue.Equals("5"))
@@ -1119,48 +1120,46 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             p[7].DbType = DbType.Decimal;
             p[8] = new SqlParameter("@EnhancementId", hdEnhancementId.Value.ToString());
             p[8].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_InsertActions", p);
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_UnspecifiedInsertActions", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
-            if (ActionId.Equals("2"))
+            if (ActionId.Equals("3"))
+            {
+                strMessage = "window.alert('Case Successfully Forwarded To " + ForwardedToUser + "');";
+                strMessage += "window.location='PPDUnspecifiedCases.aspx';";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            }
+            else if (ActionId.Equals("4"))
             {
                 if (Session["RoleId"].ToString() == "3")
                 {
-                    strMessage = "window.alert('Preauthorization has been approved by PPD(Insurer). " + hdCaseId.Value + "');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    strMessage = "window.alert('Case " + hdCaseId.Value + " sent to medical committee SHA (INSURER)');";
                 }
                 else if (Session["RoleId"].ToString() == "4")
                 {
-                    strMessage = "window.alert('Preauthorization has been approved by PPD(Trust). " + hdCaseId.Value + "');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    strMessage = "window.alert('Case " + hdCaseId.Value + " sent to medical committee SHA (TRUST)');";
                 }
-                GetPatientForPreAuthApproval();
-            }
-            else if (ActionId.Equals("3"))
-            {
-                strMessage = "window.alert('Case Successfully Forwarded To " + ForwardedToUser + "');";
+                strMessage += "window.location='PPDUnspecifiedCases.aspx';";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetPatientForPreAuthApproval();
             }
             else if (ActionId.Equals("5"))
             {
                 dlAction.SelectedIndex = 0;
                 strMessage = "window.alert('Query Raised Successfully.');";
+                strMessage += "window.location='PPDUnspecifiedCases.aspx';";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                //getPreauthQuery(ClaimId);
-                GetPatientForPreAuthApproval();
             }
             else if (ActionId.Equals("6"))
             {
                 strMessage = "window.alert('Case Rejected Successfully.');";
+                strMessage += "window.location='PPDUnspecifiedCases.aspx';";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetPatientForPreAuthApproval();
             }
             else if (ActionId.Equals("8"))
             {
                 strMessage = "window.alert('Enhancement Rejected Successfully.');";
+                strMessage += "window.location='PPDUnspecifiedCases.aspx';";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                GetPatientForPreAuthApproval();
             }
             cbTerms.Checked = false;
             tbRemark.Text = "";
