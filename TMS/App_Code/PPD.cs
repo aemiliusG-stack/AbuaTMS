@@ -90,6 +90,39 @@ public class PPDHelper
         }
     }
 
+    public DataTable GetMasterActions(bool EnhancementTaken)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query;
+            if (EnhancementTaken)
+            {
+                Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1";
+            }
+            else
+            {
+                Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement'";
+            }
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+        }
+    }
+
     public DataTable GetUserDetails(string UserId)
     {
         try
@@ -656,6 +689,46 @@ public class PPDHelper
             {
                 con.Close();
                 
+            }
+        }
+    }
+
+    public DataTable GetUnspecifiedCases(string UserId, string CaseNumber, string CardNumber, string FromDate, string ToDate)
+    {
+        try
+        {
+            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
+            SqlParameter[] p = new SqlParameter[5];
+            p[0] = new SqlParameter("@UserId", UserId);
+            p[0].DbType = DbType.String;
+            p[1] = new SqlParameter("@CaseNumber", CaseNumber);
+            p[1].DbType = DbType.String;
+            p[2] = new SqlParameter("@CardNumber", CardNumber);
+            p[2].DbType = DbType.String;
+            p[3] = new SqlParameter("@FromDate", FromDate);
+            p[3].DbType = DbType.String;
+            p[4] = new SqlParameter("@ToDate", ToDate);
+            p[4].DbType = DbType.String;
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetUnspecifiedCases", p);
+            if (con.State == ConnectionState.Open)
+                con.Close();
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                dt = ds.Tables[0];
+            }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
             }
         }
     }

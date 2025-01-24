@@ -631,4 +631,9 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
             con.Close();
         }
     }
+
+    protected void btnApproveAndPay_Click(object sender, EventArgs e)
+    {
+
+    }
 }
