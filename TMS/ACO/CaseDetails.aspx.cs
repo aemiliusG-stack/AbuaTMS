@@ -474,23 +474,23 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         // Save the deduction amount to the database
         long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         long actionId = Convert.ToInt64(actionType.SelectedValue);
-        string selectedReason = ddlReason.SelectedValue;
-        string selectedSubReason =ddlSubReason.SelectedValue;
+        string selectedQueryReasonId = ddlReason.SelectedValue;
+        string selectedSubQueryReasonId =ddlSubReason.SelectedValue;
         switch (actionId)
         {
-            case 1: // Approve
+            case 2: // Approve
                 DoAction(claimId, userId, actionId, " ", "", "", remarks,(int) totalFinalAmountByAco);
                 Response.Redirect("~/ACO/ClaimUpdation.aspx");
                 break;
-            case 4: // Raise Query
+            case 5: // Raise Query
                 //long reasonId = Convert.ToInt64(reasonDropdown.SelectedValue);
                 //long subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue);
-                DoAction(claimId, userId, actionId, selectedReason, selectedSubReason, null, remarks,0);
+                DoAction(claimId, userId, actionId, selectedQueryReasonId, selectedSubQueryReasonId, null, remarks,0);
                 Response.Redirect("~/ACO/ClaimUpdation.aspx");
                 break;
-            case 5: // Reject
-                string rejectReason = ddlReason.SelectedItem.Value;
-                DoAction(claimId, userId, actionId, "", "", rejectReason, remarks,0);
+            case 6: // Reject
+                string rejectReasonId = ddlReason.SelectedItem.Value;
+                DoAction(claimId, userId, actionId, "", "", rejectReasonId, remarks,0);
                 Response.Redirect("~/ACO/ClaimUpdation.aspx");
                 break;
             default:
@@ -499,7 +499,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 break;
         }
     }
-    protected void DoAction(long claimId, long userId, long actionId, string reasonId, string subReasonId, string rejectReason,string remarks,int? totalFinalAmountByAco)
+    protected void DoAction(long claimId, long userId, long actionId, string queryReasonId, string querySubReasonId, string rejectReasonId, string remarks,int? totalFinalAmountByAco)
     {
         try
         {
@@ -510,9 +510,9 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 cmd.Parameters.AddWithValue("@ClaimId", claimId);
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@ActionId", actionId);
-                cmd.Parameters.AddWithValue("@ReasonId", reasonId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@SubReasonId", subReasonId);
-                cmd.Parameters.AddWithValue("@RejectReason", rejectReason);
+                cmd.Parameters.AddWithValue("@ReasonId", queryReasonId ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ??  (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@@RejectReasonId", rejectReasonId);
                 cmd.Parameters.AddWithValue("@Remarks", remarks ?? "");
                 //cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco ?? "");
                 // Only add the Amount parameter when actionId is 1 (Approve)
@@ -597,18 +597,18 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         //pRemarks.Visible = false;
         pSubReason.Visible = false;
         // Show/hide the remarks TextBox based on selected value
-        if (actionType.SelectedValue == "1") // Assuming "1" is for "Approve"
+        if (actionType.SelectedValue == "2") // Assuming "1" is for "Approve"
         {
             txtRemarks.Visible = true; // Show remarks section
         }
-        else if (actionType.SelectedValue == "5")
+        else if (actionType.SelectedValue == "6")
         {
             pReason.Visible = true;
             //pRemarks.Visible = true;
             txtRemarks.Visible = true;
             BindRejectReason();
         }
-        else if (actionType.SelectedValue == "4")
+        else if (actionType.SelectedValue == "5")
         {
             pReason.Visible = true;
             pSubReason.Visible = true;
