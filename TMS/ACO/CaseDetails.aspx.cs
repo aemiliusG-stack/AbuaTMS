@@ -459,7 +459,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         string roleName = "";
         roleName = cpd.GetUserRole(userId);
         string caseNo = Session["CaseNumber"].ToString();
-        string deductionType = dropDeductionTypeACO.SelectedItem.Text;
+        string deductionType = dropDeductionTypeACO.SelectedItem.Value;
         string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
         //Add Deduction method down here
         decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
@@ -467,7 +467,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
         if (finalDeductedAmount > 0)
         {
-            aco.SaveDeductionAmount(userId, (int)finalDeductedAmount, (int)totalFinalAmountByAco, caseNo, remarks, deductionType);
+            aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount,totalFinalAmountByAco, caseNo, remarks, deductionType);
 
         }
         lbFinalAmount.Text = finalDeductedAmount.ToString();
@@ -511,8 +511,9 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@ActionId", actionId);
                 cmd.Parameters.AddWithValue("@ReasonId", queryReasonId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ??  (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@@RejectReasonId", rejectReasonId);
+                //cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ??  (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ?? "");
+                cmd.Parameters.AddWithValue("@RejectReasonId", rejectReasonId ?? "");
                 cmd.Parameters.AddWithValue("@Remarks", remarks ?? "");
                 //cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco ?? "");
                 // Only add the Amount parameter when actionId is 1 (Approve)
