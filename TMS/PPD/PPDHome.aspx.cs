@@ -106,10 +106,19 @@ public partial class PPD_PPDHome : System.Web.UI.Page
         GridViewRow row = (GridViewRow)btn.NamingContainer;
         Label lbAdmissionId = (Label)row.FindControl("lbAdmissionId");
         Label lbClaimId = (Label)row.FindControl("lbClaimId");
+        Label lbPackageId = (Label)row.FindControl("lbPackageId");
         LinkButton lnkCaseNo = (LinkButton)row.FindControl("lnkCaseNo");
         string CaseNumber = lnkCaseNo.Text.ToString();
         string AdmissionId = lbAdmissionId.Text.ToString();
-        Response.Redirect("PPDPatientDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
+        string PackageId = lbPackageId.Text.ToString();
+        if (!PackageId.Equals("28"))
+        {
+            Response.Redirect("PPDPatientDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
+        }
+        else
+        {
+            Response.Redirect("PPDUnspecifiedCaseDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
+        }
     }
 
 }
