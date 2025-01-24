@@ -878,8 +878,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         pSubReason.Visible = false;
         pUserRole.Visible = false;
         pUserToAssign.Visible = false;
-
-        if (ddlActionType.SelectedValue == "6")
+        if (ddlActionType.SelectedValue == "2")
+        {
+            pRemarks.Visible = true;
+            BindRejectReason();
+        }
+        else if (ddlActionType.SelectedValue == "6")
         {
             pReason.Visible = true;
             pRemarks.Visible = true;
@@ -912,8 +916,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             pUserRole.Visible = false;
             pUserToAssign.Visible = false;
             pTriggerType.Visible = false;
-
-
         }
     }
     protected void getPrimaryDiagnosis()
@@ -952,7 +954,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         try
         {
-
             string patientRedgNo = Session["PatientRegId"] as string;
             string caseNo = Session["CaseNumber"] as string;
             string cardNo = Session["CardNumber"] as string;

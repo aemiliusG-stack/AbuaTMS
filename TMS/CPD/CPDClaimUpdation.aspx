@@ -797,7 +797,7 @@
                                                         <div class="col-md-3 mb-3">
                                                             <div class="form-group">
                                                                 <span class="font-weight-bold text-dark">Anaesthetist Name</span><br />
-                                                                <asp:Label ID="lbAnaesthetistName" runat="server" CssClass="d-block w-50 border-bottom p-1" Text="&nbsp;"></asp:Label>
+                                                                <asp:Label ID="lbAnaesthetistName" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3 mb-3">
@@ -841,10 +841,10 @@
                                                                 <span class="font-weight-bold text-dark">OP Photos/WebEx Taken</span><br />
                                                                 <div class="d-flex">
                                                                     <div class="form-check form-check-inline me-2">
-                                                                        <asp:RadioButton ID="rbOPPhotoYes" runat="server" GroupName="OPPhotoWebEx" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbOPPhotoYes" runat="server" GroupName="OPPhotoWebEx" Enabled="False" Text="Yes" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                     <div class="form-check form-check-inline">
-                                                                        <asp:RadioButton ID="rbOPPhotoNo" runat="server" GroupName="OPPhotoWebEx" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbOPPhotoNo" runat="server" GroupName="OPPhotoWebEx" Enabled="False" Text="No" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -854,10 +854,10 @@
                                                                 <span class="font-weight-bold text-dark">Vedio Recording Done</span><br />
                                                                 <div class="d-flex">
                                                                     <div class="form-check form-check-inline me-2">
-                                                                        <asp:RadioButton ID="rbVedioRecDoneYes" runat="server" GroupName="VedioRecording" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbVedioRecDoneYes" runat="server" GroupName="VedioRecording" Enabled="False" Text="Yes" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                     <div class="form-check form-check-inline">
-                                                                        <asp:RadioButton ID="rbVedioRecDoneNo" runat="server" GroupName="VedioRecording" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbVedioRecDoneNo" runat="server" GroupName="VedioRecording" Enabled="False" Text="No" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -879,10 +879,10 @@
                                                                 <span class="font-weight-bold text-dark">Specimen Removed</span><br />
                                                                 <div class="d-flex">
                                                                     <div class="form-check form-check-inline me-2">
-                                                                        <asp:RadioButton ID="rbSpecimenRemoveYes" runat="server" GroupName="SpecimenRemoved" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbSpecimenRemoveYes" runat="server" GroupName="SpecimenRemoved" Enabled="False" Text="Yes" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                     <div class="form-check form-check-inline">
-                                                                        <asp:RadioButton ID="rbSpecimenRemoveNo" runat="server" GroupName="SpecimenRemoved" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbSpecimenRemoveNo" runat="server" GroupName="SpecimenRemoved" Enabled="False" Text="No" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -916,10 +916,10 @@
                                                                 <span class="font-weight-bold text-dark">Complications If Any</span><br />
                                                                 <div class="d-flex">
                                                                     <div class="form-check form-check-inline me-2">
-                                                                        <asp:RadioButton ID="rbComplicationsYes" runat="server" GroupName="ComplicationIfAny" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbComplicationsYes" runat="server" GroupName="ComplicationIfAny" Enabled="False" Text="Yes" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                     <div class="form-check form-check-inline">
-                                                                        <asp:RadioButton ID="rbComplicationsNo" runat="server" GroupName="ComplicationIfAny" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                        <asp:RadioButton ID="rbComplicationsNo" runat="server" GroupName="ComplicationIfAny" Enabled="False" Text="No" CssClass="form-check-input p-2" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1094,10 +1094,10 @@
                                                                     <span class="font-weight-bold text-dark">Is Special Case</span><br />
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbIsSpecialCaseYes" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsSpecialCaseYes" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="Yes" CssClass="form-check-input p-2" />
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbIsSpecialCaseNo" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbIsSpecialCaseNo" runat="server" GroupName="IsSpecialCase" Enabled="False" Text="No" CssClass="form-check-input p-2" />
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1107,10 +1107,10 @@
                                                                     <span class="font-weight-bold text-dark">Procedure Consent</span><br />
                                                                     <div class="d-flex">
                                                                         <div class="form-check form-check-inline me-2">
-                                                                            <asp:RadioButton ID="rbConsentYes" runat="server" GroupName="ProceduralConsent" Enabled="False" Text="Yes" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbConsentYes" runat="server" GroupName="ProceduralConsent" Enabled="False" Text="Yes" CssClass="form-check-input p-2" />
                                                                         </div>
                                                                         <div class="form-check form-check-inline">
-                                                                            <asp:RadioButton ID="rbConsentNo" runat="server" GroupName="ProceduralConsent" Enabled="False" Text="No" CssClass="form-check-input" />
+                                                                            <asp:RadioButton ID="rbConsentNo" runat="server" GroupName="ProceduralConsent" Enabled="False" Text="No" CssClass="form-check-input p-2" />
                                                                         </div>
                                                                     </div>
                                                                 </div>
