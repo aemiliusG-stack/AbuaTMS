@@ -159,25 +159,25 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             string JustificationFolderName = lbJustificationFolderName.Text.ToString();
             if (EnhancementStatus != null)
             {
-                if (EnhancementStatus.Equals("0"))
+                if (EnhancementStatus.Equals("1"))
                 {
                     lbEnhancementStatus.Text = "Pending";
                     lbEnhancementApprovedDate.Text = "NA";
                     lbEnhancementApprovedDate.Visible = true;
                 }
-                else if (EnhancementStatus.Equals("1"))
+                else if (EnhancementStatus.Equals("2"))
                 {
                     lbEnhancementStatus.Text = "Approved";
                     lbEnhancementApprovedDate.Text = ApprovedDate;
                     lbEnhancementApprovedDate.Visible = true;
                 }
-                else if (EnhancementStatus.Equals("2"))
+                else if (EnhancementStatus.Equals("3"))
                 {
                     lbEnhancementStatus.Text = "Query Raised";
                     lbEnhancementApprovedDate.Text = "NA";
                     lbEnhancementApprovedDate.Visible = true;
                 }
-                else if (EnhancementStatus.Equals("3"))
+                else if (EnhancementStatus.Equals("4"))
                 {
                     lbEnhancementStatus.Text = "Reject";
                     lbEnhancementRejectedDate.Text = RejectedDate;
@@ -290,7 +290,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             pAddReason.Visible = false;
         }
         // Approve Case
-        else if (selectedValue.Equals("1"))
+        else if (selectedValue.Equals("2"))
         {
             pUserRole.Visible = false;
             pReason.Visible = false;
@@ -299,7 +299,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             pAddReason.Visible = false;
         }
         // Forward Case
-        else if (selectedValue.Equals("2"))
+        else if (selectedValue.Equals("3"))
         {
             pUserRole.Visible = true;
             pReason.Visible = false;
@@ -309,7 +309,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             GetForwardUsers();
         }
         // Query Raise Case
-        else if (selectedValue.Equals("4"))
+        else if (selectedValue.Equals("5"))
         {
             pUserRole.Visible = false;
             pReason.Visible = true;
@@ -319,8 +319,8 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             GetQueryReasons();
             GetSubReasons("0");
         }
-        // Reject Enhancement
-        else if (selectedValue.Equals("5"))
+        // Reject Case
+        else if (selectedValue.Equals("6"))
         {
             pUserRole.Visible = false;
             pReason.Visible = true;
@@ -329,8 +329,8 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             pAddReason.Visible = false;
             GetRejectedReasons();
         }
-        // Reject Case
-        else if (selectedValue.Equals("6"))
+        // Reject Enhancement
+        else if (selectedValue.Equals("8"))
         {
             pUserRole.Visible = false;
             pReason.Visible = true;
@@ -345,7 +345,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
     {
         string selectedValue = dlReason.SelectedItem.Value;
         string selectedAction = dlAction.SelectedItem.Value;
-        if (!selectedAction.Equals("5") && !selectedAction.Equals("6"))
+        if (!selectedAction.Equals("6") && !selectedAction.Equals("8"))
         {
             GetSubReasons(selectedValue);
         }
@@ -804,7 +804,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = md.GetMasterActions(hdEnhancementId.Value.ToString() == "0" ? false : true);
+            dt = ppdHelper.GetMasterActions(hdEnhancementId.Value.ToString() == "0" ? false : true, false);
             if (dt != null && dt.Rows.Count > 0)
             {
                 dlAction.Items.Clear();
@@ -849,12 +849,12 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             else
             {
                 // For Case Approval
-                if (selectedValue.Equals("1"))
+                if (selectedValue.Equals("2"))
                 {
                     doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
                 }
                 // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
-                else if (selectedValue.Equals("2"))
+                else if (selectedValue.Equals("3"))
                 {
                     string selectedUserId = dlUserRole.SelectedItem.Value;
                     string selectedUserName = dlUserRole.SelectedItem.Text;
@@ -869,12 +869,12 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                     }
                 }
                 // For Case Raising Query
-                else if (selectedValue.Equals("4"))
+                else if (selectedValue.Equals("5"))
                 {
 
                 }
                 // For Case Reject
-                else if (selectedValue.Equals("5") || selectedValue.Equals("6"))
+                else if (selectedValue.Equals("6") || selectedValue.Equals("8"))
                 {
                     string selectedRejectReason = dlReason.SelectedItem.Value;
                     if (selectedRejectReason.Equals("0"))
@@ -1121,7 +1121,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_InsertActions", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
-            if (ActionId.Equals("1"))
+            if (ActionId.Equals("2"))
             {
                 if (Session["RoleId"].ToString() == "3")
                 {
@@ -1135,13 +1135,13 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 }
                 GetPatientForPreAuthApproval();
             }
-            else if (ActionId.Equals("2"))
+            else if (ActionId.Equals("3"))
             {
                 strMessage = "window.alert('Case Successfully Forwarded To " + ForwardedToUser + "');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 GetPatientForPreAuthApproval();
             }
-            else if (ActionId.Equals("4"))
+            else if (ActionId.Equals("5"))
             {
                 dlAction.SelectedIndex = 0;
                 strMessage = "window.alert('Query Raised Successfully.');";
@@ -1149,13 +1149,13 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 //getPreauthQuery(ClaimId);
                 GetPatientForPreAuthApproval();
             }
-            else if (ActionId.Equals("5"))
+            else if (ActionId.Equals("6"))
             {
                 strMessage = "window.alert('Case Rejected Successfully.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 GetPatientForPreAuthApproval();
             }
-            else if (ActionId.Equals("6"))
+            else if (ActionId.Equals("8"))
             {
                 strMessage = "window.alert('Enhancement Rejected Successfully.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);

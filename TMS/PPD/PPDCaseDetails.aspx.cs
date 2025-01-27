@@ -182,25 +182,25 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             string JustificationFolderName = lbJustificationFolderName.Text.ToString();
             if (EnhancementStatus != null)
             {
-                if (EnhancementStatus.Equals("0"))
+                if (EnhancementStatus.Equals("1"))
                 {
                     lbEnhancementStatus.Text = "Pending";
                     lbEnhancementApprovedDate.Text = "NA";
                     lbEnhancementApprovedDate.Visible = true;
                 }
-                else if (EnhancementStatus.Equals("1"))
+                else if (EnhancementStatus.Equals("2"))
                 {
                     lbEnhancementStatus.Text = "Approved";
                     lbEnhancementApprovedDate.Text = ApprovedDate;
                     lbEnhancementApprovedDate.Visible = true;
                 }
-                else if (EnhancementStatus.Equals("2"))
+                else if (EnhancementStatus.Equals("3"))
                 {
                     lbEnhancementStatus.Text = "Query Raised";
                     lbEnhancementApprovedDate.Text = "NA";
                     lbEnhancementApprovedDate.Visible = true;
                 }
-                else if (EnhancementStatus.Equals("3"))
+                else if (EnhancementStatus.Equals("4"))
                 {
                     lbEnhancementStatus.Text = "Reject";
                     lbEnhancementRejectedDate.Text = RejectedDate;

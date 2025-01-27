@@ -11,7 +11,7 @@
             var actionTypeDropdown = document.getElementById('<%= actionType.ClientID %>');
             var remarksSection = document.getElementById('remarksSection');
 
-            if (actionTypeDropdown.value === '1') { // Assuming 1 is the value for "Approve"
+            if (actionTypeDropdown.value === '2') { // Assuming 1 is the value for "Approve"
                 remarksSection.style.display = 'block'; // Show the remarks section
             } else {
                 remarksSection.style.display = 'none'; // Hide the remarks section

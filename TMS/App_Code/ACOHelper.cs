@@ -77,7 +77,7 @@ public class ACOHelper
     public DataTable GetTechnicalChecklist(string CaseNo)
     {
         dt.Clear();
-        string Query = "SELECT \r\n    t2.TotalPackageCost as TotalClaims,\r\n    t1.InsurerClaimAmountApproved,\r\n    t1.TrustClaimAmountApproved,\r\n    t3.IsSpecialCase,\r\n    t4.DiagnosisSupportedEvidence,\r\n    t4.EvidenceTherapyConducted,\r\n    t4.CaseManagementSTP,\r\n    t4.MandatoryReports\r\nFROM\r\n    TMS_ClaimMaster t1\r\nINNER JOIN \r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId \r\nINNER JOIN \r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId \r\nINNER JOIN \r\n    TMS_CPDTechnicalCkecklist t4 ON t2.CardNumber = t4.CardNumber\r\nLEFT JOIN \r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber AND t5.IsActive = 1 AND t5.IsDeleted = 0\r\nWHERE \r\n    t1.CaseNumber = @CaseNo \r\n    AND t1.IsActive = 1 \r\n    AND t1.IsDeleted = 0";
+        string Query = "SELECT\r\n    t2.TotalPackageCost AS TotalClaims,\r\n    CASE \r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t1.InsurerClaimAmountApproved)\r\n    END AS [InsurerClaimAmountApproved],\r\n    t1.TrustClaimAmountApproved,\r\n    t3.IsSpecialCase,\r\n    t4.DiagnosisSupportedEvidence,\r\n    t4.EvidenceTherapyConducted,\r\n    t4.CaseManagementSTP,\r\n    t4.MandatoryReports\r\nFROM\r\n    TMS_ClaimMaster t1\r\nINNER JOIN\r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId \r\nINNER JOIN\r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId \r\nINNER JOIN\r\n    TMS_CPDTechnicalCkecklist t4 ON t2.CardNumber = t4.CardNumber\r\nLEFT JOIN\r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber \r\n    AND t5.IsActive = 1 \r\n    AND t5.IsDeleted = 0\r\nWHERE\r\n    t1.CaseNumber = @CaseNo\r\n    AND t5.RoleId = 7\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0;";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
@@ -129,7 +129,7 @@ public class ACOHelper
     //}
     public DataTable GetClaimWorkFlow(string claimId)
     {
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t1.RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId WHERE t1.ClaimId = @claimId";
+        string Query = "SELECT t1.ActionDate,\r\nt2.RoleName,\r\nt1.Remarks,\r\nt1.ActionTaken,\r\nt1.Amount,\r\nt3.RejectName AS RejectionReason\r\nFROM TMS_PatientActionHistory t1 \r\nLEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId \r\nLEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId";
         //DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
@@ -186,11 +186,12 @@ public class ACOHelper
                 con.Close();
         }
     }
-    public void SaveDeductionAmount(int userId, int acODeductionAmount, int totalFinalAmountByAco, string caseNo, string remarks, string deductionType)
+    public void SaveDeductionAmount(int userId,int roleId, decimal acODeductionAmount, decimal totalFinalAmountByAco, string caseNo, string remarks, string deductionType)
     {
         SqlCommand cmd = new SqlCommand("ACO_InsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@UserId", userId);
+        cmd.Parameters.AddWithValue("@RoleId", roleId);
         //cmd.Parameters.AddWithValue("@ACODeductionAmount", acODeductionAmount);
         cmd.Parameters.AddWithValue("@deductionAmount", acODeductionAmount);
         cmd.Parameters.AddWithValue("@DeductionType",deductionType);

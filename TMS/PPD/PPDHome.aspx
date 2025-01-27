@@ -60,6 +60,7 @@
                                             <itemtemplate>
                                                 <asp:Label Visible="false" ID="lbAdmissionId" runat="server" Text='<%# Eval("AdmissionId") %>'></asp:Label>
                                                 <asp:Label Visible="false" ID="lbClaimId" runat="server" Text='<%# Eval("ClaimId") %>'></asp:Label>
+                                                <asp:Label Visible="false" ID="lbPackageId" runat="server" Text='<%# Eval("PackageId") %>'></asp:Label>
                                                 <asp:LinkButton ID="lnkCaseNo" runat="server" OnClick="lnkCaseNo_Click" Text='<%# Eval("CaseNumber") %>'></asp:LinkButton>
                                             </itemtemplate>
                                             <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
