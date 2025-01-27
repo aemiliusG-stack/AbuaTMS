@@ -773,10 +773,10 @@
             <asp:Button ID="submitButton" runat="server" Text="Submit" CssClass="btn btn-primary" OnClick="btnSubmit_Click" AutoPostBack="True" />
         </div>
     </div>
-    <asp:Button ID="btnApproveAndPay" runat="server" Text="Approve and Initiate Payment" CssClass="btn btn-primary" OnClick="btnApproveAndPay_Click" />
+   <%-- <asp:Button ID="btnApproveAndPay" runat="server" Text="Approve and Initiate Payment" CssClass="btn btn-primary" OnClick="btnApproveAndPay_Click" />
 <asp:Label ID="Label1" runat="server" Visible="false"></asp:Label>
 <asp:Label ID="Label2" runat="server" Visible="false"></asp:Label>
-    <!-- Note -->
+    <!-- Note -->--%>
     <div class="text-end mt-2">
         <strong style="color: red;">Insurance Wallet Amount Rs.
             <span style="color: red;">0</span>

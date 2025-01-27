@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Reflection.Emit;
+using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebGrease.Activities;
@@ -61,7 +62,64 @@ public partial class SHA_CaseDetails : System.Web.UI.Page
 
 
 
+    //protected async void btnInitiateTransaction_Click(object sender, EventArgs e)
+    //{
+    //    try
+    //    {
+    //        string paymentData = Newtonsoft.Json.JsonConvert.SerializeObject(new
+    //        {
+    //            DebitAccount = "1234567890",
+    //            Beneficiaries = new[]
+    //            {
+    //            new { AccountNumber = "9876543210", Amount = 5000, IFSC = "PUNB0123456" },
+    //            new { AccountNumber = "8765432190", Amount = 3000, IFSC = "PUNB0654321" }
+    //        },
+    //            TransactionReference = string.Format("TXN{0}", DateTime.UtcNow.Ticks),
+    //            TransactionDate = DateTime.UtcNow.ToString("o")
+    //        });
 
+    //        string publicKey = "<PNB_PUBLIC_KEY>";
+    //        string privateKey = "<YOUR_PRIVATE_KEY>";
+    //        string pgpPublicKeyPath = "path/to/pnb-public-key.asc";
+    //        string clientGuid = "7DAASFFD-8295-4B44-AF7F-596772C957EA";
+    //        string entityCode = "KEPL";
+    //        string username = "KEPL_USER_01";
+    //        string password = "your_password";
+
+    //        var picsHandler = new PICSIntegrationHandler();
+
+    //        string response = await picsHandler.ProcessTransactionAsync(
+    //            paymentData,
+    //            publicKey,
+    //            privateKey,
+    //            pgpPublicKeyPath,
+    //            clientGuid,
+    //            entityCode,
+    //            username,
+    //            password
+    //        );
+
+    //        lblSuccess.Text = string.Format("Transaction successfully initiated. Response: {0}", response);
+    //        lblSuccess.CssClass = "text-success";
+    //        lblSuccess.Visible = true;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        lblError.Text = string.Format("Error initiating transaction: {0}", ex.Message);
+    //        lblError.CssClass = "text-danger";
+    //        lblError.Visible = true;
+    //    }
+    //}
+
+
+    private string GetSHA256Hash(string input)
+    {
+        using (var sha256 = System.Security.Cryptography.SHA256.Create())
+        {
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
+        }
+    }
 
 
 
