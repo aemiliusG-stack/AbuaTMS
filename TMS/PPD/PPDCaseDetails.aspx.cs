@@ -704,7 +704,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             Button btnViewaudit = (Button)e.Row.FindControl("btnViewaudit");
             Label lbIsQueryReplied = (Label)e.Row.FindControl("lbIsQueryReplied");
             string IsQueryReplied = lbIsQueryReplied.Text.ToString();
-            if (IsQueryReplied != null && !IsQueryReplied.Equals(""))
+            if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
             {
                 btnViewaudit.Text = "View Audit";
                 btnViewaudit.Enabled = true;

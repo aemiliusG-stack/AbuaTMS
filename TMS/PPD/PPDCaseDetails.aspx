@@ -942,14 +942,21 @@
                                                                 <asp:Label ID="lbSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="30%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="25%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PPD Query">
                                                             <ItemTemplate>
                                                                 <asp:Label ID="lbPpdQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="25%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="15%" />
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Medco Reply">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lbMedcoReply" runat="server" Text='<%# Eval("QueryReply") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                            <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="15%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Audit">
                                                             <ItemTemplate>

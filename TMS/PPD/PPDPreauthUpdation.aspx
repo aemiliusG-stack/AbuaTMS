@@ -995,7 +995,7 @@
                                                         <asp:TemplateField HeaderText="Audit">
                                                             <ItemTemplate>
                                                                 <asp:Label ID="lbIsQueryReplied" Visible="false" runat="server" Text='<%# Eval("IsQueryReplied") %>'></asp:Label>
-                                                                <asp:Label ID="lbQueryFolder" Visible="false" runat="server" Text='<%# Eval("QueryFolderName") %>'></asp:Label>
+                                                                <asp:Label ID="lbQueryFolderName" Visible="false" runat="server" Text='<%# Eval("QueryFolderName") %>'></asp:Label>
                                                                 <asp:Label ID="lbQueryUploadedFileName" Visible="false" runat="server" Text='<%# Eval("QueryUploadedFileName") %>'></asp:Label>
                                                                 <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewAudit_Click" />
                                                             </ItemTemplate>
