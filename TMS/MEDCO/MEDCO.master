@@ -21,11 +21,21 @@
     <link href="../css/customStyle.css" rel="stylesheet" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
+    <style type="text/css">
+        .masterCaseCount {
+            height: 20px;
+            width: 20px;
+            background-color: red;
+            margin-right: 10px;
+            border-radius: 2px;
+            color: white;
+            text-align: center;
+        }
+    </style>
 </head>
 <body class="asby-theme">
     <form id="form1" runat="server">
         <div id="wrapper">
-
             <nav class="navbar-default navbar-static-side" role="navigation">
                 <div class="sidebar-collapse">
                     <ul class="nav metismenu" id="side-menu">
@@ -60,15 +70,17 @@
                                 <span class="fa arrow"></span>
                             </a>
                             <ul class="nav nav-second-level collapse">
-                                <li><a href="PreAuth.aspx">Initiate PreAuth</a></li>
-                                <li><a href="PatientDischarge.aspx">Cases For Surgery/Discharge</a></li>
-                                <li><a href="#.">PreAuth Query Reply</a></li>
-                                <li><a href="PreAuthCancellation.aspx">Cases For Cancellation</a></li>
-                                <li><a href="ReferPatient.aspx">Refer Patients</a></li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;">
+                                    <a href="PreAuth.aspx">Initiate PreAuth</a>
+                                    <asp:Label ID="lbPreAuthCount" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label>
+                                </li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="PatientDischarge.aspx">Cases For Surgery/Discharge</a><asp:Label ID="lbTreatmentDischargecount" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="PreAuthQueryReply.aspx">PreAuth Query Reply</a><asp:Label ID="lbPreAuthQueryReply" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="PreAuthCancellation.aspx">Cases For Cancellation</a><asp:Label ID="lbCasesForCancellation" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="ReferPatient.aspx">Refer Patients</a><asp:Label ID="lbReferPatient" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
                             </ul>
                         </li>
                     </ul>
-
                 </div>
             </nav>
 
@@ -139,6 +151,7 @@
         <asp:HiddenField ID="hdUserName" runat="server" Visible="false" />
         <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
         <asp:HiddenField ID="hdRoleName" runat="server" Visible="false" />
+        <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
     </form>
     <script src="../js/jquery-3.1.1.min.js"></script>
     <script src="../js/plugins/sweetalert/sweetalert.min.js"></script>

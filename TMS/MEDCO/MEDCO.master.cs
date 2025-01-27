@@ -12,6 +12,8 @@ partial class MEDCO_MEDCO : System.Web.UI.MasterPage
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     string pageName;
     private MasterData md = new MasterData();
+    private LoginModule lm = new LoginModule();
+    private DataTable dt = new DataTable();
 
     //const string AntiXsrfTokenKey = "__AntiXsrfToken";
     //const string AntiXsrfUserNameKey = "__AntiXsrfUserName";
@@ -83,11 +85,43 @@ partial class MEDCO_MEDCO : System.Web.UI.MasterPage
                     hdUserId.Value = Session["UserId"].ToString();
                     hdRoleId.Value = Session["RoleId"].ToString();
                     hdRoleName.Value = Session["RoleName"].ToString();
+                    hdHospitalId.Value = Session["HospitalId"].ToString();
+                    GetCaseCount();
                 }
                 else
                 {
                     Response.Redirect("~/Unauthorize.aspx", false);
                 }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void GetCaseCount()
+    {
+        try
+        {
+            dt = lm.getMEDCOCaseCount(Convert.ToInt32(hdHospitalId.Value));
+            if (dt.Rows.Count > 0)
+            {
+                lbPreAuthCount.Text = dt.Rows[0]["PreAuthOrReferCase"].ToString();
+                lbTreatmentDischargecount.Text = dt.Rows[0]["CasesForTreatmentDischargeAndCancelPatient"].ToString();
+                lbCasesForCancellation.Text = dt.Rows[0]["CasesForTreatmentDischargeAndCancelPatient"].ToString();
+                lbReferPatient.Text = dt.Rows[0]["PreAuthOrReferCase"].ToString();
+            }
+            else
+            {
+                lbPreAuthCount.Text = "0";
+                lbTreatmentDischargecount.Text = "0";
+                lbCasesForCancellation.Text = "0";
+                lbReferPatient.Text = "0";
             }
         }
         catch (Exception ex)

@@ -63,6 +63,17 @@ public class LoginModule
         {
         }
     }
+    public DataTable getMEDCOCaseCount(int HospitalId)
+    {
+        dtTemp.Clear();
+        string Query = "SELECT COUNT(CASE WHEN CurrentAction = 0 AND CAST(RegDate AS DATE) = CAST(GETDATE() AS DATE) THEN PatientRegId END) AS PreAuthOrReferCase, COUNT(CASE WHEN CurrentAction = 1 AND CAST(RegDate AS DATE) = CAST(GETDATE() AS DATE) THEN PatientRegId END) AS CasesForTreatmentDischargeAndCancelPatient FROM TMS_PatientRegistration where HospitalId = @HospitalId;";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
+    }
     public DataTable getMEDCODashboardData(int HospitalId)
     {
         dtTemp.Clear();

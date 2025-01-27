@@ -44,3 +44,13 @@ function hideDocumentViewModal() {
     $('.modal-backdrop').remove();
     $('#modalDocumentView').modal('hide');
 }
+function showContentModal() {
+    $('#contentModal').modal('hide');
+    $('.modal-backdrop').remove();
+    $('#contentModal').modal('show');
+}
+function hideContentModal() {
+    $('#contentModal').modal('hide');
+    $('.modal-backdrop').remove();
+    $('#contentModal').modal('hide');
+}

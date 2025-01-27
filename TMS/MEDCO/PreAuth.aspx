@@ -131,7 +131,6 @@
                                                                     <asp:Button ID="btnUploadConsent" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadConsent_Click" />
                                                                 </div>
                                                             </td>
-                                                            <td>NA</td>
                                                             <td>
                                                                 <asp:LinkButton ID="btnConsentDocument" runat="server" enabled="false"
                                                                     Style="font-size: 12px;" OnClick="btnConsentDocument_Click">
@@ -140,6 +139,7 @@
                                                                     <asp:Label ID="lbConsentStatus" runat="server" Text='NA'></asp:Label>
                                                                 </asp:LinkButton>
                                                             </td>
+                                                            <td>NA</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Health Card</td>
@@ -148,15 +148,15 @@
                                                                     <asp:FileUpload ID="fuHealthCard" runat="server" />
                                                                     <asp:Button ID="btnUploadHealthCard" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadHealthCard_Click" />
                                                                 </div>
-                                                                <td>NA</td>
-                                                            <td>
-                                                                <asp:LinkButton ID="btnHealthDocument" runat="server" enabled="false"
-                                                                    Style="font-size: 12px;" OnClick="btnHealthDocument_Click">
-                                                                    <asp:Label Visible="false" ID="lbHealthFolderName" runat="server" Text=''></asp:Label>
-                                                                    <asp:Label Visible="false" ID="lbHealthUploadedFileName" runat="server" Text=''></asp:Label>
-                                                                    <asp:Label ID="lbHealthStatus" runat="server" Text='NA'></asp:Label>
-                                                                </asp:LinkButton>
-                                                            </td>
+                                                                <td>
+                                                                    <asp:LinkButton ID="btnHealthDocument" runat="server" enabled="false"
+                                                                        Style="font-size: 12px;" OnClick="btnHealthDocument_Click">
+                                                                        <asp:Label Visible="false" ID="lbHealthFolderName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label Visible="false" ID="lbHealthUploadedFileName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label ID="lbHealthStatus" runat="server" Text='NA'></asp:Label>
+                                                                    </asp:LinkButton>
+                                                                </td>
+                                                            <td>NA</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Patient Photo<span class="text-danger">*</span></td>
@@ -166,7 +166,6 @@
                                                                     <asp:Button ID="btnUploadPatientPhoto" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadPatientPhoto_Click" />
                                                                 </div>
                                                             </td>
-                                                            <td>NA</td>
                                                             <td>
                                                                 <asp:LinkButton ID="btnPatientDocument" runat="server" enabled="false"
                                                                     Style="font-size: 12px;" OnClick="btnPatientDocument_Click">
@@ -175,6 +174,7 @@
                                                                     <asp:Label ID="lbPatientPhotoStatus" runat="server" Text='NA'></asp:Label>
                                                                 </asp:LinkButton>
                                                             </td>
+                                                            <td>NA</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -203,14 +203,16 @@
                 <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header round" style="background-color: #007e72;">
-                            <h2 class="modal-title text-white" style="margin: 0px !important;"><asp:Label ID="lbTitle" runat="server" Text="" class="modal-title font-weight-bolder" style="font-size: 20px; color: white;"></asp:Label></h2>
+                            <h2 class="modal-title text-white" style="margin: 0px !important;">
+                                <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title font-weight-bolder" style="font-size: 20px; color: white;"></asp:Label>
+                            </h2>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
                             <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
-                                <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Document View" style="width:80%; height:80%;"></asp:Image>
+                                <asp:Image ID="imgChildView" runat="server" class="img-fluid" AlternateText="Document View" style="width: 80%; height: 80%;"></asp:Image>
                             </div>
                         </div>
                         <div class="modal-footer">

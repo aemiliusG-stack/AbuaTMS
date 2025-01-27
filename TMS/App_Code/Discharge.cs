@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
@@ -86,6 +84,17 @@ public class Discharge
         sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
         sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
+    }
+    public DataTable GetStratificationForEnhancement(string ProcedureId)
+    {
+        dtTemp.Clear();
+        string Query = "if exists(select StratificationId from TMS_MapProcedureStratification where ProcedureId IN(@ProcedureId) AND IsActive = 1)BEGIN select DISTINCT 1 as Id, t1.StratificationId, t2.StratificationCode, t2.StratificationName, CONCAT(t2.StratificationCode, ', ', t2.StratificationName, ' - ', t2.StratificationDetail) as StratificationDetail, REPLACE(t2.StratificationAmount, 'None','0') as StratificationAmount from TMS_MapProcedureStratification t1 LEFT JOIN TMS_MasterStratificationMaster t2  ON t1.StratificationId = t2.StratificationId where t1.ProcedureId IN(@ProcedureId) AND t1.IsActive = 1 END ELSE BEGIN select 1 as Id, 0 as StratificationId END";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
         con.Open();
         sd.Fill(dtTemp);
         con.Close();
