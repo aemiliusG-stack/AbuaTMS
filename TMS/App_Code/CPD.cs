@@ -91,17 +91,35 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
+    public DataTable GetAddDeduction_CaseSearch(string CaseNo)
+    {
+        string Query = "select t3.RoleName, t2.DeductionType, t1.DeductionAmt, t1.TotalAmtAfterDeduction, t1.Remarks, t1.CreatedOn from TMS_ClaimAddDeduction t1 left join TMS_MasterDeductionTypeMaster t2 on t1.DeductionType = t2.DeductionTypeId left join TMS_Roles t3 on t1.RoleId = t3.RoleId where t1.CaseNumber = @CaseNo";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+        con.Open();
+        sd.Fill(ds);
+        con.Close();
+        return ds.Tables[0];
+    }
+    public bool IsCaseNumberExists(string caseNo)
+    {
+        bool exists = false;
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_ClaimAddDeduction WHERE CaseNumber = @CaseNo AND IsActive = 1", con);
+        cmd.Parameters.AddWithValue("@CaseNo", caseNo);
+            con.Open();
+            int count = Convert.ToInt32(cmd.ExecuteScalar());
+            if (count > 0)
+            {
+                exists = true;
+            }
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                con.Close();
+            }
+            
+        return exists;
+    }
 
-    //public DataTable GetCaseType()
-    //{
-    //    string Query = "SELECT Id, Title FROM TMS_CaseType WHERE IsActive = 1";
-    //    SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-    //    con.Open();
-    //    sd.Fill(ds);
-    //    con.Close();
-    //    dt = ds.Tables[0];
-    //    return dt;
-    //}
     public DataTable GetHospitalName()
     {
         string Query = "select Id, HospitalName from HEM_HospitalDetails";
@@ -709,6 +727,20 @@ public class CPD
         string query = "select t1.PatientRegId, t3.PrimaryDiagnosisName, t2.PDId, t2.ICDValue from TMS_PatientAdmissionDetail t1 inner join TMS_PatientSecondaryDiagnosis t2 on t1.CardNumber = t2.CardNumber inner join TMS_MasterPrimaryDiagnosis t3 on t2.PDId = t3.PDId where t1.CaseNumber = @CaseNo AND t2.IsActive = 1 AND t2.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+        con.Open();
+        sd.Fill(dtTemp);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        return dtTemp;
+    }
+    public DataTable GetPatientSecondaryDiagnosis_CaseSearch(string CardNo)
+    {
+        dtTemp.Clear();
+        string query = "SELECT T1.ICDValue, T1.PrimaryDiagnosisName, T3.RoleName FROM TMS_MasterPrimaryDiagnosis T1 LEFT JOIN TMS_PatientSecondaryDiagnosis T2 ON T1.PDId = T2.PDId LEFT JOIN TMS_Roles T3 ON T2.RegisteredBy = T3.RoleId WHERE  T2.CardNumber = @CardNo AND T2.IsActive = 1 AND T2.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNo", CardNo);
         con.Open();
         sd.Fill(dtTemp);
         if (con.State == ConnectionState.Open)

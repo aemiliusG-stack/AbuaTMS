@@ -143,16 +143,16 @@
                         </li>--%>
                         <li>
                             <asp:LinkButton ID="btnDashboard" runat="server" OnClick="btnDashboard_Click">
-    <i class="fa fa-dashboard"></i> <!-- Dashboard uses 'fa-dashboard' -->
-    <span class="nav-label">Dashboard</span>
+                              <i class="fa fa-dashboard"></i> <!-- Dashboard uses 'fa-dashboard' -->
+                              <span class="nav-label">Dashboard</span>
                             </asp:LinkButton>
                         </li>
-                        <li>
+                       <%-- <li>
                             <a href="../CPD/CPDClaimUpdateFraudulent.aspx">
                                 <i class="fa fa-th-large"></i>
                                 <span class="nav-label">Claim Update For Fraudulent/Partial Amount Cases</span>
                             </a>
-                        </li>
+                        </li>--%>
                         <li>
                             <a href="../CPD/CPDCaseSearch.aspx">
                                 <i class="bi bi-search"></i>
@@ -160,7 +160,7 @@
 
                             </a>
                         </li>
-                        <li>
+                       <%-- <li>
                             <a href="#">
                                 <i class="bi bi-coin"></i>
                                 <span class="nav-label">Offline Cases</span>
@@ -173,7 +173,7 @@
                                 <li><a href="../CPD/CPDClaimUpdation.aspx">Offline Cases Search</a></li>
 
                             </ul>
-                        </li>
+                        </li>--%>
                         <li>
                             <a href="#">
                                 <i class="bi bi-coin"></i>

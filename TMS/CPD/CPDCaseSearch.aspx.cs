@@ -204,7 +204,8 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
     {
         try
         {
-            SqlParameter[] parameters = new SqlParameter[] {
+            SqlParameter[] parameters = new SqlParameter[] 
+            {
             CreateSqlParameter("@CaseNumber", caseNumber),
             CreateSqlParameter("@CardNumber", cardNumber),
             CreateSqlParameter("@PStateId", patientStateId),
@@ -213,7 +214,7 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
             CreateSqlParameter("@ProcedureId", procedureId),
             CreateSqlParameter("@CaseType", caseType)
 
-        };
+             };
 
             if (con.State == ConnectionState.Closed)
             {
@@ -244,6 +245,24 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
                 con.Close();
             }
         }
+    }
+    protected void gvCaseSearch_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            int rowIndex = e.Row.RowIndex + 1 + gvCaseSearch.PageIndex * gvCaseSearch.PageSize;
+            Label lblSlNo = (Label)e.Row.FindControl("lbSlNo");
+            if (lblSlNo != null)
+            {
+                lblSlNo.Text = rowIndex.ToString();
+            }
+        }
+    }
+
+    protected void gridCaseSearch_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        gvCaseSearch.PageIndex = e.NewPageIndex;
+        LoadData(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
     }
 
     protected void btnCPDSearch_Click(object sender, EventArgs e)
@@ -278,18 +297,7 @@ public partial class CPD_CPDCaseSearch : System.Web.UI.Page
         }
         return param;
     }
-    protected void gvCaseSearch_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowType == DataControlRowType.DataRow)
-        {
-            int rowIndex = e.Row.RowIndex + 1;
-            Label lblSlNo = (Label)e.Row.FindControl("lbSlNo");
-            if (lblSlNo != null)
-            {
-                lblSlNo.Text = rowIndex.ToString();
-            }
-        }
-    }
+ 
     protected void btnCPDReset_Click1(object sender, EventArgs e)
     {
         ResetControls(this);

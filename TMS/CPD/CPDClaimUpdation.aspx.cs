@@ -45,8 +45,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             string patientRedgNo = Session["PatientRegId"] as string;
 
             BindPatientName();
-            gvQuestionnaire.DataSource = CreateQuestionnaireData();
-            gvQuestionnaire.DataBind();
+            
 
 
         }
@@ -165,6 +164,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         BindNonTechnicalChecklist(caseNo);
                         getTreatmentDischarge();
                         BindDeductionType();
+                        gvQuestionnaire.DataSource = CreateQuestionnaireData();
+                        gvQuestionnaire.DataBind();
                     }
                     else
                     {
@@ -1389,89 +1390,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
         }
     }
-    //public void doAction(string ClaimId, string UserId, string ForwardedToId, string ForwardedToUser, string ActionId, string ReasonId, string SubReasonId, string RejectReason, string Remarks)
-    //{
-    //    try
-    //    {
-    //        // Determine the amount to insert based on the conditions
-    //        string finalAmount = !string.IsNullOrEmpty(tbFinalAmtAfterDeduction.Text)
-    //                             ? tbFinalAmtAfterDeduction.Text
-    //                             : tbInsuranceApprovedAmt.Text;
-
-    //        SqlParameter[] p = new SqlParameter[9]; // Add one more parameter
-    //        p[0] = new SqlParameter("@ClaimId", ClaimId);
-    //        p[0].DbType = DbType.String;
-    //        p[1] = new SqlParameter("@UserId", UserId);
-    //        p[1].DbType = DbType.String;
-    //        p[2] = new SqlParameter("@ForwardedToId", ForwardedToId);
-    //        p[2].DbType = DbType.String;
-    //        p[3] = new SqlParameter("@ActionId", ActionId);
-    //        p[3].DbType = DbType.String;
-    //        p[4] = new SqlParameter("@ReasonId", ReasonId);
-    //        p[4].DbType = DbType.String;
-    //        p[5] = new SqlParameter("@SubReasonId", SubReasonId);
-    //        p[5].DbType = DbType.String;
-    //        p[6] = new SqlParameter("@RejectReason", RejectReason);
-    //        p[6].DbType = DbType.String;
-    //        p[7] = new SqlParameter("@Remarks", Remarks);
-    //        p[7].DbType = DbType.String;
-    //        p[8] = new SqlParameter("@Amount", finalAmount); // Add new parameter for the amount
-    //        p[8].DbType = DbType.String;
-
-    //        ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDInsertActions", p);
-
-    //        if (con.State == ConnectionState.Open)
-    //            con.Close();
-
-    //        if (ActionId.Equals("1"))
-    //        {
-    //            if (Session["RoleId"].ToString() == "7")
-    //            {
-    //                strMessage = "window.alert('Claim has been approved by CPD(Insurer). " + caseNo + "');window.location.reload();";
-    //                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-    //            }
-    //            else if (Session["RoleId"].ToString() == "8")
-    //            {
-    //                strMessage = "window.alert('Claim has been approved by CPD(Trust). " + caseNo + "');window.location.reload();";
-    //                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-    //            }
-    //            BindPatientName();
-    //        }
-    //        else if (ActionId.Equals("2"))
-    //        {
-    //            strMessage = "window.alert('Case Successfully Forwarded To " + ForwardedToUser + "');window.location.reload();";
-    //            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-    //            BindPatientName();
-    //        }
-    //        else if (ActionId.Equals("4"))
-    //        {
-    //            strMessage = "window.alert('Query Raised Successfully.');window.location.reload();";
-    //            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-    //            BindPatientName();
-    //        }
-    //        else if (ActionId.Equals("5"))
-    //        {
-    //            strMessage = "window.alert('Case Rejected Successfully.');window.location.reload();";
-    //            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-    //            BindPatientName();
-    //        }
-
-    //        cbTerms.Checked = false;
-    //        tbRejectRemarks.Text = "";
-    //        pUserRole.Visible = false;
-    //        pReason.Visible = false;
-    //        pSubReason.Visible = false;
-    //        pRemarks.Visible = false;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        if (con.State == ConnectionState.Open)
-    //        {
-    //            con.Close();
-    //        }
-    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-    //    }
-    //}
 
     public void getClaimQuery(string ClaimId)
     {
