@@ -128,7 +128,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
         lnkPreauthorization.CssClass = "nav-link nav-attach";
         lnkDischarge.CssClass = "nav-link active nav-attach";
-        getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        getDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
     }
 
     protected void btnTransactionDataReferences_Click(object sender, EventArgs e)
@@ -327,7 +327,6 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     DateTime admissionDate = Convert.ToDateTime(dt.Rows[0]["AdmissionDate"].ToString().Trim());
                     string IsDischarged = dt.Rows[0]["IsDischarged"].ToString().Trim();
                     Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
-                    Session["ClaimId"] = dt.Rows[0]["ClaimId"].ToString().Trim();
                     hdEnhancementId.Value = dt.Rows[0]["EnhancementId"].ToString().Trim();
                     hdCaseId.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
@@ -626,16 +625,8 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                 tbTotalPackageCost.Text = dt.Rows[0]["TotalPackageCost"].ToString();
                 tbImplantCost.Text = dt.Rows[0]["ImplantAmount"].ToString();
                 lbIncentivePercentage.Text = dt.Rows[0]["IncentivePercentage"].ToString() + " %";
-                if (Session["RoleId"].ToString() == "3")
-                {
-                    lbRoleStatus.Text = "The amount liable by insurance is";
-                    tbAmountLiable.Text = dt.Rows[0]["InsurerClaimAmountRequested"].ToString();
-                }
-                else if (Session["RoleId"].ToString() == "4")
-                {
-                    lbRoleStatus.Text = "The amount liable by trust is";
-                    tbAmountLiable.Text = dt.Rows[0]["TrustClaimAmountRequested"].ToString();
-                }
+                tbAmountLiableInsurance.Text = dt.Rows[0]["InsurerClaimAmountRequested"].ToString();
+                tbAmountLiableTrust.Text = dt.Rows[0]["TrustClaimAmountRequested"].ToString();
             }
         }
         catch (Exception ex)
@@ -913,6 +904,91 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
     }
 
+    public void getDischargeDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetDischargeDocuments(HospitalId, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridDischargeDocument.DataSource = dt;
+                gridDischargeDocument.DataBind();
+            }
+            else
+            {
+                gridDischargeDocument.DataSource = null;
+                gridDischargeDocument.DataBind();
+                panelNoDischrage.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridDischargeDocument_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
+            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+            string DocumentFor = lbDocumentFor.Text.ToString();
+            if (DocumentFor == "1")
+            {
+                lbDocumentFor.Text = "Pre Investigation";
+            }
+            else
+            {
+                lbDocumentFor.Text = "Post Investigation";
+            }
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewDischargeDocument.Text = "No Document";
+                btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewDischargeDocument.Text = "View Document";
+                btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnViewDischargeDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbDocumentName = (Label)row.FindControl("lbDocumentName");
+            Label lbFolderName = (Label)row.FindControl("lbFolder");
+            Label lbFileName = (Label)row.FindControl("lbUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbDocumentName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     public void getSurgeonDetails(string DischargeId)
     {
         try
@@ -1076,9 +1152,11 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         {
             DataTable dtSpecialDocument = new DataTable();
             DataTable dtManditoryDocument = new DataTable();
+            DataTable dtDischargeDocument = new DataTable();
             List<string> images = new List<string>();
             dtSpecialDocument = ppdHelper.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
-            dtManditoryDocument = ppdHelper.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value); ;
+            dtManditoryDocument = ppdHelper.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtDischargeDocument = ppdHelper.GetDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
             if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
             {
                 foreach (DataRow row in dtManditoryDocument.Rows)
@@ -1098,6 +1176,22 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             if (dtSpecialDocument != null && dtSpecialDocument.Rows.Count > 0)
             {
                 foreach (DataRow row in dtSpecialDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (dtDischargeDocument != null && dtDischargeDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtDischargeDocument.Rows)
                 {
                     string folderName = row["FolderName"].ToString().Trim();
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";

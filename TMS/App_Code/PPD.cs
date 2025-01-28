@@ -51,7 +51,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -85,7 +85,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -159,7 +159,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -186,7 +186,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
 
@@ -216,7 +216,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -243,7 +243,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -269,7 +269,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -296,7 +296,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -322,7 +322,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
 
@@ -351,7 +351,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
 
@@ -379,7 +379,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
 
@@ -408,7 +408,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
 
@@ -449,7 +449,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
 
@@ -480,7 +480,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
 
@@ -492,7 +492,7 @@ public class PPDHelper
         try
         {
             DataTable dt = new DataTable();
-            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
+            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 1 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
             sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
@@ -510,7 +510,35 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
+            }
+        }
+    }
+
+    public DataTable GetDischargeDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 2 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
             }
         }
     }
@@ -545,7 +573,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -555,7 +583,7 @@ public class PPDHelper
         try
         {
             DataTable dt = new DataTable();
-            string Query = "SELECT COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustToday, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 2 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerAssignedToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 2 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerAssignedOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 2 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustAssignedToday, COUNT(CASE WHEN t2.ForwardActionTrust = 2 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustAssignedOverall,COUNT(CASE WHEN CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PreauthCountToday, COUNT(t1.AdmissionId) AS PreauthCountOverall FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId";
+            string Query = "SELECT COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustToday, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 3 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerAssignedToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 3 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPPDInsurerAssignedOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 3 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustAssignedToday, COUNT(CASE WHEN t2.ForwardActionTrust = 3 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPPDTrustAssignedOverall, COUNT(CASE WHEN CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PreauthCountToday, COUNT(t1.AdmissionId) AS PreauthCountOverall FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
             sd.Fill(dt);
@@ -571,7 +599,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -609,7 +637,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -648,7 +676,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -675,7 +703,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }
@@ -702,7 +730,7 @@ public class PPDHelper
             if (con != null)
             {
                 con.Close();
-                
+
             }
         }
     }

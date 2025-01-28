@@ -765,16 +765,10 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
                 tbTotalPackageCost.Text = dt.Rows[0]["TotalPackageCost"].ToString();
                 tbImplantCost.Text = dt.Rows[0]["ImplantAmount"].ToString();
                 lbIncentivePercentage.Text = dt.Rows[0]["IncentivePercentage"].ToString() + " %";
-                if (Session["RoleId"].ToString() == "3")
-                {
-                    lbRoleStatus.Text = "The amount liable by insurance is";
-                    tbAmountLiable.Text = dt.Rows[0]["InsurerClaimAmountRequested"].ToString();
-                }
-                else if (Session["RoleId"].ToString() == "4")
-                {
-                    lbRoleStatus.Text = "The amount liable by trust is";
-                    tbAmountLiable.Text = dt.Rows[0]["TrustClaimAmountRequested"].ToString();
-                }
+                hdInsurerAmount.Value = dt.Rows[0]["InsurerClaimAmountRequested"].ToString();
+                hdTrustAmount.Value = dt.Rows[0]["TrustClaimAmountRequested"].ToString();
+                tbAmountLiableInsurance.Text = hdInsurerAmount.Value;
+                tbAmountLiableTrust.Text = hdTrustAmount.Value;
             }
         }
         catch (Exception ex)
@@ -840,7 +834,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
                 // For Case Approval
                 if (selectedValue.Equals("2"))
                 {
-                    doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
+                    doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
                 }
                 // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
                 else if (selectedValue.Equals("3"))
@@ -854,7 +848,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
                     }
                     else
                     {
-                        doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), selectedUserId, selectedUserName, selectedValue, "", "", tbRemark.Text.ToString() + "");
+                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, selectedUserId, selectedUserName, selectedValue, "", "", tbRemark.Text.ToString() + "");
                     }
                 }
                 // For Case Raising Query
@@ -873,7 +867,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
                     }
                     else
                     {
-                        doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, selectedRejectReason, "", tbRemark.Text.ToString() + "");
+                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedRejectReason, "", tbRemark.Text.ToString() + "");
                     }
                 }
             }
@@ -990,7 +984,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
     public void getForwardUsers()
     {
         DataTable dt = new DataTable();
-        dt = ppdHelper.GetUsersByRole(Session["RoleId"].ToString(), Session["UserId"].ToString());
+        dt = ppdHelper.GetUsersByRole(Session["RoleId"].ToString(), hdUserId.Value);
         if (dt != null && dt.Rows.Count > 0)
         {
             dlUserRole.Items.Clear();
@@ -1086,7 +1080,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             }
             else
             {
-                doAction(Session["ClaimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
+                doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
             }
         }
     }
@@ -1110,7 +1104,7 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             p[5].DbType = DbType.String;
             p[6] = new SqlParameter("@Remarks", Remarks);
             p[6].DbType = DbType.String;
-            p[7] = new SqlParameter("@Amount", Convert.ToDecimal(tbAmountLiable.Text.ToString()));
+            p[7] = new SqlParameter("@Amount", Convert.ToDecimal(Session["RoleId"].ToString() == "3" ? hdInsurerAmount.Value : hdTrustAmount.Value));
             p[7].DbType = DbType.Decimal;
             p[8] = new SqlParameter("@EnhancementId", hdEnhancementId.Value.ToString());
             p[8].DbType = DbType.String;

@@ -96,6 +96,8 @@
         <ContentTemplate>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdInsurerAmount" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdTrustAmount" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdCaseId" runat="server" Visible="false" />
@@ -860,7 +862,7 @@
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <span class="form-label fw-semibold">
-                                                            <asp:Label ID="lbRoleStatus" runat="server" Text="The amount liable is"></asp:Label>
+                                                            <asp:Label ID="lbInsurance" runat="server" Text="The amount liable by Insurance is"></asp:Label>
                                                             <span class="text-danger">*</span>
                                                         </span>
                                                     </div>
@@ -869,7 +871,22 @@
                                                             <div class="input-group-text">
                                                                 <i class="fa fa-inr"></i>
                                                             </div>
-                                                            <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbAmountLiable" class="form-control"></asp:TextBox>
+                                                            <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbAmountLiableInsurance" class="form-control"></asp:TextBox>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3"></div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <span class="form-label fw-semibold">
+                                                            <asp:Label ID="lbTrust" runat="server" Text="The amount liable by Trust is"></asp:Label>
+                                                            <span class="text-danger">*</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">
+                                                                <i class="fa fa-inr"></i>
+                                                            </div>
+                                                            <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isNumeric(event)" ID="tbAmountLiableTrust" class="form-control"></asp:TextBox>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
