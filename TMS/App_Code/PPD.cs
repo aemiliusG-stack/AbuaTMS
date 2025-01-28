@@ -111,7 +111,7 @@ public class PPDHelper
             {
                 if (EnhancementTaken)
                 {
-                    Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Send To Medical Audit";
+                    Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Send To Medical Audit'";
                 }
                 else
                 {
