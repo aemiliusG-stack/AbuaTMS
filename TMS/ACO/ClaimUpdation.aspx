@@ -56,6 +56,10 @@
 
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
+    <asp:HiddenField ID="hdInsurerAmount" runat="server" Visible="false" />
+    <asp:HiddenField ID="hdTrustAmount" runat="server" Visible="false" />
+    <asp:HiddenField ID="hdClaimId" runat="server" Visible="false" />
+    <asp:HiddenField ID="hdRemarks" runat="server" Visible="false" />
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox">
@@ -99,6 +103,7 @@
                     <div class="row mt-3">
                         <div class="col-md-12 text-center">
                             <asp:Label ID="lblError" runat="server" CssClass="text-danger" Visible="False"></asp:Label>
+                            <asp:Label ID="lblSuccess" runat="server" CssClass="text-danger" Visible="False"></asp:Label>
                         </div>
                     </div>
                     <!-- Search and Reset Buttons -->
@@ -150,83 +155,205 @@
             </p>
         </div>
     </div>
+    <div class="col-lg-12">
+        <div class="ibox-content">
+            <div class="form-group  row">
+                <div class="col-md-12 table-responsive mt-2">
+                    <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
+                    <asp:GridView ID="gridrptClaimCases" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                        <AlternatingRowStyle BackColor="Gainsboro" />
+                        <Columns>
+                            <asp:TemplateField HeaderText="Sl No.">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex+1 %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Checkbox">
+                                <HeaderTemplate>
+                                    <asp:CheckBox ID="chkSelectAll" runat="server" OnCheckedChanged="chkSelectAll_CheckedChanged" AutoPostBack="True" />
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <asp:Label ID="lbClaimId" runat="server" Text='<%# Eval("ClaimId") %>' Visible="false"></asp:Label>
+                                    <asp:CheckBox ID="cbCheckbox" runat="server" OnCheckedChanged="cbCheckbox_CheckedChanged" AutoPostBack="True" />
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <%--<asp:TemplateField HeaderText="Claim Id" Visible="False">
+                                <ItemTemplate>
+                                    <asp:HiddenField ID="hfClaimId" runat="server" Value='<%# Eval("ClaimId") %>' />
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                            </asp:TemplateField>--%>
 
-    <div class="table-section" style="overflow: scroll;">
-        <table class="table table-bordered">
-            <thead class="table-header">
-                <tr style="background: #19c0a0">
-                    <th>S.No</th>
-                    <th>Case No</th>
-                    <th>Claim No</th>
-                    <th>Beneficiary Card Number</th>
-                    <th>Case Status</th>
-                    <th>Hospital Name</th>
-                    <th>Registered Date</th>
-                    <th>Claim Submitted Date</th>
-                    <th>Hospital Account No</th>
-                    <th>Hospital IFSC Code</th>
-                    <th>TDS Exemption(Y/N)</th>
-                    <th>TDS Percentage</th>
-                    <%--<th>RF Percentage</th>--%>
-                    <th>Claim Initiated Amount(Rs.)</th>
-                    <th>Approved Amount(I)(Rs.)</th>
-                    <th>Approved Amount(T)(Rs.)</th>
-                    <th>Approved Amount(Rs.)</th>
-                    <th>Tds Amount(I)(Rs.)</th>
-                    <%--<th>RF Amount(I)(Rs.)</th>--%>
-                    <th>Final Amount(I)(Rs.)</th>
-                    <th>Tds Amount(T)(Rs.)</th>
-                    <%--<th>RF Amount(T)(Rs.)</th>--%>
-                    <th>Final Amount(T)(Rs.)</th>
-                    <th>BFA Amount(T)(Rs.)</th>
-                    <th>Claim Payable Amount(Rs.)</th>
-                    <th>ACO Exemption Remarks</th>
-                </tr>
-            </thead>
-            <tbody>
-                <asp:Repeater ID="rptClaimCases" runat="server">
-                    <ItemTemplate>
-                        <tr>
-                            <td><%# Container.ItemIndex + 1 %></td>
-                            <td>
-                                <a href='<%# "CaseDetails.aspx?CaseNumber=" + Eval("CaseNumber") %>'>
-                                    <%# Eval("CaseNumber") %>
-                                </a>
-                            </td>
-                            <td><%# Eval("ClaimNo") %></td>
-                            <td><%# Eval("BeneficiaryCardNumber") %></td>
-                            <td><%# Eval("CaseStatus") %></td>
-                            <td><%# Eval("HospitalName") %></td>
-                            <td><%# Eval("RegisteredDate", "{0:dd/MM/yyyy}") %></td>
-                            <td><%# Eval("ClaimSubmittedDate", "{0:dd/MM/yyyy}") %></td>
-                            <td><%# Eval("HospitalAccountNo") %></td>
-                            <td><%# Eval("HospitalIFSCCode") %></td>
-                            <td><%# Eval("TDSExemption") %></td>
-                            <td><%# Eval("TDSPercentage") %></td>
-                            <td><%# Eval("ClaimInitiatedAmount") %></td>
-                            <td><%# Eval("InsurerApprovedAmount") %></td>
-                            <td><%# Eval("TrustApprovedAmount") %></td>
-                            <td><%# Eval("ApprovedAmount") %></td>
-                            <td><%# Eval("InsurerTDSAmount") %></td>
-                            <td><%# Eval("InsurerFinalAmount") %></td>
-                            <td><%# Eval("TrustTdsAmount") %></td>
-                            <td><%# Eval("TrustFinalAmount") %></td>
-                            <td><%# Eval("BFAAmount") %></td>
-                            <td><%# Eval("ClaimPayableAmount") %></td>
-                            <td>
-                                <textarea rows="2" cols="40" placeholder="Enter remarks here"></textarea>
-                            </td>
-                        </tr>
-                    </ItemTemplate>
-                </asp:Repeater>
-            </tbody>
-        </table>
+                            <asp:TemplateField HeaderText="Case No">
+                                <ItemTemplate>
+                                    <asp:HyperLink ID="hlCaseNumber" runat="server"
+                                        NavigateUrl='<%# "CaseDetails.aspx?CaseNumber=" + Eval("CaseNumber") %>'>
+                                            <%# Eval("CaseNumber") %>
+                                    </asp:HyperLink>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Beneficiary CardNumber">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbBeneficiaryCardNumber" runat="server" Text='<%# Eval("BeneficiaryCardNumber") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Case Status">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbCaseStatus" runat="server" Text='<%# Eval("CaseStatus") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Hospital Name">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Registered Date">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbRegisteredDate" runat="server" Text='<%# Eval("RegisteredDate") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Claim Submited Date">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbClaimSubmittedDate" runat="server" Text='<%# Eval("ClaimSubmittedDate") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Hospital Account No">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbHospitalAccountNo" runat="server" Text='<%# Eval("HospitalAccountNo") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Hospital IFSC Code">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbHospitalIFSCCode" runat="server" Text='<%# Eval("HospitalIFSCCode") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="TDS Exemption(Y/N)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbTDSExemption" runat="server" Text='<%# Eval("TDSExemption") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="4%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="TDS Percentage">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbTDSPercentage" runat="server" Text='<%# Eval("TDSPercentage") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="4%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Claim Initiated Amount(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbClaimInitiatedAmount" runat="server" Text='<%# Eval("ClaimInitiatedAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Approved Amount(I)(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbInsurerApprovedAmount" runat="server" Text='<%# Eval("InsurerApprovedAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Approved Amount(T)(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbTrustApprovedAmount" runat="server" Text='<%# Eval("TrustApprovedAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Approved Amount(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbApprovedAmount" runat="server" Text='<%# Eval("ApprovedAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Tds Amount(I)(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbInsurerTDSAmount" runat="server" Text='<%# Eval("InsurerTDSAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Final Amount(I)(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbInsurerFinalAmount" runat="server" Text='<%# Eval("InsurerFinalAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Tds Amount(T)(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbTrustTdsAmount" runat="server" Text='<%# Eval("TrustTdsAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Final Amount(T)(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbTrustFinalAmount" runat="server" Text='<%# Eval("TrustFinalAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="BFA Amount(T)(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="lbBFAAmount" runat="server" Text='<%# Eval("BFAAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Claim Payable Amount(Rs.)">
+                                <ItemTemplate>
+                                    <asp:Label ID="ClaimPayableAmount" runat="server" Text='<%# Eval("ClaimPayableAmount") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="ACO Exemption Remarks">
+                                <ItemTemplate>
+                                    <asp:TextBox ID="tbExemptionRemarks" runat="server" class="form-control" TextMode="MultiLine"></asp:TextBox>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
+                </div>
+            </div>
+        </div>
     </div>
+
+
     <div class="row mt-3">
         <div class="col-md-12 text-center">
-            <asp:LinkButton ID="LinkButton3" runat="server" CssClass="btn btn-success rounded-pill" OnClick="btnSearch_Click">
-                        Approved
+            <asp:LinkButton ID="btnApprove" runat="server" CssClass="btn btn-success" OnClick="btnApprove_Click">
+                    <i class="fas fa-check"></i> Approve
             </asp:LinkButton>
+
         </div>
     </div>
 </asp:Content>

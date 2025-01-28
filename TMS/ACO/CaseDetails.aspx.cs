@@ -631,4 +631,20 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         string selectedValue = ddlReason.SelectedItem.Value;
         BindQuerySubReason(selectedValue);
     }
+    protected void lnkClaimTab_Click(object sender, EventArgs e)
+    {
+        // Set all panels to visible
+        pnlICDDetails.Visible = true;
+        pnlClaimDetails.Visible=true;
+        pnlNonTechnicalChecklist.Visible = true;
+        pnlTechnicalChecklist.Visible = true;
+        pnlACORemarks.Visible = true;
+        pnlAddDeduction.Visible = true;
+        pnlWorkflow.Visible = true;
+        pnlActionType.Visible = true;
+
+        // Optionally, set focus to the first section (e.g., ICD Details)
+        pnlICDDetails.Focus();
+    }
+
 }

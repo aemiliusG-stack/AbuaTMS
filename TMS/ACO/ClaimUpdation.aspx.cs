@@ -59,14 +59,14 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
                     // Check if there is data
                     if (dt.Rows.Count > 0)
                     {
-                        rptClaimCases.DataSource = dt;
-                        rptClaimCases.DataBind();
+                        gridrptClaimCases.DataSource = dt;
+                        gridrptClaimCases.DataBind();
                     }
                     else
                     {
                         // If no data, clear the repeater
-                        rptClaimCases.DataSource = null;
-                        rptClaimCases.DataBind();
+                        gridrptClaimCases.DataSource = null;
+                        gridrptClaimCases.DataBind();
                     }
                 }
             }
@@ -91,8 +91,8 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
         ddlPhase.SelectedIndex = 0;
         ddlFinancialYear.SelectedIndex = 0;
 
-        rptClaimCases.DataSource = null;
-        rptClaimCases.DataBind();
+        gridrptClaimCases.DataSource = null;
+        gridrptClaimCases.DataBind();
 
         lblTotalCases.Text = "0";
         lblSelectedCases.Text = "0";
@@ -107,5 +107,100 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
     }
     protected void SearchSubmit_Click(object sender, EventArgs e)
     {
+    }
+    protected void btnApprove_Click(object sender, EventArgs e)
+    {
+
+        //decimal InsurerAmount = Convert.ToDecimal(hdInsurerAmount.Value);
+        //decimal TrustAmount = Convert.ToDecimal(hdTrustAmount.Value);
+
+        // Default values in case parsing fails
+        int parsedUserId;
+        int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
+        int actionId = 2;
+        decimal TrustAmount = 0;
+        decimal InsurerAmount = 0;
+
+        // Check if HiddenFields are not empty and parse values
+        if (!string.IsNullOrEmpty(hdTrustAmount.Value))
+        {
+            decimal.TryParse(hdTrustAmount.Value, out TrustAmount);
+            ApproveClaim(Convert.ToInt32(hdClaimId.Value), userId, actionId, " ", "", "", hdRemarks.Value, (int)TrustAmount);
+        }
+        if (!string.IsNullOrEmpty(hdInsurerAmount.Value))
+        {
+            decimal.TryParse(hdInsurerAmount.Value, out InsurerAmount);
+            ApproveClaim(Convert.ToInt32(hdClaimId.Value), userId, actionId, " ", "", "", hdRemarks.Value, (int)InsurerAmount);
+            Response.Redirect("~/ACO/ClaimUpdation.aspx");
+        }
+    }
+    private void ApproveClaim(int claimId, long userId, int actionId, string queryReasonId, string querySubReasonId, string rejectReasonId, string remarks, int? totalFinalAmountByAco)
+    {
+        try
+        {
+            //reasonId = (long?)(selectedReason ?? (object)DBNull.Value) ?? 0;
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_InsertActions", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ClaimId", claimId);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@ActionId", actionId);
+                cmd.Parameters.AddWithValue("@ReasonId", queryReasonId ?? (object)DBNull.Value);
+                //cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ??  (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ?? "");
+                cmd.Parameters.AddWithValue("@RejectReasonId", rejectReasonId ?? "");
+                cmd.Parameters.AddWithValue("@Remarks", remarks ?? "");
+                //cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco ?? "");
+                // Only add the Amount parameter when actionId is 1 (Approve)
+                if (totalFinalAmountByAco.HasValue)
+                {
+                    cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco.Value);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@Amount", 0); // Or omit this parameter entirely if you prefer
+                }
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            lblSuccess.Text = "Action processed successfully!";
+            lblSuccess.Visible = true;
+            //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+        }
+        catch (Exception ex)
+        {
+            lblError.Text = "Error processing action: " + ex.Message;
+            lblError.Visible = true;
+        }
+        finally
+        {
+            con.Close();
+        }
+    }
+    protected void chkSelectAll_CheckedChanged(object sender, EventArgs e)
+    {
+        CheckBox chkSelectAll = (CheckBox)sender;
+        foreach (GridViewRow row in gridrptClaimCases.Rows)
+        {
+            CheckBox chkBox = (CheckBox)row.FindControl("cbCheckbox");
+            chkBox.Checked = chkSelectAll.Checked;
+        }
+    }
+
+
+    protected void cbCheckbox_CheckedChanged(object sender, EventArgs e)
+    {
+        CheckBox chkBox = (CheckBox)sender;
+
+        GridViewRow row = (GridViewRow)chkBox.NamingContainer;
+        Label lbInsurerFinalAmount = (Label)row.FindControl("lbInsurerFinalAmount");
+        Label lbTrustFinalAmount = (Label)row.FindControl("lbTrustFinalAmount");
+        Label lbClaimId = (Label)row.FindControl("lbClaimId");
+        TextBox tbExemptionRemarks = (TextBox)row.FindControl("tbExemptionRemarks");
+        hdInsurerAmount.Value = lbInsurerFinalAmount.Text.ToString();
+        hdTrustAmount.Value = lbTrustFinalAmount.Text.ToString();
+        hdClaimId.Value = lbClaimId.Text.ToString();
+        hdRemarks.Value = tbExemptionRemarks.Text.ToString();
     }
 }
