@@ -128,12 +128,26 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     {
                         pnlAddDeduction.Visible = false;
                     }
+                    if (cpd.IsPatientSecondaryDiagnosisExists(hdAbuaId.Value, hdPatientRegId.Value))
+                    {
+                        pPreauthSD.Visible = true;
+                    }
+                    else
+                    {
+                        pPreauthSD.Visible = false;
+                    }
+                    if (cpd.IsPatientSecondaryDiagnosisExists(hdAbuaId.Value, hdPatientRegId.Value))
+                    {
+                        pClaimsSD.Visible = true;
+                    }
+                    else
+                    {
+                        pClaimsSD.Visible = false;
+                    }
                     displayPatientAdmissionImage();
-                    BindGrid_PICDDetails_Claims();
                     getNetworkHospitalDetails();
                     BindClaimsDetails();
                     BindTechnicalChecklistData();
-                    BindGrid_ICDDetails_Preauth();
                     BindGrid_TreatmentProtocol();
                     BindGrid_ICHIDetails();
                     BindPreauthAdmissionDetails();
@@ -141,6 +155,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     getPatientPrimaryDiagnosis();
                     getPatientSecondaryDiagnosis();
                     getTreatmentDischarge();
+                    BindGrid_TreatmentSurgeryDate();
                     BindNonTechnicalChecklist(caseNo);
                     BindDeductionGrid();
                     gvQuestionnaire.DataSource = CreateQuestionnaireData();
@@ -189,26 +204,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
 
 
     //Claims Updation
-    private void BindGrid_PICDDetails_Claims()
-    {
-        string cardNo = Session["CardNumber"] as string;
-        int patientRedgNo = Session["PatientRegId"] != null ? Convert.ToInt32(Session["PatientRegId"]) : 0;
-
-        dt.Clear();
-        dt = cpd.GetPICDDetails(cardNo, patientRedgNo);
-
-        if (dt != null && dt.Rows.Count > 0)
-        {
-            gvPICDDetails_Claim.DataSource = dt;
-            gvPICDDetails_Claim.DataBind();
-        }
-        else
-        {
-            gvPICDDetails_Claim.DataSource = null;
-            gvPICDDetails_Claim.EmptyDataText = "No ICD details found.";
-            gvPICDDetails_Claim.DataBind();
-        }
-    }
+   
     public void BindNonTechnicalChecklist(string caseNo)
     {
         try
@@ -305,23 +301,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             tbType.Text = "";
             tbAddress.Text = "";
         }
-    }
-    private void BindGrid_ICDDetails_Preauth()
-    {
-        DataTable dt = new DataTable();
-        dt.Columns.Add("PreauthId");
-        dt.Columns.Add("ICDCode");
-        dt.Columns.Add("ICDDescription");
-        dt.Columns.Add("ActedByRole");
-        DataRow row = dt.NewRow();
-        row["PreauthId"] = "NA";
-        row["ICDCode"] = "NA";
-        row["ICDDescription"] = "NA";
-        row["ActedByRole"] = "NA";
-        dt.Rows.Add(row);
-
-        gvICDDetails_Preauth.DataSource = dt;
-        gvICDDetails_Preauth.DataBind();
     }
     private void BindGrid_TreatmentProtocol()
     {
@@ -598,28 +577,24 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             gvClaimWorkFlow.DataBind();
         }
     }
+
     protected void getPatientPrimaryDiagnosis()
     {
         try
         {
-            string caseNo = Session["CaseNumber"] as string;
-            if (!string.IsNullOrEmpty(caseNo))
+            DataTable dt = new DataTable();
+            dt = cpd.GetPatientPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt != null && dt.Rows.Count > 0)
             {
-                dt.Clear();
-                dt = cpd.GetPatientPrimaryDiagnosis(caseNo);
-                if (dt.Rows.Count > 0)
-                {
-                    gvPICDDetails_Claim.DataSource = dt;
-                    gvPICDDetails_Claim.DataBind();
-                }
-                else
-                {
-                    gvPICDDetails_Claim.DataSource = null;
-                    gvPICDDetails_Claim.DataBind();
-                }
+                gvPreauthPD.DataSource = dt;
+                gvPreauthPD.DataBind();
+                gvPICDDetails_Claim.DataSource = dt;
+                gvPICDDetails_Claim.DataBind();
             }
             else
             {
+                gvPreauthPD.DataSource = null;
+                gvPreauthPD.DataBind();
                 gvPICDDetails_Claim.DataSource = null;
                 gvPICDDetails_Claim.DataBind();
             }
@@ -638,19 +613,23 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     {
         try
         {
-            string CardNo = Session["CardNumber"] as string;
-            
-            dt = cpd.GetPatientSecondaryDiagnosis_CaseSearch(CardNo);
-            if (dt.Rows.Count > 0)
+            DataTable dt = new DataTable();
+            dt = cpd.GetPatientSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt != null && dt.Rows.Count > 0)
             {
+                gvPraauthSD.DataSource = dt;
+                gvPraauthSD.DataBind();
                 gvSICDDetails_Claim.DataSource = dt;
                 gvSICDDetails_Claim.DataBind();
             }
             else
             {
-                gvSICDDetails_Claim.DataSource = "NA";
+                gvPraauthSD.DataSource = null;
+                gvPraauthSD.DataBind();
+                gvSICDDetails_Claim.DataSource = null;
                 gvSICDDetails_Claim.DataBind();
             }
+           
         }
         catch (Exception ex)
         {
@@ -662,6 +641,8 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
+    
     public void getClaimQuery(string ClaimId)
     {
         try
@@ -742,7 +723,33 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);
         }
     }
-
+    protected void BindGrid_TreatmentSurgeryDate()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cpd.getTreatmentSurgeryDate(hdHospitalId.Value, hdPatientRegId.Value, hdAbuaId.Value);
+            if (dt.Rows.Count > 0)
+            {
+                gridSurgeryTreatmentDate.DataSource = dt;
+                gridSurgeryTreatmentDate.DataBind();
+            }
+            else
+            {
+                gridSurgeryTreatmentDate.DataSource = "";
+                gridSurgeryTreatmentDate.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
     //Attachments
     protected void btnAttachments_Click(object sender, EventArgs e)
     {

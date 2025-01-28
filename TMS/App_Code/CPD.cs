@@ -661,31 +661,57 @@ public class CPD
         con.Close();
         return dtTemp;
     }
-    public DataTable GetPatientPrimaryDiagnosis(string CaseNo)
+    public bool IsPatientSecondaryDiagnosisExists(string CardNo, string PatientRegId)
     {
-        dtTemp.Clear();
-        string query = "select t1.PatientRegId, t3.PrimaryDiagnosisName, t2.PDId, t2.ICDValue " +
-                       "from TMS_PatientAdmissionDetail t1 " +
-                       "inner join TMS_PatientPrimaryDiagnosis t2 on t1.CardNumber = t2.CardNumber " +
-                       "inner join TMS_MasterPrimaryDiagnosis t3 on t2.PDId = t3.PDId " +
-                       "where t1.CaseNumber = @CaseNo AND t2.IsActive = 1 AND t2.IsDeleted = 0";
+        bool exists = false;
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_PatientSecondaryDiagnosis WHERE PatientRegId = @PatientRegId AND CardNumber= @CardNo AND IsActive = 1", con);
+        cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        cmd.Parameters.AddWithValue("@CardNo", CardNo);
 
-        SqlDataAdapter sd = new SqlDataAdapter(query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(dtTemp);
-        if (con.State == ConnectionState.Open)
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        if (count > 0)
+        {
+            exists = true;
+        }
+        if (con.State == System.Data.ConnectionState.Open)
         {
             con.Close();
         }
+
+        return exists;
+    }
+    public DataTable GetPatientPrimaryDiagnosis(string CardNumber, string PatientRegId)
+    {
+        dtTemp.Clear();
+        string Query = "SELECT t1.Id, t1.PatientRegId, t3.RoleName, t2.PrimaryDiagnosisName, t1.PDId, t2.ICDValue from TMS_PatientPrimaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId INNER JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
         return dtTemp;
     }
-    public int DeletePrimaryDiagnosis(string CaseNo, int PDId)
+    public DataTable GetPatientSecondaryDiagnosis(string CardNumber, string PatientRegId)
     {
-        string Query = "DELETE t1 FROM TMS_PatientPrimaryDiagnosis t1 INNER JOIN TMS_PatientAdmissionDetail t2 ON t1.CardNumber = t2.CardNumber WHERE t2.CaseNumber = @CaseNo AND t1.PDId = @PDId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        dtTemp.Clear();
+        string Query = "SELECT t1.Id, t1.PatientRegId, t3.RoleName, t1.PDId, t2.PrimaryDiagnosisName, t2.ICDValue from TMS_PatientSecondaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId INNER JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
+    }
+    public int DeletePrimaryDiagnosis(string CardNumber, string PatientRegId, int Id)
+    {
+        string Query = "DELETE FROM TMS_PatientPrimaryDiagnosis  WHERE CardNumber =  @CardNumber AND PatientRegId = @PatientRegId AND Id = @Id AND IsDeleted = 0";
         SqlCommand cmd = new SqlCommand(Query, con);
-        cmd.Parameters.AddWithValue("@CaseNo", CaseNo);
-        cmd.Parameters.AddWithValue("@PDId", PDId);
+        cmd.Parameters.AddWithValue("@CardNumber", CardNumber);
+        cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        cmd.Parameters.AddWithValue("@Id", Id);
         con.Open();
         int rowsAffected = cmd.ExecuteNonQuery();
         if (con.State == ConnectionState.Open)
@@ -694,12 +720,14 @@ public class CPD
         }
         return rowsAffected;
     }
-    public int DeleteSecondaryDiagnosis(string CaseNo, int PDId)
+    public int DeleteSecondaryDiagnosis(string CardNumber, string PatientRegId, int Id)
     {
-        string Query = "DELETE t1 FROM TMS_PatientSecondaryDiagnosis t1 INNER JOIN TMS_PatientAdmissionDetail t2 ON t1.CardNumber = t2.CardNumber WHERE t2.CaseNumber = @CaseNo AND t1.PDId = @PDId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        string Query = "DELETE FROM TMS_PatientSecondaryDiagnosis  WHERE CardNumber =  @CardNumber AND PatientRegId = @PatientRegId AND Id = @Id AND IsDeleted = 0";
         SqlCommand cmd = new SqlCommand(Query, con);
-        cmd.Parameters.AddWithValue("@CaseNo", CaseNo);
-        cmd.Parameters.AddWithValue("@PDId", PDId);
+        cmd.Parameters.AddWithValue("@CardNumber", CardNumber);
+        cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        cmd.Parameters.AddWithValue("@Id", Id);
+
         con.Open();
         int rowsAffected = cmd.ExecuteNonQuery();
         if (con.State == ConnectionState.Open)
@@ -721,20 +749,7 @@ public class CPD
         }
         return dtTemp;
     }
-    public DataTable GetPatientSecondaryDiagnosis(string CaseNo)
-    {
-        dtTemp.Clear();
-        string query = "select t1.PatientRegId, t3.PrimaryDiagnosisName, t2.PDId, t2.ICDValue from TMS_PatientAdmissionDetail t1 inner join TMS_PatientSecondaryDiagnosis t2 on t1.CardNumber = t2.CardNumber inner join TMS_MasterPrimaryDiagnosis t3 on t2.PDId = t3.PDId where t1.CaseNumber = @CaseNo AND t2.IsActive = 1 AND t2.IsDeleted = 0";
-        SqlDataAdapter sd = new SqlDataAdapter(query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
-        con.Open();
-        sd.Fill(dtTemp);
-        if (con.State == ConnectionState.Open)
-        {
-            con.Close();
-        }
-        return dtTemp;
-    }
+    
     public DataTable GetPatientSecondaryDiagnosis_CaseSearch(string CardNo)
     {
         dtTemp.Clear();
@@ -997,6 +1012,30 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
+    public DataTable getTreatmentSurgeryDate(string HospitalId, string PatientRegId, string CardNo)
+    {
+        dt.Clear();
+        try
+        {
+            string Query = "select t1.PatientRegId, t1.ProcedureId, t2.ProcedureCode, t2.ProcedureName, CONVERT(VARCHAR, TreatmentStartDate, 23) as TreatmentStartDate from TMS_PatientTreatmentProtocol t1 LEFT JOIN TMS_MasterPackageDetail t2 ON t1.ProcedureId = t2.ProcedureId where t1.HospitalId = @HospitalId AND t1.PatientRegId = @PatientRegId AND t1.CardNumber = @CardNumber AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNo);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+
+        return dt;
+    }
     public bool UpdateDischarge(string ClaimId, int DischargeStatus, string Remarks)
     {
         string Query = "UPDATE TMS_DischargeDetail SET IsDischarged = @DischargeStatus, Remarks = @Remarks WHERE ClaimId = @ClaimId";
@@ -1120,7 +1159,32 @@ public class CPD
         dtTemp = ds.Tables[0];
         return dtTemp;
     }
+    public DataTable GetEnhancementDetails(string AdmissionId)
+    {
+        try
+        {
+            string Query = "SELECT t1.EnhancementId, t1.AdmissionId, t1.CreatedOn AS EnhancementInitiateDate, t1.EnhancementFrom, t1.EnhancementTo, t1.EnhancementDays, t1.StratificationId, t1.EnhancementStatus, t1.Amount, t1.Remarks, t1.ApprovedDate, t1.RejectedDate, ISNULL(t2.RejectName, 'NA') AS RejectedReason, t1.RejectedRemarks, t1.PatientFolderName, t1.PatientUploadedFileName, t1.PatientFilePath, t1.JustificationFolderName, t1.JustificationFileName, t1.JustificationFilePath FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_MasterRejectReason t2 ON t1.RejectReasonId = t2.RejectId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            DataTable dt = new DataTable();
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
 
+            }
+        }
+    }
 }
 
 

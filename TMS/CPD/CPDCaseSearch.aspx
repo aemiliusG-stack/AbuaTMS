@@ -219,23 +219,24 @@
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
+
                                             <asp:TemplateField HeaderText="Case Registration Date">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbPatientRegDate" runat="server" Text='<%# Eval("CaseRegistrationDate") %>'></asp:Label>
+                                                    <asp:Label ID="lbCaseRegDate" runat="server" Text='<%# Eval("CaseRegistrationDate") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Category">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbPatientRegDate" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
+                                                    <asp:Label ID="lbCategory" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Procedure Name">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbPatientRegDate" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                                    <asp:Label ID="lbProcedureName" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />

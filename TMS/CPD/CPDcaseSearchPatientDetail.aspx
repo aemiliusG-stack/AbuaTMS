@@ -384,51 +384,100 @@
                                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">
                                                     <h3 class="m-0">ICD Details</h3>
                                                 </div>
-                                                <div class="ibox-content">
-                                                    <div class="ibox mt-4">
-                                                        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                                                            <div class="d-flex w-100 justify-content-center position-relative">
-                                                                <h3 class="m-0">Primary Diagnosis ICD Values</h3>
+                                                <asp:Panel ID="pPreauthPD" runat="server">
+                                                    <div class="ibox-content">
+                                                        <div class="ibox mt-4">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Primary Diagnosis ICD Values</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <asp:GridView ID="gvPreauthPD" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                    <Columns>
+                                                                        <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="ICD Code">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthPICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="ICD Description">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthPICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthPActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                    </Columns>
+                                                                </asp:GridView>
+
                                                             </div>
                                                         </div>
-                                                        <div class="ibox-content">
-                                                            <asp:GridView ID="gvICDDetails_Preauth" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
-                                                                <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                <Columns>
-                                                                    <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="PreauthId" runat="server" Text="NA"></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Code">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="PreauthICDCode" runat="server" Text="NA"></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Description">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="PreauthICDDes" runat="server" Text="NA"></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="Acted By Role">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="PreauthActRole" runat="server" Text='<%# Eval("ActedByRole") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                </Columns>
-                                                            </asp:GridView>
+                                                    </div>
+                                                </asp:Panel>
+                                                <asp:Panel ID="pPreauthSD" runat="server" Visible="false">
+                                                    <div class="ibox-content">
+                                                        <div class="ibox mt-4">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Secondary Diagnosis ICD Values</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <asp:GridView ID="gvPraauthSD" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                    <Columns>
+                                                                        <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthSICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="ICD Code">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthSICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="ICD Description">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthSICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="PreauthSIActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                    </Columns>
+                                                                </asp:GridView>
 
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </asp:Panel>
                                             </div>
                                             <div class="ibox mt-4">
                                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">
@@ -956,24 +1005,57 @@
                                                 </div>
                                             </div>
                                             <%--Surgery/Treatment Start Date Details--%>
-                                            <div class="ibox">
-                                                <div class="ibox-title d-flex justify-content-between align-items-center text-white">
-                                                    <div class="w-100 text-center">
-                                                        <h3 class="m-0">Surgery/Treatment Start Date Details</h3>
+                                            <div class="ibox ">
+                                                <div class="ibox-title d-flex justify-content-center">
+                                                    <h5 style="text-align: center;">Surgery/Treatment Start Date Details</h5>
+                                                    <div class="ibox-tools">
+                                                        <a class="collapse-link">
+                                                            <i class="fa fa-chevron-up"></i>
+                                                        </a>
                                                     </div>
                                                 </div>
                                                 <div class="ibox-content">
-                                                    <asp:GridView ID="GridSurgeryDate" runat="server" CssClass="table table-bordered" AutoGenerateColumns="false">
-                                                        <Columns>
-                                                            <asp:BoundField DataField="Procedure Code" HeaderText="Procedure Code" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Procedure Name" HeaderText="Procedure Name" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                            <asp:BoundField DataField="Surgery Date/Treatment Start Date" HeaderText="Surgery Date/Treatment Start Date" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                                        </Columns>
-                                                    </asp:GridView>
-                                                    <span class="font-weight-bold text-danger">Note:</span>
-                                                    <span>Please select Treatment start date for Medical Procedure and Surgical Procedures</span>
+                                                    <div class="form-group  row">
+                                                        <div class="col-md-12">
+                                                            <asp:GridView ID="gridSurgeryTreatmentDate" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                <AlternatingRowStyle BackColor="Gainsboro" />
+
+                                                                <Columns>
+                                                                    <asp:TemplateField HeaderText="Sl No.">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex+1 %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Procedure Code">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbActionName" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Procedure Name">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbActionName" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Surgery Date/Treatment Start Date">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbActionName" runat="server" Text='<%# Eval("TreatmentStartDate") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+                                                                </Columns>
+                                                            </asp:GridView>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+
                                             <%--Treatment Summary--%>
                                             <div class="ibox">
                                                 <div class="ibox-title d-flex justify-content-between align-items-center text-white">
@@ -1142,97 +1224,100 @@
                                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">
                                                     <h3 class="m-0">ICD Details</h3>
                                                 </div>
-                                                <div class="ibox-content">
-                                                    <div class="ibox mt-4">
-                                                        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                                                            <div class="d-flex w-100 justify-content-center position-relative">
-                                                                <h3 class="m-0">Primary Diagnosis ICD Values</h3>
+                                                <asp:Panel ID="pClaimsPD" runat="server">
+                                                    <div class="ibox-content">
+                                                        <div class="ibox mt-4">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Primary Diagnosis ICD Values</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <asp:GridView ID="gvPICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                    <Columns>
+                                                                        <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="ICD Code">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimPICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="ICD Description">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimPICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimPActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                    </Columns>
+                                                                </asp:GridView>
+
                                                             </div>
                                                         </div>
-                                                        <div class="ibox-content">
-                                                            <asp:GridView ID="gvPICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
-                                                                <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                <Columns>
-                                                                    <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="ClaimPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Code">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="ClaimPICDCode" runat="server" Text='<%# Eval("ICDCode") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Description">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="ClaimPICDDescription" runat="server" Text='<%# Eval("ICDDescription") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="Acted By Role">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="ClaimPActRole" runat="server" Text='<%# Eval("ActedByRole") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                </Columns>
-                                                            </asp:GridView>
-
-                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="ibox-content">
-                                                    <div class="ibox mt-4">
-                                                        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                                                            <div class="d-flex w-100 justify-content-center position-relative">
-                                                                <h3 class="m-0">Secondary Diagnosis ICD Values</h3>
+                                                </asp:Panel>
+                                                <asp:Panel ID="pClaimsSD" runat="server" Visible="false">
+                                                    <div class="ibox-content">
+                                                        <div class="ibox mt-4">
+                                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                                    <h3 class="m-0">Secondary Diagnosis ICD Values</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ibox-content">
+                                                                <asp:GridView ID="gvSICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                    <Columns>
+                                                                        <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="ICD Value">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimSICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Diagnosis Name">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimSICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="ClaimSActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                                                        </asp:TemplateField>
+                                                                    </Columns>
+                                                                </asp:GridView>
+
                                                             </div>
                                                         </div>
-                                                        <div class="ibox-content">
-                                                            <asp:GridView ID="gvSICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
-                                                                <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                <Columns>
-                                                                    <asp:TemplateField HeaderText="Sl. No.">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" VerticalAlign="Middle" Font-Bold="True" ForeColor="White" />
-                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Code">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="ClaimSICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Description">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="ClaimSICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="Acted By Role">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="ClaimSActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
-                                                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
-                                                                    </asp:TemplateField>
-                                                                </Columns>
-                                                            </asp:GridView>
-
-                                                        </div>
                                                     </div>
-                                                </div>
-
+                                                </asp:Panel>
                                             </div>
                                             <div class="ibox mt-4">
                                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">
