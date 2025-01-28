@@ -1,4 +1,6 @@
 ﻿<%@ Application Language="C#" %>
+<%@ Import Namespace="System.Net" %>
+<%@ Import Namespace="System.Net.Http" %>
 
 <script runat="server">
     public void Application_Start(object sender, EventArgs e)

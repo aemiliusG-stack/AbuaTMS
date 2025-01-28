@@ -47,8 +47,17 @@ partial class _Default : System.Web.UI.Page
     {
         try
         {
+            //Random random = new Random();
+            //string captchaCode = random.Next(1000, 9999).ToString(); // Generate a 4-digit random number
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             Random random = new Random();
-            string captchaCode = random.Next(1000, 9999).ToString(); // Generate a 4-digit random number
+            char[] code = new char[6];
+
+            for (int i = 0; i < 6; i++)
+            {
+                code[i] = chars[random.Next(chars.Length)];
+            }
+            string captchaCode = new string(code);
             Session["captcha"] = captchaCode; // Store in session
         }
         catch (Exception ex)
@@ -63,7 +72,7 @@ partial class _Default : System.Web.UI.Page
     {
         try
         {
-            if (TextboxValidation.isAlphaNumeric(tbUsername.Text) == false || TextboxValidation.IsPassword(tbPassword.Text) == false || TextboxValidation.isNumeric(txt_Captcha.Text) == false)
+            if (TextboxValidation.isAlphaNumeric(tbUsername.Text) == false || TextboxValidation.IsPassword(tbPassword.Text) == false || TextboxValidation.isAlphaNumeric(txt_Captcha.Text) == false)
             {
                 string strMessage = "window.alert('Invalid Entry!');";
                 ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "AlertMessage", strMessage, true);
@@ -173,11 +182,9 @@ partial class _Default : System.Web.UI.Page
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CPD(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CPD(TRUST)")
                         Response.Redirect("CPD/CPDHome.aspx", false);
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACO(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACO(TRUST)")
-                        Response.Redirect("ACO/Dashboard.aspx", false);
+                        Response.Redirect("ACO/ACOHome.aspx", false);
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(TRUST)")
                         Response.Redirect("SHA/Dashboard.aspx", false);
-                    else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACS")
-                        Response.Redirect("ACS/ACSHome.aspx", false);
                     else
                         Response.Redirect("Default.aspx");
                 }

@@ -120,13 +120,13 @@
                         <ContentTemplate>
                             <div class="form-group">
                                 <asp:Image ID="imgCaptcha" runat="server" ImageUrl="~/CaptchaImageHandler.ashx" />
-                                <asp:Button ID="btnRefresh" runat="server" CssClass="btn btn-primary btn-sm" Text="Refresh" OnClick="btnRefresh_Click" UseSubmitBehavior="false" />
+                                <asp:Button ID="btnRefresh" runat="server" CssClass="btn btn-primary btn-sm" Text="Refresh" OnClick="btnRefresh_Click" />
                             </div>
                         </ContentTemplate>
                     </asp:UpdatePanel>
                     <div class="control-group">
 
-                        <asp:TextBox class="input-block-level" ID="txt_Captcha" runat="server" AutoCompleteType="Disabled" autocomplete="off" OnKeypress="return isNumeric(event);"></asp:TextBox>
+                        <asp:TextBox class="input-block-level" ID="txt_Captcha" runat="server" AutoCompleteType="Disabled" autocomplete="off" OnKeypress="return isAlphaNumeric(event);"></asp:TextBox>
                         <asp:RequiredFieldValidator runat="server" ID="RequiredFieldValidator2" ControlToValidate="txt_Captcha" ErrorMessage="Can't Left Blank Captcha Field" />
 
                     </div>

@@ -15,7 +15,7 @@ public class CaptchaImageHandler : IHttpHandler, System.Web.SessionState.IRequir
             using (Bitmap bitmap = new Bitmap(100, 30))
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                RectangleF rectf = new RectangleF(10, 5, 0, 0);
+                RectangleF rectf = new RectangleF(2, 3, 0, 0);
                 g.Clear(Color.White);
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
