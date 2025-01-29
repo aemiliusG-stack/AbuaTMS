@@ -136,7 +136,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetEnhancementDetails(Session["AdmissionId"].ToString());
+            dt = ppdHelper.GetEnhancementDetails(hdAdmissionId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridTransactionDataReferences.DataSource = dt;
@@ -326,7 +326,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     DateTime registrationDate = Convert.ToDateTime(dt.Rows[0]["RegDate"].ToString().Trim());
                     DateTime admissionDate = Convert.ToDateTime(dt.Rows[0]["AdmissionDate"].ToString().Trim());
                     string IsDischarged = dt.Rows[0]["IsDischarged"].ToString().Trim();
-                    Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
+                    hdAdmissionId.Value = dt.Rows[0]["AdmissionId"].ToString().Trim();
                     hdEnhancementId.Value = dt.Rows[0]["EnhancementId"].ToString().Trim();
                     hdCaseId.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
@@ -617,7 +617,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetAdmissionDetails(Session["AdmissionId"].ToString());
+            dt = ppdHelper.GetAdmissionDetails(hdAdmissionId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 tbPackageCost.Text = dt.Rows[0]["PackageCost"].ToString();

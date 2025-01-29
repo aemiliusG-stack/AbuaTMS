@@ -356,7 +356,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientEnhancementDetail", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
-            if (ds.Tables[0].Rows.Count > 0)
+            if (ds != null && ds.Tables[0].Rows.Count > 0)
             {
                 if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
                 {
@@ -371,7 +371,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid Request!');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement already in progress!');", true);
             }
         }
         catch (Exception ex)

@@ -300,7 +300,7 @@
                                                             </div>
                                                             <div class="col-lg-9">
                                                                 <asp:DropDownList ID="dropState" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropState" OnSelectedIndexChanged="dropState_SelectedIndexChanged"></asp:DropDownList>
-                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="*Select State" ValidationGroup="b" ControlToValidate="dropState" ForeColor="Red" InitialValue="0" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                                                                <%--<asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="*Select State" ValidationGroup="b" ControlToValidate="dropState" ForeColor="Red" InitialValue="0" SetFocusOnError="True"></asp:RequiredFieldValidator>--%>
                                                             </div>
                                                         </div>
                                                         <br />
@@ -310,7 +310,7 @@
                                                             </div>
                                                             <div class="col-lg-9">
                                                                 <asp:DropDownList ID="dropDistrict" runat="server" class="form-control" AutoPostBack="True" ValidationGroup="b" OnSelectedIndexChanged="dropDistrict_SelectedIndexChanged"></asp:DropDownList>
-                                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="*Select District" ValidationGroup="b" ControlToValidate="dropDistrict" ForeColor="Red" InitialValue="0" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                                                                <%--<asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="*Select District" ValidationGroup="b" ControlToValidate="dropDistrict" ForeColor="Red" InitialValue="0" SetFocusOnError="True"></asp:RequiredFieldValidator>--%>
                                                             </div>
                                                         </div>
                                                         <br />
@@ -338,7 +338,7 @@
                                                             </div>
                                                             <div class="col-lg-9">
                                                                 <asp:TextBox ID="tbPinCode" runat="server" CssClass="form-control" ValidationGroup="b" required="true" MaxLength="6" OnKeypress="return isNumeric(event);"></asp:TextBox>
-                                                                <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ErrorMessage="* Invalid Pin Code!" ControlToValidate="tbPinCode" ForeColor="Red" SetFocusOnError="True" ValidationExpression="^[1-9][0-9]{5}$" ValidationGroup="b"></asp:RegularExpressionValidator>
+                                                                <%--<asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ErrorMessage="* Invalid Pin Code!" ControlToValidate="tbPinCode" ForeColor="Red" SetFocusOnError="True" ValidationExpression="^[1-9][0-9]{5}$" ValidationGroup="b"></asp:RegularExpressionValidator>--%>
                                                             </div>
                                                         </div>
                                                         <br />
@@ -354,7 +354,7 @@
                                                                     <asp:ListItem Value="3">Attendant</asp:ListItem>
                                                                 </asp:DropDownList>
                                                             </div>
-                                                            <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="*Select Mobile Belongs To" ValidationGroup="b" ControlToValidate="dropMobileBelongsTo" ForeColor="Red" InitialValue="0" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                                                            <%--<asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="*Select Mobile Belongs To" ValidationGroup="b" ControlToValidate="dropMobileBelongsTo" ForeColor="Red" InitialValue="0" SetFocusOnError="True"></asp:RequiredFieldValidator>--%>
                                                         </div>
                                                         <br />
                                                         <div id="divMobileBelongsTo" runat="server" class="form-group row m-b" visible="false">
@@ -383,7 +383,7 @@
                                                             </div>
                                                             <div class="col-lg-9">
                                                                 <asp:TextBox ID="tbCommMobileNo" runat="server" CssClass="form-control" ValidationGroup="b" required="true" MaxLength="10" OnKeypress="return isNumeric(event);"></asp:TextBox>
-                                                                <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ErrorMessage="*Invalid Mobile No!" ControlToValidate="tbCommMobileNo" ForeColor="Red" ValidationExpression="^[6-9]\d{9}$" ValidationGroup="b"></asp:RegularExpressionValidator>
+                                                                <%--<asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ErrorMessage="*Invalid Mobile No!" ControlToValidate="tbCommMobileNo" ForeColor="Red" ValidationExpression="^[6-9]\d{9}$" ValidationGroup="b"></asp:RegularExpressionValidator>--%>
                                                             </div>
                                                         </div>
                                                     </div>

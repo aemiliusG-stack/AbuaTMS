@@ -169,7 +169,7 @@ public class PPDHelper
         try
         {
             DataTable dt = new DataTable();
-            string Query = "SELECT t1.IncentivePercentage, t1.PackageCost, t1.IncentiveAmount, t1.ImplantAmount, t1.TotalPackageCost, t2.InsurerClaimAmountRequested, t2.TrustClaimAmountRequested FROM TMS_PatientAdmissionDetail t1 INNER JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            string Query = "SELECT t1.IncentivePercentage, t1.PackageCost, t1.IncentiveAmount, t1.ImplantAmount, t1.TotalPackageCost, t2.InsurerClaimAmountRequested, t2.TrustClaimAmountRequested, t1.EnhancementAmount FROM TMS_PatientAdmissionDetail t1 INNER JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
             con.Open();

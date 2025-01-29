@@ -101,6 +101,7 @@
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdCaseId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdAdmissionId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdEnhancementId" runat="server" Visible="false" />
 
             <asp:MultiView ID="MultiViewMain" runat="server">
