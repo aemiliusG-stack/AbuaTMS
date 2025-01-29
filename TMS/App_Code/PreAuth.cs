@@ -80,7 +80,7 @@ public class PreAuth
     public DataTable GetPatientPrimaryDiagnosis(string CardNumber, string PatientRegId)
     {
         dtTemp.Clear();
-        string Query = "select t1.PatientRegId, t1.RegisteredBy, t2.PrimaryDiagnosisName, t1.PDId, t2.ICDValue from TMS_PatientPrimaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId where t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        string Query = "select t1.PatientRegId, t1.RegisteredBy, t2.PrimaryDiagnosisName, t1.PDId, t1.ICDValue from TMS_PatientPrimaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId where t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
         sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
@@ -92,7 +92,7 @@ public class PreAuth
     public DataTable GetPatientSecondaryDiagnosis(string CardNumber, string PatientRegId)
     {
         dtTemp.Clear();
-        string Query = "select t1.PatientRegId, t1.RegisteredBy, t1.PDId, t2.PrimaryDiagnosisName, t2.ICDValue from TMS_PatientSecondaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId where t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        string Query = "select t1.PatientRegId, t1.RegisteredBy, t1.PDId, t2.PrimaryDiagnosisName, t1.ICDValue from TMS_PatientSecondaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId where t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
         sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);

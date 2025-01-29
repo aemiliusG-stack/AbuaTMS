@@ -289,16 +289,27 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
         if (!string.IsNullOrEmpty(procedureIdFinal))
         {
             dt.Clear();
-            dt = dis.GetStratificationForEnhancement(procedureIdFinal.ToString());
-        }
-        if (dt.Rows.Count > 0)
-        {
-            t3DropEnhancementStratification.Items.Clear();
-            t3DropEnhancementStratification.DataValueField = "StratificationId";
-            t3DropEnhancementStratification.DataTextField = "StratificationDetail";
-            t3DropEnhancementStratification.DataSource = dt;
-            t3DropEnhancementStratification.DataBind();
-            t3DropEnhancementStratification.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            SqlParameter[] p = new SqlParameter[1];
+            p[0] = new SqlParameter("@ProcedureId", procedureIdFinal.ToString());
+            p[0].DbType = DbType.String;
+
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_GetStratificationForMultipleProcedure", p);
+            if (con.State == ConnectionState.Open)
+                con.Close();
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                //dt = dis.GetStratificationForEnhancement(procedureIdFinal.ToString());
+                dt = ds.Tables[0];
+                if (dt.Rows.Count > 0)
+                {
+                    t3DropEnhancementStratification.Items.Clear();
+                    t3DropEnhancementStratification.DataValueField = "StratificationId";
+                    t3DropEnhancementStratification.DataTextField = "StratificationDetail";
+                    t3DropEnhancementStratification.DataSource = dt;
+                    t3DropEnhancementStratification.DataBind();
+                    t3DropEnhancementStratification.Items.Insert(0, new ListItem("--SELECT--", "0"));
+                }
+            }
         }
         MultiView3.SetActiveView(viewEnhancement);
     }
@@ -371,7 +382,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement already in progress!');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement already in progess!');", true);
             }
         }
         catch (Exception ex)
