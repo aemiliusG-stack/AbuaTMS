@@ -1296,8 +1296,8 @@
                                                                 <asp:DropDownList ID="dropSecondaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropSecondaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                                 </asp:DropDownList>
                                                             </div>
-                                                            <div class="row mb-3">
-                                                                <div class="col-md-6">
+                                                            <div class="row col-lg-12 mb-3">
+                                                                <div class="col-md-6 table-responsive">
                                                                     <asp:GridView ID="gridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                         <AlternatingRowStyle BackColor="Gainsboro" />
                                                                         <Columns>
@@ -1346,7 +1346,7 @@
                                                                         </Columns>
                                                                     </asp:GridView>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-6 table-responsive">
                                                                     <asp:GridView ID="gridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" GridLines="Both" CellPadding="3" Width="100%">
                                                                         <AlternatingRowStyle BackColor="Gainsboro" />
                                                                         <Columns>

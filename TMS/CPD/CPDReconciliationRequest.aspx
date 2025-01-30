@@ -61,8 +61,7 @@
                     <h5 class="card-title">Displaying Records:</h5>
                     <div class="card mt-4">
                         <div class="card-body table-responsive">
-                            <asp:GridView ID="gvReconciliationClaim" runat="server"
-                                OnRowDataBound="gvReconciliationClaim_RowDataBound"
+                            <asp:GridView ID="gvReconciliationClaim" runat="server" OnRowDataBound="gvReconciliationClaim_RowDataBound"
                                 AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                 <Columns>

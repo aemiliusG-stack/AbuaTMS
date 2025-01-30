@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AbuaTMS;
 
 public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
 {
@@ -15,7 +16,8 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
     DataTable dt = new DataTable();
     DataSet ds = new DataSet();
     MasterData md = new MasterData();
-    private static CEX cex = new CEX();
+    CPD cpd = new CPD();
+    CEOSHA CEOSHA = new CEOSHA();
     string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -34,7 +36,7 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
     {
         try
         {
-            dt = cex.GetSpecialityName();
+            dt = cpd.GetSpecialityName();
             if (dt != null && dt.Rows.Count > 0)
             {
                 dropCategory.Items.Clear();
@@ -64,7 +66,7 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
             int packageId;
             if (int.TryParse(dropCategory.SelectedValue, out packageId))
             {
-                dt = cex.GetProcedureName(packageId);
+                dt = cpd.GetProcedureName(packageId);
                 if (dt.Rows.Count > 0)
                 {
                     dropProcedureName.Items.Clear();
@@ -104,6 +106,32 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
         dropCategory.SelectedIndex = 0;
         dropProcedureName.SelectedIndex = 0;
     }
+    private void BindGrid_RecociliationClaimUpdation()
+    {
+        dt.Clear();
+        dt = CEOSHA.GetRecociliationClaimUpdation();
+
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            gvReconciliationClaim.DataSource = dt;
+            gvReconciliationClaim.DataBind();
+        }
+        else
+        {
+            gvReconciliationClaim.DataSource = null;
+            gvReconciliationClaim.EmptyDataText = "No record found.";
+            gvReconciliationClaim.DataBind();
+        }
+    }
+    protected void gvReconciliationClaim_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            int rowIndex = e.Row.RowIndex + 1;
+            Label lbSlNo = (Label)e.Row.FindControl("lbSlNo");
+            lbSlNo.Text = rowIndex.ToString();
+        }
+    }
     protected void btnSearch_Click(object sender, EventArgs e)
     {
 
@@ -113,4 +141,5 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
     {
         ClearAll();
     }
+
 }

@@ -11,7 +11,7 @@ using AbuaTMS;
 
 public partial class CPD_CPDReconciliationRequest : System.Web.UI.Page
 {
-    //SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
+    SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     DataTable dt = new DataTable();
     DataSet ds = new DataSet();
     CPD cpd = new CPD();

@@ -36,7 +36,7 @@
                             <div class="col-md-3 mb-3">
                                 <span class="form-label font-bold">Scheme Id</span>
                                 <asp:DropDownList ID="dropSchemeId" runat="server" class="form-control mt-2">
-                                   <asp:ListItem Text="ABUA-JHARKHAND" Value="1" Selected="True" />
+                                    <asp:ListItem Text="ABUA-JHARKHAND" Value="1" Selected="True" />
                                 </asp:DropDownList>
                             </div>
                             <div class="col-md-3 mb-3">
@@ -59,91 +59,108 @@
                     </div>
 
                     <div class="card mt-4">
-                        <div class="card-body">
-                            <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
-                            <div class="table-responsive mt-2">
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr class="table-primary">
-                                            <th scope="col" style="background-color: #007e72; color: white;">S.No</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Case No</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Claim No</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Patient Name</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Beneficiary Card Number</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Case Status</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Hospital Name</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Registred Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td><a href="/CEO(SHA)/CEOSHAUnspecifiedDetails.aspx" class="text-decoration-underline text-black font-bold">CASE/PS7/HOSP20G12238/P2897102</a></td>
-                                            <td>TRUST/RAN/2024/3393003210/1</td>
-                                            <td>DUBRAJ MAHTO</td>
-                                            <td>MD02V937R</td>
-                                            <td>Procedure auto approved insurance (Insurance)
-                                            </td>
-                                            <td>CHC NAMKUM</td>
-                                            <td>16/07/2024</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <%--<asp:GridView ID="gridCaseSearch" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
-                         <alternatingrowstyle backcolor="Gainsboro" />
-                         <columns>
-                             <asp:TemplateField HeaderText="S.No.">
-                                 <itemtemplate>
-                                     <asp:Label ID="lbSlNo" runat="server" Text="1"></asp:Label>
-                                 </itemtemplate>
-                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                             </asp:TemplateField>
-                             <asp:TemplateField HeaderText="Case No">
-                                 <itemtemplate>
-                                     <asp:Label ID="lbCaseNo" runat="server" Text="CASE/PS7"></asp:Label>
-                                 </itemtemplate>
-                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                             </asp:TemplateField>
-                             <asp:TemplateField HeaderText="Claim No">
-                                 <itemtemplate>
-                                     <asp:Label ID="lbClaimNo" runat="server" Text="TRUST/RAN"></asp:Label>
-                                 </itemtemplate>
-                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                             </asp:TemplateField>
-                             <asp:TemplateField HeaderText="Patient Name">
-                                 <itemtemplate>
-                                     <asp:Label ID="lbPatientName" runat="server" Text="Patient Name"></asp:Label>
-                                 </itemtemplate>
-                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                             </asp:TemplateField>
-                             <asp:TemplateField HeaderText="Case Status">
-                                 <itemtemplate>
-                                     <asp:Label ID="lbCaseStatus" runat="server" Text="Case Status"></asp:Label>
-                                 </itemtemplate>
-                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                             </asp:TemplateField>
-                             <asp:TemplateField HeaderText="Hospital Name">
-                                 <itemtemplate>
-                                     <asp:Label ID="lbHospitalName" runat="server" Text="Hospital Name"></asp:Label>
-                                 </itemtemplate>
-                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                             </asp:TemplateField>
-                             <asp:TemplateField HeaderText="Registred Date">
-                                 <itemtemplate>
-                                     <asp:Label ID="lbRegisteredDate" runat="server" Text="Registred Date"></asp:Label>
-                                 </itemtemplate>
-                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                 <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                             </asp:TemplateField>
-                         </columns>
-                     </asp:GridView>--%>
-                            </div>
+                        <div class="card-body table-responsive">
+                            <asp:GridView ID="gvReconciliationClaim" runat="server" OnRowDataBound="gvReconciliationClaim_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                <AlternatingRowStyle BackColor="Gainsboro" />
+                                <Columns>
+                                    <asp:TemplateField HeaderText="Sl.No.">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbSlNo" runat="server" Text=""></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                    </asp:TemplateField>
+
+                                    <asp:TemplateField HeaderText="Case No">
+                                        <ItemTemplate>
+                                            <asp:HyperLink ID="hyperlinkCaseNo" runat="server"
+                                                Text='<%# Eval("CaseNumber") %>'
+                                                NavigateUrl='<%# "CEOSHAUnspecifiedPatientDetails.aspx?CaseNo=" + Eval("CaseNumber") %>' />
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                    </asp:TemplateField>
+
+                                    <asp:TemplateField HeaderText="Claim No">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbClaimNo" runat="server" Text='<%# Eval("ClaimNumber") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
+
+                                    <asp:TemplateField HeaderText="Case Status">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbCaseStatus" runat="server" Text='<%# Eval("CaseStatus") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
+
+                                    <asp:TemplateField HeaderText="Hospital Name">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
+
+                                    <asp:TemplateField HeaderText="Registered Date">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbRegDate" runat="server" Text='<%# Eval("AdmissionDate") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
+
+                                    <asp:TemplateField HeaderText="Claim Initiated Amount">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbClaimInitiatedAmt" runat="server" Text='<%# Eval("ClaimInitiatedAmt") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
+
+                                    <asp:TemplateField HeaderText="Claim Approved Amount">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbClaimApprovedAmt" runat="server" Text='<%# Eval("ClaimApprovedAmt") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
+
+                                    <%-- <asp:TemplateField HeaderText="Erroneous Amount">
+                       <itemtemplate>
+                           <asp:Label ID="lbErroneousAmt" runat="server" Text='<%# Eval("ErroneousAmt") %>'></asp:Label>
+                       </itemtemplate>
+                       <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                       <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                   </asp:TemplateField>
+
+                   <asp:TemplateField HeaderText="Erroneous Initiated Amount">
+                       <itemtemplate>
+                           <asp:Label ID="lbErroneousInitiatedAmt" runat="server" Text='<%# Eval("ErroneousInitiatedAmt") %>'></asp:Label>
+                       </itemtemplate>
+                       <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
+                       <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
+                   </asp:TemplateField>--%>
+                                </Columns>
+                            </asp:GridView>
+
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end">
+                                    <li class="page-item disabled">
+                                        <a class="page-link">Previous</a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+
                         </div>
                     </div>
                 </div>

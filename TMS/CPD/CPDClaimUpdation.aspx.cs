@@ -93,6 +93,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         dt = ds.Tables[0];
                         string claimId = dt.Rows[0]["ClaimId"].ToString();
                         Session["ClaimId"] = claimId;
+                        hdClaimId.Value = claimId;
                         lbCaseNoHead.Text = dt.Rows[0]["CaseNumber"].ToString();
                         lbName.Text = dt.Rows[0]["PatientName"].ToString();
                         lbBeneficiaryId.Text = dt.Rows[0]["CardNumber"].ToString();
@@ -160,6 +161,22 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         else
                         {
                             pClaimsSD.Visible = false;
+                        }
+                        if (cpd.IsClaimQueryExists(hdClaimId.Value))
+                        {
+                            pClaimQuery.Visible = true;
+                        }
+                        else
+                        {
+                            pClaimQuery.Visible = false;
+                        }
+                        if (cpd.IsPreauthUtilizationExists(hfAdmissionId.Value))
+                        {
+                            pPreauthUtilization.Visible = true;
+                        }
+                        else
+                        {
+                            pPreauthUtilization.Visible = false;
                         }
                         displayPatientAdmissionImage();
                         BindGrid_TreatmentProtocol();
@@ -809,6 +826,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         }
         dropDeductionType.Items.Insert(0, new ListItem("--Select--", ""));
     }
+    
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
         hdUserId.Value = Session["UserId"].ToString();
@@ -817,43 +835,53 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         {
             decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
             string roleName = cpd.GetUserRole(Convert.ToInt32(Session["UserId"].ToString()));
+
+            if (!decimal.TryParse(tbAmount.Text, out deductionAmount) || deductionAmount < 0)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid deduction amount. It must be a positive number.');", true);
+                return;
+            }
             if (roleName == "CPD(INSURER)")
             {
-                totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value.ToString());
-                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
-                if (deductionAmount > totalClaims)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
-                    return;
-                }
-                totalDeductionAmount = totalClaims - deductionAmount;
-                tbTotalDeductedAmt.Text = deductionAmount.ToString();
-                tbFinalAmt.Text = totalClaims.ToString();
-                tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
-
+                totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value);
             }
             else if (roleName == "CPD(TRUST)")
             {
-                totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value.ToString());
-                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
-                if (deductionAmount > totalClaims)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
-                    return;
-                }
-                totalDeductionAmount = totalClaims - deductionAmount;
-                tbTotalDeductedAmt.Text = deductionAmount.ToString();
-                tbFinalAmt.Text = totalClaims.ToString();
-                tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
+                totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value);
             }
+            else
+            {
+                return; // Exit if the role is unknown
+            }
+            if (deductionAmount > totalClaims)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
+                return;
+            }
+
+            totalDeductionAmount = totalClaims - deductionAmount;
+
+            tbTotalDeductedAmt.Text = deductionAmount.ToString();
+            tbFinalAmt.Text = totalClaims.ToString();
+            tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
+
             hfDeductedAmount.Value = deductionAmount.ToString();
             hfFinalAmount.Value = totalDeductionAmount.ToString();
-            
         }
         catch (Exception ex)
         {
-            
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('An error occurred. Please try again.');", true);
         }
+    }
+    protected void ResetDeduction_Click(object sender, EventArgs e)
+    {
+        dropDeductionType.ClearSelection(); 
+        dropDeductionType.SelectedIndex = 0; 
+        tbAmount.Text = "";
+        tbDedRemarks.Text = "";
+        tbTotalDeductedAmt.Text = "";
+        tbFinalAmt.Text = "";
+        tbFinalAmtAfterDeduction.Text = "";
     }
     private void BindClaimWorkflow()
     {

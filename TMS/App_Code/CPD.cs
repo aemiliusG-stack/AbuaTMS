@@ -606,6 +606,25 @@ public class CPD
         }
         return dt;
     }
+    public bool IsClaimQueryExists(string Claimid)
+    {
+        bool exists = false;
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_ClaimQuery WHERE  ClaimId= @Claimid AND IsActive = 1", con);
+        cmd.Parameters.AddWithValue("@Claimid", Claimid);
+
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        if (count > 0)
+        {
+            exists = true;
+        }
+        if (con.State == System.Data.ConnectionState.Open)
+        {
+            con.Close();
+        }
+
+        return exists;
+    }
     public DataTable GetClaimQuery(string ClaimId)
     {
         dt.Clear();
@@ -1184,6 +1203,24 @@ public class CPD
 
             }
         }
+    }
+    public bool IsPreauthUtilizationExists(string AdmissionId)
+    {
+        bool exists = false;
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_PatientAdmissionDetail WHERE  IsEnhancementTaken = 1 AND AdmissionId = @AdmissionId AND IsActive = 1", con);
+        cmd.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        if (count > 0)
+        {
+            exists = true;
+        }
+        if (con.State == System.Data.ConnectionState.Open)
+        {
+            con.Close();
+        }
+
+        return exists;
     }
 }
 
