@@ -2,17 +2,10 @@
 using System;
 using System.Data.SqlClient;
 using System.Data;
-using System.Drawing;
 using System.Web.Services;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Xml.Linq;
-using WebGrease.Css.Ast;
 using System.Configuration;
 using System.Web;
-using AbuaTMS;
-using Org.BouncyCastle.Crypto.General;
-using System.Security.Cryptography;
 
 
 public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
@@ -40,10 +33,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             {
                 hdUserId.Value = Session["UserId"].ToString();
                 hdRoleId.Value = Session["RoleId"].ToString();
-                BindGridPrimaryDiagnosis();
-                BindGridPrimaryICDValue();
                 BindGridICHIDetail();
-                BindGridSurgeryDate();
                 getpatient();
             }
         }
@@ -97,9 +87,20 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     tbCSTherepyDate.Attributes["max"] = maxDate;
                     tbCSAdmissionDate.Attributes["min"] = minDateadmission;
                     tbCSAdmissionDate.Attributes["max"] = maxDate;
-                    Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
-                    Session["ClaimId"] = dt.Rows[0]["ClaimId"].ToString().Trim();
                     hdClaimId.Value = dt.Rows[0]["ClaimId"].ToString().Trim();
+                    Session["ClaimId"] = hdClaimId.Value;
+                    hdHospitalId.Value = dt.Rows[0]["HospitalId"].ToString().Trim();
+                    hdClaimMode.Value = dt.Rows[0]["ClaimMode"].ToString();
+                    if (hdClaimMode.Value == "3")
+                    {
+                        bool result = cex.UpdateIfHybride(hdClaimId.Value, hdUserId.Value);
+                        if (!result)
+                        {
+                            string errorMessage = "window.alert('.');";
+                            ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                            return;
+                        }
+                    }
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
                     hdAdmissionId.Value = dt.Rows[0]["AdmissionId"].ToString().Trim();
                     hdPatientRegId.Value = dt.Rows[0]["PatientRegId"].ToString().Trim();
@@ -107,31 +108,20 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     lbBenCardId.Text = dt.Rows[0]["CardNumber"].ToString().Trim();
                     lbRegistrationNo.Text = dt.Rows[0]["PatientRegId"].ToString().Trim();
                     lbCaseNumber.Text = "Case No: " + dt.Rows[0]["CaseNumber"].ToString().Trim();
-
-                    string caseNumber = dt.Rows[0]["CaseNumber"].ToString().Trim();
-
-                    Session["CaseNumber"] = caseNumber;
-
-                    hdCaseNo.Value = caseNumber;
+                    hdCaseNo.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     string patientImageBase64 = Convert.ToString(dt.Rows[0]["ImageURL"].ToString());
                     string folderName = hdAbuaId.Value;
                     string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
                     string base64String = "";
-
                     base64String = cex.DisplayImage(folderName, imageFileName);
                     if (base64String != "")
                     {
                         imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
-                        //imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64String;
                     }
-
                     else
                     {
                         imgPatientPhoto.ImageUrl = "~/img/profile.jpg";
-                        //imgPatientPhotosecond.ImageUrl = "~/img/profile.jpg";
                     }
-
-
                     lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     lbRegDate.Text = registrationDate.ToString("dd-MM-yyyy");
                     lbComContactNo.Text = dt.Rows[0]["MobileNumber"].ToString().Trim();
@@ -139,7 +129,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     lbGender.Text = dt.Rows[0]["Gender"].ToString().Trim() == "" ? "N/A" : dt.Rows[0]["Gender"].ToString().Trim();
                     lbFamilyID.Text = dt.Rows[0]["PatientFamilyId"].ToString().Trim();
                     lbAadharVerified.Text = dt.Rows[0]["IsAadharVerified"].ToString().Trim() == "False" ? "No" : "Yes";
-                    //lbBiometricVerified.Text = dt.Rows[0]["IsBiometricVerified"].ToString().Trim() == "False" ? "No" : "Yes";
                     lbPatientDistrict.Text = dt.Rows[0]["District"].ToString().Trim();
                     lbAge.Text = dt.Rows[0]["Age"].ToString().Trim();
                     tbRemark.Text = dt.Rows[0]["Remarks"].ToString().Trim();
@@ -160,12 +149,29 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     lbHospitalIncentive.Text = dt.Rows[0]["IncentivePercentage"].ToString().Trim() + "%";
                     lbTotalPackageCostShow.Text = dt.Rows[0]["TotalPackageCost"].ToString().Trim();
                     lbNonTechDeathDate.Text = DischargeDate.ToString("dd-MM-yyyy");
-
+                    bool IfSecondaryDiagnosisPresent = cex.IfSecondaryDiagnosisPresent(hdAbuaId.Value, hdPatientRegId.Value);
+                    if (IfSecondaryDiagnosisPresent)
+                    {
+                        PanelSecondaryDiagnosis.Visible = true;
+                        pnlSecondaryDiagnosisICDValue.Visible = true;
+                        BindGrid_SecondaryDiagnosis();
+                        BindGrid_ClaimSecondaryDiagnosis();
+                    }
+                    bool IsOncologyCase = cex.IsOncologyCase(hdCaseNo.Value);
+                    if (IsOncologyCase)
+                    {
+                        btnOncology.Visible = true;
+                        btnOncology.CssClass = "btn btn-primary";
+                    }
                     displayPatientAdmissionImage();
                     BindGrid_TreatmentProtocol();
+                    BindGrid_TreatmentSurgeryDate();
+                    BindGrid_PrimaryDiagnosis();
+                    BindGrid_ClaimPrimaryDiagnosis();
                     BindGrid_PreauthWorkFlow();
                     BindClaimWorkflow();
                     getTreatmentDischarge();
+
 
                     if (hdRoleId.Value == "5")
                     {
@@ -187,9 +193,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                         PanelTotLiableInsuranceIs.Visible = false;
                         PanelTotLiableTrust.Visible = true;
                         PanelTotLiableTrustIs.Visible = true;
-                        //lbpnlInsuranceAmount.Text = dt.Rows[0]["InsurerClaimAmountApproved"].ToString().Trim();
                         lbpnlTrustAmount.Text = dt.Rows[0]["TrustClaimAmountApproved"].ToString().Trim();
-                        //lbTotalLiableAmountByInsurer.Text = dt.Rows[0]["InsurerClaimAmountApproved"].ToString().Trim();
                         lbTotalLiableAmountByTrust.Text = dt.Rows[0]["TrustClaimAmountApproved"].ToString().Trim();
                     }
 
@@ -203,7 +207,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                         rbAdmissionTypePlanned.Checked = false;
                         rbAdmissionTypeEmergency.Checked = true;
                     }
-
                 }
             }
             else
@@ -251,12 +254,10 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
     private void getTreatmentDischarge()
     {
-        string claimId = Session["ClaimId"] as string;
         dt.Clear();
-        dt = cex.GetTreatmentDischarge(claimId);
+        dt = cex.GetTreatmentDischarge(hdClaimId.Value);
         if (dt != null && dt.Rows.Count > 0)
         {
             DataRow row = dt.Rows[0];
@@ -268,7 +269,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             lbAnaesthetistName.Text = row["AnaesthetistName"].ToString();
             lbAnaesthetistRegNo.Text = row["AnaesthetistRegNo"].ToString();
             lbAnaesthetistContactNo.Text = row["AnaesthetistMobNo"].ToString();
-            //lbAnaesthetistType.Text = row["DoctorContactNumber"].ToString();
             lbIncisionType.Text = row["IncisionType"].ToString();
             rbOPPhotoYes.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && Convert.ToBoolean(row["OPPhotosWebexTaken"]);
             rbOPPhotoNo.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && !Convert.ToBoolean(row["OPPhotosWebexTaken"]);
@@ -303,43 +303,17 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             lbRoomNo.Text = row["RoomNo"].ToString();
             rbIsSpecialCaseYes.Checked = row["IsSpecialCase"] != DBNull.Value && Convert.ToBoolean(row["IsSpecialCase"]);
             rbIsSpecialCaseNo.Checked = row["IsSpecialCase"] != DBNull.Value && !Convert.ToBoolean(row["IsSpecialCase"]);
+            if (rbIsSpecialCaseYes.Checked)
+            {
+                pnlSpecialCaseValue.Visible = true; 
+                lbSpecialCaseValue.Text = row["SpecialCaseValue"].ToString(); 
+            }
             lbFinalDiagnosis.Text = row["FinalDiagnosis"].ToString();
             rbConsentYes.Checked = row["ProcedureConsent"] != DBNull.Value && Convert.ToBoolean(row["ProcedureConsent"]);
             rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);
         }
         else
         {
-            lbDocType.Text = "";
-            lbDoctorName.Text = "";
-            lbDocRegnNo.Text = "";
-            lbDocQualification.Text = "";
-            lbDocContactNo.Text = "";
-            lbAnaesthetistName.Text = "";
-            lbAnaesthetistRegNo.Text = "";
-            lbAnaesthetistContactNo.Text = "";
-            //lbAnaesthetistType.Text = "";
-            lbSwabCounts.Text = "";
-            lbSurutes.Text = "";
-            lbDranageCount.Text = "";
-            lbBloodLoss.Text = "";
-            lbOperativeInstructions.Text = "";
-            lbPatientCondition.Text = "";
-            lbTraetmentDate.Text = "";
-            tbSurgeryStartTime.Text = "";
-            tbSurgeryEndTime.Text = "";
-            tbTreatmentGiven.Text = "";
-            tbOperativeFindings.Text = "";
-            tbPostOperativePeriod.Text = "";
-            tbSpecialInvestigationGiven.Text = "";
-            tbStatusAtDischarge.Text = "";
-            tbReview.Text = "";
-            tbAdvice.Text = "";
-            lbDischargeDate.Text = "";
-            lbNextFollowUp.Text = "";
-            lbConsultBlockName.Text = "";
-            lbFloor.Text = "";
-            lbRoomNo.Text = "";
-            lbFinalDiagnosis.Text = "";
 
         }
     }
@@ -395,7 +369,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
     protected void tbCSTherepyDate_TextChanged(object sender, EventArgs e)
     {
 
@@ -431,12 +404,12 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                 }
                 else
                 {
-                    //lblMessage.Text = "Please enter a valid date.";
+                   
                 }
             }
             else
             {
-                //lblMessage.Text = "No patient details available.";
+              
             }
         }
         catch (Exception ex)
@@ -483,12 +456,12 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                 }
                 else
                 {
-                    //lblMessage.Text = "Please enter a valid date.";
+                    
                 }
             }
             else
             {
-                //lblMessage.Text = "No patient details available.";
+               
             }
         }
         catch (Exception ex)
@@ -534,43 +507,30 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
                     return;
                 }
-
-
                 string caseNo = hdCaseNo.Value;
                 string cardNumber = hdAbuaId.Value;
                 string userId = hdUserId.Value;
                 string claimId = hdClaimId.Value;
                 string admissionId = hdAdmissionId.Value;
-
+                string claimMode = hdClaimMode.Value;
                 int isNameCorrect = rbIsNameCorrectYes.Checked ? 1 : 0;
                 int isGenderCorrect = rbIsGenderCorrectYes.Checked ? 1 : 0;
                 int doesPhotoMatch = rbIsPhotoVerifiedYes.Checked ? 1 : 0;
-
                 string admissionDateCS = tbCSAdmissionDate.Text;
                 string admissionDateCSText = tbCSAdmissionDate.Text;
-
                 int doesAddDateMatchCS = rbIsAdmissionDateVerifiedYes.Checked ? 1 : 0;
-
                 string surgeryDateCS = tbCSTherepyDate.Text;
                 int doesSurDateMatchCS = rbIsSurgeryDateVerifiedYes.Checked ? 1 : 0;
-
-
                 string dischargeDateCS = tbCSDischargeDate.Text;
                 int doesDischargeDateMatchCS = rbIsDischargeDateCSVerifiedYes.Checked ? 1 : 0;
-
                 int isPatientSignVerified = rbIsSignVerifiedYes.Checked ? 1 : 0;
                 int isReportVerified = rbIsReportCorrectYes.Checked ? 1 : 0;
                 int isDateAndNameCorrect = rbIsReportVerifiedYes.Checked ? 1 : 0;
-
                 string nonTechChecklistRemarks = tbNonTechFormRemark.Text;
                 string Role = hdRoleId.Value;
-
-                //DataTable dt = new DataTable();
                 dt = ds.Tables[0];
-                //DataRow row = dt.Rows[0];
                 string demo = dt.Rows[0]["TotalPackageCost"].ToString().Trim();
                 int amount = Convert.ToInt32(Convert.ToDecimal(dt.Rows[0]["TotalPackageCost"].ToString().Trim()));
-
 
                 DateTime admissionDate;
                 if (DateTime.TryParse(tbCSAdmissionDate.Text, out admissionDate))
@@ -620,13 +580,12 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
 
                 if (resultId)
                 {
-                    if (hdRoleId.Value == "5")
+                    if (hdClaimMode.Value == "3")
                     {
-                        bool result = cex.UpdateClaimMasterForCEXInsurer(caseNo, userId, claimId);
-
+                        bool result = cex.UpdateClaimMasterForCEXHybrid(caseNo, userId, claimId);
                         if (result)
                         {
-                            bool ActionResult = cex.PatientActionForCEXInsurer(userId, claimId, amount, nonTechChecklistRemarks);
+                            bool ActionResult = cex.PatientActionForCEXHybrid(userId, claimId, admissionId, amount, nonTechChecklistRemarks);
                             if (ActionResult)
                             {
                                 string strMessage = "window.alert('Saved Successfully!');window.location.reload();";
@@ -639,23 +598,44 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                             ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
                         }
                     }
-                    else if (hdRoleId.Value == "6")
+                    else
                     {
-                        bool result = cex.UpdateClaimMasterForCEXTrust(caseNo, userId, claimId);
-
-                        if (result)
+                        if (hdRoleId.Value == "5")
                         {
-                            bool ActionResult = cex.PatientActionForCEXTrust(userId, claimId, amount, nonTechChecklistRemarks);
-                            if (ActionResult)
+                            bool result = cex.UpdateClaimMasterForCEXInsurer(caseNo, userId, claimId);
+                            if (result)
                             {
-                                strMessage = "window.alert('Saved Successfully.');window.location.reload();";
+                                bool ActionResult = cex.PatientActionForCEXInsurer(userId, claimId, admissionId, amount, nonTechChecklistRemarks);
+                                if (ActionResult)
+                                {
+                                    string strMessage = "window.alert('Saved Successfully!');window.location.reload();";
+                                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                                }
+                            }
+                            else
+                            {
+                                strMessage = "window.alert('Something Went Wrong.');window.location.reload();";
                                 ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
                             }
                         }
-                        else
+                        else if (hdRoleId.Value == "6")
                         {
-                            strMessage = "window.alert('Something Went Wrong.');window.location.reload();";
-                            ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                            bool result = cex.UpdateClaimMasterForCEXTrust(caseNo, userId, claimId);
+
+                            if (result)
+                            {
+                                bool ActionResult = cex.PatientActionForCEXTrust(userId, claimId, admissionId, amount, nonTechChecklistRemarks);
+                                if (ActionResult)
+                                {
+                                    strMessage = "window.alert('Saved Successfully.');window.location.reload();";
+                                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                                }
+                            }
+                            else
+                            {
+                                strMessage = "window.alert('Something Went Wrong.');window.location.reload();";
+                                ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
+                            }
                         }
                     }
                 }
@@ -664,7 +644,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     strMessage = "window.alert('Failed to Saved.');";
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Result", strMessage, true);
                 }
-
             }
         }
         catch (Exception ex)
@@ -677,35 +656,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
-
-    private void BindGridPrimaryDiagnosis()
-    {
-        DataTable dt = new DataTable();
-        dt.Columns.Add("S No");
-        dt.Columns.Add("ICD Code");
-        dt.Columns.Add("ICD Description");
-        dt.Columns.Add("Acted By Role");
-
-        dt.Rows.Add("1", "N/A", "N/A)", "N/A");
-
-        GridPrimaryDiagnosis.DataSource = dt;
-        GridPrimaryDiagnosis.DataBind();
-    }
-    private void BindGridPrimaryICDValue()
-    {
-        DataTable dt = new DataTable();
-        dt.Columns.Add("S No");
-        dt.Columns.Add("ICD Code");
-        dt.Columns.Add("ICD Description");
-        dt.Columns.Add("Acted By Role");
-
-        dt.Rows.Add("1", "N/A", "N/A)", "N/A");
-
-        GridPrimaryICDValue.DataSource = dt;
-        GridPrimaryICDValue.DataBind();
-    }
-
     private void BindGridICHIDetail()
     {
         DataTable dt = new DataTable();
@@ -716,42 +666,12 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         dt.Columns.Add("ICHI Code given By SAFO");
         dt.Columns.Add("ICHI Code given By NAFO");
 
-        dt.Rows.Add("Secondary suturing of episiotomy - Secondary suturing of episiotomy(SO-SO056A)-S400073", "Repair of perineum(PAW MK AA)", "NA", "NA", "NA", "NA");
+        dt.Rows.Add("NA", "NA", "NA", "NA", "NA", "NA");
 
         GridICHIDetail.DataSource = dt;
         GridICHIDetail.DataBind();
     }
-    //private void BindGridWorkflow()
-    //{
-    //    DataTable dt = new DataTable();
-    //    dt.Columns.Add("S No");
-    //    dt.Columns.Add("Date and Time");
-    //    dt.Columns.Add("Role");
-    //    dt.Columns.Add("Remarks");
-    //    dt.Columns.Add("Action");
-    //    dt.Columns.Add("Amount");
-    //    dt.Columns.Add("Preauth Querry Rejection");
-
-    //    dt.Rows.Add("1", "14/06/2024 17:01:02", "MEDCO(MEDCO)", "NA", "Patient Regisered", "NA", "NA");
-    //    dt.Rows.Add("2", "18/06/2024 17:01:02", "MEDCO(MEDCO)", "Procedure Auto Approved", "Procedure auto approved insurance(insurance)", "2750", "NA");
-    //    dt.Rows.Add("3ss", "29/06/2024 17:01:02", "MEDCO(MEDCO)", "NA", "Discharge Date update by Medco(Insurance)", "2750", "NA");
-
-    //    GridWorkflow.DataSource = dt;
-    //    GridWorkflow.DataBind();
-    //}
-    private void BindGridSurgeryDate()
-    {
-        DataTable dt = new DataTable();
-        dt.Columns.Add("Procedure Code");
-        dt.Columns.Add("Procedure Name");
-        dt.Columns.Add("Surgery Date/Treatment Start Date");
-
-        dt.Rows.Add("SO056A", "Secondary sutiuring of episiotomy", "14-06-2024");
-
-        GridSurgeryDate.DataSource = dt;
-        GridSurgeryDate.DataBind();
-    }
-
+  
     [WebMethod]
     public static string NotifyInactivity(string message)
     {
@@ -762,8 +682,6 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         }
         return System.Web.VirtualPathUtility.ToAbsolute("~/Unauthorize.aspx");
     }
-
-
     protected void btnPastHistory_Click(object sender, EventArgs e)
     {
         mvCEXTabs.SetActiveView(ViewPast);
@@ -772,6 +690,11 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         btnTreatment.CssClass = "btn btn-primary";
         btnClaims.CssClass = "btn btn-primary";
         btnAttachments.CssClass = "btn btn-primary";
+        if (btnOncology.Visible)
+        {
+            btnOncology.CssClass = "btn btn-primary"; 
+        }
+
     }
 
     protected void btnPreauth_Click(object sender, EventArgs e)
@@ -782,6 +705,10 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         btnTreatment.CssClass = "btn btn-primary";
         btnClaims.CssClass = "btn btn-primary";
         btnAttachments.CssClass = "btn btn-primary";
+        if (btnOncology.Visible)
+        {
+            btnOncology.CssClass = "btn btn-primary";
+        }
     }
 
     protected void btnTreatment_Click(object sender, EventArgs e)
@@ -792,6 +719,10 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         btnTreatment.CssClass = "btn btn-warning";
         btnClaims.CssClass = "btn btn-primary";
         btnAttachments.CssClass = "btn btn-primary";
+        if (btnOncology.Visible)
+        {
+            btnOncology.CssClass = "btn btn-primary";
+        }
     }
 
     protected void btnClaims_Click(object sender, EventArgs e)
@@ -802,6 +733,10 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         btnTreatment.CssClass = "btn btn-primary";
         btnClaims.CssClass = "btn btn-warning";
         btnAttachments.CssClass = "btn btn-primary";
+        if (btnOncology.Visible)
+        {
+            btnOncology.CssClass = "btn btn-primary";
+        }
     }
 
     protected void btnAttachments_Click(object sender, EventArgs e)
@@ -813,6 +748,10 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         btnTreatment.CssClass = "btn btn-primary";
         btnClaims.CssClass = "btn btn-primary";
         btnAttachments.CssClass = "btn btn-warning";
+        if (btnOncology.Visible)
+        {
+            btnOncology.CssClass = "btn btn-primary";
+        }
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkDischarge.CssClass = "btn btn-primary";
         lnkDeath.CssClass = "btn btn-primary";
@@ -926,7 +865,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
     private void BindGrid_PreauthWorkFlow()
     {
         dt.Clear();
-        string claimId = Session["ClaimId"].ToString();
+        string claimId = hdClaimId.Value;
         dt = cex.GetClaimWorkFlow(Convert.ToInt32(claimId));
         if (dt != null && dt.Rows.Count > 0)
         {
@@ -943,7 +882,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
     private void BindClaimWorkflow()
     {
         dt.Clear();
-        string claimId = Session["ClaimId"].ToString();
+        string claimId = hdClaimId.Value;
         dt = cex.GetClaimWorkFlow(Convert.ToInt32(claimId));
         if (dt != null && dt.Rows.Count > 0)
         {
@@ -982,8 +921,141 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-
-
+        }
+    }
+    protected void BindGrid_TreatmentSurgeryDate()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cex.getTreatmentSurgeryDate(hdHospitalId.Value, hdPatientRegId.Value, hdAbuaId.Value);
+            if (dt.Rows.Count > 0)
+            {
+                gridSurgeryTreatmentDate.DataSource = dt;
+                gridSurgeryTreatmentDate.DataBind();
+            }
+            else
+            {
+                gridSurgeryTreatmentDate.DataSource = "";
+                gridSurgeryTreatmentDate.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void BindGrid_PrimaryDiagnosis()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cex.getPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt.Rows.Count > 0)
+            {
+                GridPrimaryDiagnosis.DataSource = dt;
+                GridPrimaryDiagnosis.DataBind();
+            }
+            else
+            {
+                GridPrimaryDiagnosis.DataSource = "";
+                GridPrimaryDiagnosis.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void BindGrid_ClaimPrimaryDiagnosis()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cex.getPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt.Rows.Count > 0)
+            {
+                GridClaimPrimaryDiagnosisICDValue.DataSource = dt;
+                GridClaimPrimaryDiagnosisICDValue.DataBind();
+            }
+            else
+            {
+                GridClaimPrimaryDiagnosisICDValue.DataSource = "";
+                GridClaimPrimaryDiagnosisICDValue.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void BindGrid_SecondaryDiagnosis()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cex.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt.Rows.Count > 0)
+            {
+                GridSecondaryDiagnosis.DataSource = dt;
+                GridSecondaryDiagnosis.DataBind();
+            }
+            else
+            {
+                GridSecondaryDiagnosis.DataSource = "";
+                GridSecondaryDiagnosis.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void BindGrid_ClaimSecondaryDiagnosis()
+    {
+        try
+        {
+            dt.Clear();
+            dt = cex.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt.Rows.Count > 0)
+            {
+                GridClaimSecondaryDiagnosisICDValue.DataSource = dt;
+                GridClaimSecondaryDiagnosisICDValue.DataBind();
+            }
+            else
+            {
+                GridClaimSecondaryDiagnosisICDValue.DataSource = "";
+                GridClaimSecondaryDiagnosisICDValue.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1008,10 +1080,21 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
     protected void LinkButton1_Click(object sender, EventArgs e)
     {
         MultiView3.SetActiveView(viewPhoto);
         ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+    }
+
+    protected void btnOncology_Click(object sender, EventArgs e)
+    {
+        mvCEXTabs.SetActiveView(ViewOncology);
+        btnOncology.Visible = true;
+        btnOncology.CssClass = "btn btn-warning";
+        btnPastHistory.CssClass = "btn btn-primary";
+        btnPreauth.CssClass = "btn btn-primary";
+        btnTreatment.CssClass = "btn btn-primary";
+        btnClaims.CssClass = "btn btn-primary";
+        btnAttachments.CssClass = "btn btn-primary";
     }
 }

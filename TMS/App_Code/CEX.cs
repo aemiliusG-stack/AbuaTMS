@@ -149,6 +149,68 @@ public class CEX
             return false;
         }
     }
+
+    public bool UpdateClaimMasterForCEXHybrid(string caseNo, string userId, string claimId)
+    {
+        try
+        {
+            string query = @"UPDATE TMS_ClaimMaster
+				SET ForwardedByInsurer = 5, ForwardedToInsurer = 7 , CurrentHandleByInsurer = 0 ,ForwardedByTrust = 6, ForwardedToTrust = 8 ,CurrentHandleByTrust = 0,  CEXInsurerId = @UserId , CEXTrustId = @UserId,IsCEXInsurerApproved = 1,IsCEXTrustApproved = 1, UpdatedOn = GETDATE()
+				WHERE CaseNumber = @CaseNo AND ClaimId = @ClaimId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
+            sd.InsertCommand.Parameters.AddWithValue("@CaseNo", caseNo);
+            sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+    public bool UpdateIfHybride( string claimId, string userId)
+    {
+        try
+        {
+            string query = @"UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = @UserId, CurrentHandleByTrust = @UserId WHERE ClaimId = @ClaimId";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
+            sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
     public bool UpdateClaimMasterForCEXTrust(string caseNo, string userId, string claimId)
     {
         try
@@ -181,17 +243,18 @@ public class CEX
             return false;
         }
     }
-    public bool PatientActionForCEXInsurer(string userId, string claimId, int amount, string nonTechChecklistRemarks)
+    public bool PatientActionForCEXInsurer(string userId, string claimId,string admissionId, int amount, string nonTechChecklistRemarks)
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
+	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
             sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
             sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
+            sd.InsertCommand.Parameters.AddWithValue("@AdmissionId", admissionId);
             sd.InsertCommand.Parameters.AddWithValue("@Amount", amount);
             sd.InsertCommand.Parameters.AddWithValue("@Remarks", nonTechChecklistRemarks);
             if (con.State == ConnectionState.Open)
@@ -213,17 +276,52 @@ public class CEX
             return false;
         }
     }
-    public bool PatientActionForCEXTrust(string userId, string claimId, int amount, string nonTechChecklistRemarks)
+    public bool PatientActionForCEXHybrid(string userId, string claimId,string admissionId, int amount, string nonTechChecklistRemarks)
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
+	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Hybrid)',@Remarks,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
             sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
             sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
+            sd.InsertCommand.Parameters.AddWithValue("@AdmissionId", admissionId);
+            sd.InsertCommand.Parameters.AddWithValue("@Amount", amount);
+            sd.InsertCommand.Parameters.AddWithValue("@Remarks", nonTechChecklistRemarks);
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            con.Open();
+            int rowsAffected = sd.InsertCommand.ExecuteNonQuery();
+            con.Close();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+    public bool PatientActionForCEXTrust(string userId, string claimId,string admissionId, int amount, string nonTechChecklistRemarks)
+    {
+        try
+        {
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
+	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,@Amount, 1, GETDATE())";
+
+            SqlDataAdapter sd = new SqlDataAdapter();
+            sd.InsertCommand = new SqlCommand(query, con);
+            sd.InsertCommand.Parameters.AddWithValue("@UserId", userId);
+            sd.InsertCommand.Parameters.AddWithValue("@ClaimId", claimId);
+            sd.InsertCommand.Parameters.AddWithValue("@AdmissionId", admissionId);
+            sd.InsertCommand.Parameters.AddWithValue("@Amount", amount);
             sd.InsertCommand.Parameters.AddWithValue("@Remarks", nonTechChecklistRemarks);
             if (con.State == ConnectionState.Open)
             {
@@ -269,6 +367,59 @@ public class CEX
             return false;
         }
     }
+    public bool IfSecondaryDiagnosisPresent(string cardNo,string PatientRegId)
+    {
+        try
+        {
+            string query = @"Select COUNT(1) From TMS_PatientSecondaryDiagnosis WHERE CardNumber = @CardNumber AND PatientRegId = @PatientRegId";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@CardNumber", cardNo);
+            cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar(); 
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+    public bool IsOncologyCase(string caseNo)
+    {
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_PatientTreatmentProtocol t1 Left Join TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId
+                            Left Join TMS_PatientAdmissionDetail t3 ON t1.PatientRegId = t3.PatientRegId WHERE t3.CaseNumber = @CaseNumber AND t1.PackageId in (10,24,25)";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@CaseNumber", caseNo);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar();
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
+
+
+
     public string DisplayImage(string folderName, string imageFileName)
     {
         string imageBaseUrl = ConfigurationManager.AppSettings["ImageUrlPath"];
@@ -280,7 +431,7 @@ public class CEX
 
     public DataTable GetTreatmentDischarge(string ClaimId)
     {
-        string Query = "SELECT T3.TypeOfMedicalExpertise, T3.DoctorName, T3.DoctorRegistrationNumber, T3.Qualification, T3.DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id LEFT JOIN HEM_Execl_DoctorRegistration T3 ON T1.DoctorId = T3.Sno WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
+        string Query = "SELECT T3.TypeOfMedicalExpertise, T3.DoctorName, T3.DoctorRegistrationNumber, T3.Qualification, T3.DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase,T1.SpecialCaseValue, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id LEFT JOIN HEM_Execl_DoctorRegistration T3 ON T1.DoctorId = T3.Sno WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
@@ -366,11 +517,11 @@ public class CEX
 
         if (RoleName.ToUpper() == "CEX(INSURER)")
         {
-            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 , CurrentHandleByTrust = 0   WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
         }
         else if (RoleName.ToUpper() == "CEX(TRUST)")
         {
-            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = 0 , CurrentHandleByInsurer = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
         }
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
@@ -417,6 +568,76 @@ public class CEX
             string Query = "SELECT t2.SpecialityName, t3.ProcedureName, t1.ProcedureAmountFinal, COUNT(t3.ProcedureName) AS Quantity, CASE WHEN t1.ImplantId IS NULL OR t1.ImplantId = 0 THEN 'NA' ELSE t4.ImplantName END AS ImplantName,CASE WHEN t1.StratificationId IS NULL OR t1.StratificationId = 0 THEN 'NA' ELSE t5.StratificationName END AS StratificationName FROM TMS_PatientTreatmentProtocol t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId LEFT JOIN TMS_MasterImplantMaster t4 on t1.ImplantId= t4.ImplantId LEFT JOIN TMS_MasterStratificationMaster t5 on t5.StratificationId=t1.StratificationId INNER JOIN TMS_PatientAdmissionDetail t6 on t6.PatientRegId = t1.PatientRegId WHERE t6.CaseNumber = @CaseNo GROUP BY t2.SpecialityName, t3.ProcedureName, t1.ProcedureAmountFinal, t1.ImplantId, t4.ImplantName, t1.StratificationId, t5.StratificationName";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+
+        return dt;
+    }
+    public DataTable getTreatmentSurgeryDate(string HospitalId, string PatientRegId, string CardNo)
+    {
+        dt.Clear();
+        try
+        {
+            string Query = "select t1.PatientRegId, t1.ProcedureId, t2.ProcedureCode, t2.ProcedureName, CONVERT(VARCHAR, TreatmentStartDate, 23) as TreatmentStartDate from TMS_PatientTreatmentProtocol t1 LEFT JOIN TMS_MasterPackageDetail t2 ON t1.ProcedureId = t2.ProcedureId where t1.HospitalId = @HospitalId AND t1.PatientRegId = @PatientRegId AND t1.CardNumber = @CardNumber AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNo);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+
+        return dt;
+    }
+    public DataTable getPrimaryDiagnosis(string CardNo, string PatientRegId)
+    {
+        dt.Clear();
+        try
+        {
+            string Query = "Select t1.ICDValue,t3.RoleName, t2.PrimaryDiagnosisName from TMS_PatientPrimaryDiagnosis t1 LEFT JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId LEFT JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNo);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+        }
+        catch
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+
+        return dt;
+    }
+    public DataTable getSecondaryDiagnosis(string CardNo, string PatientRegId)
+    {
+        dt.Clear();
+        try
+        {
+            string Query = "Select t1.ICDValue,t3.RoleName, t2.PrimaryDiagnosisName from TMS_PatientSecondaryDiagnosis t1 LEFT JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId LEFT JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNo);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
             con.Open();
             sd.Fill(dt);
             con.Close();
