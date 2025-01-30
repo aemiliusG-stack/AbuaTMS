@@ -154,6 +154,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                     }
                 }
                 BindClaimWorkflow(lbClaimId.Text);
+                ShowPreInvestigationDocuments();
             }
             MultiView1.SetActiveView(viewDischarge);
         }
@@ -761,61 +762,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     }
     protected void btnAttachment_Click(object sender, EventArgs e)
     {
-        try
-        {
-            dt.Clear();
-            dt = preAuth.GetPatientManditoryDocument(hdAbuaId.Value.ToString());
-
-            if (dt.Rows.Count > 0)
-            {
-                // Check and handle the first row (index 0)
-                foreach (DataRow dr in dt.Rows)
-                {
-                    string DocumentId = dr["DocumentId"].ToString().Trim();
-                    string FolderName = dr["FolderName"].ToString().Trim();
-                    string UploadedFileName = dr["UploadedFileName"].ToString().Trim();
-                    if (DocumentId.Equals("4"))
-                    {
-                        lbDischargeSummaryStatus.Text = "Click Here To View";
-                        lbDischargeFolderName.Text = FolderName;
-                        lbDischargeUploadedFileName.Text = UploadedFileName;
-                        lbDischargeSummaryStatus.ForeColor = System.Drawing.Color.Green;
-                        btnDischargeSummary.Enabled = true;
-                    }
-                    else if (DocumentId.Equals("5"))
-                    {
-                        lbOperationDocumentStatus.Text = "Click Here To View";
-                        lbOperationDocumentFolderName.Text = FolderName;
-                        lbOperationDocumentUploadedFileName.Text = UploadedFileName;
-                        lbOperationDocumentStatus.ForeColor = System.Drawing.Color.Green;
-                        btnOperationDocument.Enabled = true;
-                    }
-                    else if (DocumentId.Equals("6"))
-                    {
-                        lbDischargePhotoStatus.Text = "Click Here To View";
-                        lbDischargePhotoFolderName.Text = FolderName;
-                        lbDischargePhotoUploadedFileName.Text = UploadedFileName;
-                        lbDischargePhotoStatus.ForeColor = System.Drawing.Color.Green;
-                        btnDischargePhoto.Enabled = true;
-                    }
-                }
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-
+        getDischargeDocument();
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
@@ -1317,7 +1264,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = DocumentName;
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
@@ -1367,7 +1313,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = "Patient Photo";
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
@@ -1393,7 +1338,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = "Enhancement Justification";
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
@@ -1417,7 +1361,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + childBase64String;
             }
             lbTitle.Text = "Child Photo/ Document";
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
@@ -1448,7 +1391,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = packageName + " / " + investigationName;
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
@@ -1551,7 +1493,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = DocumentName;
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
@@ -1574,7 +1515,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = DocumentName;
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
@@ -1597,11 +1537,749 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = DocumentName;
-            MultiView5.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
         }
         catch (Exception ex)
         {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void ShowPreInvestigationDocuments()
+    {
+        try
+        {
+            DataTable dtDocumentGroup = new DataTable();
+            // TMS_PreAuthInsertDocumentPreInvestigation
+            dtDocumentGroup = preAuth.getPreInvestigationDocumentsPackage(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, hdPatientRegId.Value);
+            if (dtDocumentGroup.Rows.Count > 0)
+            {
+                GridPackage.DataSource = dtDocumentGroup;
+                GridPackage.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void GridPackage_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        try
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                DataTable dtDocument = new DataTable();
+                GridView gridInvestigation = (GridView)e.Row.FindControl("gridInvestigation");
+                int packageid = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "PackageId"));
+                int ProcedureId = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "ProcedureId"));
+                dtDocument = preAuth.getPostInvestigationDocumentsProcedure(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, Convert.ToInt32(hdPatientRegId.Value), packageid, ProcedureId);
+                gridInvestigation.DataSource = dtDocument;
+                gridInvestigation.DataBind();
+
+                foreach (GridViewRow row in gridInvestigation.Rows)
+                {
+                    Label lbUploadStatus = (Label)row.FindControl("lbUploadStatus");
+                    LinkButton btnUploadStatus = (LinkButton)row.FindControl("btnUploadStatus");
+                    // Dim dropUpdate As DropDownList = DirectCast(row.FindControl("dropStatus"), DropDownList)
+                    // dropUpdate.Text = lbCheckAI.Text
+                    // dropUpdate.ForeColor = Drawing.Color.White
+                    if (lbUploadStatus.Text == "View Document")
+                    {
+                        lbUploadStatus.ForeColor = System.Drawing.Color.Green;
+                        btnUploadStatus.Enabled = true;
+                    }
+                    else
+                    {
+                        lbUploadStatus.ForeColor = System.Drawing.Color.Red;
+                        btnUploadStatus.Enabled = false;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnUploadStatus_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            LinkButton btn = (LinkButton)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbDocumentName = (Label)row.FindControl("lbPostInvestigationName");
+            Label lbFolderName = (Label)row.FindControl("lbFolder");
+            Label lbFileName = (Label)row.FindControl("lbUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbDocumentName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnUploadPostInvestigation(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btnUpload = (Button)sender;
+            string InvestigationId = btnUpload.CommandArgument;
+            GridViewRow row = (GridViewRow)btnUpload.NamingContainer;
+            // Dim fuImage As FileUpload = CType(row.FindControl("fuImage"), FileUpload)
+            Label lbPostInvestigationPackageId = (Label)row.FindControl("lbPostInvestigationPackageId");
+            Label lbPostInvestigationProcedureId = (Label)row.FindControl("lbPostInvestigationProcedureId");
+            Label lbPostInvestigationId = (Label)row.FindControl("lbPostInvestigationId");
+            Label lbPostInvestigationName = (Label)row.FindControl("lbPostInvestigationName");
+
+            hdPackageId.Value = lbPostInvestigationPackageId.Text;
+            hdProcedureId.Value = lbPostInvestigationProcedureId.Text;
+            hdPostInvestigationId.Value = lbPostInvestigationId.Text;
+            // Dim nestedGridViewRow As GridViewRow = CType(btnUpload.NamingContainer, GridViewRow)
+            // Dim parentGridViewRow As GridViewRow = CType(nestedGridViewRow.NamingContainer.NamingContainer, GridViewRow)
+            // Dim packageId As String = CType(parentGridViewRow.Cells(0).Text, String) ' Assuming PackageID is in the first column
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showDocumentUploadModal", "showDocumentUploadModal();", true);
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnUploadPostInvestigationFile_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (fuImage.HasFile)
+            {
+                string fileExtension = Path.GetExtension(fuImage.FileName).ToLower();
+                int fileSize = fuImage.PostedFile.ContentLength;
+                string mimeType = fuImage.PostedFile.ContentType;
+                if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")
+                {
+                    using (Stream fileStream = fuImage.PostedFile.InputStream)
+                    {
+                        byte[] fileBytes = new byte[fileStream.Length];
+                        fileStream.Read(fileBytes, 0, fileBytes.Length);
+
+                        // Convert file content to Base64 string
+                        string base64String = Convert.ToBase64String(fileBytes);
+
+                        // Further processing with base64String if needed
+                        string randomFolderName = hdAbuaId.Value;
+                        string baseFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
+                        string destinationFolderPath = Path.Combine(baseFolderPath, randomFolderName);
+
+                        if (!Directory.Exists(destinationFolderPath))
+                            Directory.CreateDirectory(destinationFolderPath);
+
+                        string fileName = hdPackageId.Value + "_" + hdProcedureId.Value + "_" + hdPostInvestigationId.Value + "_" + DateTime.Now.ToShortDateString();
+                        string imagePath = Path.Combine(destinationFolderPath, fileName + ".jpeg");
+
+                        // Save the file to the specified path
+                        File.WriteAllBytes(imagePath, fileBytes);
+                        SqlParameter[] p = new SqlParameter[9];
+                        p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+                        p[0].DbType = DbType.String;
+                        p[1] = new SqlParameter("@CardNumber", hdAbuaId.Value);
+                        p[1].DbType = DbType.String;
+                        p[2] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+                        p[2].DbType = DbType.String;
+                        p[3] = new SqlParameter("@PackageId", hdPackageId.Value);
+                        p[3].DbType = DbType.String;
+                        p[4] = new SqlParameter("@ProcedureId", hdProcedureId.Value);
+                        p[4].DbType = DbType.String;
+                        p[5] = new SqlParameter("@PostInvestigationId", hdPostInvestigationId.Value);
+                        p[5].DbType = DbType.String;
+                        p[6] = new SqlParameter("@FolderName", randomFolderName.ToString());
+                        p[6].DbType = DbType.String;
+                        p[7] = new SqlParameter("@UploadedFileName", fileName.ToString());
+                        p[7].DbType = DbType.String;
+                        p[8] = new SqlParameter("@FilePath", imagePath.ToString());
+                        p[8].DbType = DbType.String;
+                        ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertDocumentPostInvestigation", p);
+                        if (con.State == ConnectionState.Open)
+                            con.Close();
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            if (ds.Tables[0].Rows[0]["checkId"].ToString() == "1")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Image uploaded successfully!')", true);
+                                ShowPreInvestigationDocuments();
+                            }
+                            else if (ds.Tables[0].Rows[0]["checkId"].ToString() == "0")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Image uploaded successfully!')", true);
+                                ShowPreInvestigationDocuments();
+                            }
+                            else
+                            {
+                                strMessage = "window.alert('Invalid request!');";
+                                ScriptManager.RegisterStartupScript(btnUploadPostInvestigationFile, btnUploadPostInvestigationFile.GetType(), "Error", strMessage, true);
+                            }
+                        }
+                        else
+                        {
+                            strMessage = "window.alert('Invalid request!');";
+                            ScriptManager.RegisterStartupScript(btnUploadPostInvestigationFile, btnUploadPostInvestigationFile.GetType(), "Error", strMessage, true);
+                        }
+                    }
+                }
+                else
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Invalid File Format! Please upload .jpg/.jpeg/.png')", true);
+            }
+            else
+                // Handle case where no file was selected
+                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Please select a file to upload.')", true);
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void hideDocumentUploadModal_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "hideDocumentUploadModal", "hideDocumentUploadModal();", true);
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnEnhancementAttachment_Click(object sender, EventArgs e)
+    {
+        
+    }
+    protected void btnDischarge_Click(object sender, EventArgs e)
+    {
+        getDischargeDocument();
+    }
+    protected void btnOther_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            dt.Clear();
+            dt = preAuth.GetPatientManditoryDocument(hdAbuaId.Value.ToString());
+            hdCount.Value = "0";
+
+            if (dt.Rows.Count > 0)
+            {
+                // Check and handle the first row (index 0)
+                foreach (DataRow dr in dt.Rows)
+                {
+                    string DocumentId = dr["DocumentId"].ToString().Trim();
+                    string FolderName = dr["FolderName"].ToString().Trim();
+                    string UploadedFileName = dr["UploadedFileName"].ToString().Trim();
+                    if (DocumentId.Equals("7"))
+                    {
+                        lbDocumentOneStatus.Text = "Click Here To View";
+                        lbDocumentOneFolderName.Text = FolderName;
+                        lbDocumentOneUploadedFileName.Text = UploadedFileName;
+                        lbDocumentOneStatus.ForeColor = System.Drawing.Color.Green;
+                        btnDocumentOne.Enabled = true;
+                        panelOne.Visible = true;
+                        hdCount.Value = Convert.ToString(Convert.ToInt32(hdCount.Value) + 1);
+                    }
+                    else if (DocumentId.Equals("8"))
+                    {
+                        lbDocumentTwoStatus.Text = "Click Here To View";
+                        lbDocumentTwoFolderName.Text = FolderName;
+                        lbDocumentTwoUploadedFileName.Text = UploadedFileName;
+                        lbDocumentTwoStatus.ForeColor = System.Drawing.Color.Green;
+                        btnDocumentTwo.Enabled = true;
+                        panelTwo.Visible = true;
+                        hdCount.Value = Convert.ToString(Convert.ToInt32(hdCount.Value) + 1);
+                    }
+                    else if (DocumentId.Equals("9"))
+                    {
+                        lbDocumentThreeStatus.Text = "Click Here To View";
+                        lbDocumentThreeFolderName.Text = FolderName;
+                        lbDocumentThreeUploadedFileName.Text = UploadedFileName;
+                        lbDocumentThreeStatus.ForeColor = System.Drawing.Color.Green;
+                        btnDocumentThree.Enabled = true;
+                        panelThree.Visible = true;
+                        hdCount.Value = Convert.ToString(Convert.ToInt32(hdCount.Value) + 1);
+                    }
+                }
+            }
+            multiViewDischarge.SetActiveView(viewMultipleDocument);
+            btnDischarge.CssClass = "nav-link nav-attach";
+            btnOther.CssClass = "nav-link active nav-attach ml-2";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnAddMore_Click(object sender, EventArgs e)
+    {
+        hdCount.Value = Convert.ToString(Convert.ToInt32(hdCount.Value) + 1);
+        int count = Convert.ToInt32(hdCount.Value);
+        if (count < 4)
+        {
+            if (count == 1)
+            {
+                panelOne.Visible = true;
+                panelTwo.Visible = false;
+                panelThree.Visible = false;
+            }
+            else if (count == 2)
+            {
+                panelOne.Visible = true;
+                panelTwo.Visible = true;
+                panelThree.Visible = false;
+            }
+            else if (count == 3)
+            {
+                panelOne.Visible = true;
+                panelTwo.Visible = true;
+                panelThree.Visible = true;
+            }
+        }
+        multiViewDischarge.SetActiveView(viewMultipleDocument);
+        btnDischarge.CssClass = "nav-link nav-attach";
+        btnOther.CssClass = "nav-link active nav-attach ml-2";
+        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+    }
+    protected void btnUploadDocumentOne_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (fuDocumentOne.HasFile)
+            {
+                string fileExtension = Path.GetExtension(fuDocumentOne.FileName).ToLower();
+                int fileSize = fuDocumentOne.PostedFile.ContentLength;
+                string mimeType = fuDocumentOne.PostedFile.ContentType;
+                if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")
+                {
+                    using (Stream fileStream = fuDocumentOne.PostedFile.InputStream)
+                    {
+                        byte[] fileBytes = new byte[fileStream.Length];
+                        fileStream.Read(fileBytes, 0, fileBytes.Length);
+
+                        // Convert file content to Base64 string
+                        string base64String = Convert.ToBase64String(fileBytes);
+
+                        // Further processing with base64String if needed
+                        string randomFolderName = hdAbuaId.Value;
+                        string baseFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
+                        string destinationFolderPath = Path.Combine(baseFolderPath, randomFolderName);
+
+                        if (!Directory.Exists(destinationFolderPath))
+                            Directory.CreateDirectory(destinationFolderPath);
+
+                        string fileName = "DocumentOne_" + "_" + hdAbuaId.Value;
+                        string imagePath = Path.Combine(destinationFolderPath, fileName + ".jpeg");
+
+                        File.WriteAllBytes(imagePath, fileBytes);
+                        SqlParameter[] p = new SqlParameter[8];
+                        p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+                        p[0].DbType = DbType.String;
+                        p[1] = new SqlParameter("@CardNumber", hdAbuaId.Value);
+                        p[1].DbType = DbType.String;
+                        p[2] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+                        p[2].DbType = DbType.String;
+                        p[3] = new SqlParameter("@DocumentFor", 2);
+                        p[3].DbType = DbType.String;
+                        p[4] = new SqlParameter("@DocumentId", 7);
+                        p[4].DbType = DbType.String;
+                        p[5] = new SqlParameter("@FolderName", randomFolderName.ToString());
+                        p[5].DbType = DbType.String;
+                        p[6] = new SqlParameter("@UploadedFileName", fileName.ToString());
+                        p[6].DbType = DbType.String;
+                        p[7] = new SqlParameter("@FilePath", imagePath.ToString());
+                        p[7].DbType = DbType.String;
+                        ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertDocumentMandatory", p);
+                        if (con.State == ConnectionState.Open)
+                            con.Close();
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            if (ds.Tables[0].Rows[0]["checkId"].ToString() == "1")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('File uploaded successfully!')", true);
+                            }
+                            else if (ds.Tables[0].Rows[0]["checkId"].ToString() == "0")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('File uploaded successfully!')", true);
+                            }
+                            else
+                            {
+                                strMessage = "window.alert('Invalid request!');";
+                                ScriptManager.RegisterStartupScript(btnUploadDocumentOne, btnUploadDocumentOne.GetType(), "Error", strMessage, true);
+                            }
+                        }
+                        else
+                        {
+                            strMessage = "window.alert('Invalid request!');";
+                            ScriptManager.RegisterStartupScript(btnUploadDocumentOne, btnUploadDocumentOne.GetType(), "Error", strMessage, true);
+                        }
+                    }
+                }
+                else
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Invalid File Format! Please upload .jpg/.jpeg/.png')", true);
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Please select a file to upload.')", true);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnDocumentOne_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string folderName = lbDocumentOneFolderName.Text;
+            string fileName = lbDocumentOneUploadedFileName.Text + ".jpeg";
+            string DocumentName = "Document One";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnUploadDocumentTwo_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (fuDocumentTwo.HasFile)
+            {
+                string fileExtension = Path.GetExtension(fuDocumentTwo.FileName).ToLower();
+                int fileSize = fuDocumentTwo.PostedFile.ContentLength;
+                string mimeType = fuDocumentTwo.PostedFile.ContentType;
+                if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")
+                {
+                    using (Stream fileStream = fuDocumentTwo.PostedFile.InputStream)
+                    {
+                        byte[] fileBytes = new byte[fileStream.Length];
+                        fileStream.Read(fileBytes, 0, fileBytes.Length);
+
+                        // Convert file content to Base64 string
+                        string base64String = Convert.ToBase64String(fileBytes);
+
+                        // Further processing with base64String if needed
+                        string randomFolderName = hdAbuaId.Value;
+                        string baseFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
+                        string destinationFolderPath = Path.Combine(baseFolderPath, randomFolderName);
+
+                        if (!Directory.Exists(destinationFolderPath))
+                            Directory.CreateDirectory(destinationFolderPath);
+
+                        string fileName = "DocumentTwo_" + "_" + hdAbuaId.Value;
+                        string imagePath = Path.Combine(destinationFolderPath, fileName + ".jpeg");
+
+                        File.WriteAllBytes(imagePath, fileBytes);
+                        SqlParameter[] p = new SqlParameter[8];
+                        p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+                        p[0].DbType = DbType.String;
+                        p[1] = new SqlParameter("@CardNumber", hdAbuaId.Value);
+                        p[1].DbType = DbType.String;
+                        p[2] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+                        p[2].DbType = DbType.String;
+                        p[3] = new SqlParameter("@DocumentFor", 2);
+                        p[3].DbType = DbType.String;
+                        p[4] = new SqlParameter("@DocumentId", 8);
+                        p[4].DbType = DbType.String;
+                        p[5] = new SqlParameter("@FolderName", randomFolderName.ToString());
+                        p[5].DbType = DbType.String;
+                        p[6] = new SqlParameter("@UploadedFileName", fileName.ToString());
+                        p[6].DbType = DbType.String;
+                        p[7] = new SqlParameter("@FilePath", imagePath.ToString());
+                        p[7].DbType = DbType.String;
+                        ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertDocumentMandatory", p);
+                        if (con.State == ConnectionState.Open)
+                            con.Close();
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            if (ds.Tables[0].Rows[0]["checkId"].ToString() == "1")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('File uploaded successfully!')", true);
+                            }
+                            else if (ds.Tables[0].Rows[0]["checkId"].ToString() == "0")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('File uploaded successfully!')", true);
+                            }
+                            else
+                            {
+                                strMessage = "window.alert('Invalid request!');";
+                                ScriptManager.RegisterStartupScript(btnUploadDocumentTwo, btnUploadDocumentTwo.GetType(), "Error", strMessage, true);
+                            }
+                        }
+                        else
+                        {
+                            strMessage = "window.alert('Invalid request!');";
+                            ScriptManager.RegisterStartupScript(btnUploadDocumentTwo, btnUploadDocumentTwo.GetType(), "Error", strMessage, true);
+                        }
+                    }
+                }
+                else
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Invalid File Format! Please upload .jpg/.jpeg/.png')", true);
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Please select a file to upload.')", true);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnDocumentTwo_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string folderName = lbDocumentTwoFolderName.Text;
+            string fileName = lbDocumentTwoUploadedFileName.Text + ".jpeg";
+            string DocumentName = "Document Two";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnUploadDocumentThree_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (fuDocumentThree.HasFile)
+            {
+                string fileExtension = Path.GetExtension(fuDocumentThree.FileName).ToLower();
+                int fileSize = fuDocumentThree.PostedFile.ContentLength;
+                string mimeType = fuDocumentThree.PostedFile.ContentType;
+                if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")
+                {
+                    using (Stream fileStream = fuDocumentThree.PostedFile.InputStream)
+                    {
+                        byte[] fileBytes = new byte[fileStream.Length];
+                        fileStream.Read(fileBytes, 0, fileBytes.Length);
+
+                        // Convert file content to Base64 string
+                        string base64String = Convert.ToBase64String(fileBytes);
+
+                        // Further processing with base64String if needed
+                        string randomFolderName = hdAbuaId.Value;
+                        string baseFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
+                        string destinationFolderPath = Path.Combine(baseFolderPath, randomFolderName);
+
+                        if (!Directory.Exists(destinationFolderPath))
+                            Directory.CreateDirectory(destinationFolderPath);
+
+                        string fileName = "DocumentThree_" + "_" + hdAbuaId.Value;
+                        string imagePath = Path.Combine(destinationFolderPath, fileName + ".jpeg");
+
+                        File.WriteAllBytes(imagePath, fileBytes);
+                        SqlParameter[] p = new SqlParameter[8];
+                        p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+                        p[0].DbType = DbType.String;
+                        p[1] = new SqlParameter("@CardNumber", hdAbuaId.Value);
+                        p[1].DbType = DbType.String;
+                        p[2] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+                        p[2].DbType = DbType.String;
+                        p[3] = new SqlParameter("@DocumentFor", 2);
+                        p[3].DbType = DbType.String;
+                        p[4] = new SqlParameter("@DocumentId", 9);
+                        p[4].DbType = DbType.String;
+                        p[5] = new SqlParameter("@FolderName", randomFolderName.ToString());
+                        p[5].DbType = DbType.String;
+                        p[6] = new SqlParameter("@UploadedFileName", fileName.ToString());
+                        p[6].DbType = DbType.String;
+                        p[7] = new SqlParameter("@FilePath", imagePath.ToString());
+                        p[7].DbType = DbType.String;
+                        ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertDocumentMandatory", p);
+                        if (con.State == ConnectionState.Open)
+                            con.Close();
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            if (ds.Tables[0].Rows[0]["checkId"].ToString() == "1")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('File uploaded successfully!')", true);
+                            }
+                            else if (ds.Tables[0].Rows[0]["checkId"].ToString() == "0")
+                            {
+                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('File uploaded successfully!')", true);
+                            }
+                            else
+                            {
+                                strMessage = "window.alert('Invalid request!');";
+                                ScriptManager.RegisterStartupScript(btnUploadDocumentThree, btnUploadDocumentThree.GetType(), "Error", strMessage, true);
+                            }
+                        }
+                        else
+                        {
+                            strMessage = "window.alert('Invalid request!');";
+                            ScriptManager.RegisterStartupScript(btnUploadDocumentThree, btnUploadDocumentThree.GetType(), "Error", strMessage, true);
+                        }
+                    }
+                }
+                else
+                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Invalid File Format! Please upload .jpg/.jpeg/.png')", true);
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Please select a file to upload.')", true);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void btnDocumentThree_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            string folderName = lbDocumentThreeFolderName.Text;
+            string fileName = lbDocumentThreeUploadedFileName.Text + ".jpeg";
+            string DocumentName = "Document Three";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showContentModal", "showContentModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    public void getDischargeDocument()
+    {
+        try
+        {
+            dt.Clear();
+            dt = preAuth.GetPatientManditoryDocument(hdAbuaId.Value.ToString());
+
+            if (dt.Rows.Count > 0)
+            {
+                // Check and handle the first row (index 0)
+                foreach (DataRow dr in dt.Rows)
+                {
+                    string DocumentId = dr["DocumentId"].ToString().Trim();
+                    string FolderName = dr["FolderName"].ToString().Trim();
+                    string UploadedFileName = dr["UploadedFileName"].ToString().Trim();
+                    if (DocumentId.Equals("4"))
+                    {
+                        lbDischargeSummaryStatus.Text = "Click Here To View";
+                        lbDischargeFolderName.Text = FolderName;
+                        lbDischargeUploadedFileName.Text = UploadedFileName;
+                        lbDischargeSummaryStatus.ForeColor = System.Drawing.Color.Green;
+                        btnDischargeSummary.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("5"))
+                    {
+                        lbOperationDocumentStatus.Text = "Click Here To View";
+                        lbOperationDocumentFolderName.Text = FolderName;
+                        lbOperationDocumentUploadedFileName.Text = UploadedFileName;
+                        lbOperationDocumentStatus.ForeColor = System.Drawing.Color.Green;
+                        btnOperationDocument.Enabled = true;
+                    }
+                    else if (DocumentId.Equals("6"))
+                    {
+                        lbDischargePhotoStatus.Text = "Click Here To View";
+                        lbDischargePhotoFolderName.Text = FolderName;
+                        lbDischargePhotoUploadedFileName.Text = UploadedFileName;
+                        lbDischargePhotoStatus.ForeColor = System.Drawing.Color.Green;
+                        btnDischargePhoto.Enabled = true;
+                    }
+                }
+            }
+            multiViewDischarge.SetActiveView(viewDischargeDocument);
+            btnDischarge.CssClass = "nav-link active nav-attach";
+            btnOther.CssClass = "nav-link nav-attach ml-2";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showAttachmentAnamolyModal", "showAttachmentAnamolyModal();", true);
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }

@@ -177,6 +177,22 @@ public class PreAuth
         return dtDocumentChild;
     }
 
+    public DataTable getPostInvestigationDocumentsProcedure(int HospitalId, string CardNumber, int PatientRegId, int PackageId, int ProcedureId)
+    {
+        DataTable dtDocumentChild = new DataTable();
+        string Query = "select t1.PackageId, t1.ProcedureId, t1.PostInvestigationId, t2.InvestigationName, t1.UploadStatus, t1.FolderName, t1.UploadedFileName from TMS_PatientDocumentPostInvestigation t1 LEFT JOIN TMS_MasterInvestigationMaster t2 ON t1.PostInvestigationId = t2.InvestigationId where t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId AND t1.IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
+        sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        con.Open();
+        sd.Fill(dtDocumentChild);
+        con.Close();
+        return dtDocumentChild;
+    }
+
     public DataTable getPatientPackageTotalAmount(int HospitalId, string CardNumber, string PatientRegId)
     {
         dtTemp.Clear();

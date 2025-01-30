@@ -51,6 +51,10 @@
             <asp:HiddenField ID="hdAdmissionId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdClaimId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAdmissionDate" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdPackageId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdProcedureId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdPostInvestigationId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdCount" Value="0" runat="server" Visible="false" />
             <div class="modal fade" id="modalAttachmentAnamoly" tabindex="-1" role="dialog" aria-labelledby="ViewDataAnamolyModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
@@ -62,92 +66,179 @@
                         </div>
                         <div class="modal-body">
                             <div class="tab-pane fade show active" id="attachment" role="tabpanel">
-                                <ul class="nav nav-tabs d-flex flex-row justify-content-around" id="attachTab" role="tablist">
+                                <ul class="nav nav-tabs d-flex flex-row justify-content-start" id="attachTab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active nav-attach" id="one-tab"
-                                            data-toggle="tab" href="#one" role="tab" aria-controls="one" aria-selected="true">
-                                            <span>Discharge</span>
-                                        </a>
+                                        <asp:LinkButton ID="btnDischarge" runat="server" class="nav-link active nav-attach" OnClick="btnDischarge_Click">
+                                            <span>Discharge Documents</span>
+                                        </asp:LinkButton>
+                                    </li>
+                                    <li class="nav-item">
+                                        <asp:LinkButton ID="btnOther" runat="server" OnClick="btnOther_Click" CssClass="nav-link nav-attach ml-2">
+                                            <span>Other Documents</span>
+                                        </asp:LinkButton>
                                     </li>
                                 </ul>
                                 <div class="tab-content" id="attachTabContent">
-                                    <div class="tab-pane fade show active" id="one" role="tabpanel">
-                                        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                                            <div class="d-flex w-100 justify-content-center position-relative">
-                                                <h3 class="m-0">Discharge Documents</h3>
+                                    <asp:MultiView ID="multiViewDischarge" runat="server" ActiveViewIndex="0">
+                                        <asp:View ID="viewDischargeDocument" runat="server">
+                                            <div class="tab-pane fade show active" id="one" role="tabpanel">
+                                                <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                    <div class="d-flex w-100 justify-content-center">
+                                                        <h3 class="m-0">Discharge Documents</h3>
+                                                    </div>
+                                                </div>
+                                                <div class="ibox-content">
+                                                    <table class="table table-bordered table-striped" style="width: 100%;">
+                                                        <thead>
+                                                            <tr class="table-primary">
+                                                                <th style="background-color: #007e72; color: white; width: 30%;">Attachment Name</th>
+                                                                <th style="background-color: #007e72; color: white; width: 30%;">Select File To Upload</th>
+                                                                <th style="background-color: #007e72; color: white; width: 40%;">Upload</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Discharge Summary</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <asp:FileUpload ID="fuDischargeSummary" runat="server" />
+                                                                        <asp:Button ID="btnUploadDischargeSummary" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDischargeSummary_Click" />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <asp:LinkButton ID="btnDischargeSummary" runat="server" Enabled="false"
+                                                                        Style="font-size: 12px;" OnClick="btnDischargeSummary_Click">
+                                                                        <asp:Label Visible="false" ID="lbDischargeFolderName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label Visible="false" ID="lbDischargeUploadedFileName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label ID="lbDischargeSummaryStatus" runat="server" Text='NA'></asp:Label>
+                                                                    </asp:LinkButton>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Operation Document</td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <asp:FileUpload ID="fuOperationDocument" runat="server" />
+                                                                        <asp:Button ID="btnUploadOperationDocument" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadOperationDocument_Click" />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <asp:LinkButton ID="btnOperationDocument" runat="server" Enabled="false"
+                                                                        Style="font-size: 12px;" OnClick="btnOperationDocument_Click">
+                                                                        <asp:Label Visible="false" ID="lbOperationDocumentFolderName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label Visible="false" ID="lbOperationDocumentUploadedFileName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label ID="lbOperationDocumentStatus" runat="server" Text='NA'></asp:Label>
+                                                                    </asp:LinkButton>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>After Discharge Photo<span class="text-danger">*</span></td>
+                                                                <td>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <asp:FileUpload ID="fuDischargePhoto" runat="server" />
+                                                                        <asp:Button ID="btnUploadAfterDischargePhoto" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadAfterDischargePhoto_Click" />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <asp:LinkButton ID="btnDischargePhoto" runat="server" Enabled="false"
+                                                                        Style="font-size: 12px;" OnClick="btnDischargePhoto_Click">
+                                                                        <asp:Label Visible="false" ID="lbDischargePhotoFolderName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label Visible="false" ID="lbDischargePhotoUploadedFileName" runat="server" Text=''></asp:Label>
+                                                                        <asp:Label ID="lbDischargePhotoStatus" runat="server" Text='NA'></asp:Label>
+                                                                    </asp:LinkButton>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="ibox-content">
-                                            <table class="table table-bordered table-striped" style="width: 100%;">
-                                                <thead>
-                                                    <tr class="table-primary">
-                                                        <th style="background-color: #007e72; color: white; width: 20%;">Attachment Name</th>
-                                                        <th style="background-color: #007e72; color: white; width: 20%;">Select File To Upload</th>
-                                                        <th style="background-color: #007e72; color: white; width: 40%;">Upload</th>
-                                                        <th style="background-color: #007e72; color: white; width: 20%;">Beneficiary Options</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Discharge Summary</td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <asp:FileUpload ID="fuDischargeSummary" runat="server" />
-                                                                <asp:Button ID="btnUploadDischargeSummary" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDischargeSummary_Click" />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <asp:LinkButton ID="btnDischargeSummary" runat="server" Enabled="false"
-                                                                Style="font-size: 12px;" OnClick="btnDischargeSummary_Click">
-                                                                <asp:Label Visible="false" ID="lbDischargeFolderName" runat="server" Text=''></asp:Label>
-                                                                <asp:Label Visible="false" ID="lbDischargeUploadedFileName" runat="server" Text=''></asp:Label>
-                                                                <asp:Label ID="lbDischargeSummaryStatus" runat="server" Text='NA'></asp:Label>
-                                                            </asp:LinkButton>
-                                                        </td>
-                                                        <td>NA</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Operation Document</td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <asp:FileUpload ID="fuOperationDocument" runat="server" />
-                                                                <asp:Button ID="btnUploadOperationDocument" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadOperationDocument_Click" />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <asp:LinkButton ID="btnOperationDocument" runat="server" Enabled="false"
-                                                                Style="font-size: 12px;" OnClick="btnOperationDocument_Click">
-                                                                <asp:Label Visible="false" ID="lbOperationDocumentFolderName" runat="server" Text=''></asp:Label>
-                                                                <asp:Label Visible="false" ID="lbOperationDocumentUploadedFileName" runat="server" Text=''></asp:Label>
-                                                                <asp:Label ID="lbOperationDocumentStatus" runat="server" Text='NA'></asp:Label>
-                                                            </asp:LinkButton>
-                                                        </td>
-                                                        <td>NA</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>After Discharge Photo<span class="text-danger">*</span></td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <asp:FileUpload ID="fuDischargePhoto" runat="server" />
-                                                                <asp:Button ID="btnUploadAfterDischargePhoto" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadAfterDischargePhoto_Click" />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <asp:LinkButton ID="btnDischargePhoto" runat="server" Enabled="false"
-                                                                Style="font-size: 12px;" OnClick="btnDischargePhoto_Click">
-                                                                <asp:Label Visible="false" ID="lbDischargePhotoFolderName" runat="server" Text=''></asp:Label>
-                                                                <asp:Label Visible="false" ID="lbDischargePhotoUploadedFileName" runat="server" Text=''></asp:Label>
-                                                                <asp:Label ID="lbDischargePhotoStatus" runat="server" Text='NA'></asp:Label>
-                                                            </asp:LinkButton>
-                                                        </td>
-                                                        <td>NA</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="container mt-4">
+                                        </asp:View>
+                                        <asp:View ID="viewMultipleDocument" runat="server">
+                                            <div class="tab-pane fade show active" id="two" role="tabpanel">
+                                                <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h3 class="m-0">Other Documents</h3>
+                                                        <asp:LinkButton ID="btnAddMore" runat="server" OnClick="btnAddMore_Click" CssClass="nav-link nav-attach ml-2 bg-white" Style="border-radius: 10px; color: green;">
+                                                            <span>Add More</span>
+                                                            <i class="fa fa-plus"></i>
+                                                        </asp:LinkButton>
+                                                    </div>
+                                                </div>
+                                                <div class="ibox-content">
+                                                    <table class="table table-bordered table-striped" style="width: 100%;">
+                                                        <thead>
+                                                            <tr class="table-primary">
+                                                                <th style="background-color: #007e72; color: white; width: 30%;">Attachment Name</th>
+                                                                <th style="background-color: #007e72; color: white; width: 30%;">Select File To Upload</th>
+                                                                <th style="background-color: #007e72; color: white; width: 40%;">Upload</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <asp:Panel ID="panelOne" runat="server" Visible="false">
+                                                                <tr>
+                                                                    <td>Document One</td>
+                                                                    <td>
+                                                                        <div class="d-flex align-items-center">
+                                                                            <asp:FileUpload ID="fuDocumentOne" runat="server" />
+                                                                            <asp:Button ID="btnUploadDocumentOne" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentOne_Click"/>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <asp:LinkButton ID="btnDocumentOne" runat="server" Enabled="false"
+                                                                            Style="font-size: 12px;" OnClick="btnDocumentOne_Click">
+                                                                            <asp:Label Visible="false" ID="lbDocumentOneFolderName" runat="server" Text=''></asp:Label>
+                                                                            <asp:Label Visible="false" ID="lbDocumentOneUploadedFileName" runat="server" Text=''></asp:Label>
+                                                                            <asp:Label ID="lbDocumentOneStatus" runat="server" Text='NA'></asp:Label>
+                                                                        </asp:LinkButton>
+                                                                    </td>
+                                                                </tr>
+                                                            </asp:Panel>
+                                                            <asp:Panel ID="panelTwo" runat="server" Visible="false">
+                                                                <tr>
+                                                                    <td>Document Two</td>
+                                                                    <td>
+                                                                        <div class="d-flex align-items-center">
+                                                                            <asp:FileUpload ID="fuDocumentTwo" runat="server" />
+                                                                            <asp:Button ID="btnUploadDocumentTwo" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentTwo_Click"/>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <asp:LinkButton ID="btnDocumentTwo" runat="server" Enabled="false"
+                                                                            Style="font-size: 12px;" OnClick="btnDocumentTwo_Click">
+                                                                            <asp:Label Visible="false" ID="lbDocumentTwoFolderName" runat="server" Text=''></asp:Label>
+                                                                            <asp:Label Visible="false" ID="lbDocumentTwoUploadedFileName" runat="server" Text=''></asp:Label>
+                                                                            <asp:Label ID="lbDocumentTwoStatus" runat="server" Text='NA'></asp:Label>
+                                                                        </asp:LinkButton>
+                                                                    </td>
+                                                                </tr>
+                                                            </asp:Panel>
+                                                            <asp:Panel ID="panelThree" runat="server" Visible="false">
+                                                                <tr>
+                                                                    <td>Document Three</td>
+                                                                    <td>
+                                                                        <div class="d-flex align-items-center">
+                                                                            <asp:FileUpload ID="fuDocumentThree" runat="server" />
+                                                                            <asp:Button ID="btnUploadDocumentThree" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentThree_Click"/>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <asp:LinkButton ID="btnDocumentThree" runat="server" Enabled="false"
+                                                                            Style="font-size: 12px;" OnClick="btnDocumentThree_Click">
+                                                                            <asp:Label Visible="false" ID="lbDocumentThreeFolderName" runat="server" Text=''></asp:Label>
+                                                                            <asp:Label Visible="false" ID="lbDocumentThreeUploadedFileName" runat="server" Text=''></asp:Label>
+                                                                            <asp:Label ID="lbDocumentThreeStatus" runat="server" Text='NA'></asp:Label>
+                                                                        </asp:LinkButton>
+                                                                    </td>
+                                                                </tr>
+                                                            </asp:Panel>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </asp:View>
+                                    </asp:MultiView>
 
+                                    <div class="container mt-4">
                                         <strong class="text-danger">Note:</strong>
                                         <ol class="text-danger font-weight-bold">
                                             <li>File size should not exceded 500 kb</li>
@@ -185,15 +276,31 @@
                                 <i class="fa fa-times"></i>
                             </button>
                         </div>
-                        <asp:MultiView ID="MultiView5" runat="server">
-                            <asp:View ID="viewPhoto" runat="server">
-                                <div class="modal-body">
-                                    <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
-                                        <asp:Image ID="imgChildView" runat="server" class="img-fluid" ImageUrl="https://plus.unsplash.com/premium_photo-1664304370934-b21ea9e0b1f5?q=80&w=1883&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" AlternateText="Child Document" />
-                                    </div>
-                                </div>
-                            </asp:View>
-                        </asp:MultiView>
+                        <div class="modal-body">
+                            <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
+                                <asp:Image ID="imgChildView" runat="server" class="img-fluid" ImageUrl="https://plus.unsplash.com/premium_photo-1664304370934-b21ea9e0b1f5?q=80&w=1883&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" AlternateText="Child Document" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalDocumentUpload" tabindex="-1" role="dialog" aria-labelledby="modal2Label" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header round" style="background-color: #007e72;">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <asp:FileUpload ID="fuImage" runat="server" />
+                            <asp:Button ID="btnUploadPostInvestigationFile" CssClass="btn btn-primary btn-sm rounded-pill" runat="server" Text="Upload" OnClick="btnUploadPostInvestigationFile_Click" />
+                        </div>
+                        <div class="modal-footer">
+                            <asp:Button ID="Button6" CssClass="btn btn-secondary" Text="Close" runat="server" OnClick="hideDocumentUploadModal_Click" />
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -686,7 +793,7 @@
                                                         <br />
                                                         <div class="form-group row m-b">
                                                             <div class="col-lg-12">
-                                                                <asp:Button ID="btnEnhancementAttachment" runat="server" CssClass="btn btn-primary" Text="Add/View Attachment" />
+                                                                <asp:Button ID="btnEnhancementAttachment" runat="server" CssClass="btn btn-primary" Text="Add/View Attachment" OnClick="btnEnhancementAttachment_Click" />
                                                             </div>
                                                         </div>
                                                         <hr />
@@ -1025,6 +1132,77 @@
                                                 </div>
                                             </div>
                                             <div class="ibox-title">
+                                                <h5>Document Required</h5>
+                                            </div>
+                                            <div class="ibox-content">
+                                                <div class="row text-dark">
+                                                    <div class="col-lg-12">
+                                                        <asp:GridView ID="GridPackage" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" OnRowDataBound="GridPackage_RowDataBound">
+                                                            <RowStyle BackColor="White" Height="20px" />
+                                                            <Columns>
+                                                                <asp:BoundField DataField="PackageID" HeaderText="Package ID" Visible="false" />
+                                                                <asp:BoundField DataField="ProcedureId" HeaderText="Procedure ID" Visible="false" />
+                                                                <asp:TemplateField HeaderText="Package Id" Visible="false">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbPackageId" runat="server" Text='<%# Eval("PackageId") %>' CssClass="font-weight-bold text-dark"></asp:Label>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="40%" />
+                                                                </asp:TemplateField>
+                                                                <asp:TemplateField HeaderText="Procedure/Treatment">
+                                                                    <ItemTemplate>
+                                                                        <asp:Label ID="lbDocumentName" runat="server" Text='<%# Eval("SpecialityName") %>' CssClass="font-weight-bold text-dark"></asp:Label>
+                                                                        <asp:GridView ID="gridInvestigation" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                                                            <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                            <Columns>
+                                                                                <asp:TemplateField HeaderText="Pre Investigation Documents" Visible="false">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="lbPostInvestigationPackageId" runat="server" Text='<%# Eval("PackageId") %>' CssClass="font-weight-bold text-dark" Visible="false"></asp:Label>
+                                                                                        <asp:Label ID="lbPostInvestigationProcedureId" runat="server" Text='<%# Eval("ProcedureId") %>' CssClass="font-weight-bold text-dark" Visible="false"></asp:Label>
+                                                                                        <asp:Label ID="lbPostInvestigationId" runat="server" Text='<%# Eval("PostInvestigationId") %>' CssClass="font-weight-bold text-dark" Visible="false"></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="60%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Post Investigation Documents">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Label ID="lbPostInvestigationName" runat="server" Text='<%# Eval("InvestigationName") %>'></asp:Label>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="40%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Select File To Upload">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:Button ID="btnUploadPostInvestigation" runat="server" Text="Click Here To Upload" CssClass="btn btn-primary btn-sm rounded-pill" Style="font-size: 11px;" CommandArgument='<%# Eval("PostInvestigationId") %>' OnClick="btnUploadPostInvestigation" />
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="40%" />
+                                                                                </asp:TemplateField>
+                                                                                <asp:TemplateField HeaderText="Uploaded File">
+                                                                                    <ItemTemplate>
+                                                                                        <asp:LinkButton ID="btnUploadStatus" runat="server"
+                                                                                            Style="font-size: 12px;" OnClick="btnUploadStatus_Click">
+                                                                                            <asp:Label Visible="false" ID="lbFolder" runat="server" Text='<%# Eval("FolderName") %>'></asp:Label>
+                                                                                            <asp:Label Visible="false" ID="lbUploadedFileName" runat="server" Text='<%# Eval("UploadedFileName") %>'></asp:Label>
+                                                                                            <asp:Label ID="lbUploadStatus" runat="server" Text='<%# Eval("UploadStatus") %>'></asp:Label>
+                                                                                        </asp:LinkButton>
+                                                                                    </ItemTemplate>
+                                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                                </asp:TemplateField>
+                                                                            </Columns>
+                                                                        </asp:GridView>
+                                                                    </ItemTemplate>
+                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-left" Width="95%" />
+                                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="95%" />
+                                                                </asp:TemplateField>
+                                                            </Columns>
+                                                        </asp:GridView>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="ibox-title">
                                                 <h5>Treatment Summary</h5>
                                             </div>
                                             <div class="ibox-content">
@@ -1358,9 +1536,13 @@
         </ContentTemplate>
         <Triggers>
             <asp:PostBackTrigger ControlID="btnDownloadPdf" />
+            <asp:PostBackTrigger ControlID="btnUploadPostInvestigationFile" />
             <asp:PostBackTrigger ControlID="btnUploadDischargeSummary" />
             <asp:PostBackTrigger ControlID="btnUploadOperationDocument" />
             <asp:PostBackTrigger ControlID="btnUploadAfterDischargePhoto" />
+            <asp:PostBackTrigger ControlID="btnUploadDocumentOne" />
+            <asp:PostBackTrigger ControlID="btnUploadDocumentTwo" />
+            <asp:PostBackTrigger ControlID="btnUploadDocumentThree" />
         </Triggers>
     </asp:UpdatePanel>
 </asp:Content>
