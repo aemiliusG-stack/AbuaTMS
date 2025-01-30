@@ -1311,6 +1311,9 @@
                                             <li class="nav-item mr-2 mt-1" id="discharge">
                                                 <asp:LinkButton ID="lnkDischarge" runat="server" CssClass="nav-link nav-attach" OnClick="lnkDischarge_Click">Discharge Document</asp:LinkButton>
                                             </li>
+                                            <li class="nav-item mr-2 mt-1" id="postInvestigation">
+                                                <asp:LinkButton ID="lnkPostInvestigation" runat="server" CssClass="nav-link nav-attach" OnClick="lnkPostInvestigation_Click">Post Investigation</asp:LinkButton>
+                                            </li>
                                         </ul>
 
                                         <div class="tab-content" id="attachTabContent">
@@ -1575,6 +1578,101 @@
                                                                 </Columns>
                                                             </asp:GridView>
                                                             <asp:Panel ID="panelNoDischrage" runat="server" Visible="false">
+                                                                <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                                    <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                        <img src="../images/search.svg" />
+                                                                        <span class="fs-6 mt-2">No Record Found</span>
+                                                                        <span class="text-body-tertiary">Currently, no document available at this moment.</span>
+                                                                    </div>
+                                                                </div>
+                                                            </asp:Panel>
+                                                        </div>
+                                                    </div>
+                                                </asp:View>
+                                                <asp:View ID="viewPostInvestigation" runat="server">
+                                                    <div class="tab-pane fade show active" role="tabpanel">
+                                                        <div class="ibox-title text-center">
+                                                            <h3 class="text-white">Post Investigations</h3>
+                                                        </div>
+                                                        <div class="ibox-content table-responsive">
+                                                            <asp:GridView ID="gridPostInvestigation" runat="server" OnRowDataBound="gridPostInvestigation_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                <Columns>
+                                                                    <asp:TemplateField HeaderText="Sl. No.">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="Label2" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Uploaded Date">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostCreatedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Hospital Name">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Speciality Name">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostPackageName" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Procedure Code">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostProcedureCode" runat="server" Text='<%# Eval("ProcedureCode") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Procedure Name">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostProcedureName" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Investigation Code">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostInvestigationCode" runat="server" Text='<%# Eval("InvestigationCode") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Investigation Name">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostInvestigationName" runat="server" Text='<%# Eval("InvestigationName") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Investigation Stage">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label ID="lbPostInvestigationStage" runat="server" Text='<%# Eval("InvestigationStage") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField HeaderText="Uploaded Documents">
+                                                                        <ItemTemplate>
+                                                                            <asp:Label Visible="false" ID="lbPostFolderName" runat="server" Text='<%# Eval("FolderName") %>'></asp:Label>
+                                                                            <asp:Label Visible="false" ID="lbPostFileName" runat="server" Text='<%# Eval("UploadedFileName") %>'></asp:Label>
+                                                                            <asp:Button ID="btnViewPostDocument" runat="server" Text="View Document" class="btn btn-success btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnViewPostDocument_Click" />
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
+                                                                    </asp:TemplateField>
+                                                                </Columns>
+                                                            </asp:GridView>
+                                                            <asp:Panel ID="panelNoPostInvestigation" runat="server" Visible="false">
                                                                 <div class="row ibox-content" style="background-color: #f0f0f0;">
                                                                     <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
                                                                         <img src="../images/search.svg" />

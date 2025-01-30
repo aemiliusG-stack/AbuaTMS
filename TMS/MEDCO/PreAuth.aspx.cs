@@ -1242,12 +1242,12 @@ partial class MEDCO_PreAuth : System.Web.UI.Page
                             ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "AlertMessage", strMessage, true);
                             return;
                         }
-                        else if (Convert.ToInt32(tbUnspecifiedProcedureAmount.Text) > 100000)
-                        {
-                            string strMessage = "window.alert('Amount should be less than or equal to 100000!');";
-                            ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "AlertMessage", strMessage, true);
-                            return;
-                        }
+                        //else if (Convert.ToInt32(tbUnspecifiedProcedureAmount.Text) > 100000)
+                        //{
+                        //    string strMessage = "window.alert('Amount should be less than or equal to 100000!');";
+                        //    ScriptManager.RegisterStartupScript(btnAddProcedure, btnAddProcedure.GetType(), "AlertMessage", strMessage, true);
+                        //    return;
+                        //}
                     }
                     //if (tbInvestigation.Text != "")
                     //{

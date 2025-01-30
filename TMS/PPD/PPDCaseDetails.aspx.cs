@@ -107,6 +107,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         lnkPreauthorization.CssClass = "nav-link active nav-attach";
         lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
         lnkDischarge.CssClass = "nav-link nav-attach";
+        lnkPostInvestigation.CssClass = "nav-link nav-attach";
         ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
         getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
     }
@@ -115,9 +116,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
     {
         MultiView2.SetActiveView(viewSpecialInvestigation);
         btnAttachmanet.CssClass = "btn btn-warning p-3";
-        lnkSpecialInvestigation.CssClass = "nav-link active nav-attach";
         lnkPreauthorization.CssClass = "nav-link nav-attach";
+        lnkSpecialInvestigation.CssClass = "nav-link active nav-attach";
         lnkDischarge.CssClass = "nav-link nav-attach";
+        lnkPostInvestigation.CssClass = "nav-link nav-attach";
         getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
     }
 
@@ -128,7 +130,19 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
         lnkPreauthorization.CssClass = "nav-link nav-attach";
         lnkDischarge.CssClass = "nav-link active nav-attach";
+        lnkPostInvestigation.CssClass = "nav-link nav-attach";
         getDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+    }
+
+    protected void lnkPostInvestigation_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewPostInvestigation);
+        btnAttachmanet.CssClass = "btn btn-warning p-3";
+        lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
+        lnkPreauthorization.CssClass = "nav-link nav-attach";
+        lnkDischarge.CssClass = "nav-link nav-attach";
+        lnkPostInvestigation.CssClass = "nav-link active nav-attach";
+        getPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
     }
 
     protected void btnTransactionDataReferences_Click(object sender, EventArgs e)
@@ -989,6 +1003,85 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
     }
 
+    public void getPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetPostInvestigationDocuments(HospitalId, CardNumber, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridPostInvestigation.DataSource = dt;
+                gridPostInvestigation.DataBind();
+            }
+            else
+            {
+                gridPostInvestigation.DataSource = null;
+                gridPostInvestigation.DataBind();
+                panelNoPostInvestigation.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridPostInvestigation_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewPostDocument = (Button)e.Row.FindControl("btnViewPostDocument");
+            Label lbPostInvestigationStage = (Label)e.Row.FindControl("lbPostInvestigationStage");
+            lbPostInvestigationStage.Text = "Post Investigation";
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewPostDocument.Text = "No Document";
+                btnViewPostDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewPostDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewPostDocument.Text = "View Document";
+                btnViewPostDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewPostDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnViewPostDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbPostPackageName = (Label)row.FindControl("lbPostPackageName");
+            Label lbPostInvestigationName = (Label)row.FindControl("lbPostInvestigationName");
+            Label lbPostFolderName = (Label)row.FindControl("lbPostFolderName");
+            Label lbPostFileName = (Label)row.FindControl("lbPostFileName");
+            string folderName = lbPostFolderName.Text;
+            string fileName = lbPostFileName.Text + ".jpeg";
+            string packageName = lbPostPackageName.Text;
+            string investigationName = lbPostInvestigationName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = packageName + " / " + investigationName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     public void getSurgeonDetails(string DischargeId)
     {
         try
@@ -1153,10 +1246,12 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             DataTable dtSpecialDocument = new DataTable();
             DataTable dtManditoryDocument = new DataTable();
             DataTable dtDischargeDocument = new DataTable();
+            DataTable dtPostDocument = new DataTable();
             List<string> images = new List<string>();
             dtSpecialDocument = ppdHelper.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
             dtManditoryDocument = ppdHelper.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
             dtDischargeDocument = ppdHelper.GetDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtPostDocument = ppdHelper.GetPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
             if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
             {
                 foreach (DataRow row in dtManditoryDocument.Rows)
@@ -1192,6 +1287,22 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             if (dtDischargeDocument != null && dtDischargeDocument.Rows.Count > 0)
             {
                 foreach (DataRow row in dtDischargeDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (dtPostDocument != null && dtPostDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtPostDocument.Rows)
                 {
                     string folderName = row["FolderName"].ToString().Trim();
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";

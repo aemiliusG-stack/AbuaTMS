@@ -452,8 +452,6 @@ public class PPDHelper
 
             }
         }
-
-
     }
 
     public DataTable GetPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
@@ -483,8 +481,35 @@ public class PPDHelper
 
             }
         }
+    }
 
+    public DataTable GetPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPostInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PostInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PostInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Post'";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
 
+            }
+        }
     }
 
     public DataTable GetManditoryDocuments(string HospitalId, string PatientRegId)
