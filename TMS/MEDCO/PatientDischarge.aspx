@@ -180,7 +180,7 @@
                                                                     <td>
                                                                         <div class="d-flex align-items-center">
                                                                             <asp:FileUpload ID="fuDocumentOne" runat="server" />
-                                                                            <asp:Button ID="btnUploadDocumentOne" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentOne_Click"/>
+                                                                            <asp:Button ID="btnUploadDocumentOne" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentOne_Click" />
                                                                         </div>
                                                                     </td>
                                                                     <td>
@@ -199,7 +199,7 @@
                                                                     <td>
                                                                         <div class="d-flex align-items-center">
                                                                             <asp:FileUpload ID="fuDocumentTwo" runat="server" />
-                                                                            <asp:Button ID="btnUploadDocumentTwo" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentTwo_Click"/>
+                                                                            <asp:Button ID="btnUploadDocumentTwo" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentTwo_Click" />
                                                                         </div>
                                                                     </td>
                                                                     <td>
@@ -218,7 +218,7 @@
                                                                     <td>
                                                                         <div class="d-flex align-items-center">
                                                                             <asp:FileUpload ID="fuDocumentThree" runat="server" />
-                                                                            <asp:Button ID="btnUploadDocumentThree" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentThree_Click"/>
+                                                                            <asp:Button ID="btnUploadDocumentThree" runat="server" Text="Upload" CssClass="btn btn-sm btn-primary rounded-pill ml-3" OnClick="btnUploadDocumentThree_Click" />
                                                                         </div>
                                                                     </td>
                                                                     <td>
@@ -1241,7 +1241,8 @@
                                                         </div>
                                                         <div class="col-lg-3">
                                                             <span style="font-weight: 600!important;">Discharge:</span><br />
-                                                            <asp:RadioButton ID="rbDischarge" runat="server" Text="Discharge" GroupName="rbDischarge" Font-Bold="True" AutoPostBack="True" OnCheckedChanged="rbDischarge_CheckedChanged" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:RadioButton ID="rbDeath" runat="server" Text="Death" GroupName="rbDischarge" Font-Bold="True" ForeColor="#FF3300" AutoPostBack="True" OnCheckedChanged="rbDeath_CheckedChanged" />
+                                                            <asp:RadioButton ID="rbDischarge" runat="server" Text="Discharge" GroupName="rbDischarge" Font-Bold="True" AutoPostBack="True" OnCheckedChanged="rbDischarge_CheckedChanged" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <asp:RadioButton ID="rbDeath" runat="server" Text="Death" GroupName="rbDischarge" Font-Bold="True" ForeColor="#FF3300" AutoPostBack="True" OnCheckedChanged="rbDeath_CheckedChanged" />
                                                         </div>
                                                     </div>
                                                 </div>

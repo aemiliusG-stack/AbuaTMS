@@ -49,39 +49,46 @@ public partial class PPD_PPDDashboard : System.Web.UI.Page
             dt = ppdHelper.GetDashboardData();
             if (dt != null && dt.Rows.Count > 0)
             {
-                lbInsurerCountToday.Text = dt.Rows[0]["PPDInsurerToday"].ToString();
-                lbInsurerCountOverall.Text = dt.Rows[0]["PPPDInsurerOverall"].ToString();
-                lbTrustCountToday.Text = dt.Rows[0]["PPDTrustToday"].ToString();
-                lbTrustOverall.Text = dt.Rows[0]["PPPDTrustOverall"].ToString();
-                lbInsurerAssignedToday.Text = dt.Rows[0]["PPDInsurerAssignedToday"].ToString();
-                lbInsurerAssignedOverall.Text = dt.Rows[0]["PPPDInsurerAssignedOverall"].ToString();
-                lbTrustAssignedToday.Text = dt.Rows[0]["PPDTrustAssignedToday"].ToString();
-                lbTrustAssignedOverall.Text = dt.Rows[0]["PPPDTrustAssignedOverall"].ToString();
-                lbPreauthCountToday.Text = dt.Rows[0]["PreauthCountToday"].ToString();
-                lbPreauthCountOverall.Text = dt.Rows[0]["PreauthCountOverall"].ToString();
+                lbPreauthToday.Text = dt.Rows[0]["PreauthCountToday"].ToString();
+                lbPreauthOverall.Text = dt.Rows[0]["PreauthCountOverall"].ToString();
                 if (Session["RoleId"].ToString() == "3")
                 {
                     lbTitle.Text = "Pendency At Insurer";
-                    panelInsurerCountToday.Visible = true;
-                    panelInsurerCountOverall.Visible = true;
-                    panelInsurerAssignedToday.Visible = true;
-                    panelInsurerAssignedOverall.Visible = true;
-                    panelTrustCountToday.Visible = false;
-                    panelTrustCountOverall.Visible = false;
-                    panelTrustAssignedToday.Visible = false;
-                    panelTrustAssignedOverall.Visible = false;
+                    lbUserRole.Text = "Preauth Panel Doctor Insurer";
+                    lbUserRoleAssigned.Text = "Preauth Panel Doctor Insurer (Assigned)";
+                    lbUserTodayCount.Text = dt.Rows[0]["PPDInsurerToday"].ToString();
+                    lbUserOverallCount.Text = dt.Rows[0]["PPDInsurerOverall"].ToString();
+                    lbAssignedToday.Text = dt.Rows[0]["PPDInsurerAssignedToday"].ToString();
+                    lbAssignedOverall.Text = dt.Rows[0]["PPDInsurerAssignedOverall"].ToString();
+                    lbUnspecifiedToday.Text = dt.Rows[0]["UnspecifiedCaseInsurerToday"].ToString();
+                    lbUnspecifiedOverall.Text = dt.Rows[0]["UnspecifiedCaseInsurerOverall"].ToString();
                 }
                 else if (Session["RoleId"].ToString() == "4")
                 {
                     lbTitle.Text = "Pendency At Trust";
-                    panelTrustCountToday.Visible = true;
-                    panelTrustCountOverall.Visible = true;
-                    panelTrustAssignedToday.Visible = true;
-                    panelTrustAssignedOverall.Visible = true;
-                    panelInsurerCountToday.Visible = false;
-                    panelInsurerCountOverall.Visible = false;
-                    panelInsurerAssignedToday.Visible = false;
-                    panelInsurerAssignedOverall.Visible = false;
+                    lbUserRole.Text = "Preauth Panel Doctor Trust";
+                    lbUserRoleAssigned.Text = "Preauth Panel Doctor Trust (Assigned)";
+                    lbUserTodayCount.Text = dt.Rows[0]["PPDTrustToday"].ToString();
+                    lbUserOverallCount.Text = dt.Rows[0]["PPDTrustOverall"].ToString();
+                    lbAssignedToday.Text = dt.Rows[0]["PPDTrustAssignedToday"].ToString();
+                    lbAssignedOverall.Text = dt.Rows[0]["PPDTrustAssignedOverall"].ToString();
+                    lbUnspecifiedToday.Text = dt.Rows[0]["UnspecifiedCaseTrustToday"].ToString();
+                    lbUnspecifiedOverall.Text = dt.Rows[0]["UnspecifiedCaseTrustOverall"].ToString();
+                }
+            }
+            else
+            {
+                if (Session["RoleId"].ToString() == "3")
+                {
+                    lbTitle.Text = "Pendency At Insurer";
+                    lbUserRole.Text = "Preauth Panel Doctor Insurer";
+                    lbUserRoleAssigned.Text = "Preauth Panel Doctor Insurer (Assigned)";
+                }
+                else if (Session["RoleId"].ToString() == "4")
+                {
+                    lbTitle.Text = "Pendency At Trust";
+                    lbUserRole.Text = "Preauth Panel Doctor Trust";
+                    lbUserRoleAssigned.Text = "Preauth Panel Doctor Trust (Assigned)";
                 }
             }
         }

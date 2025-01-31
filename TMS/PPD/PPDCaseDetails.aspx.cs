@@ -607,12 +607,17 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridTreatementProtocol.DataSource = dt;
+                gridSurgeryTreatementDate.DataSource = dt;
                 gridTreatementProtocol.DataBind();
+                gridSurgeryTreatementDate.DataBind();
             }
             else
             {
                 gridTreatementProtocol.DataSource = null;
+                gridSurgeryTreatementDate.DataSource = null;
                 gridTreatementProtocol.DataBind();
+                gridSurgeryTreatementDate.DataBind();
+                panelSurgeryDate.Visible = true;
             }
         }
         catch (Exception ex)
@@ -1191,16 +1196,35 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                 tbStatusAtDischarge.Text = dt.Rows[0]["StatusAtDischarge"].ToString();
                 tbReview.Text = dt.Rows[0]["Review"].ToString();
                 tbAdvice.Text = dt.Rows[0]["Advice"].ToString();
-                //rbDischarge.Checked = false;
                 tbDischargeDate.Text = dt.Rows[0]["DischargeDate"].ToString();
                 tbNextFollowDate.Text = dt.Rows[0]["NextFollowUpDate"].ToString();
                 tbConsultAtBlock.Text = dt.Rows[0]["ConsultAtBlock"].ToString();
                 tbFloor.Text = dt.Rows[0]["FloorNo"].ToString();
                 tbRoomNo.Text = dt.Rows[0]["RoomNo"].ToString();
-                tbIsSpecialCase.Text = dt.Rows[0]["IsSpecialCase"].ToString();
                 tbSpecialCaseValue.Text = dt.Rows[0]["SpecialCaseValue"].ToString();
-                tbFinalDiagnosis.Text = dt.Rows[0]["FinalDiagnosis"].ToString();
                 tbFinalDiagnosisDescription.Text = dt.Rows[0]["FinalDiagnosisDesc"].ToString();
+                if (dt.Rows[0]["IsDischarged"].ToString().Equals("True"))
+                {
+                    rbDischarge.Checked = true;
+                    rbDeath.Checked = false;
+                }
+                else
+                {
+                    rbDischarge.Checked = false;
+                    rbDeath.Checked = true;
+                }
+                if (dt.Rows[0]["IsSpecialCase"].ToString().Equals("True"))
+                {
+                    tbIsSpecialCase.Text = "Yes";
+                }
+                else
+                {
+                    tbIsSpecialCase.Text = "No";
+                }
+                if (dt.Rows[0]["FinalDiagnosis"].ToString().Equals("1"))
+                {
+                    tbFinalDiagnosis.Text = "Other";
+                }
                 if (dt.Rows[0]["ProcedureConsent"].ToString().Equals("True"))
                 {
                     rbProcedureConsentYes.Checked = true;
