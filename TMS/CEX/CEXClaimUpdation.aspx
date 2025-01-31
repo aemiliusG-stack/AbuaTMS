@@ -376,7 +376,7 @@
                                                                 <div class="ibox-content">
                                                                     <div class="form-group  row">
                                                                         <div class="col-md-12">
-                                                                            <asp:GridView ID="GridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                            <asp:GridView ID="GridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                                 <Columns>
                                                                                     <asp:TemplateField HeaderText="Sl No.">
@@ -427,7 +427,7 @@
                                                                 <div class="ibox-content">
                                                                     <div class="form-group  row">
                                                                         <div class="col-md-12">
-                                                                            <asp:GridView ID="GridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                            <asp:GridView ID="GridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                                 <Columns>
                                                                                     <asp:TemplateField HeaderText="Sl No.">
@@ -606,7 +606,7 @@
                                                 <div class="ibox-content">
                                                     <div class="row">
                                                         <div class="table-responsive">
-                                                            <asp:GridView ID="gvPreauthWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                            <asp:GridView ID="gvPreauthWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                 <Columns>
                                                                     <asp:TemplateField HeaderText="Sl No.">
@@ -904,7 +904,7 @@
                                                 <div class="ibox-content">
                                                     <div class="form-group  row">
                                                         <div class="col-md-12">
-                                                            <asp:GridView ID="gridSurgeryTreatmentDate" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                            <asp:GridView ID="gridSurgeryTreatmentDate" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                 <Columns>
                                                                     <asp:TemplateField HeaderText="Sl No.">
@@ -1126,7 +1126,7 @@
                                                                 <div class="ibox-content">
                                                                     <div class="form-group  row">
                                                                         <div class="col-md-12">
-                                                                            <asp:GridView ID="GridClaimPrimaryDiagnosisICDValue" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                            <asp:GridView ID="GridClaimPrimaryDiagnosisICDValue" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                                 <Columns>
                                                                                     <asp:TemplateField HeaderText="Sl No.">
@@ -1177,7 +1177,7 @@
                                                                 <div class="ibox-content">
                                                                     <div class="form-group  row">
                                                                         <div class="col-md-12">
-                                                                            <asp:GridView ID="GridClaimSecondaryDiagnosisICDValue" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                            <asp:GridView ID="GridClaimSecondaryDiagnosisICDValue" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                                 <Columns>
                                                                                     <asp:TemplateField HeaderText="Sl No.">
@@ -1476,7 +1476,7 @@
                                                 <div class="ibox-content">
                                                     <div class="row">
                                                         <div class="table-responsive">
-                                                            <asp:GridView ID="gvClaimWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" AllowPaging="True" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                            <asp:GridView ID="gvClaimWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                 <Columns>
                                                                     <asp:TemplateField HeaderText="Sl No.">
@@ -1616,7 +1616,6 @@
                                                                         </thead>
                                                                         <tbody>
                                                                             <tr>
-                                                                                <%--<td><a href="#." class="text-decoration-underline text-black fw-semibold">Patient Photo</a></td>--%>
                                                                                 <td>
                                                                                     <asp:LinkButton ID="LinkButton1" runat="server" CssClass="text-decoration-none" OnClick="LinkButton1_Click"><span>Patient Photo</span></asp:LinkButton></td>
                                                                                 <td>17-08-2024 12:30:00</td>
