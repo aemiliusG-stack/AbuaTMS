@@ -185,13 +185,10 @@ partial class _Default : System.Web.UI.Page
                         Response.Redirect("ACO/ACOHome.aspx", false);
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "SHA(TRUST)")
                         Response.Redirect("SHA/Dashboard.aspx", false);
-<<<<<<< Updated upstream
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "ACS")
                         Response.Redirect("ACS/ACSHome.aspx", false);
-=======
                     else if (dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CEO_SHA(INSURER)" || dtLoginData.Rows[0]["RoleName"].ToString().ToUpper() == "CEO_SHA(TRUST)")
                         Response.Redirect("CEO_SHA/CEOSHAHome.aspx", false);
->>>>>>> Stashed changes
                     else
                         Response.Redirect("Default.aspx");
                 }
