@@ -93,13 +93,15 @@ public class CPD
     }
     public DataTable GetAddDeduction_CaseSearch(string CaseNo)
     {
+        dt.Clear();
         string Query = "select t3.RoleName, t2.DeductionType, t1.DeductionAmt, t1.TotalAmtAfterDeduction, t1.Remarks, t1.CreatedOn from TMS_ClaimAddDeduction t1 left join TMS_MasterDeductionTypeMaster t2 on t1.DeductionType = t2.DeductionTypeId left join TMS_Roles t3 on t1.RoleId = t3.RoleId where t1.CaseNumber = @CaseNo";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
         sd.Fill(ds);
         con.Close();
-        return ds.Tables[0];
+        dt = ds.Tables[0];
+        return dt;
     }
     public bool IsCaseNumberExists(string caseNo)
     {
@@ -444,6 +446,21 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
+    public DataTable GetTechnicalChecklist_CaseSearch(string CaseNo)
+    {
+        dt.Clear();
+        string Query = "select t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountRequested, t1.TrustClaimAmountRequested, t3.IsSpecialCase, t4.DiagnosisSupportedEvidence, t4.CaseManagementSTP, t4.EvidenceTherapyConducted, t4.MandatoryReports, t4.Remarks from TMS_ClaimMaster t1 LEFT JOIN TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId LEFT JOIN TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId LEFT JOIN TMS_CPDTechnicalCkecklist t4 on t1.CaseNumber = t4.CaseNumber where t1.CaseNumber = @CaseNo AND t1.IsActive = 1 AND t1.IsDeleted = 0 AND t2.IsDischarged = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+        con.Open();
+        sd.Fill(ds);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        dt = ds.Tables[0];
+        return dt;
+    }
     //MIS
     public DataTable GetSpecialityName()
     {
@@ -555,12 +572,13 @@ public class CPD
         }
         return roleName;
     }
-    public void InsertDeductionAndUpdateClaimMaster(int userId, int roleId, string deductionType, decimal deductionAmount, decimal totalDeductionAmount, string caseNo, string remarks)
+    public void InsertDeductionAndUpdateClaimMaster(int userId, int roleId, string deductionType, decimal deductionAmount, decimal totalDeductionAmount, string caseNo, string remarks, int claimId)
     {
         SqlCommand cmd = new SqlCommand("TMS_CPDInsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@RoleId", roleId);
         cmd.Parameters.AddWithValue("@UserId", userId);
+        cmd.Parameters.AddWithValue("@Claimid", claimId);
         cmd.Parameters.AddWithValue("@DeductionType", deductionType);
         cmd.Parameters.AddWithValue("@DeductionAmount", deductionAmount);
         cmd.Parameters.AddWithValue("@TotalDeductionAmount", totalDeductionAmount);
@@ -783,12 +801,13 @@ public class CPD
         }
         return dtTemp;
     }
-    public void InsertTechnicalChecklist(string caseNumber, string cardNumber, bool diagnosisSupported, bool caseManagementSTP, bool evidenceTherapyConducted, bool mandatoryReports, string remarks)
+    public void InsertTechnicalChecklist(int claimId, string caseNumber, string cardNumber, bool diagnosisSupported, bool caseManagementSTP, bool evidenceTherapyConducted, bool mandatoryReports, string remarks)
     {
-        string query = "INSERT INTO TMS_CPDTechnicalCkecklist (CaseNumber, CardNumber, DiagnosisSupportedEvidence, CaseManagementSTP, EvidenceTherapyConducted, MandatoryReports, Remarks, IsActive, IsDeleted, CreatedOn, UpdatedOn) " +
-                           "VALUES (@CaseNumber, @CardNumber, @DiagnosisSupportedEvidence, @CaseManagementSTP, @EvidenceTherapyConducted, @MandatoryReports, @Remarks, @IsActive, @IsDeleted, @CreatedOn, @UpdatedOn)";
+        string query = "INSERT INTO TMS_CPDTechnicalCkecklist (ClaimId, CaseNumber, CardNumber, DiagnosisSupportedEvidence, CaseManagementSTP, EvidenceTherapyConducted, MandatoryReports, Remarks, IsActive, IsDeleted, CreatedOn, UpdatedOn) " +
+                           "VALUES (@ClaimId, @CaseNumber, @CardNumber, @DiagnosisSupportedEvidence, @CaseManagementSTP, @EvidenceTherapyConducted, @MandatoryReports, @Remarks, @IsActive, @IsDeleted, @CreatedOn, @UpdatedOn)";
 
         SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.AddWithValue("@ClaimId", claimId);
         cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
         cmd.Parameters.AddWithValue("@CardNumber", cardNumber);
         cmd.Parameters.AddWithValue("@DiagnosisSupportedEvidence", diagnosisSupported);
@@ -1208,6 +1227,42 @@ public class CPD
     {
         bool exists = false;
         SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_PatientAdmissionDetail WHERE  IsEnhancementTaken = 1 AND AdmissionId = @AdmissionId AND IsActive = 1", con);
+        cmd.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        if (count > 0)
+        {
+            exists = true;
+        }
+        if (con.State == System.Data.ConnectionState.Open)
+        {
+            con.Close();
+        }
+
+        return exists;
+    }
+    public bool IsTratmentDishargeExists(string AdmissionId)
+    {
+        bool exists = false;
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_PatientAdmissionDetail WHERE  IsDischarged = 1 AND AdmissionId = @AdmissionId AND IsActive = 1", con);
+        cmd.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        if (count > 0)
+        {
+            exists = true;
+        }
+        if (con.State == System.Data.ConnectionState.Open)
+        {
+            con.Close();
+        }
+
+        return exists;
+    }
+    public bool IsClaimExists(string AdmissionId)
+    {
+        bool exists = false;
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_PatientAdmissionDetail WHERE  IsClaimInitiated = 1 AND AdmissionId = @AdmissionId AND IsActive = 1", con);
         cmd.Parameters.AddWithValue("@AdmissionId", AdmissionId);
         con.Open();
         int count = Convert.ToInt32(cmd.ExecuteScalar());

@@ -177,6 +177,8 @@
             <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfClaimId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfCaseNumber" runat="server" Visible="false" />
             <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPackageId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfPDId" runat="server" Visible="false" />
@@ -1296,109 +1298,109 @@
                                                                 <asp:DropDownList ID="dropSecondaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropSecondaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                                 </asp:DropDownList>
                                                             </div>
-                                                            <div class="row col-lg-12 mb-3">
-                                                                <div class="col-md-6 table-responsive">
-                                                                    <asp:GridView ID="gridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
-                                                                        <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                        <Columns>
-                                                                            <asp:TemplateField HeaderText="Sl No.">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Id" Visible="false">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbPatientPDId" runat="server" Text='<%# Eval("Id") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="PD Id" Visible="false">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbPPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Diagnosis Name">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Acted By Role">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbActedBy" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Cancel">
-                                                                                <ItemTemplate>
-                                                                                    <asp:LinkButton ID="lnkDeletePrimaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeletePrimaryDiagnosis_Click" CommandArgument='<%# Eval("PDId") %>'>Remove</asp:LinkButton>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                                                                            </asp:TemplateField>
-                                                                        </Columns>
-                                                                    </asp:GridView>
-                                                                </div>
-                                                                <div class="col-md-6 table-responsive">
-                                                                    <asp:GridView ID="gridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" GridLines="Both" CellPadding="3" Width="100%">
-                                                                        <AlternatingRowStyle BackColor="Gainsboro" />
-                                                                        <Columns>
-                                                                            <asp:TemplateField HeaderText="Sl No.">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Id" Visible="false">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbPatientSDId" runat="server" Text='<%# Eval("Id") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="PD Id" Visible="false">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbSPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Diagnosis Name">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Acted By Role">
-                                                                                <ItemTemplate>
-                                                                                    <asp:Label ID="lbActedBy" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
-                                                                            </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Cancel">
-                                                                                <ItemTemplate>
-                                                                                    <asp:LinkButton ID="lnkDeleteSecondaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeleteSecondaryDiagnosis_Click" CommandArgument='<%# Eval("PDId") %>'>Remove</asp:LinkButton>
-                                                                                </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                                                                            </asp:TemplateField>
-                                                                        </Columns>
-                                                                    </asp:GridView>
-                                                                </div>
-                                                                <div class="col-md-12 mt-2">
-                                                                    <span class="text-danger">Note: User can select multiple options in Primary and Secondary diagnosis fields.</span>
-                                                                </div>
+                                                            <%--<div class="row col-lg-12 mb-3">--%>
+                                                            <div class="col-md-6 table-responsive">
+                                                                <asp:GridView ID="gridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                    <Columns>
+                                                                        <asp:TemplateField HeaderText="Sl No.">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Id" Visible="false">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbPatientPDId" runat="server" Text='<%# Eval("Id") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="PD Id" Visible="false">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbPPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Diagnosis Name">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbActedBy" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Cancel">
+                                                                            <ItemTemplate>
+                                                                                <asp:LinkButton ID="lnkDeletePrimaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeletePrimaryDiagnosis_Click" CommandArgument='<%# Eval("PDId") %>'>Remove</asp:LinkButton>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                        </asp:TemplateField>
+                                                                    </Columns>
+                                                                </asp:GridView>
                                                             </div>
+                                                            <div class="col-md-6 table-responsive">
+                                                                <asp:GridView ID="gridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" GridLines="Both" CellPadding="3" Width="100%">
+                                                                    <AlternatingRowStyle BackColor="Gainsboro" />
+                                                                    <Columns>
+                                                                        <asp:TemplateField HeaderText="Sl No.">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Id" Visible="false">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbPatientSDId" runat="server" Text='<%# Eval("Id") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="PD Id" Visible="false">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbSPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Diagnosis Name">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <ItemTemplate>
+                                                                                <asp:Label ID="lbActedBy" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                        </asp:TemplateField>
+                                                                        <asp:TemplateField HeaderText="Cancel">
+                                                                            <ItemTemplate>
+                                                                                <asp:LinkButton ID="lnkDeleteSecondaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeleteSecondaryDiagnosis_Click" CommandArgument='<%# Eval("PDId") %>'>Remove</asp:LinkButton>
+                                                                            </ItemTemplate>
+                                                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                                        </asp:TemplateField>
+                                                                    </Columns>
+                                                                </asp:GridView>
+                                                            </div>
+                                                            <div class="col-md-12 mt-2">
+                                                                <span class="text-danger">Note: User can select multiple options in Primary and Secondary diagnosis fields.</span>
+                                                            </div>
+                                                            <%--</div>--%>
                                                         </div>
                                                     </div>
                                                 </div>

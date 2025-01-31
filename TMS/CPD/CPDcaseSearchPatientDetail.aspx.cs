@@ -79,7 +79,9 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     DateTime registrationDate = Convert.ToDateTime(dt.Rows[0]["RegDate"].ToString().Trim());
                     DateTime admissionDate = Convert.ToDateTime(dt.Rows[0]["AdmissionDate"].ToString().Trim());
                     Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
+                    hfAdmissionId.Value = dt.Rows[0]["AdmissionId"].ToString().Trim();
                     Session["ClaimId"] = dt.Rows[0]["ClaimId"].ToString().Trim();
+                    hfClaimId.Value = dt.Rows[0]["ClaimId"].ToString().Trim();
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
                     hdPatientRegId.Value = dt.Rows[0]["PatientRegId"].ToString().Trim();
                     hdHospitalId.Value = dt.Rows[0]["HospitalId"].ToString().Trim();
@@ -92,6 +94,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     Session["CaseNumber"] = caseNo;
                     lbCaseNo.Text = caseNo;
+                    hfCaseNumber.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     lbActualRegDate.Text = registrationDate.ToString("dd-MM-yyyy");
                     lbContactNo.Text = dt.Rows[0]["MobileNumber"].ToString().Trim();
                     lbHospitalType.Text = dt.Rows[0]["HospitalType"].ToString().Trim();
@@ -136,13 +139,47 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     {
                         pPreauthSD.Visible = false;
                     }
-                    if (cpd.IsPatientSecondaryDiagnosisExists(hdAbuaId.Value, hdPatientRegId.Value))
+                    if (cpd.IsClaimQueryExists(hfClaimId.Value))
                     {
-                        pClaimsSD.Visible = true;
+                        pClaimQuery.Visible = true;
                     }
                     else
                     {
-                        pClaimsSD.Visible = false;
+                        pClaimQuery.Visible = false;
+                    }
+                    if (cpd.IsPreauthUtilizationExists(hfAdmissionId.Value))
+                    {
+                        pPreauthUtilization.Visible = true;
+                    }
+                    else
+                    {
+                        pPreauthUtilization.Visible = false;
+                    }
+                    if (cpd.IsTratmentDishargeExists(hfAdmissionId.Value))
+                    {
+                        pTreatmentDischarge.Visible = true;
+                        listTreatment.Visible = true;
+                    }
+                    else
+                    {
+                        pTreatmentDischarge.Visible = false;
+                        listTreatment.Visible = false;
+                        mvCPDTabs.SetActiveView(ViewPreauth);
+                        btnPreauth.CssClass = "btn btn-warning";
+
+                    }
+                    if (cpd.IsClaimExists(hfAdmissionId.Value))
+                    {
+                        pClaims.Visible = true;
+                        listClaims.Visible = true;
+                    }
+                    else
+                    {
+                        pClaims.Visible = false;
+                        listClaims.Visible = false;
+                        mvCPDTabs.SetActiveView(ViewPreauth);
+                        btnPreauth.CssClass = "btn btn-warning";
+
                     }
                     displayPatientAdmissionImage();
                     getNetworkHospitalDetails();
@@ -203,49 +240,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     }
 
 
-    //Claims Updation
-   
-    public void BindNonTechnicalChecklist(string caseNo)
-    {
-        try
-        {
-            DataTable dtNonTechChecklist = cpd.GetNonTechnicalChecklist(caseNo);
-
-            if (dtNonTechChecklist.Rows.Count > 0)
-            {
-                DataRow row = dtNonTechChecklist.Rows[0];
-                rbIsNameCorrectYes.Checked = row["IsNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsNameCorrect"]);
-                rbIsNameCorrectNo.Checked = row["IsNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsNameCorrect"]);
-                rbIsGenderCorrectYes.Checked = row["IsGenderCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsGenderCorrect"]);
-                rbIsGenderCorrectNo.Checked = row["IsGenderCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsGenderCorrect"]);
-                rbIsPhotoVerifiedYes.Checked = row["DoesPhotoMatch"] != DBNull.Value && Convert.ToBoolean(row["DoesPhotoMatch"]);
-                rbIsPhotoVerifiedNo.Checked = row["DoesPhotoMatch"] != DBNull.Value && !Convert.ToBoolean(row["DoesPhotoMatch"]);
-                rbIsAdmissionDateVerifiedYes.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesAddDateMatchCS"]);
-                rbIsAdmissionDateVerifiedNo.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesAddDateMatchCS"]);
-                rbIsSurgeryDateVerifiedYes.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesSurDateMatchCS"]);
-                rbIsSurgeryDateVerifiedNo.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesSurDateMatchCS"]);
-                rbIsDischargeDateCSVerifiedYes.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesDischDateMatchCS"]);
-                rbIsDischargeDateCSVerifiedNo.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesDischDateMatchCS"]);
-                rbIsSignVerifiedYes.Checked = row["IsPatientSignVerified"] != DBNull.Value && Convert.ToBoolean(row["IsPatientSignVerified"]);
-                rbIsSignVerifiedNo.Checked = row["IsPatientSignVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsPatientSignVerified"]);
-                rbIsReportCorrectYes.Checked = row["IsReportVerified"] != DBNull.Value && Convert.ToBoolean(row["IsReportVerified"]);
-                rbIsReportCorrectNo.Checked = row["IsReportVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsReportVerified"]);
-                rbIsReportVerifiedYes.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsDateAndNameCorrect"]);
-                rbIsReportVerifiedNo.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsDateAndNameCorrect"]);
-                lbNonTechAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
-                lbCSAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
-                lbNonTechSurgeryDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
-                lbCSTherepyDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
-                lbNonTechDeathDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
-                lbCSDischargeDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
-                tbNonTechFormRemark.Text = row["NonTechChecklistRemarks"] != DBNull.Value ? row["NonTechChecklistRemarks"].ToString() : "";
-            }
-        }
-        catch (Exception ex)
-        {
-            lblMessage.Text = "Error loading data: " + ex.Message;
-        }
-    }
+    
     private void BindDeductionGrid()
     {
         string CaseNo = Session["CaseNumber"] as string;
@@ -254,34 +249,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         gvDeduction.DataSource = dtDeduction;
         gvDeduction.DataBind();
     }
-    //public void CheckCaseNumberAndBindData(string CaseNo)
-    //{
-    //    try
-    //    {
-    //        if (!string.IsNullOrEmpty(CaseNo))
-    //        {
-    //            if (cpd.IsCaseNumberExists(CaseNo))
-    //            {
-    //                divAddDeduction.Visible = true; 
-    //            }
-    //            else
-    //            {
-    //                divAddDeduction.Visible = false; 
-    //            }
-    //            BindPatientName(CaseNo);
-    //        }
-    //        else
-    //        {
-    //            divAddDeduction.Visible = false; 
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine("Error: " + ex.Message);
-    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-    //        Response.Redirect("~/Unauthorize.aspx", false);
-    //    }
-    //}
+   
     //Preauthorization
     private void getNetworkHospitalDetails()
     {
@@ -476,6 +444,49 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         btnQuestionnaire.CssClass = "btn btn-warning";
         btnCaseSheet.CssClass = "btn btn-primary ";
     }
+    //Claims Updation
+
+    public void BindNonTechnicalChecklist(string caseNo)
+    {
+        try
+        {
+            DataTable dtNonTechChecklist = cpd.GetNonTechnicalChecklist(caseNo);
+
+            if (dtNonTechChecklist.Rows.Count > 0)
+            {
+                DataRow row = dtNonTechChecklist.Rows[0];
+                rbIsNameCorrectYes.Checked = row["IsNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsNameCorrect"]);
+                rbIsNameCorrectNo.Checked = row["IsNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsNameCorrect"]);
+                rbIsGenderCorrectYes.Checked = row["IsGenderCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsGenderCorrect"]);
+                rbIsGenderCorrectNo.Checked = row["IsGenderCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsGenderCorrect"]);
+                rbIsPhotoVerifiedYes.Checked = row["DoesPhotoMatch"] != DBNull.Value && Convert.ToBoolean(row["DoesPhotoMatch"]);
+                rbIsPhotoVerifiedNo.Checked = row["DoesPhotoMatch"] != DBNull.Value && !Convert.ToBoolean(row["DoesPhotoMatch"]);
+                rbIsAdmissionDateVerifiedYes.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesAddDateMatchCS"]);
+                rbIsAdmissionDateVerifiedNo.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesAddDateMatchCS"]);
+                rbIsSurgeryDateVerifiedYes.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesSurDateMatchCS"]);
+                rbIsSurgeryDateVerifiedNo.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesSurDateMatchCS"]);
+                rbIsDischargeDateCSVerifiedYes.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesDischDateMatchCS"]);
+                rbIsDischargeDateCSVerifiedNo.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesDischDateMatchCS"]);
+                rbIsSignVerifiedYes.Checked = row["IsPatientSignVerified"] != DBNull.Value && Convert.ToBoolean(row["IsPatientSignVerified"]);
+                rbIsSignVerifiedNo.Checked = row["IsPatientSignVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsPatientSignVerified"]);
+                rbIsReportCorrectYes.Checked = row["IsReportVerified"] != DBNull.Value && Convert.ToBoolean(row["IsReportVerified"]);
+                rbIsReportCorrectNo.Checked = row["IsReportVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsReportVerified"]);
+                rbIsReportVerifiedYes.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsDateAndNameCorrect"]);
+                rbIsReportVerifiedNo.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsDateAndNameCorrect"]);
+                lbNonTechAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbNonTechSurgeryDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSTherepyDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbNonTechDeathDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSDischargeDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
+                tbNonTechFormRemark.Text = row["NonTechChecklistRemarks"] != DBNull.Value ? row["NonTechChecklistRemarks"].ToString() : "";
+            }
+        }
+        catch (Exception ex)
+        {
+            lblMessage.Text = "Error loading data: " + ex.Message;
+        }
+    }
     public void BindClaimsDetails()
     {
         try
@@ -529,11 +540,9 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     private void BindTechnicalChecklistData()
     {
         dt.Clear();
-        string caseNo = Session["CaseNumber"].ToString();
-        string cardNo = Session["CardNumber"].ToString();
-        if (!string.IsNullOrEmpty(caseNo))
+        if (!string.IsNullOrEmpty(hfCaseNumber.Value))
         {
-            dt = cpd.GetTechnicalChecklist(caseNo);
+            dt = cpd.GetTechnicalChecklist_CaseSearch(hfCaseNumber.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -551,7 +560,15 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 {
                     tbSpecialCase.Text = string.Empty;
                 }
-
+                rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && Convert.ToBoolean(row["CaseManagementSTP"]);
+                rbCaseManagementNo.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
+                rbEvidenceTherapyYes.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && Convert.ToBoolean(row["MandatoryReports"]);
+                rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
+                tbTechRemarks.Text=row["TotalClaims"].ToString();
             }
         }
     }

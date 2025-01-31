@@ -99,6 +99,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     DateTime admissionDate = Convert.ToDateTime(dt.Rows[0]["AdmissionDate"].ToString().Trim());
                     Session["AdmissionId"] = dt.Rows[0]["AdmissionId"].ToString().Trim();
                     Session["ClaimId"] = dt.Rows[0]["ClaimId"].ToString().Trim();
+                    hfClaimId.Value = dt.Rows[0]["ClaimId"].ToString().Trim();
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
                     hdPatientRegId.Value = dt.Rows[0]["PatientRegId"].ToString().Trim();
                     hdHospitalId.Value = dt.Rows[0]["HospitalId"].ToString().Trim();
@@ -111,6 +112,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     Session["CaseNumber"] = caseNo;
                     lbCaseNo.Text = caseNo;
+                    hfCaseNumber.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     lbActualRegDate.Text = registrationDate.ToString("dd-MM-yyyy");
                     lbContactNo.Text = dt.Rows[0]["MobileNumber"].ToString().Trim();
                     lbHospitalType.Text = dt.Rows[0]["HospitalType"].ToString().Trim();
@@ -1334,11 +1336,8 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
     //}
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
-        string caseNo = Session["CaseNumber"] as string;
-        string cardNo = Session["CardNumber"] as string;
         string selectedReason = ddlReason.SelectedItem.Value;
         string selectedSubReason = ddlSubReason.SelectedItem.Value;
-
         if (!cbTerms.Checked)
         {
             strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
@@ -1346,6 +1345,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
         }
         else
         {
+
             string selectedValue = ddlActionType.SelectedItem.Value;
 
             if (selectedValue.Equals("0"))
@@ -1355,14 +1355,41 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             }
             else
             {
-                if (selectedValue.Equals("1"))
+                if (selectedValue.Equals("2"))
                 {
+                    if (!rbDiagnosisSupportedYes.Checked && !rbDiagnosisSupportedNo.Checked)
+                    {
+                        strMessage = "window.alert('Please select Diagnosis Supported Yes or No.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
+
+                    if (!rbCaseManagementYes.Checked && !rbCaseManagementNo.Checked)
+                    {
+                        strMessage = "window.alert('Please select Case Management Yes or No.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
+
+                    if (!rbEvidenceTherapyYes.Checked && !rbEvidenceTherapyNo.Checked)
+                    {
+                        strMessage = "window.alert('Please select Evidence Therapy Conducted Yes or No.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
+
+                    if (!rbMandatoryReportsYes.Checked && !rbMandatoryReportsNo.Checked)
+                    {
+                        strMessage = "window.alert('Please select Mandatory Reports Yes or No.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
                     if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
                     {
                         decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
                         decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
 
-                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, hfCaseNumber.Value, tbDedRemarks.Text, Convert.ToInt32(hfClaimId.Value));
 
                     }
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
@@ -1372,16 +1399,16 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     bool evidenceTherapyConducted = rbEvidenceTherapyYes.Checked;
                     bool mandatoryReports = rbMandatoryReportsYes.Checked;
                     string remarks = tbTechRemarks.Text.Trim();
-                    if (!cpd.CheckCaseNumberExists(caseNo))
+                    if (!cpd.CheckCaseNumberExists(hfCaseNumber.Value))
                     {
-                        cpd.InsertTechnicalChecklist(caseNo, cardNo, diagnosisSupported, caseManagementSTP, evidenceTherapyConducted, mandatoryReports, remarks);
+                        cpd.InsertTechnicalChecklist(Convert.ToInt32(hfClaimId.Value), hfCaseNumber.Value, hdAbuaId.Value, diagnosisSupported, caseManagementSTP, evidenceTherapyConducted, mandatoryReports, remarks);
                     }
                     else
                     {
                         lblMessage.Text = "The case number already exists in the checklist.";
                     }
                 }
-                else if (selectedValue.Equals("2"))
+                else if (selectedValue.Equals("3"))
                 {
                     string selectedUserId = ddlUserToAssign.SelectedItem.Value;
                     string selectedUserName = ddlUserToAssign.SelectedItem.Text;
@@ -1395,7 +1422,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                         doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), selectedUserId, selectedUserName, selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
                     }
                 }
-                else if (selectedValue.Equals("4"))
+                else if (selectedValue.Equals("5"))
                 {
 
                     if (selectedReason.Equals("0"))
@@ -1416,7 +1443,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                         }
                     }
                 }
-                else if (selectedValue.Equals("5"))
+                else if (selectedValue.Equals("6"))
                 {
                     string selectedRejectReason = ddlReason.SelectedItem.Value;
                     if (selectedRejectReason.Equals("0"))
@@ -1426,7 +1453,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     }
                     else
                     {
-                        doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", ddlReason.SelectedItem.Text.ToString(), tbRejectRemarks.Text.ToString() + "");
+                        doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", ddlReason.SelectedItem.Value.ToString(), tbRejectRemarks.Text.ToString() + "");
                     }
                 }
             }

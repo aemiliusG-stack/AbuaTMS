@@ -24,7 +24,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     private PreAuth preAuth = new PreAuth();
     CPD cpd = new CPD();
     public static PPDHelper ppdHelper = new PPDHelper();
-    private string caseNo;
     private string claimNo;
     string pageName;
     private string strMessage;
@@ -39,15 +38,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         else if (!IsPostBack)
         {
             hdUserId.Value = Session["UserId"].ToString();
-            string caseNo = Session["CaseNumber"] as string;
-            string cardNo = Session["CardNumber"] as string;
-            string claimId = Session["ClaimId"] as string;
-            string patientRedgNo = Session["PatientRegId"] as string;
-
             BindPatientName();
-            
-
-
         }
     }
 
@@ -93,21 +84,20 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         dt = ds.Tables[0];
                         string claimId = dt.Rows[0]["ClaimId"].ToString();
                         Session["ClaimId"] = claimId;
-                        hdClaimId.Value = claimId;
+                        hfClaimId.Value = claimId;
                         lbCaseNoHead.Text = dt.Rows[0]["CaseNumber"].ToString();
                         lbName.Text = dt.Rows[0]["PatientName"].ToString();
                         lbBeneficiaryId.Text = dt.Rows[0]["CardNumber"].ToString();
                         hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString();
-                        hdHospitalId.Value = dt.Rows[0]["HospitalId"].ToString();
+                        hfHospitalId.Value = dt.Rows[0]["HospitalId"].ToString();
                         string cardNo = dt.Rows[0]["CardNumber"].ToString();
                         Session["CardNumber"] = cardNo;
                         lbRegNo.Text = dt.Rows[0]["PatientRegId"].ToString();
                         hdPatientRegId.Value = dt.Rows[0]["PatientRegId"].ToString();
                         string patientRedgNo = dt.Rows[0]["PatientRegId"].ToString();
                         Session["PatientRegId"] = patientRedgNo;
-                        string caseNo = dt.Rows[0]["CaseNumber"].ToString();
-                        Session["CaseNumber"] = caseNo;
-                        lbCaseNo.Text = caseNo;
+                        hfCaseNumber.Value = dt.Rows[0]["CaseNumber"].ToString();
+                        lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString(); 
                         lbCaseStatus.Text = dt.Rows[0]["CaseStatus"].ToString();
                         lbContactNo.Text = dt.Rows[0]["MobileNumber"].ToString();
                         string gender = dt.Rows[0]["Gender"].ToString().Trim().ToUpper();
@@ -118,7 +108,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         lbAadharVerified.Text = isAadharVerified == 1 ? "Yes" : "No";
                         lbAge.Text = dt.Rows[0]["Age"].ToString();
                         lbHospitalType.Text = dt.Rows[0]["HospitalType"].ToString();
-                        hdHospitalId.Value = dt.Rows[0]["HospitalId"].ToString().Trim();
+                        hfHospitalId.Value = dt.Rows[0]["HospitalId"].ToString().Trim();
                         hfAdmissionId.Value = dt.Rows[0]["AdmissionId"].ToString();
                         if (!string.IsNullOrEmpty(dt.Rows[0]["RegDate"].ToString()))
                         {
@@ -162,7 +152,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         {
                             pClaimsSD.Visible = false;
                         }
-                        if (cpd.IsClaimQueryExists(hdClaimId.Value))
+                        if (cpd.IsClaimQueryExists(hfClaimId.Value))
                         {
                             pClaimQuery.Visible = true;
                         }
@@ -192,7 +182,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         BindClaimsDetails();
                         getNetworkHospitalDetails();
                         BindActionType();
-                        BindNonTechnicalChecklist(caseNo);
+                        BindNonTechnicalChecklist();
                         getTreatmentDischarge();
                         BindGrid_TreatmentSurgeryDate();
                         BindDeductionType();
@@ -276,9 +266,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     //Preauthorization Tab
     private void getNetworkHospitalDetails()
     {
-        string caseNo = Session["CaseNumber"] as string;
         dt.Clear();
-        dt = cpd.GetNetworkHospitalDetails(caseNo);
+        dt = cpd.GetNetworkHospitalDetails(hfCaseNumber.Value);
         if (dt != null && dt.Rows.Count > 0)
         {
             DataRow row = dt.Rows[0];
@@ -295,8 +284,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     }
     private void BindGrid_TreatmentProtocol()
     {
-        string caseNo = Session["CaseNumber"] as string;
-        dt = cpd.GetTreatmentProtocol(caseNo);
+        dt = cpd.GetTreatmentProtocol(hfCaseNumber.Value);
 
         gvTreatmentProtocol.DataSource = dt;
         gvTreatmentProtocol.DataBind();
@@ -371,8 +359,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     }
     private void BindPreauthAdmissionDetails()
     {
-        string caseNo = Session["CaseNumber"] as string;
-        DataTable dt = cpd.GetAdmissionDetails(caseNo);
+        DataTable dt = cpd.GetAdmissionDetails(hfCaseNumber.Value);
 
         if (dt != null && dt.Rows.Count > 0)
         {
@@ -654,10 +641,9 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         try
         {
-            string caseNo = Session["CaseNumber"].ToString();
-            if (!string.IsNullOrEmpty(caseNo))
+            if (!string.IsNullOrEmpty(hfCaseNumber.Value))
             {
-                DataTable dtClaimsDetails = cpd.GetClaimsDetails(caseNo);
+                DataTable dtClaimsDetails = cpd.GetClaimsDetails(hfCaseNumber.Value);
 
                 if (dtClaimsDetails != null && dtClaimsDetails.Rows.Count > 0)
                 {
@@ -740,11 +726,11 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     //        gvSICDDetails_Claim.DataBind();
     //    }
     //}
-    public void BindNonTechnicalChecklist(string caseNo)
+    public void BindNonTechnicalChecklist()
     {
         try
         {
-            DataTable dtNonTechChecklist = cpd.GetNonTechnicalChecklist(caseNo);
+            DataTable dtNonTechChecklist = cpd.GetNonTechnicalChecklist(hfCaseNumber.Value);
 
             if (dtNonTechChecklist.Rows.Count > 0)
             {
@@ -784,11 +770,10 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     private void BindTechnicalChecklistData()
     {
         dt.Clear();
-        string caseNo = Session["CaseNumber"].ToString();
         string cardNo = Session["CardNumber"].ToString();
-        if (!string.IsNullOrEmpty(caseNo))
+        if (!string.IsNullOrEmpty(hfCaseNumber.Value))
         {
-            dt = cpd.GetTechnicalChecklist(caseNo);
+            dt = cpd.GetTechnicalChecklist(hfCaseNumber.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -1082,9 +1067,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         try
         {
-            string caseNo = Session["CaseNumber"] as string;
             dt.Clear();
-            dt = cpd.getPrimaryDiagnosis(caseNo);
+            dt = cpd.getPrimaryDiagnosis(hfCaseNumber.Value);
             if (dt.Rows.Count > 0)
             {
                 dropPrimaryDiagnosis.Items.Clear();
@@ -1114,10 +1098,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         try
         {
-            string patientRedgNo = Session["PatientRegId"] as string;
-            string caseNo = Session["CaseNumber"] as string;
-            string cardNo = Session["CardNumber"] as string;
-
+            
             SqlParameter[] p = new SqlParameter[5];
             p[0] = new SqlParameter("@CardNumber", hdAbuaId.Value);
             p[0].DbType = DbType.String;
@@ -1151,9 +1132,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         try
         {
-            string patientRedgNo = Session["PatientRegId"] as string;
-            string caseNo = Session["CaseNumber"] as string;
-            string cardNo = Session["CardNumber"] as string;
+         
 
             SqlParameter[] p = new SqlParameter[5];
             p[0] = new SqlParameter("@CardNumber", hdAbuaId.Value);
@@ -1190,9 +1169,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         try
         {
             dt.Clear();
-            string caseNo = Session["CaseNumber"] as string;
 
-            dt = cpd.getSecondaryDiagnosis(caseNo);
+            dt = cpd.getSecondaryDiagnosis(hfCaseNumber.Value);
             if (dt.Rows.Count > 0)
             {
                 dropSecondaryDiagnosis.Items.Clear();
@@ -1331,8 +1309,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
-        string caseNo = Session["CaseNumber"] as string;
-        string cardNo = Session["CardNumber"] as string;
         string selectedReason = ddlReason.SelectedItem.Value;
         string selectedSubReason = ddlSubReason.SelectedItem.Value;
         if (!cbTerms.Checked)
@@ -1386,7 +1362,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
                         decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
 
-                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, caseNo, tbDedRemarks.Text);
+                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, hfCaseNumber.Value, tbDedRemarks.Text, Convert.ToInt32(hfClaimId.Value));
 
                     }
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
@@ -1396,9 +1372,9 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                     bool evidenceTherapyConducted = rbEvidenceTherapyYes.Checked;
                     bool mandatoryReports = rbMandatoryReportsYes.Checked;
                     string remarks = tbTechRemarks.Text.Trim();
-                    if (!cpd.CheckCaseNumberExists(caseNo))
+                    if (!cpd.CheckCaseNumberExists(hfCaseNumber.Value))
                     {
-                        cpd.InsertTechnicalChecklist(caseNo, cardNo, diagnosisSupported, caseManagementSTP, evidenceTherapyConducted, mandatoryReports, remarks);
+                        cpd.InsertTechnicalChecklist(Convert.ToInt32(hfClaimId.Value), hfCaseNumber.Value, hdAbuaId.Value, diagnosisSupported, caseManagementSTP, evidenceTherapyConducted, mandatoryReports, remarks);
                     }
                     else
                     {
@@ -1489,12 +1465,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 if (Session["RoleId"].ToString() == "7")
                 {
-                    strMessage = "window.alert('Claim has been approved by CPD(Insurer). " + caseNo + "');window.location.reload();";
+                    strMessage = "window.alert('Claim has been approved by CPD(Insurer). " + hfCaseNumber.Value + "');window.location.reload();";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
                 else if (Session["RoleId"].ToString() == "8")
                 {
-                    strMessage = "window.alert('Claim has been approved by CPD(Trust). " + caseNo + "');window.location.reload();";
+                    strMessage = "window.alert('Claim has been approved by CPD(Trust). " + hfCaseNumber.Value + "');window.location.reload();";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
                 BindPatientName();
@@ -1622,7 +1598,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cpd.getTreatmentSurgeryDate(hdHospitalId.Value, hdPatientRegId.Value, hdAbuaId.Value);
+            dt = cpd.getTreatmentSurgeryDate(hfHospitalId.Value, hdPatientRegId.Value, hdAbuaId.Value);
             if (dt.Rows.Count > 0)
             {
                 gridSurgeryTreatmentDate.DataSource = dt;
@@ -1657,7 +1633,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnQuestionnaire.CssClass = "btn btn-primary";
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        getManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
     }
 
     protected void lnkPreauthorization_Click(object sender, EventArgs e)
@@ -1672,7 +1648,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkSpecialInvestigation.CssClass = "btn btn-primary";
         //ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        getManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
     }
 
 
@@ -1687,7 +1663,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnClaims.CssClass = "btn btn-primary ";
         lnkSpecialInvestigation.CssClass = "btn btn-warning";
         lnkPreauthorization.CssClass = "btn btn-primary";
-        getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        getPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
     }
 
     public void getManditoryDocuments(string HospitalId, string PatientRegId)
@@ -1856,7 +1832,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         {
             DataTable dt = new DataTable();
             List<string> images = new List<string>();
-            dt = ppdHelper.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dt = ppdHelper.GetPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 foreach (DataRow row in dt.Rows)

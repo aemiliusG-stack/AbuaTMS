@@ -58,12 +58,7 @@
         //    sendDataToServer();
         //};
 
-        //function sendDataToServer() {
-        //    var xhr = new XMLHttpRequest();
-        //    xhr.open("POST", "PPDPreauthUpdation.aspx/NotifyInactivity", true);
-        //    xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-        //    xhr.send(JSON.stringify({ message: "User closed the tab/window." }));
-        //}
+       
     </script>
 
 </asp:Content>
@@ -75,9 +70,10 @@
             <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
             <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdClaimId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
-            <asp:HiddenField ID="hdPackageId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfClaimId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfCaseNumber" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfHospitalId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfPackageId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfPDId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfAdmissionId" runat="server" Visible="false" />
             <asp:HiddenField ID="hfInsurerApprovedAmount" runat="server" Visible="false" />
@@ -1245,7 +1241,7 @@
                                                                 <asp:DropDownList ID="dropSecondaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropSecondaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                                 </asp:DropDownList>
                                                             </div>
-                                                            <div class="row col-lg-12 mb-3">
+                                                            <%--<div class="row col-md-12 mb-3">--%>
                                                                 <div class="col-md-6 table-responsive">
                                                                     <asp:GridView ID="gridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                         <alternatingrowstyle backcolor="Gainsboro" />
@@ -1347,7 +1343,7 @@
                                                                 <div class="col-md-12 mt-2">
                                                                     <span class="text-danger">Note: User can select multiple options in Primary and Secondary diagnosis fields.</span>
                                                                 </div>
-                                                            </div>
+                                                            <%--</div>--%>
                                                         </div>
                                                     </div>
                                                 </div>
