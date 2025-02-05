@@ -1391,7 +1391,7 @@
                                                                     <asp:Label Visible="false" ID="lbIcpFolderName" runat="server" Text='<%# Eval("IcpFolderName") %>'></asp:Label>
                                                                     <asp:Label Visible="false" ID="lbIcpUploadedFileName" runat="server" Text='<%# Eval("IcpUploadedFileName") %>'></asp:Label>
                                                                     <asp:LinkButton ID="lnkPhoto" runat="server" OnClick="lnkPhoto_Click" Enabled="true">Patient Photo</asp:LinkButton><br />
-                                                                    <asp:LinkButton ID="lnkDocument" runat="server" OnClick="lnkDocument_Click" Enabled="true">Enhancement Justification</asp:LinkButton>
+                                                                    <asp:LinkButton ID="lnkDocument" runat="server" OnClick="lnkDocument_Click" Enabled="true">Enhancement Justification</asp:LinkButton><br />
                                                                     <asp:LinkButton ID="lnkIcp" runat="server" OnClick="lnkIcp_Click" Enabled="true">ICP</asp:LinkButton>
                                                                 </itemtemplate>
                                                                 <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
