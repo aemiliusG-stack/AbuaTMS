@@ -163,10 +163,10 @@
                                         </div>
                                         <div class="row col-lg-3">
                                             <div class="col-lg-6 align-items-center">
-                                                <asp:Image ID="imgPatientPhoto" runat="server" ImageUrl="../img/images/profile.jpg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px;" AlternateText="Patient Photo" />
+                                                <asp:Image ID="imgPatientPhoto" runat="server" ImageUrl="../img/profile.jpg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px;" AlternateText="Patient Photo" />
                                             </div>
                                             <div class="col-lg-6 align-items-center">
-                                                <asp:Image ID="imgPatientPhotosecond" runat="server" ImageUrl="../img/images/profile.jpg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px;" AlternateText="Patient Photo" />
+                                                <asp:Image ID="imgPatientPhotosecond" runat="server" ImageUrl="../img/profile.jpg" CssClass="img-fluid mb-3" Style="max-width: 100px; height: 140px;" AlternateText="Patient Photo" />
                                             </div>
                                         </div>
                                     </div>
@@ -2268,7 +2268,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <%--<div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-m">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -2286,7 +2286,30 @@
                                 </asp:MultiView>
                             </div>
                         </div>
+                    </div>--%>
+
+                    <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title fs-5 font-weight-bolder"></asp:Label>
+                                    <button type="button" class="btn" onclick="hideModal();">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                                <asp:MultiView ID="MultiView3" runat="server">
+                                    <asp:View ID="viewPhoto" runat="server">
+                                        <div class="modal-body">
+                                            <div class="row table-responsive" style="max-height: 700px; overflow-y: scroll;">
+                                                <asp:Image ID="imgChildView" runat="server" class="img-fluid" ImageUrl="https://plus.unsplash.com/premium_photo-1664304370934-b21ea9e0b1f5?q=80&w=1883&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" AlternateText="Child Document" />
+                                            </div>
+                                        </div>
+                                    </asp:View>
+                                </asp:MultiView>
+                            </div>
+                        </div>
                     </div>
+
                 </asp:View>
                 <asp:View ID="ViewNoPendingDataPage" runat="server">
                     <div class="d-flex align-items-center justify-content-center m-5">
