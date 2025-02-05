@@ -6,6 +6,8 @@ using System.Web.Services;
 using System.Web.UI;
 using System.Configuration;
 using System.Web;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 
 public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
@@ -752,116 +754,121 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         {
             btnOncology.CssClass = "btn btn-primary";
         }
-        lnkPreauthorization.CssClass = "btn btn-warning";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
+        btnPreauthorization.CssClass = "btn btn-warning";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
     }
-    protected void lnkPreauthorization_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewPreauthorization);
-        lnkPreauthorization.CssClass = "btn btn-warning";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
-    }
-    protected void lnkDischarge_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewDischarge);
-        lnkPreauthorization.CssClass = "btn btn-primary";
-        lnkDischarge.CssClass = "btn btn-warning";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
-    }
+    //protected void lnkPreauthorization_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewPreauthorization);
+    //    lnkPreauthorization.CssClass = "btn btn-warning";
+    //    lnkDischarge.CssClass = "btn btn-primary";
+    //    lnkDeath.CssClass = "btn btn-primary";
+    //    lnkClaim.CssClass = "btn btn-primary";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-primary";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-primary";
+    //    lnkFraudDocuments.CssClass = "btn btn-primary";
+    //    lnkAuditDocuments.CssClass = "btn btn-primary";
+    //    getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+    //}
+    //protected void lnkDischarge_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewDischarge);
+    //    lnkPreauthorization.CssClass = "btn btn-primary";
+    //    lnkDischarge.CssClass = "btn btn-warning";
+    //    lnkDeath.CssClass = "btn btn-primary";
+    //    lnkClaim.CssClass = "btn btn-primary";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-primary";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-primary";
+    //    lnkFraudDocuments.CssClass = "btn btn-primary";
+    //    lnkAuditDocuments.CssClass = "btn btn-primary";
+    //    getDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+    //}
 
-    protected void lnkDeath_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewDeath);
-        lnkPreauthorization.CssClass = "btn btn-primary";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-warning";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
-    }
-    protected void lnkClaim_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewClaims);
-        lnkPreauthorization.CssClass = "btn btn-primary";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-warning";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
-    }
+    //protected void lnkDeath_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewDeath);
+    //    lnkPreauthorization.CssClass = "btn btn-primary";
+    //    lnkDischarge.CssClass = "btn btn-primary";
+    //    lnkDeath.CssClass = "btn btn-warning";
+    //    lnkClaim.CssClass = "btn btn-primary";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-primary";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-primary";
+    //    lnkFraudDocuments.CssClass = "btn btn-primary";
+    //    lnkAuditDocuments.CssClass = "btn btn-primary";
+    //}
+    //protected void lnkClaim_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewClaims);
+    //    lnkPreauthorization.CssClass = "btn btn-primary";
+    //    lnkDischarge.CssClass = "btn btn-primary";
+    //    lnkDeath.CssClass = "btn btn-primary";
+    //    lnkClaim.CssClass = "btn btn-warning";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-primary";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-primary";
+    //    lnkFraudDocuments.CssClass = "btn btn-primary";
+    //    lnkAuditDocuments.CssClass = "btn btn-primary";
+    //}
 
-    protected void lnkGeneralInvestigation_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewGeneralInvestigation);
-        lnkPreauthorization.CssClass = "btn btn-primary";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-warning";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
-    }
+    //protected void lnkGeneralInvestigation_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewGeneralInvestigation);
+    //    lnkPreauthorization.CssClass = "btn btn-primary";
+    //    lnkDischarge.CssClass = "btn btn-primary";
+    //    lnkDeath.CssClass = "btn btn-primary";
+    //    lnkClaim.CssClass = "btn btn-primary";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-warning";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-primary";
+    //    lnkFraudDocuments.CssClass = "btn btn-primary";
+    //    lnkAuditDocuments.CssClass = "btn btn-primary";
+    //}
 
-    protected void lnkSpecialInvestigation_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewSpecialInvestigation);
-        lnkPreauthorization.CssClass = "btn btn-primary";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-warning";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
-    }
+    //protected void lnkSpecialInvestigation_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewSpecialInvestigation);
+    //    lnkPreauthorization.CssClass = "btn btn-primary";
+    //    lnkDischarge.CssClass = "btn btn-primary";
+    //    lnkDeath.CssClass = "btn btn-primary";
+    //    lnkClaim.CssClass = "btn btn-primary";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-primary";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-warning";
+    //    lnkFraudDocuments.CssClass = "btn btn-primary";
+    //    lnkAuditDocuments.CssClass = "btn btn-primary";
+    //    getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+    //}
 
-    protected void lnkFraudDocuments_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewFraudDocuments);
-        lnkPreauthorization.CssClass = "btn btn-primary";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-warning";
-        lnkAuditDocuments.CssClass = "btn btn-primary";
-    }
+    //protected void lnkFraudDocuments_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewFraudDocuments);
+    //    lnkPreauthorization.CssClass = "btn btn-primary";
+    //    lnkDischarge.CssClass = "btn btn-primary";
+    //    lnkDeath.CssClass = "btn btn-primary";
+    //    lnkClaim.CssClass = "btn btn-primary";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-primary";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-primary";
+    //    lnkFraudDocuments.CssClass = "btn btn-warning";
+    //    lnkAuditDocuments.CssClass = "btn btn-primary";
+    //}
 
-    protected void lnkAuditDocuments_Click(object sender, EventArgs e)
-    {
-        MultiView2.SetActiveView(viewAuditDocuments);
-        lnkPreauthorization.CssClass = "btn btn-primary";
-        lnkDischarge.CssClass = "btn btn-primary";
-        lnkDeath.CssClass = "btn btn-primary";
-        lnkClaim.CssClass = "btn btn-primary";
-        lnkGeneralInvestigation.CssClass = "btn btn-primary";
-        lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        lnkFraudDocuments.CssClass = "btn btn-primary";
-        lnkAuditDocuments.CssClass = "btn btn-warning";
-    }
+    //protected void lnkAuditDocuments_Click(object sender, EventArgs e)
+    //{
+    //    MultiView2.SetActiveView(viewAuditDocuments);
+    //    lnkPreauthorization.CssClass = "btn btn-primary";
+    //    lnkDischarge.CssClass = "btn btn-primary";
+    //    lnkDeath.CssClass = "btn btn-primary";
+    //    lnkClaim.CssClass = "btn btn-primary";
+    //    lnkGeneralInvestigation.CssClass = "btn btn-primary";
+    //    lnkSpecialInvestigation.CssClass = "btn btn-primary";
+    //    lnkFraudDocuments.CssClass = "btn btn-primary";
+    //    lnkAuditDocuments.CssClass = "btn btn-warning";
+    //}
     private void BindGrid_PreauthWorkFlow()
     {
         dt.Clear();
@@ -1059,27 +1066,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         }
     }
 
-    protected void btnDownloadPdf_Click1(object sender, EventArgs e)
-    {
-        try
-        {
-            string image1Url = "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/1.png";
-            string image2Url = "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/1.png";
-            byte[] pdfBytes = cex.CreatePdfWithImagesInMemory(new[] { image1Url, image2Url });
-
-            Response.Clear();
-            Response.ContentType = "application/pdf";
-            Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
-            Response.BinaryWrite(pdfBytes);
-            Response.Flush();
-            HttpContext.Current.ApplicationInstance.CompleteRequest();
-        }
-        catch (Exception ex)
-        {
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
+   
     protected void LinkButton1_Click(object sender, EventArgs e)
     {
         MultiView3.SetActiveView(viewPhoto);
@@ -1096,5 +1083,541 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         btnTreatment.CssClass = "btn btn-primary";
         btnClaims.CssClass = "btn btn-primary";
         btnAttachments.CssClass = "btn btn-primary";
+    }
+    public void getManditoryDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cex.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridManditoryDocument.DataSource = dt;
+                gridManditoryDocument.DataBind();
+            }
+            else
+            {
+                gridManditoryDocument.DataSource = null;
+                gridManditoryDocument.DataBind();
+                panelNoManditoryDocument.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridManditoryDocument_RowDataBound(object sender, System.Web.UI.WebControls.GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewMandateDocument = (Button)e.Row.FindControl("btnViewMandateDocument");
+            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+            string DocumentFor = lbDocumentFor.Text.ToString();
+            if (DocumentFor == "1")
+            {
+                lbDocumentFor.Text = "Pre Investigation";
+            }
+            else
+            {
+                lbDocumentFor.Text = "Post Investigation";
+            }
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewMandateDocument.Text = "No Document";
+                btnViewMandateDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewMandateDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewMandateDocument.Text = "View Document";
+                btnViewMandateDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewMandateDocument.Enabled = true;
+            }
+        }
+    }
+    public void getPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cex.GetPreInvestigationDocuments(HospitalId, CardNumber, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridSpecialInvestigation.DataSource = dt;
+                gridSpecialInvestigation.DataBind();
+            }
+            else
+            {
+                gridSpecialInvestigation.DataSource = null;
+                gridSpecialInvestigation.DataBind();
+                panelNoSpecialInvestigation.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    public void getPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cex.GetPostInvestigationDocuments(HospitalId, CardNumber, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridPostInvestigationDocument.DataSource = dt;
+                gridPostInvestigationDocument.DataBind();
+            }
+            else
+            {
+                gridPostInvestigationDocument.DataSource = null;
+                gridPostInvestigationDocument.DataBind();
+                panelPostInvestigationDocument.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    public void getDischargeDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cex.GetDischargeDocuments(HospitalId, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridDischargeDocument.DataSource = dt;
+                gridDischargeDocument.DataBind();
+            }
+            else
+            {
+                gridDischargeDocument.DataSource = null;
+                gridDischargeDocument.DataBind();
+                panelDischargeDocument.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridSpecialInvestigation_RowDataBound(object sender, System.Web.UI.WebControls.GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewDocument = (Button)e.Row.FindControl("btnViewDocument");
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewDocument.Text = "No Document";
+                btnViewDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewDocument.Text = "View Document";
+                btnViewDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnViewMandateDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbDocumentName = (Label)row.FindControl("lbDocumentName");
+            Label lbFolderName = (Label)row.FindControl("lbFolder");
+            Label lbFileName = (Label)row.FindControl("lbUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbDocumentName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+
+    protected void btnViewDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbPackageName = (Label)row.FindControl("lbPackageName");
+            Label lbInvestigationName = (Label)row.FindControl("lbInvestigationName");
+            Label lbFolderName = (Label)row.FindControl("lbFolderName");
+            Label lbFileName = (Label)row.FindControl("lbFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string packageName = lbPackageName.Text;
+            string investigationName = lbInvestigationName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = packageName + " / " + investigationName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnDownloadPdf_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            DataTable dtSpecialDocument = new DataTable();
+            DataTable dtManditoryDocument = new DataTable();
+            DataTable dtDischargeDocument = new DataTable();
+            DataTable dtPostInvestigationDocument = new DataTable();
+            List<string> images = new List<string>();
+            dtSpecialDocument = cex.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtManditoryDocument = cex.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtDischargeDocument = cex.GetDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtPostInvestigationDocument = cex.GetPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtManditoryDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (dtSpecialDocument != null && dtSpecialDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtSpecialDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (dtDischargeDocument != null && dtDischargeDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtDischargeDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (dtPostInvestigationDocument != null && dtPostInvestigationDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtPostInvestigationDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (images.Count > 0)
+            {
+                byte[] pdfBytes = cex.CreatePdfWithImagesInMemory(images);
+                Response.Clear();
+                Response.ContentType = "application/pdf";
+                Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
+                Response.BinaryWrite(pdfBytes);
+                Response.Flush();
+                HttpContext.Current.ApplicationInstance.CompleteRequest();
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnViewDischargeDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbDocumentName = (Label)row.FindControl("lbDocumentName");
+            Label lbFolderName = (Label)row.FindControl("lbFolder");
+            Label lbFileName = (Label)row.FindControl("lbUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbDocumentName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridDischargeDocument_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewDischargeDocument.Text = "No Document";
+                btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewDischargeDocument.Text = "View Document";
+                btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnlnkPreauthorization_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewPreauthorization);
+        btnPreauthorization.CssClass = "btn btn-warning";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+    }
+
+    protected void btnDischarge_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewDischarge);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-warning";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+        getDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+    }
+
+    protected void btnDeath_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewDeath);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-warning";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+    }
+
+    protected void btnClaim_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewClaims);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-warning";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+    }
+
+    protected void btnGenInvestigation_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewGeneralInvestigation);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-warning";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+    }
+
+    protected void btnSpecialInvestigation_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewSpecialInvestigation);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-warning";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+        getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+    }
+
+    protected void btnFraudDoc_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewFraudDocuments);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-warning";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+    }
+
+    protected void btnAuditDoc_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewAuditDocuments);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass = "btn btn-primary";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-warning";
+    }
+
+    protected void btnPostIvestigation_Click(object sender, EventArgs e)
+    {
+        MultiView2.SetActiveView(viewPostInvestigation);
+        btnPreauthorization.CssClass = "btn btn-primary";
+        btnDischarge.CssClass = "btn btn-primary";
+        //btnDeath.CssClass = "btn btn-primary";
+        //btnClaim.CssClass = "btn btn-primary";
+        //btnGenInvestigation.CssClass = "btn btn-primary";
+        btnSpecialInvestigation.CssClass = "btn btn-primary";
+        btnPostIvestigation.CssClass= "btn btn-warning";
+        //btnFraudDoc.CssClass = "btn btn-primary";
+        //btnAuditDoc.CssClass = "btn btn-primary";
+        getPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+    }
+
+    protected void btnViewPostInvestigationDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbPackageName = (Label)row.FindControl("lbPackageName");
+            Label lbInvestigationName = (Label)row.FindControl("lbInvestigationName");
+            Label lbFolderName = (Label)row.FindControl("lbFolderName");
+            Label lbFileName = (Label)row.FindControl("lbFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string packageName = lbPackageName.Text;
+            string investigationName = lbInvestigationName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = packageName + " / " + investigationName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridPostInvestigationDocument_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewPostInvestigationDocument = (Button)e.Row.FindControl("btnViewPostInvestigationDocument");
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewPostInvestigationDocument.Text = "No Document";
+                btnViewPostInvestigationDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewPostInvestigationDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewPostInvestigationDocument.Text = "View Document";
+                btnViewPostInvestigationDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewPostInvestigationDocument.Enabled = true;
+            }
+        }
     }
 }
