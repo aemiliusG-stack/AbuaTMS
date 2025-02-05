@@ -97,7 +97,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         string patientRedgNo = dt.Rows[0]["PatientRegId"].ToString();
                         Session["PatientRegId"] = patientRedgNo;
                         hfCaseNumber.Value = dt.Rows[0]["CaseNumber"].ToString();
-                        lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString(); 
+                        lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString();
                         lbCaseStatus.Text = dt.Rows[0]["CaseStatus"].ToString();
                         lbContactNo.Text = dt.Rows[0]["MobileNumber"].ToString();
                         string gender = dt.Rows[0]["Gender"].ToString().Trim().ToUpper();
@@ -191,10 +191,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                     }
                     else
                     {
-                        lbName.Text = "No data found.";
-                        ClearLabels();
-                        //multiViewRecords.ActiveViewIndex = 1;
-                        MultiViewMain.ActiveViewIndex = 1;
+                        MultiViewMain.SetActiveView(viewNoDataPending);
+                        lbNodataPending.Text = "There Is No Pending Case Right Now";
                     }
                 }
             }
@@ -258,7 +256,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         tbInsuranceApprovedAmt.Text = "";
         tbTrustApprovedAmt.Text = "";
         tbSpecialCase.Text = "";
-       
+
 
     }
 
@@ -811,7 +809,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         }
         dropDeductionType.Items.Insert(0, new ListItem("--Select--", ""));
     }
-    
+
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
         hdUserId.Value = Session["UserId"].ToString();
@@ -860,8 +858,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     }
     protected void ResetDeduction_Click(object sender, EventArgs e)
     {
-        dropDeductionType.ClearSelection(); 
-        dropDeductionType.SelectedIndex = 0; 
+        dropDeductionType.ClearSelection();
+        dropDeductionType.SelectedIndex = 0;
         tbAmount.Text = "";
         tbDedRemarks.Text = "";
         tbTotalDeductedAmt.Text = "";
@@ -1014,7 +1012,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             Console.WriteLine("Error: " + ex.Message);
         }
     }
-    
+
     protected void ddlActionType_SelectedIndexChanged(object sender, EventArgs e)
     {
         pUserRole.Visible = false;
@@ -1051,7 +1049,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             pSubReason.Visible = true;
             pRemarks.Visible = true;
             pTriggerType.Visible = false;
-            BindQueryReason();          
+            BindQueryReason();
         }
         else
         {
@@ -1098,7 +1096,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         try
         {
-            
+
             SqlParameter[] p = new SqlParameter[5];
             p[0] = new SqlParameter("@CardNumber", hdAbuaId.Value);
             p[0].DbType = DbType.String;
@@ -1132,7 +1130,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     {
         try
         {
-         
+
 
             SqlParameter[] p = new SqlParameter[5];
             p[0] = new SqlParameter("@CardNumber", hdAbuaId.Value);
@@ -1268,7 +1266,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    
+
     protected void lnkDeletePrimaryDiagnosis_Click(object sender, EventArgs e)
     {
         try
@@ -1298,8 +1296,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             int rowsAffected = 0;
             rowsAffected = cpd.DeleteSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbPatientSDId.Text));
             getPatientSecondaryDiagnosis();
-            
-            
+
+
         }
         catch (Exception ex)
         {
@@ -1318,9 +1316,9 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         }
         else
         {
-            
+
             string selectedValue = ddlActionType.SelectedItem.Value;
-            
+
             if (selectedValue.Equals("0"))
             {
                 strMessage = "window.alert('Case action is required.');";
@@ -1359,10 +1357,11 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                     }
                     if (!hfDeductedAmount.Value.IsEmpty() && !hfFinalAmount.Value.IsEmpty())
                     {
+                        int deductionType;
                         decimal deductedAmount = Convert.ToDecimal(hfDeductedAmount.Value.ToString());
                         decimal finalAmount = Convert.ToDecimal(hfFinalAmount.Value.ToString());
-
-                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), dropDeductionType.SelectedItem.Value, deductedAmount, finalAmount, hfCaseNumber.Value, tbDedRemarks.Text, Convert.ToInt32(hfClaimId.Value));
+                        int.TryParse(dropDeductionType.SelectedValue, out deductionType);
+                        cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), deductionType, deductedAmount, finalAmount, hfCaseNumber.Value, tbDedRemarks.Text, Convert.ToInt32(hfClaimId.Value));
 
                     }
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
@@ -1456,7 +1455,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             p[6].DbType = DbType.String;
             p[7] = new SqlParameter("@Remarks", Remarks);
             p[7].DbType = DbType.String;
-            p[8] = new SqlParameter("@Amount", finalAmount); 
+            p[8] = new SqlParameter("@Amount", finalAmount);
             p[8].DbType = DbType.String;
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDInsertActions", p);
             if (con.State == ConnectionState.Open)
@@ -1620,6 +1619,59 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    protected void btnUpdateDischarge_Click(object sender, EventArgs e)
+    {
+        if (!tbDischargeTypeRemarks.Visible)
+        {
+            tbDischargeTypeRemarks.Visible = true;
+            lbDischargeTypeRemarks.Visible = true;
+            rbDischarge.Enabled = true;
+            rbDeath.Enabled = true;
+            mvCPDTabs.SetActiveView(ViewTreatmentDischarge);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please enter Discharge/Death type update remarks.');", true);
+        }
+        else
+        {
+            string remarks = tbDischargeTypeRemarks.Text.Trim();
+            bool isDischarge = rbDischarge.Checked;
+            bool isDeath = rbDeath.Checked;
+            if (string.IsNullOrEmpty(remarks))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Remarks are required.');", true);
+                return;
+            }
+            if (!isDischarge && !isDeath)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please select either Discharge or Death.');", true);
+                return;
+            }
+            int dischargeStatus = isDischarge ? 1 : 0;
+            string claimId = Session["ClaimId"] as string;
+
+            try
+            {
+                bool isUpdated = cpd.UpdateDischarge(claimId, dischargeStatus, remarks);
+                if (isUpdated)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Discharge/Death type updated successfully.');", true);
+                    tbDischargeTypeRemarks.Text = string.Empty;
+                    tbDischargeTypeRemarks.Visible = false;
+                    lbDischargeTypeRemarks.Visible = false;
+                    rbDischarge.Enabled = false;
+                    rbDeath.Enabled = false;
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Update failed. Please try again.');", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Error: {ex.Message}');", true);
+            }
+        }
+    }
+
     //Attachments
     protected void btnAttachments_Click(object sender, EventArgs e)
     {
@@ -1633,6 +1685,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnQuestionnaire.CssClass = "btn btn-primary";
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkSpecialInvestigation.CssClass = "btn btn-primary";
+        lnkDischarge.CssClass = "btn btn-primary";
+        lnkPostInvestigation.CssClass = "btn btn-primary";
         getManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
     }
 
@@ -1647,6 +1701,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnClaims.CssClass = "btn btn-primary ";
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkSpecialInvestigation.CssClass = "btn btn-primary";
+        lnkDischarge.CssClass = "btn btn-primary";
+        lnkPostInvestigation.CssClass = "btn btn-primary";
         //ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
         getManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
     }
@@ -1663,9 +1719,41 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnClaims.CssClass = "btn btn-primary ";
         lnkSpecialInvestigation.CssClass = "btn btn-warning";
         lnkPreauthorization.CssClass = "btn btn-primary";
+        lnkDischarge.CssClass = "btn btn-primary";
+        lnkPostInvestigation.CssClass = "btn btn-primary";
+        getPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+    }
+    protected void lnkDischarge_Click(object sender, EventArgs e)
+    {
+        mvCPDTabs.SetActiveView(ViewAttachment);
+        MultiView2.SetActiveView(viewDischarge);
+        btnAttachments.CssClass = "btn btn-warning ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-primary ";
+        lnkSpecialInvestigation.CssClass = "btn btn-primary";
+        lnkPreauthorization.CssClass = "btn btn-primary";
+        lnkDischarge.CssClass = "btn btn-warning";
+        lnkPostInvestigation.CssClass = "btn btn-primary";
         getPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
     }
 
+    protected void lnkPostInvestigation_Click(object sender, EventArgs e)
+    {
+        mvCPDTabs.SetActiveView(ViewAttachment);
+        MultiView2.SetActiveView(viewPostInvestigation);
+        btnAttachments.CssClass = "btn btn-warning ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-primary ";
+        lnkSpecialInvestigation.CssClass = "btn btn-primary";
+        lnkPreauthorization.CssClass = "btn btn-primary";
+        lnkDischarge.CssClass = "btn btn-primary";
+        lnkPostInvestigation.CssClass = "btn btn-warning";
+        getPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+    }
     public void getManditoryDocuments(string HospitalId, string PatientRegId)
     {
         try
@@ -1826,16 +1914,185 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    protected void btnDownloadPdf_Click(object sender, EventArgs e)
+    public void getDischargeDocuments(string HospitalId, string PatientRegId)
     {
         try
         {
             DataTable dt = new DataTable();
-            List<string> images = new List<string>();
-            dt = ppdHelper.GetPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dt = ppdHelper.GetDischargeDocuments(HospitalId, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
-                foreach (DataRow row in dt.Rows)
+                gridDischargeDocument.DataSource = dt;
+                gridDischargeDocument.DataBind();
+            }
+            else
+            {
+                gridDischargeDocument.DataSource = null;
+                gridDischargeDocument.DataBind();
+                panelNoDischrage.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridDischargeDocument_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
+            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+            string DocumentFor = lbDocumentFor.Text.ToString();
+            if (DocumentFor == "1")
+            {
+                lbDocumentFor.Text = "Pre Investigation";
+            }
+            else
+            {
+                lbDocumentFor.Text = "Post Investigation";
+            }
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewDischargeDocument.Text = "No Document";
+                btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewDischargeDocument.Text = "View Document";
+                btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnViewDischargeDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbDocumentName = (Label)row.FindControl("lbDocumentName");
+            Label lbFolderName = (Label)row.FindControl("lbFolder");
+            Label lbFileName = (Label)row.FindControl("lbUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbDocumentName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    public void getPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetPostInvestigationDocuments(HospitalId, CardNumber, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridPostInvestigation.DataSource = dt;
+                gridPostInvestigation.DataBind();
+            }
+            else
+            {
+                gridPostInvestigation.DataSource = null;
+                gridPostInvestigation.DataBind();
+                panelNoPostInvestigation.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridPostInvestigation_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewPostDocument = (Button)e.Row.FindControl("btnViewPostDocument");
+            Label lbPostInvestigationStage = (Label)e.Row.FindControl("lbPostInvestigationStage");
+            lbPostInvestigationStage.Text = "Post Investigation";
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewPostDocument.Text = "No Document";
+                btnViewPostDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewPostDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewPostDocument.Text = "View Document";
+                btnViewPostDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewPostDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnViewPostDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbPostPackageName = (Label)row.FindControl("lbPostPackageName");
+            Label lbPostInvestigationName = (Label)row.FindControl("lbPostInvestigationName");
+            Label lbPostFolderName = (Label)row.FindControl("lbPostFolderName");
+            Label lbPostFileName = (Label)row.FindControl("lbPostFileName");
+            string folderName = lbPostFolderName.Text;
+            string fileName = lbPostFileName.Text + ".jpeg";
+            string packageName = lbPostPackageName.Text;
+            string investigationName = lbPostInvestigationName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = packageName + " / " + investigationName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnDownloadPdf_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            DataTable dtSpecialDocument = new DataTable();
+            DataTable dtManditoryDocument = new DataTable();
+            DataTable dtDischargeDocument = new DataTable();
+            DataTable dtPostDocument = new DataTable();
+            List<string> images = new List<string>();
+            dtSpecialDocument = ppdHelper.GetPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtManditoryDocument = ppdHelper.GetManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
+            dtDischargeDocument = ppdHelper.GetDischargeDocuments(hfHospitalId.Value, hdPatientRegId.Value);
+            dtPostDocument = ppdHelper.GetPostInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtManditoryDocument.Rows)
                 {
                     string folderName = row["FolderName"].ToString().Trim();
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
@@ -1848,74 +2105,70 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         }
                     }
                 }
-                if (images.Count > 0)
+            }
+            if (dtSpecialDocument != null && dtSpecialDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtSpecialDocument.Rows)
                 {
-                    byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
-                    Response.Clear();
-                    Response.ContentType = "application/pdf";
-                    Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
-                    Response.BinaryWrite(pdfBytes);
-                    Response.Flush();
-                    HttpContext.Current.ApplicationInstance.CompleteRequest();
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
                 }
+            }
+            if (dtDischargeDocument != null && dtDischargeDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtDischargeDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (dtPostDocument != null && dtPostDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtPostDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (images.Count > 0)
+            {
+                byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
+                Response.Clear();
+                Response.ContentType = "application/pdf";
+                Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
+                Response.BinaryWrite(pdfBytes);
+                Response.Flush();
+                HttpContext.Current.ApplicationInstance.CompleteRequest();
             }
         }
         catch (Exception ex)
         {
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
-    protected void btnUpdateDischarge_Click(object sender, EventArgs e)
-    {
-        if (!tbDischargeTypeRemarks.Visible)
-        {
-            tbDischargeTypeRemarks.Visible = true;
-            lbDischargeTypeRemarks.Visible = true;
-            rbDischarge.Enabled = true;
-            rbDeath.Enabled = true;
-            mvCPDTabs.SetActiveView(ViewTreatmentDischarge);
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please enter Discharge/Death type update remarks.');", true);
-        }
-        else
-        {
-            string remarks = tbDischargeTypeRemarks.Text.Trim();
-            bool isDischarge = rbDischarge.Checked;
-            bool isDeath = rbDeath.Checked;
-            if (string.IsNullOrEmpty(remarks))
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Remarks are required.');", true);
-                return;
-            }
-            if (!isDischarge && !isDeath)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please select either Discharge or Death.');", true);
-                return;
-            }
-            int dischargeStatus = isDischarge ? 1 : 0;
-            string claimId = Session["ClaimId"] as string;
-
-            try
-            {
-                bool isUpdated = cpd.UpdateDischarge(claimId, dischargeStatus, remarks);
-                if (isUpdated)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Discharge/Death type updated successfully.');", true);
-                    tbDischargeTypeRemarks.Text = string.Empty;
-                    tbDischargeTypeRemarks.Visible = false;
-                    lbDischargeTypeRemarks.Visible = false;
-                    rbDischarge.Enabled = false;
-                    rbDeath.Enabled = false;
-                }
-                else
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Update failed. Please try again.');", true);
-                }
-            }
-            catch (Exception ex)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Error: {ex.Message}');", true);
-            }
         }
     }
 

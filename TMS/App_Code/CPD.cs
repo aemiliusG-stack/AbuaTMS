@@ -572,7 +572,7 @@ public class CPD
         }
         return roleName;
     }
-    public void InsertDeductionAndUpdateClaimMaster(int userId, int roleId, string deductionType, decimal deductionAmount, decimal totalDeductionAmount, string caseNo, string remarks, int claimId)
+    public void InsertDeductionAndUpdateClaimMaster(int userId, int roleId, int deductionType, decimal deductionAmount, decimal totalDeductionAmount, string caseNo, string remarks, int claimId)
     {
         SqlCommand cmd = new SqlCommand("TMS_CPDInsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
@@ -720,20 +720,20 @@ public class CPD
     }
     public DataTable GetPatientPrimaryDiagnosis(string CardNumber, string PatientRegId)
     {
-        dtTemp.Clear();
-        string Query = "SELECT t1.Id, t1.PatientRegId, t3.RoleName, t2.PrimaryDiagnosisName, t1.PDId, t2.ICDValue from TMS_PatientPrimaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId INNER JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        dt.Clear();
+        string Query = "SELECT t1.Id, t1.PatientRegId, t3.RoleName, t2.PrimaryDiagnosisName, t1.PDId, t2.ICDValue from TMS_PatientPrimaryDiagnosis t1 LEFT JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId LEFT JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
         sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
         con.Open();
-        sd.Fill(dtTemp);
+        sd.Fill(dt);
         con.Close();
-        return dtTemp;
+        return dt;
     }
     public DataTable GetPatientSecondaryDiagnosis(string CardNumber, string PatientRegId)
     {
         dtTemp.Clear();
-        string Query = "SELECT t1.Id, t1.PatientRegId, t3.RoleName, t1.PDId, t2.PrimaryDiagnosisName, t2.ICDValue from TMS_PatientSecondaryDiagnosis t1 INNER JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId INNER JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        string Query = "SELECT t1.Id, t1.PatientRegId, t3.RoleName, t1.PDId, t2.PrimaryDiagnosisName, t2.ICDValue from TMS_PatientSecondaryDiagnosis t1 LEFT JOIN TMS_MasterPrimaryDiagnosis t2 ON t1.PDId = t2.PDId LEFT JOIN TMS_Roles t3 ON t1.RegisteredBy = t3.RoleId WHERE t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
         sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
