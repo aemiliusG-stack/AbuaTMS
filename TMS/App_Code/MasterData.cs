@@ -48,7 +48,7 @@ public class MasterData
     {
         try
         {
-            string Query = "Select DISTINCT t1.UserId, t1.Username, r1.RoleName, IsNull(d1.Title,'NA') as DistrictName, IsNull(h1.HospitalName, 'NA') as HospitalName, t1.FullName, t1.UserAddress, t1.MobileNo, FORMAT (t1.CreatedOn, 'dd-MMM-yyyy ') as CreatedOn from TMS_Users t1 LEFT JOIN TMS_Roles r1 ON t1.RoleId = r1.RoleId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.Id LEFT JOIN HEM_MasterDistricts d1 ON t1.DistrictId = d1.Id";
+            string Query = "Select DISTINCT t1.UserId, t1.Username, r1.RoleName, IsNull(d1.Title,'NA') as DistrictName, IsNull(h1.HospitalName, 'NA') as HospitalName, t1.FullName, t1.UserAddress, t1.MobileNo, FORMAT (t1.CreatedOn, 'dd-MMM-yyyy ') as CreatedOn from TMS_Users t1 LEFT JOIN TMS_Roles r1 ON t1.RoleId = r1.RoleId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId LEFT JOIN HEM_MasterDistricts d1 ON t1.DistrictId = d1.Id";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
             sd.Fill(ds);
@@ -2704,5 +2704,4 @@ public class MasterData
         return dt;
 
     }
-
 }

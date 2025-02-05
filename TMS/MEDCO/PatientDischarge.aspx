@@ -792,8 +792,23 @@
                                                         </div>
                                                         <br />
                                                         <div class="form-group row m-b">
-                                                            <div class="col-lg-12">
-                                                                <asp:Button ID="btnEnhancementAttachment" runat="server" CssClass="btn btn-primary" Text="Add/View Attachment" OnClick="btnEnhancementAttachment_Click" />
+                                                            <div class="col-lg-4">
+                                                                <span style="font-weight: 600!important;">Patient Photo</span><br />
+                                                                <div class="d-flex align-items-center">
+                                                                    <asp:FileUpload ID="fuEnhancementPatientPhoto" runat="server" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <span style="font-weight: 600!important;">Justification Of Enhancement</span><br />
+                                                                <div class="d-flex align-items-center">
+                                                                    <asp:FileUpload ID="fuEnhancementJustification" runat="server" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <span style="font-weight: 600!important;">ICP Photo</span><br />
+                                                                <div class="d-flex align-items-center">
+                                                                    <asp:FileUpload ID="fuEnhancementIcp" runat="server" />
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <hr />
@@ -1241,8 +1256,7 @@
                                                         </div>
                                                         <div class="col-lg-3">
                                                             <span style="font-weight: 600!important;">Discharge:</span><br />
-                                                            <asp:RadioButton ID="rbDischarge" runat="server" Text="Discharge" GroupName="rbDischarge" Font-Bold="True" AutoPostBack="True" OnCheckedChanged="rbDischarge_CheckedChanged" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                            <asp:RadioButton ID="rbDeath" runat="server" Text="Death" GroupName="rbDischarge" Font-Bold="True" ForeColor="#FF3300" AutoPostBack="True" OnCheckedChanged="rbDeath_CheckedChanged" />
+                                                            <asp:RadioButton ID="rbDischarge" runat="server" Text="Discharge" GroupName="rbDischarge" Font-Bold="True" AutoPostBack="True" OnCheckedChanged="rbDischarge_CheckedChanged" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:RadioButton ID="rbDeath" runat="server" Text="Death" GroupName="rbDischarge" Font-Bold="True" ForeColor="#FF3300" AutoPostBack="True" OnCheckedChanged="rbDeath_CheckedChanged" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1544,6 +1558,7 @@
             <asp:PostBackTrigger ControlID="btnUploadDocumentOne" />
             <asp:PostBackTrigger ControlID="btnUploadDocumentTwo" />
             <asp:PostBackTrigger ControlID="btnUploadDocumentThree" />
+            <asp:PostBackTrigger ControlID="btnInitiateEnhancement" />
         </Triggers>
     </asp:UpdatePanel>
 </asp:Content>

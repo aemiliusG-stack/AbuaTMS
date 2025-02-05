@@ -345,45 +345,134 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     {
         try
         {
-            SqlParameter[] p = new SqlParameter[9];
-            p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
-            p[0].DbType = DbType.String;
-            p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
-            p[1].DbType = DbType.String;
-            p[2] = new SqlParameter("@Cardnumber", hdAbuaId.Value);
-            p[2].DbType = DbType.String;
-            p[3] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
-            p[3].DbType = DbType.String;
-            p[4] = new SqlParameter("@EnhancementFrom", t3tbEnhancementFromDate.Text);
-            p[4].DbType = DbType.String;
-            p[5] = new SqlParameter("@EnhancementTo", t3tbEnhancementToDate.Text);
-            p[5].DbType = DbType.String;
-            p[6] = new SqlParameter("@StratificationId", t3DropEnhancementStratification.SelectedValue);
-            p[6].DbType = DbType.String;
-            p[7] = new SqlParameter("@Remarks", t3EnhancementRemarks.Text);
-            p[7].DbType = DbType.String;
-            p[8] = new SqlParameter("@UserId", hdUserId.Value);
-            p[8].DbType = DbType.String;
-
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientEnhancementDetail", p);
-            if (con.State == ConnectionState.Open)
-                con.Close();
-            if (ds != null && ds.Tables[0].Rows.Count > 0)
+            // Nirmal 
+            if (fuEnhancementPatientPhoto.HasFile && fuEnhancementJustification.HasFile && fuEnhancementIcp.HasFile)
             {
-                if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
+                string PatientPhotoExtension = Path.GetExtension(fuEnhancementPatientPhoto.FileName).ToLower();
+                int PatientPhotoFileSize = fuEnhancementPatientPhoto.PostedFile.ContentLength;
+                string PatientPhotoMimeType = fuEnhancementPatientPhoto.PostedFile.ContentType;
+
+                string JustificationPhotoExtension = Path.GetExtension(fuEnhancementJustification.FileName).ToLower();
+                int JustificationFileSize = fuEnhancementJustification.PostedFile.ContentLength;
+                string JustificationMimeType = fuEnhancementJustification.PostedFile.ContentType;
+
+                string IcpExtension = Path.GetExtension(fuEnhancementIcp.FileName).ToLower();
+                int IcpFileSize = fuEnhancementIcp.PostedFile.ContentLength;
+                string IcpMimeType = fuEnhancementIcp.PostedFile.ContentType;
+
+                if (PatientPhotoExtension == ".jpg" || PatientPhotoExtension == ".jpeg" || PatientPhotoExtension == ".png" || JustificationPhotoExtension == ".jpg" || JustificationPhotoExtension == ".jpeg" || JustificationPhotoExtension == ".png" || IcpExtension == ".jpg" || IcpExtension == ".jpeg" || IcpExtension == ".png")
                 {
-                    GetPatientForDischarge();
-                    MultiView1.SetActiveView(viewPatientList);
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement Raised Successfully!');", true);
-                }
-                else
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid Request!');", true);
+                    //Patient Photo
+                    Stream filePatientPhotoStream = fuEnhancementPatientPhoto.PostedFile.InputStream;
+                    byte[] filePatientPhotoBytes = new byte[filePatientPhotoStream.Length];
+                    filePatientPhotoStream.Read(filePatientPhotoBytes, 0, filePatientPhotoBytes.Length);
+
+                    string base64StringPatientPhoto = Convert.ToBase64String(filePatientPhotoBytes);
+                    string randomPatientFolderName = hdAbuaId.Value;
+                    string basePatientFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
+                    string destinationPatientFolderPath = Path.Combine(basePatientFolderPath, randomPatientFolderName);
+                    
+                    if (!Directory.Exists(destinationPatientFolderPath))
+                        Directory.CreateDirectory(destinationPatientFolderPath);
+                    string patientFileName = "EnhancementPatient_" + "_" + hdAbuaId.Value;
+                    string patientImagePath = Path.Combine(destinationPatientFolderPath, patientFileName + ".jpeg");
+                    File.WriteAllBytes(patientImagePath, filePatientPhotoBytes);
+
+                    //Justification Photo
+                    Stream fileJustificationPhotoStream = fuEnhancementJustification.PostedFile.InputStream;
+                    byte[] fileJustificationPhotoBytes = new byte[fileJustificationPhotoStream.Length];
+                    fileJustificationPhotoStream.Read(fileJustificationPhotoBytes, 0, fileJustificationPhotoBytes.Length);
+
+                    string base64StringJustificationPhoto = Convert.ToBase64String(fileJustificationPhotoBytes);
+                    string randomJustificationFolderName = hdAbuaId.Value;
+                    string baseJustificationFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
+                    string destinationJustificationFolderPath = Path.Combine(baseJustificationFolderPath, randomJustificationFolderName);
+
+                    if (!Directory.Exists(destinationJustificationFolderPath))
+                        Directory.CreateDirectory(destinationJustificationFolderPath);
+                    string justificationFileName = "EnhancementJustification_" + "_" + hdAbuaId.Value;
+                    string justificationImagePath = Path.Combine(destinationJustificationFolderPath, justificationFileName + ".jpeg");
+                    File.WriteAllBytes(justificationImagePath, fileJustificationPhotoBytes);
+
+                    //Icp Photo
+                    Stream fileIcpPhotoStream = fuEnhancementIcp.PostedFile.InputStream;
+                    byte[] fileIcpPhotoBytes = new byte[fileIcpPhotoStream.Length];
+                    fileIcpPhotoStream.Read(fileIcpPhotoBytes, 0, fileIcpPhotoBytes.Length);
+
+                    string base64StringIcpPhoto = Convert.ToBase64String(fileIcpPhotoBytes);
+                    string randomIcpFolderName = hdAbuaId.Value;
+                    string baseIcpFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
+                    string destinationIcpFolderPath = Path.Combine(baseIcpFolderPath, randomIcpFolderName);
+
+                    if (!Directory.Exists(destinationIcpFolderPath))
+                        Directory.CreateDirectory(destinationIcpFolderPath);
+                    string icpFileName = "EnhancementIcp_" + "_" + hdAbuaId.Value;
+                    string icpImagePath = Path.Combine(destinationIcpFolderPath, icpFileName + ".jpeg");
+                    File.WriteAllBytes(icpImagePath, fileIcpPhotoBytes);
+
+                    SqlParameter[] p = new SqlParameter[18];
+                    p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+                    p[0].DbType = DbType.String;
+                    p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+                    p[1].DbType = DbType.String;
+                    p[2] = new SqlParameter("@Cardnumber", hdAbuaId.Value);
+                    p[2].DbType = DbType.String;
+                    p[3] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
+                    p[3].DbType = DbType.String;
+                    p[4] = new SqlParameter("@EnhancementFrom", t3tbEnhancementFromDate.Text);
+                    p[4].DbType = DbType.String;
+                    p[5] = new SqlParameter("@EnhancementTo", t3tbEnhancementToDate.Text);
+                    p[5].DbType = DbType.String;
+                    p[6] = new SqlParameter("@StratificationId", t3DropEnhancementStratification.SelectedValue);
+                    p[6].DbType = DbType.String;
+                    p[7] = new SqlParameter("@Remarks", t3EnhancementRemarks.Text);
+                    p[7].DbType = DbType.String;
+                    p[8] = new SqlParameter("@UserId", hdUserId.Value);
+                    p[8].DbType = DbType.String;
+                    p[9] = new SqlParameter("@PatientFolderName", randomPatientFolderName);
+                    p[9].DbType = DbType.String;
+                    p[10] = new SqlParameter("@PatientUploadedFileName", patientFileName);
+                    p[10].DbType = DbType.String;
+                    p[11] = new SqlParameter("@PatientFilePath", patientImagePath);
+                    p[11].DbType = DbType.String;
+                    p[12] = new SqlParameter("@JustificationFolderName", randomJustificationFolderName);
+                    p[12].DbType = DbType.String;
+                    p[13] = new SqlParameter("@JustificationUploadedFileName", justificationFileName);
+                    p[13].DbType = DbType.String;
+                    p[14] = new SqlParameter("@JustificationFilePath", justificationImagePath);
+                    p[14].DbType = DbType.String;
+                    p[15] = new SqlParameter("@IcpFolderName", randomIcpFolderName);
+                    p[15].DbType = DbType.String;
+                    p[16] = new SqlParameter("@IcpUploadedFileName", icpFileName);
+                    p[16].DbType = DbType.String;
+                    p[17] = new SqlParameter("@IcpFilePath", icpImagePath);
+                    p[17].DbType = DbType.String;
+
+                    ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientEnhancementDetail", p);
+                    if (con.State == ConnectionState.Open)
+                        con.Close();
+                    if (ds != null && ds.Tables[0].Rows.Count > 0)
+                    {
+                        if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
+                        {
+                            GetPatientForDischarge();
+                            MultiView1.SetActiveView(viewPatientList);
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement Raised Successfully!');", true);
+                        }
+                        else
+                        {
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid Request!');", true);
+                        }
+                    }
+                    else
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement already in progess!');", true);
+                    }
                 }
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement already in progess!');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement Document Required!');", true);
             }
         }
         catch (Exception ex)
@@ -1781,10 +1870,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
-    }
-    protected void btnEnhancementAttachment_Click(object sender, EventArgs e)
-    {
-        
     }
     protected void btnDischarge_Click(object sender, EventArgs e)
     {
