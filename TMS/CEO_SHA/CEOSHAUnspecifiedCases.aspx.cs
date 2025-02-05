@@ -30,6 +30,7 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
         else if (!IsPostBack)
         {
             getSpecialityName();
+            BindGrid_RecociliationClaimUpdation();
         }
     }
     protected void getSpecialityName()

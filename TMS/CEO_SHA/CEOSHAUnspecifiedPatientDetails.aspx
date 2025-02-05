@@ -6,6 +6,17 @@
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
+            <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfClaimId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfCaseNumber" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfHospitalId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfPackageId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfPDId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hfAdmissionId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ibox ">
@@ -28,7 +39,7 @@
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <span class="font-weight-bold">Beneficiary Card Number:</span><br>
-                                            <asp:Label ID="lbBenCardId" runat="server"></asp:Label>
+                                            <asp:Label ID="lbBeneficiaryId" runat="server"></asp:Label>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <span class="font-weight-bold">Registration No:</span><br>
@@ -40,7 +51,7 @@
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <span class="font-weight-bold">Case Status:</span><br>
-                                            <asp:Label ID="lbCAseStatus" runat="server" Text="N/A"></asp:Label>
+                                            <asp:Label ID="lbCaseStatus" runat="server" Text="N/A"></asp:Label>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <span class="font-weight-bold">IP No:</span><br>
@@ -84,7 +95,7 @@
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <span class="font-weight-bold">Family ID:</span><br>
-                                            <asp:Label ID="lbFamilyID" runat="server"></asp:Label>
+                                            <asp:Label ID="lbFamilyId" runat="server"></asp:Label>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <span class="font-weight-bold">Gender:</span><br>
@@ -139,14 +150,52 @@
                                 </div>
                             </div>
                             <div class="ibox-content">
-                                <asp:GridView ID="GridTreatmentProtocol" runat="server" CssClass="table table-bordered" AutoGenerateColumns="false">
+                                <asp:GridView ID="gvTreatmentProtocol" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                    <AlternatingRowStyle BackColor="Gainsboro" />
                                     <Columns>
-                                        <asp:BoundField DataField="SpecialityName" HeaderText="Category Name" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="ProcedureName" HeaderText="Procedure Name" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="TreatingDoctor" HeaderText="Treating Doctor" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="Quantity" HeaderText="Quantity" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="ProcedureAmountFinal" HeaderText="Amount(Rs)" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="StratificationName" HeaderText="Stratification" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
+                                        <asp:TemplateField HeaderText="Category">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbSpeciality" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" Font-Size="12px" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Procedure Name">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbProcedure" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="30%" Font-Size="12px" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Quantity">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbQuantity" runat="server" Text='<%# Eval("Quantity") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" Font-Size="12px" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Amount(₹)">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbAmount" runat="server" Text='<%# Eval("ProcedureAmountFinal") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" Font-Size="12px" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Stratification">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbStratification" runat="server" Text='<%# Eval("StratificationName") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" Font-Size="12px" />
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Implant">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbImplants" runat="server" Text='<%# Eval("ImplantName") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" Font-Size="12px" />
+                                        </asp:TemplateField>
+
                                     </Columns>
                                 </asp:GridView>
                             </div>
@@ -185,7 +234,7 @@
                                         <span class="font-weight-bold text-dark">Package Cost</span>
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <asp:Label ID="lbPackageCostshow" runat="server" CssClass="form-label" Text="64748" />
+                                        <asp:Label ID="lbPackageCost" runat="server" CssClass="form-label" Text="64748" />
                                         <hr />
                                     </div>
                                     <div class="col-md-4 mb-3">
@@ -196,7 +245,7 @@
                                         <span class="font-weight-bold text-dark">Incentive Amount</span>
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <asp:Label ID="lbIncentiveAmountShow" runat="server" CssClass="form-label" Text="2750" />
+                                        <asp:Label ID="lbIncentiveAmount" runat="server" CssClass="form-label" Text="2750" />
                                         <hr />
                                     </div>
                                     <div class="col-md-4 mb-3">
@@ -205,13 +254,14 @@
                                         <span class="font-weight-bold text-dark">Total Package Cost</span>
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <asp:Label ID="lbTotalPackageCostShow" runat="server" CssClass="form-label" Text="64748" />
+                                        <asp:Label ID="lbTotalPackageCost" runat="server" CssClass="form-label" Text="64748" />
                                         <hr />
                                     </div>
                                     <div class="col-md-4 mb-3">
                                     </div>
                                     <asp:Panel ID="PanelTotLiableInsurance" Visible="false" runat="server" CssClass="form-group col-md-4 mb-3">
-                                        <span class="font-weight-bold text-dark">Total Amount Liable by Insurance is:</span><br />
+                                        <span class="font-weight-bold text-dark">Total Amount Liable by Insurance is:</span>
+
                                     </asp:Panel>
                                     <asp:Panel ID="PanelTotLiableInsuranceIs" Visible="false" runat="server" CssClass="form-group col-md-4 mb-3">
                                         <asp:Label ID="lbTotalLiableAmountByInsurer" runat="server" CssClass="small-text"></asp:Label>
@@ -237,17 +287,64 @@
                                 </div>
                             </div>
                             <div class="ibox-content">
-                                <asp:GridView ID="GridWorkflow" runat="server" CssClass="table table-bordered" AutoGenerateColumns="false">
-                                    <Columns>
-                                        <asp:BoundField DataField="S No" HeaderText="S No" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="Date and Time" HeaderText="Date and Time" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="Role" HeaderText="Role Name" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="Remarks" HeaderText="Remarks" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="Action" HeaderText="Action" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="Amount" HeaderText="Amount(Rs)" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                        <asp:BoundField DataField="Preauth Querry Rejection" HeaderText="Preauth Querry Rejection" HtmlEncode="false" HeaderStyle-CssClass="bg-dark-green text-center p-3" ItemStyle-CssClass="text-center p-3" />
-                                    </Columns>
-                                </asp:GridView>
+                                <div class="row">
+                                    <div class="table-responsive">
+                                        <asp:GridView ID="gvPreauthWorkFlow" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                                            <AlternatingRowStyle BackColor="Gainsboro" />
+                                            <Columns>
+                                                <asp:TemplateField HeaderText="S.No.">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lbSlNo" runat="server" Text='<%# Eval("SlNo") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Date And Time">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lbPreActionDate" runat="server" Text='<%# Eval("ActionDate") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Acted By Role">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lbPreRoleName" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Action Taken">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lbPreActionTaken" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Approved Amount(Rs.)">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lbPreAmount" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Remarks">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lbPreRemarks" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="PreAuth Query/Rejection Reasons">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lbPreRejectionReason" runat="server" Text='<%# Eval("RejectionReason") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
+                                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
+                                                </asp:TemplateField>
+                                            </Columns>
+                                        </asp:GridView>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row col-md-12 mb-3">

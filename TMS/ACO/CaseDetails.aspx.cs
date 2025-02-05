@@ -213,12 +213,13 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         int parsedUserId;
         int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
         string caseNo = Session["CaseNumber"].ToString();
+        long claimId = Convert.ToInt64(Session["ClaimId"]);
         //string cardNo = Session["CardNumber"].ToString();
 
-        if (!string.IsNullOrEmpty(caseNo))
+        if (claimId !=null)
         {
 
-            dt = aco.GetTechnicalChecklist(caseNo);
+            dt = aco.GetTechnicalChecklist(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -512,6 +513,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         string roleName = "";
         roleName = cpd.GetUserRole(userId);
         string caseNo = Session["CaseNumber"].ToString();
+        long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         string deductionType = dropDeductionTypeACO.SelectedItem.Value;
         string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
         decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.Trim());
@@ -530,10 +532,9 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         lbFinalAmount.Text = finalDeductedAmount.ToString();
         if (finalDeductedAmount > 0)
         {
-            aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, caseNo, remarks, deductionType);
+            aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks, deductionType);
         }
         // Save the deduction amount to the database
-        long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         long actionId = Convert.ToInt64(actionType.SelectedValue);
         string selectedQueryReasonId = ddlReason.SelectedValue;
         string selectedSubQueryReasonId =ddlSubReason.SelectedValue;
