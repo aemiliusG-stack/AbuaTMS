@@ -1964,7 +1964,7 @@
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Amount</span><span class="text-danger">*</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbAmount" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbAmount" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Remarks</span><span class="text-danger">*</span><br />
@@ -2243,6 +2243,12 @@
                                                                 <span class="form-label fw-semibold">Remarks</span>
                                                                 <asp:TextBox runat="server" ID="tbRejectRemarks" class="form-control mt-2"></asp:TextBox>
                                                             </asp:Panel>
+                                                            <asp:Panel ID="pTriggerType" runat="server" Visible="false" CssClass="col-md-3 mb-3">
+                                                                <span class="form-label fw-semibold">Select Trigger Type<span class="text-danger">*</span></span>
+                                                                <asp:DropDownList ID="ddTriggerType" runat="server" CssClass="form-control mt-2" AutoPostBack="True">
+                                                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                                                </asp:DropDownList>
+                                                            </asp:Panel>
                                                         </div>
 
                                                         <div class="row mt-3">
@@ -2258,6 +2264,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
 
                                             </div>
                                         </div>

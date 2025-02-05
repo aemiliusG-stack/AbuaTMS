@@ -475,7 +475,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cpd.GetEnhancementDetails(hfAdmissionId.ToString());
+            dt = cpd.GetEnhancementDetails(hfAdmissionId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridTransactionDataReferences.DataSource = dt;
@@ -845,42 +845,44 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
         {
             decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
             string roleName = cpd.GetUserRole(Convert.ToInt32(Session["UserId"].ToString()));
+
+            if (!decimal.TryParse(tbAmount.Text, out deductionAmount) || deductionAmount < 0)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid deduction amount. It must be a positive number.');", true);
+                return;
+            }
             if (roleName == "CPD(INSURER)")
             {
-                totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value.ToString());
-                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
-                if (deductionAmount > totalClaims)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
-                    return;
-                }
-                totalDeductionAmount = totalClaims - deductionAmount;
-                tbTotalDeductedAmt.Text = deductionAmount.ToString();
-                tbFinalAmt.Text = totalClaims.ToString();
-                tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
-
+                totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value);
             }
             else if (roleName == "CPD(TRUST)")
             {
-                totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value.ToString());
-                deductionAmount = Convert.ToDecimal(tbAmount.Text.ToString());
-                if (deductionAmount > totalClaims)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
-                    return;
-                }
-                totalDeductionAmount = totalClaims - deductionAmount;
-                tbTotalDeductedAmt.Text = deductionAmount.ToString();
-                tbFinalAmt.Text = totalClaims.ToString();
-                tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
+                totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value);
             }
+            else
+            {
+                return; // Exit if the role is unknown
+            }
+
+            // Ensure at least 1 rupee is left after deduction
+            if (deductionAmount >= totalClaims)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
+                return;
+            }
+
+            totalDeductionAmount = totalClaims - deductionAmount;
+
+            tbTotalDeductedAmt.Text = deductionAmount.ToString();
+            tbFinalAmt.Text = totalClaims.ToString();
+            tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
+
             hfDeductedAmount.Value = deductionAmount.ToString();
             hfFinalAmount.Value = totalDeductionAmount.ToString();
-
         }
         catch (Exception ex)
         {
-
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('An error occurred. Please try again.');", true);
         }
     }
     private void BindClaimWorkflow()
@@ -974,6 +976,43 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
         string selectedValue = ddlReason.SelectedItem.Value;
         BindQuerySubReason(selectedValue);
     }
+    public void getForwardUsers()
+    {
+        DataTable dt = new DataTable();
+        dt = cpd.GetUsersByRole(Session["RoleId"].ToString(), Session["UserId"].ToString());
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            ddlUserToAssign.Items.Clear();
+            ddlUserToAssign.DataValueField = "UserId";
+            ddlUserToAssign.DataTextField = "FullName";
+            ddlUserToAssign.DataSource = dt;
+            ddlUserToAssign.DataBind();
+            ddlUserToAssign.Items.Insert(0, new ListItem("--Select--", "0"));
+        }
+        else
+        {
+            ddlUserToAssign.Items.Clear();
+            ddlUserToAssign.Items.Insert(0, new ListItem("--Select--", "0"));
+        }
+    }
+
+    private void BindTriggerType()
+    {
+        try
+        {
+            DataTable dt = cpd.GetTriggerType();
+            ddTriggerType.DataSource = dt;
+            ddTriggerType.DataTextField = "TriggerType";
+            ddTriggerType.DataValueField = "Id";
+            ddTriggerType.DataBind();
+            ddTriggerType.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+
     protected void ddlActionType_SelectedIndexChanged(object sender, EventArgs e)
     {
         pUserRole.Visible = false;
@@ -982,26 +1021,36 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
         pSubReason.Visible = false;
         pUserRole.Visible = false;
         pUserToAssign.Visible = false;
-
-        if (ddlActionType.SelectedValue == "Reject")
+        if (ddlActionType.SelectedValue == "2")
+        {
+            pRemarks.Visible = true;
+            pTriggerType.Visible = false;
+            BindRejectReason();
+        }
+        else if (ddlActionType.SelectedValue == "6")
         {
             pReason.Visible = true;
             pRemarks.Visible = true;
             BindRejectReason();
         }
-        else if (ddlActionType.SelectedValue == "Forward")
+        else if (ddlActionType.SelectedValue == "3")
         {
             pUserRole.Visible = true;
             pUserToAssign.Visible = true;
+            getForwardUsers();
         }
-        else if (ddlActionType.SelectedValue == "Raise Query")
+        else if (ddlActionType.SelectedValue == "4")
+        {
+            pTriggerType.Visible = true;
+            BindTriggerType();
+        }
+        else if (ddlActionType.SelectedValue == "5")
         {
             pReason.Visible = true;
             pSubReason.Visible = true;
             pRemarks.Visible = true;
+            pTriggerType.Visible = false;
             BindQueryReason();
-            BindQuerySubReason("1");
-
         }
         else
         {
@@ -1010,7 +1059,7 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             pRemarks.Visible = false;
             pUserRole.Visible = false;
             pUserToAssign.Visible = false;
-
+            pTriggerType.Visible = false;
         }
     }
     protected void getPrimaryDiagnosis()
@@ -1316,6 +1365,18 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                     if (!rbMandatoryReportsYes.Checked && !rbMandatoryReportsNo.Checked)
                     {
                         strMessage = "window.alert('Please select Mandatory Reports Yes or No.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
+                    if (string.IsNullOrEmpty(tbTechRemarks.Text))
+                    {
+                        strMessage = "window.alert('Please fill the Remarks.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
+                    if (string.IsNullOrEmpty(tbRejectRemarks.Text))
+                    {
+                        strMessage = "window.alert('Please fill the Remarks.');";
                         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                         return;
                     }

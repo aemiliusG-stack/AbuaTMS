@@ -1821,7 +1821,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="ibox mt-4">
                                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">
                                                     <div class="d-flex w-100 justify-content-center position-relative">
@@ -1835,12 +1834,11 @@
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Type</span><br />
                                                                     <asp:DropDownList runat="server" ID="dropDeductionType" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;">
-                                                                        <%--                                                                        <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>                                                                        --%>
                                                                     </asp:DropDownList>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Amount</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbAmount" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    <asp:TextBox runat="server" ID="tbAmount" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <span class="form-label fw-bold" style="font-weight: 800;">Remarks</span><br />
@@ -1917,7 +1915,6 @@
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
-
                                                                     <asp:TemplateField HeaderText="Approved Amount(Rs.)">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="Label15" runat="server" Text='<%# Eval("Amount") %>'></asp:Label>
@@ -1951,69 +1948,75 @@
                                                         <h3 class="text-white">Preauth Actual Utilization</h3>
                                                     </div>
                                                     <div class="ibox-content table-responsive">
-                                                        <asp:GridView ID="gvPreauthUtilization" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999"
-                                                            BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%"
-                                                            CssClass="table table-bordered table-striped">
-                                                            <AlternatingRowStyle BackColor="Gainsboro" />
-                                                            <Columns>
-                                                                <asp:TemplateField HeaderText="Action Type">
-                                                                    <ItemTemplate>
-                                                                        <asp:Label ID="lbQueryDate" runat="server" Text='<%# Eval("QueryRaisedDate") %>'></asp:Label>
-                                                                    </ItemTemplate>
-                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                </asp:TemplateField>
-                                                                <asp:TemplateField HeaderText="From Date">
-                                                                    <ItemTemplate>
-                                                                        <asp:Label ID="lbMainReason" runat="server" Text='<%# Eval("ReasonName") %>'></asp:Label>
-                                                                    </ItemTemplate>
-                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
-                                                                </asp:TemplateField>
-                                                                <asp:TemplateField HeaderText="To Date">
-                                                                    <ItemTemplate>
-                                                                        <asp:Label ID="lbSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
-                                                                    </ItemTemplate>
-                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="30%" />
-                                                                </asp:TemplateField>
-                                                                <asp:TemplateField HeaderText="Ward Type">
-                                                                    <ItemTemplate>
-                                                                        <asp:Label ID="lbPPDQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
-                                                                    </ItemTemplate>
-                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
-                                                                </asp:TemplateField>
-                                                                <asp:TemplateField HeaderText="Ward Rent Per Day">
-                                                                    <ItemTemplate>
-                                                                        <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" />
-                                                                    </ItemTemplate>
-                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                </asp:TemplateField>
-                                                                <asp:TemplateField HeaderText="No Of Days">
-                                                                    <ItemTemplate>
-                                                                        <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" />
-                                                                    </ItemTemplate>
-                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                </asp:TemplateField>
-                                                                <asp:TemplateField HeaderText="Total Amount">
-                                                                    <ItemTemplate>
-                                                                        <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" />
-                                                                    </ItemTemplate>
-                                                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                    <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
-                                                                </asp:TemplateField>
-                                                            </Columns>
-                                                        </asp:GridView>
+                                                        <table class="table table-bordered table-striped">
+                                                            <thead>
+                                                                <tr class="table-primary text-center">
+                                                                    <th scope="col" style="background-color: #007e72; color: white;">Action Type</th>
+                                                                    <th scope="col" style="background-color: #007e72; color: white;">From Date</th>
+                                                                    <th scope="col" style="background-color: #007e72; color: white;">To Date</th>
+                                                                    <th scope="col" style="background-color: #007e72; color: white;">Ward Type</th>
+                                                                    <th scope="col" style="background-color: #007e72; color: white;">Ward Rent Per Day</th>
+                                                                    <th scope="col" style="background-color: #007e72; color: white;">No Of Days</th>
+                                                                    <th scope="col" style="background-color: #007e72; color: white;">Total Amount</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="text-center">
+                                                                <tr>
+                                                                    <td>
+                                                                        <asp:Label ID="lbActionTypePreauth" runat="server" Text="Preauth"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbPreauthFromDate" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbPreauthToDate" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbPreauthWardType" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbPreauthWardRent" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbPreauthNoOfDays" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbPreauthAmount" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <asp:Label ID="lbActionTypeEnhance" runat="server" Text="Preauth"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbEnhanceFromDate" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbEnhanceToDate" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbEnhanceWardType" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbEnhanceWardRent" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbEnhanceNoOfDays" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                    <td>
+                                                                            <asp:Label ID="lbEnhanceAmount" runat="server" Text="0"></asp:Label>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
                                                         <div class="row mt-4 text-dark">
                                                             <div class="col-12 mb-3">
-                                                                <span class="form-label fw-bold" style="font-weight: 800;">Sum Of Actual No Of Days</span>
+                                                                <span class="form-label fw-bold" style="font-weight: 800;">Sum Of Actual No Of Days : </span>
                                                                 <asp:TextBox runat="server" ID="tbSumActualDay" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none; padding-left: 5px;"></asp:TextBox>
                                                             </div>
                                                             <div class="col-12">
-                                                                <span class="form-label fw-bold" style="font-weight: 800;">Sum Of Actual Total Amount</span>
+                                                                <span class="form-label fw-bold" style="font-weight: 800;">Sum Of Actual Total Amount : </span>
                                                                 <asp:TextBox runat="server" ID="tbSumTotalAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none; padding-left: 5px;"></asp:TextBox>
                                                             </div>
                                                         </div>

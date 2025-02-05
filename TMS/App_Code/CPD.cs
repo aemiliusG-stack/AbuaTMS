@@ -1150,6 +1150,62 @@ public class CPD
         }
         return dt;
     }
+    public DataTable GetDischargeDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 2 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
+    public DataTable GetPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT DISTINCT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPostInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PostInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PostInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Post'";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
+
     //public byte[] CreatePdfWithImagesInMemory(List<string> images)
     //{
     //    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -1201,7 +1257,7 @@ public class CPD
     {
         try
         {
-            string Query = "SELECT t1.EnhancementId, t1.AdmissionId, t1.CreatedOn AS EnhancementInitiateDate, t1.EnhancementFrom, t1.EnhancementTo, t1.EnhancementDays, t1.StratificationId, t1.EnhancementStatus, t1.Amount, t1.Remarks, t1.ApprovedDate, t1.RejectedDate, ISNULL(t2.RejectName, 'NA') AS RejectedReason, t1.RejectedRemarks, t1.PatientFolderName, t1.PatientUploadedFileName, t1.PatientFilePath, t1.JustificationFolderName, t1.JustificationFileName, t1.JustificationFilePath FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_MasterRejectReason t2 ON t1.RejectReasonId = t2.RejectId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            string Query = "SELECT t1.EnhancementId, t1.AdmissionId, t1.CreatedOn AS EnhancementInitiateDate, t1.EnhancementFrom, t1.EnhancementTo, t1.EnhancementDays, t1.StratificationId, t1.EnhancementStatus, t1.Amount, t1.Remarks, t1.ApprovedDate, t1.RejectedDate, ISNULL(t2.RejectName, 'NA') AS RejectedReason, t1.RejectedRemarks, t1.PatientFolderName, t1.PatientUploadedFileName, t1.PatientFilePath, t1.JustificationFolderName, t1.JustificationFileName, t1.JustificationFilePath, t1.IcpFolderName, t1.IcpUploadedFileName, t1.IcpFilePath FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_MasterRejectReason t2 ON t1.RejectReasonId = t2.RejectId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
             DataTable dt = new DataTable();
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
@@ -1222,6 +1278,22 @@ public class CPD
 
             }
         }
+    }
+
+    public DataTable GetPreauthUtilization(string AdmissionId)
+    {
+        dt.Clear();
+        string Query = "SELECT t1.EnhancementFrom, t1.EnhancementTo, t3.StratificationDetail as EnhanceWardType, t3.StratificationAmount as EnhanceWardRent, EnhancementFrom as EnhanceNoOfDays, t1.Amount as EnhanceAmount, t2.AdmissionDate as PreauthDate, t5.StratificationDetail as PreauthWardType, t5.StratificationAmount as PrauthWardRent, t2.PackageCost as PreauthAmount FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId LEFT JOIN TMS_MasterStratificationMaster t3 ON t1.StratificationId = t3.StratificationId LEFT JOIN TMS_PatientTreatmentProtocol t4 ON t2.PatientRegId =  t4.PatientRegId LEFT JOIN TMS_MasterStratificationMaster t5 ON t4.StratificationId = t5.StratificationId WHERE t1.AdmissionId = @AdmissionId ";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+        con.Open();
+        sd.Fill(ds);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        dt = ds.Tables[0];
+        return dt;
     }
     public bool IsPreauthUtilizationExists(string AdmissionId)
     {

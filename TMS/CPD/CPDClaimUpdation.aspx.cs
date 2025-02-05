@@ -188,6 +188,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         BindDeductionType();
                         gvQuestionnaire.DataSource = CreateQuestionnaireData();
                         gvQuestionnaire.DataBind();
+                        BindPreauthUtilizationData();
                     }
                     else
                     {
@@ -403,7 +404,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cpd.GetEnhancementDetails(hfAdmissionId.ToString());
+            dt = cpd.GetEnhancementDetails(hfAdmissionId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridTransactionDataReferences.DataSource = dt;
@@ -810,6 +811,52 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         dropDeductionType.Items.Insert(0, new ListItem("--Select--", ""));
     }
 
+    //protected void AddDeduction_Click(object sender, EventArgs e)
+    //{
+    //    hdUserId.Value = Session["UserId"].ToString();
+    //    hdRoleId.Value = Session["RoleId"].ToString();
+    //    try
+    //    {
+    //        decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
+    //        string roleName = cpd.GetUserRole(Convert.ToInt32(Session["UserId"].ToString()));
+
+    //        if (!decimal.TryParse(tbAmount.Text, out deductionAmount) || deductionAmount < 0)
+    //        {
+    //            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid deduction amount. It must be a positive number.');", true);
+    //            return;
+    //        }
+    //        if (roleName == "CPD(INSURER)")
+    //        {
+    //            totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value);
+    //        }
+    //        else if (roleName == "CPD(TRUST)")
+    //        {
+    //            totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value);
+    //        }
+    //        else
+    //        {
+    //            return; // Exit if the role is unknown
+    //        }
+    //        if (deductionAmount > totalClaims)
+    //        {
+    //            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
+    //            return;
+    //        }
+
+    //        totalDeductionAmount = totalClaims - deductionAmount;
+
+    //        tbTotalDeductedAmt.Text = deductionAmount.ToString();
+    //        tbFinalAmt.Text = totalClaims.ToString();
+    //        tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
+
+    //        hfDeductedAmount.Value = deductionAmount.ToString();
+    //        hfFinalAmount.Value = totalDeductionAmount.ToString();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('An error occurred. Please try again.');", true);
+    //    }
+    //}
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
         hdUserId.Value = Session["UserId"].ToString();
@@ -836,9 +883,11 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             {
                 return; // Exit if the role is unknown
             }
-            if (deductionAmount > totalClaims)
+
+            // Ensure at least 1 rupee is left after deduction
+            if (deductionAmount >= totalClaims)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
                 return;
             }
 
@@ -856,6 +905,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('An error occurred. Please try again.');", true);
         }
     }
+
     protected void ResetDeduction_Click(object sender, EventArgs e)
     {
         dropDeductionType.ClearSelection();
@@ -888,6 +938,73 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             gvClaimWorkFlow.DataBind();
         }
     }
+    public void BindPreauthUtilizationData()
+    {
+        DataTable dt = cpd.GetPreauthUtilization(hfAdmissionId.Value);
+
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            //decimal totalNoOfDays = 0;
+            //decimal totalAmount = 0;
+
+            int preauthNoOfDays = 0;
+            decimal preauthAmount = 0;
+
+            int enhanceNoOfDays = 0;
+            decimal enhanceAmount = 0;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                DateTime preauthFrom = Convert.ToDateTime(row["PreauthDate"]); 
+                DateTime preauthTo = Convert.ToDateTime(row["PreauthDate"]);  
+
+                int preauthNoOfDaysForRecord = (preauthTo - preauthFrom).Days + 1;  // Add 1 to include both start and end dates
+
+                decimal preauthWardRentPerDay = Convert.ToDecimal(row["PrauthWardRent"]);
+                decimal preauthAmountForRecord = preauthWardRentPerDay * preauthNoOfDaysForRecord;
+
+                preauthNoOfDays += preauthNoOfDaysForRecord;
+                preauthAmount += preauthAmountForRecord;
+
+                lbActionTypePreauth.Text = "Preauth";
+                lbPreauthFromDate.Text = preauthFrom.ToString("dd-MM-yyyy");
+                lbPreauthToDate.Text = preauthTo.ToString("dd-MM-yyyy");
+                lbPreauthWardType.Text = row["PreauthWardType"].ToString();
+                lbPreauthWardRent.Text = preauthWardRentPerDay.ToString();
+                lbPreauthNoOfDays.Text = preauthNoOfDaysForRecord.ToString();
+                lbPreauthAmount.Text = preauthAmountForRecord.ToString("C");
+
+                DateTime enhancementFrom = Convert.ToDateTime(row["EnhancementFrom"]);
+                DateTime enhancementTo = Convert.ToDateTime(row["EnhancementTo"]);
+
+                int enhanceNoOfDaysForRecord = (enhancementTo - enhancementFrom).Days + 1;  
+
+                decimal enhanceWardRentPerDay = Convert.ToDecimal(row["EnhanceWardRent"]);
+                decimal enhanceAmountForRecord = enhanceWardRentPerDay * enhanceNoOfDaysForRecord;
+
+                enhanceNoOfDays += enhanceNoOfDaysForRecord;
+                enhanceAmount += enhanceAmountForRecord;
+
+                lbActionTypeEnhance.Text = "Enhancement";
+                lbEnhanceFromDate.Text = enhancementFrom.ToString("dd-MM-yyyy");
+                lbEnhanceToDate.Text = enhancementTo.ToString("dd-MM-yyyy");
+                lbEnhanceWardType.Text = row["EnhanceWardType"].ToString();
+                lbEnhanceWardRent.Text = enhanceWardRentPerDay.ToString();
+                lbEnhanceNoOfDays.Text = enhanceNoOfDaysForRecord.ToString();
+                lbEnhanceAmount.Text = enhanceAmountForRecord.ToString("C");
+            }
+
+            tbSumActualDay.Text = (preauthNoOfDays + enhanceNoOfDays).ToString();
+            tbSumTotalAmt.Text = (preauthAmount + enhanceAmount).ToString("C");
+
+            pPreauthUtilization.Visible = true;
+        }
+        else
+        {
+            pPreauthUtilization.Visible = false;
+        }
+    }
+
     private void BindActionType()
     {
         try
@@ -1024,6 +1141,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         if (ddlActionType.SelectedValue == "2")
         {
             pRemarks.Visible = true;
+            pTriggerType.Visible = false;
             BindRejectReason();
         }
         else if (ddlActionType.SelectedValue == "6")
@@ -1352,6 +1470,18 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                     if (!rbMandatoryReportsYes.Checked && !rbMandatoryReportsNo.Checked)
                     {
                         strMessage = "window.alert('Please select Mandatory Reports Yes or No.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
+                    if (string.IsNullOrEmpty(tbTechRemarks.Text))
+                    {
+                        strMessage = "window.alert('Please fill the Remarks.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        return;
+                    }
+                    if (string.IsNullOrEmpty(tbRejectRemarks.Text))
+                    {
+                        strMessage = "window.alert('Please fill the Remarks.');";
                         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                         return;
                     }
@@ -1736,7 +1866,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         lnkPreauthorization.CssClass = "btn btn-primary";
         lnkDischarge.CssClass = "btn btn-warning";
         lnkPostInvestigation.CssClass = "btn btn-primary";
-        getPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        getDischargeDocuments(hfHospitalId.Value, hdPatientRegId.Value);
     }
 
     protected void lnkPostInvestigation_Click(object sender, EventArgs e)
@@ -1752,7 +1882,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         lnkPreauthorization.CssClass = "btn btn-primary";
         lnkDischarge.CssClass = "btn btn-primary";
         lnkPostInvestigation.CssClass = "btn btn-warning";
-        getPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        getPostInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
     }
     public void getManditoryDocuments(string HospitalId, string PatientRegId)
     {
@@ -1919,7 +2049,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetDischargeDocuments(HospitalId, PatientRegId);
+            dt = cpd.GetDischargeDocuments(HospitalId, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridDischargeDocument.DataSource = dt;
@@ -2003,7 +2133,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetPostInvestigationDocuments(HospitalId, CardNumber, PatientRegId);
+            dt = cpd.GetPostInvestigationDocuments(HospitalId, CardNumber, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridPostInvestigation.DataSource = dt;

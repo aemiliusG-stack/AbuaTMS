@@ -41,14 +41,14 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             if (!string.IsNullOrEmpty(caseNo))
             {
                 Session["CaseNumber"] = caseNo;
-                
+
                 BindPatientName(caseNo);
             }
             else
             {
                 lbName.Text = "No CaseNo provided.";
             }
-            
+
         }
     }
     public void BindPatientName(string caseNo)
@@ -58,7 +58,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             SqlParameter[] p = new SqlParameter[1];
             p[0] = new SqlParameter("@CaseNo", caseNo);
             p[0].DbType = DbType.String;
-           
+
             DataSet ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_CPDCaseSearchPatientDetails", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
@@ -84,7 +84,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     hfClaimId.Value = dt.Rows[0]["ClaimId"].ToString().Trim();
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
                     hdPatientRegId.Value = dt.Rows[0]["PatientRegId"].ToString().Trim();
-                    hdHospitalId.Value = dt.Rows[0]["HospitalId"].ToString().Trim();
+                    hfHospitalId.Value = dt.Rows[0]["HospitalId"].ToString().Trim();
                     lbName.Text = dt.Rows[0]["PatientName"].ToString().Trim();
                     lbBeneficiaryId.Text = dt.Rows[0]["CardNumber"].ToString().Trim();
                     string cardNo = dt.Rows[0]["CardNumber"].ToString();
@@ -240,7 +240,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     }
 
 
-    
+
     private void BindDeductionGrid()
     {
         string CaseNo = Session["CaseNumber"] as string;
@@ -249,7 +249,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         gvDeduction.DataSource = dtDeduction;
         gvDeduction.DataBind();
     }
-   
+
     //Preauthorization
     private void getNetworkHospitalDetails()
     {
@@ -568,7 +568,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
                 rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && Convert.ToBoolean(row["MandatoryReports"]);
                 rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
-                tbTechRemarks.Text=row["TotalClaims"].ToString();
+                tbTechRemarks.Text = row["TotalClaims"].ToString();
             }
         }
     }
@@ -646,7 +646,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 gvSICDDetails_Claim.DataSource = null;
                 gvSICDDetails_Claim.DataBind();
             }
-           
+
         }
         catch (Exception ex)
         {
@@ -659,7 +659,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         }
     }
 
-    
+
     public void getClaimQuery(string ClaimId)
     {
         try
@@ -745,7 +745,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cpd.getTreatmentSurgeryDate(hdHospitalId.Value, hdPatientRegId.Value, hdAbuaId.Value);
+            dt = cpd.getTreatmentSurgeryDate(hfHospitalId.Value, hdPatientRegId.Value, hdAbuaId.Value);
             if (dt.Rows.Count > 0)
             {
                 gridSurgeryTreatmentDate.DataSource = dt;
@@ -780,7 +780,9 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         btnQuestionnaire.CssClass = "btn btn-primary";
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkSpecialInvestigation.CssClass = "btn btn-primary";
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        lnkDischarge.CssClass = "btn btn-primary";
+        lnkPostInvestigation.CssClass = "btn btn-primary";
+        getManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
     }
 
     protected void lnkPreauthorization_Click(object sender, EventArgs e)
@@ -795,10 +797,8 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         lnkPreauthorization.CssClass = "btn btn-warning";
         lnkSpecialInvestigation.CssClass = "btn btn-primary";
         //ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        getManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
     }
-
-
     protected void lnkSpecialInvestigation_Click(object sender, EventArgs e)
     {
         mvCPDTabs.SetActiveView(ViewAttachment);
@@ -810,7 +810,38 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         btnClaims.CssClass = "btn btn-primary ";
         lnkSpecialInvestigation.CssClass = "btn btn-warning";
         lnkPreauthorization.CssClass = "btn btn-primary";
-        getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        getPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+    }
+    protected void lnkDischarge_Click(object sender, EventArgs e)
+    {
+        mvCPDTabs.SetActiveView(ViewAttachment);
+        MultiView2.SetActiveView(viewDischarge);
+        btnAttachments.CssClass = "btn btn-warning ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-primary ";
+        lnkSpecialInvestigation.CssClass = "btn btn-primary";
+        lnkPreauthorization.CssClass = "btn btn-primary";
+        lnkDischarge.CssClass = "btn btn-warning";
+        lnkPostInvestigation.CssClass = "btn btn-primary";
+        getDischargeDocuments(hfHospitalId.Value, hdPatientRegId.Value);
+    }
+
+    protected void lnkPostInvestigation_Click(object sender, EventArgs e)
+    {
+        mvCPDTabs.SetActiveView(ViewAttachment);
+        MultiView2.SetActiveView(viewPostInvestigation);
+        btnAttachments.CssClass = "btn btn-warning ";
+        btnPreauth.CssClass = "btn btn-primary ";
+        btnPastHistory.CssClass = "btn btn-primary ";
+        btnTreatment.CssClass = "btn btn-primary ";
+        btnClaims.CssClass = "btn btn-primary ";
+        lnkSpecialInvestigation.CssClass = "btn btn-primary";
+        lnkPreauthorization.CssClass = "btn btn-primary";
+        lnkDischarge.CssClass = "btn btn-primary";
+        lnkPostInvestigation.CssClass = "btn btn-warning";
+        getPostInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
     }
 
     public void getManditoryDocuments(string HospitalId, string PatientRegId)
@@ -973,13 +1004,176 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    public void getDischargeDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cpd.GetDischargeDocuments(HospitalId, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridDischargeDocument.DataSource = dt;
+                gridDischargeDocument.DataBind();
+            }
+            else
+            {
+                gridDischargeDocument.DataSource = null;
+                gridDischargeDocument.DataBind();
+                panelNoDischrage.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridDischargeDocument_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
+            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+            string DocumentFor = lbDocumentFor.Text.ToString();
+            if (DocumentFor == "1")
+            {
+                lbDocumentFor.Text = "Pre Investigation";
+            }
+            else
+            {
+                lbDocumentFor.Text = "Post Investigation";
+            }
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewDischargeDocument.Text = "No Document";
+                btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewDischargeDocument.Text = "View Document";
+                btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewDischargeDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnViewDischargeDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbDocumentName = (Label)row.FindControl("lbDocumentName");
+            Label lbFolderName = (Label)row.FindControl("lbFolder");
+            Label lbFileName = (Label)row.FindControl("lbUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbDocumentName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    public void getPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cpd.GetPostInvestigationDocuments(HospitalId, CardNumber, PatientRegId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridPostInvestigation.DataSource = dt;
+                gridPostInvestigation.DataBind();
+            }
+            else
+            {
+                gridPostInvestigation.DataSource = null;
+                gridPostInvestigation.DataBind();
+                panelNoPostInvestigation.Visible = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridPostInvestigation_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+            Button btnViewPostDocument = (Button)e.Row.FindControl("btnViewPostDocument");
+            Label lbPostInvestigationStage = (Label)e.Row.FindControl("lbPostInvestigationStage");
+            lbPostInvestigationStage.Text = "Post Investigation";
+            if (string.IsNullOrEmpty(uploadedFileName))
+            {
+                btnViewPostDocument.Text = "No Document";
+                btnViewPostDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                btnViewPostDocument.Enabled = false;
+            }
+            else
+            {
+                btnViewPostDocument.Text = "View Document";
+                btnViewPostDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                btnViewPostDocument.Enabled = true;
+            }
+        }
+    }
+
+    protected void btnViewPostDocument_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbPostPackageName = (Label)row.FindControl("lbPostPackageName");
+            Label lbPostInvestigationName = (Label)row.FindControl("lbPostInvestigationName");
+            Label lbPostFolderName = (Label)row.FindControl("lbPostFolderName");
+            Label lbPostFileName = (Label)row.FindControl("lbPostFileName");
+            string folderName = lbPostFolderName.Text;
+            string fileName = lbPostFileName.Text + ".jpeg";
+            string packageName = lbPostPackageName.Text;
+            string investigationName = lbPostInvestigationName.Text;
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = packageName + " / " + investigationName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     protected void btnDownloadPdf_Click(object sender, EventArgs e)
     {
         try
         {
             DataTable dt = new DataTable();
             List<string> images = new List<string>();
-            dt = ppdHelper.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dt = ppdHelper.GetPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 foreach (DataRow row in dt.Rows)
