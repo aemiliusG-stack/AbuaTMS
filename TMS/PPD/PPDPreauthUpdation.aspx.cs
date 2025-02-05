@@ -145,13 +145,16 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             Label lbEnhancementRejectedDate = (Label)e.Row.FindControl("lbEnhancementRejectedDate");
             Label lbPatientFolderName = (Label)e.Row.FindControl("lbPatientFolderName");
             Label lbJustificationFolderName = (Label)e.Row.FindControl("lbJustificationFolderName");
+            Label lbIcpFolderName = (Label)e.Row.FindControl("lbIcpFolderName");
             LinkButton lnkPhoto = (LinkButton)e.Row.FindControl("lnkPhoto");
             LinkButton lnkDocument = (LinkButton)e.Row.FindControl("lnkDocument");
+            LinkButton lnkIcp = (LinkButton)e.Row.FindControl("lnkIcp");
             string EnhancementStatus = lbEnhancementStatus.Text.ToString();
             string ApprovedDate = lbEnhancementApprovedDate.Text.ToString();
             string RejectedDate = lbEnhancementRejectedDate.Text.ToString();
             string PatientFolderName = lbPatientFolderName.Text.ToString();
             string JustificationFolderName = lbJustificationFolderName.Text.ToString();
+            string IcpFolderName = lbIcpFolderName.Text.ToString();
             if (EnhancementStatus != null)
             {
                 if (EnhancementStatus.Equals("1"))
@@ -188,6 +191,11 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             {
                 lnkDocument.Enabled = false;
                 lnkDocument.CssClass = "text-danger";
+            }
+            if (IcpFolderName.Equals("NA"))
+            {
+                lnkIcp.Enabled = false;
+                lnkIcp.CssClass = "text-danger";
             }
         }
     }
@@ -245,6 +253,33 @@ partial class PPD_PPDPreauthUpdation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
 
+    }
+
+    protected void lnkIcp_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            LinkButton btn = (LinkButton)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbIcpFolderName = (Label)row.FindControl("lbIcpFolderName");
+            Label lbIcpUploadedFileName = (Label)row.FindControl("lbIcpUploadedFileName");
+            string IcpFolderName = lbIcpFolderName.Text.ToString();
+            string IcpUploadedFileName = lbIcpUploadedFileName.Text.ToString() + ".jpeg";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(IcpFolderName, IcpUploadedFileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = "ICP";
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkChildPhoto_Click(object sender, EventArgs e)

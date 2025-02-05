@@ -1840,8 +1840,11 @@
                                                                     <asp:Label Visible="false" ID="lbPatientUploadedFileName" runat="server" Text='<%# Eval("PatientUploadedFileName") %>'></asp:Label>
                                                                     <asp:Label Visible="false" ID="lbJustificationFolderName" runat="server" Text='<%# Eval("JustificationFolderName") %>'></asp:Label>
                                                                     <asp:Label Visible="false" ID="lbJustificationUploadedFileName" runat="server" Text='<%# Eval("JustificationFileName") %>'></asp:Label>
+                                                                    <asp:Label Visible="false" ID="lbIcpFolderName" runat="server" Text='<%# Eval("IcpFolderName") %>'></asp:Label>
+                                                                    <asp:Label Visible="false" ID="lbIcpUploadedFileName" runat="server" Text='<%# Eval("IcpUploadedFileName") %>'></asp:Label>
                                                                     <asp:LinkButton ID="lnkPhoto" runat="server" OnClick="lnkPhoto_Click" Enabled="true">Patient Photo</asp:LinkButton><br />
                                                                     <asp:LinkButton ID="lnkDocument" runat="server" OnClick="lnkDocument_Click" Enabled="true">Enhancement Justification</asp:LinkButton>
+                                                                    <asp:LinkButton ID="lnkIcp" runat="server" OnClick="lnkIcp_Click" Enabled="true">ICP</asp:LinkButton>
                                                                 </ItemTemplate>
                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />

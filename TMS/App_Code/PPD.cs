@@ -737,7 +737,7 @@ public class PPDHelper
     {
         try
         {
-            string Query = "SELECT t1.EnhancementId, t1.AdmissionId, t1.CreatedOn AS EnhancementInitiateDate, t1.EnhancementFrom, t1.EnhancementTo, t1.EnhancementDays, t1.StratificationId, t1.EnhancementStatus, t1.Amount, t1.Remarks, t1.ApprovedDate, t1.RejectedDate, ISNULL(t2.RejectName, 'NA') AS RejectedReason, t1.RejectedRemarks, t1.PatientFolderName, t1.PatientUploadedFileName, t1.PatientFilePath, t1.JustificationFolderName, t1.JustificationFileName, t1.JustificationFilePath FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_MasterRejectReason t2 ON t1.RejectReasonId = t2.RejectId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            string Query = "SELECT t1.EnhancementId, t1.AdmissionId, t1.CreatedOn AS EnhancementInitiateDate, t1.EnhancementFrom, t1.EnhancementTo, t1.EnhancementDays, t1.StratificationId, t1.EnhancementStatus, t1.Amount, t1.Remarks, t1.ApprovedDate, t1.RejectedDate, ISNULL(t2.RejectName, 'NA') AS RejectedReason, t1.RejectedRemarks, t1.PatientFolderName, t1.PatientUploadedFileName, t1.PatientFilePath, t1.JustificationFolderName, t1.JustificationFileName, t1.JustificationFilePath, t1.IcpFolderName, t1.IcpUploadedFileName, t1.IcpFilePath FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_MasterRejectReason t2 ON t1.RejectReasonId = t2.RejectId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
             DataTable dt = new DataTable();
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
