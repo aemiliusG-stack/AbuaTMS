@@ -1,17 +1,17 @@
-﻿using System;
-using System.IO;
+﻿using System.Data.SqlClient;
 using System.Data;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Configuration;
 using CareerPath.DAL;
 using iText.IO.Image;
 using iText.Kernel.Pdf;
+using System.IO;
 using iText.Layout;
 using iText.Layout.Element;
-using System.Linq;
 using System.Net;
-using Org.BouncyCastle.Asn1.X509;
-using WebGrease.Css.Ast;
+using System;
+using System.Collections.Generic;
+using System.Web.Security;
 
 
 
@@ -117,12 +117,153 @@ public class CEX
             return false;
         }
     }
+    public DataTable GetManditoryDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 1 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
+    public DataTable GetPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPreInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PreInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PreInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Pre'";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
+    public DataTable GetPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPostInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PostInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PostInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Post'";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
+    public DataTable GetDischargeDocuments(string HospitalId, string PatientRegId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterDischargeMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 1 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
+    public byte[] CreatePdfWithImagesInMemory(List<string> images)
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        MemoryStream ms = new MemoryStream();
+        PdfWriter pdfWriter = new PdfWriter(ms);
+        PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+        Document document = new Document(pdfDocument);
+        foreach (string image in images)
+        {
+            if (image.StartsWith("data:image", StringComparison.OrdinalIgnoreCase))
+            {
+                string base64String = image.Substring(image.IndexOf(",") + 1);
+                byte[] imageBytes = Convert.FromBase64String(base64String);
+                ImageData imageData = ImageDataFactory.Create(imageBytes);
+                document.Add(new Image(imageData));
+            }
+            else
+            {
+                WebClient webClient = new WebClient();
+                byte[] imageBytes = webClient.DownloadData(image);
+                ImageData imageData = ImageDataFactory.Create(imageBytes);
+                document.Add(new Image(imageData));
+            }
+            if (image != images.Last())
+            {
+                document.Add(new AreaBreak());
+            }
+        }
+        document.Close();
+        return ms.ToArray();
+    }
     public bool UpdateClaimMasterForCEXInsurer(string caseNo, string userId, string claimId)
     {
         try
         {
             string query = @"UPDATE TMS_ClaimMaster
-				SET ForwardedByInsurer = 5, ForwardedToInsurer = 7 , CurrentHandleByInsurer = 0 , CEXInsurerId = @UserId , IsCEXInsurerApproved = 1, UpdatedOn = GETDATE()
+				SET ForwardedByInsurer = 5, ForwardActionInsurer = 2, ForwardedToInsurer = 7 , CurrentHandleByInsurer = 0 , CEXInsurerId = @UserId , IsCEXInsurerApproved = 1, UpdatedOn = GETDATE()
 				WHERE CaseNumber = @CaseNo AND ClaimId = @ClaimId";
 
             SqlDataAdapter sd = new SqlDataAdapter();
@@ -155,7 +296,7 @@ public class CEX
         try
         {
             string query = @"UPDATE TMS_ClaimMaster
-				SET ForwardedByInsurer = 5, ForwardedToInsurer = 7 , CurrentHandleByInsurer = 0 ,ForwardedByTrust = 6, ForwardedToTrust = 8 ,CurrentHandleByTrust = 0,  CEXInsurerId = @UserId , CEXTrustId = @UserId,IsCEXInsurerApproved = 1,IsCEXTrustApproved = 1, UpdatedOn = GETDATE()
+				SET ForwardedByInsurer = 5, ForwardedToInsurer = 7 , ForwardActionInsurer = 2,ForwardActionTrust = 2, CurrentHandleByInsurer = 0 ,ForwardedByTrust = 6, ForwardedToTrust = 8 ,CurrentHandleByTrust = 0,  CEXInsurerId = @UserId , CEXTrustId = @UserId,IsCEXInsurerApproved = 1,IsCEXTrustApproved = 1, UpdatedOn = GETDATE()
 				WHERE CaseNumber = @CaseNo AND ClaimId = @ClaimId";
 
             SqlDataAdapter sd = new SqlDataAdapter();
@@ -216,7 +357,7 @@ public class CEX
         try
         {
             string query = @"UPDATE TMS_ClaimMaster
-				SET ForwardedByTrust = 6, ForwardedToTrust = 8 ,CurrentHandleByTrust = 0 , CEXTrustId = @UserId , IsCEXTrustApproved = 1, UpdatedOn = GETDATE()
+				SET ForwardedByTrust = 6, ForwardActionTrust = 2, ForwardedToTrust = 8 ,CurrentHandleByTrust = 0 , CEXTrustId = @UserId , IsCEXTrustApproved = 1, UpdatedOn = GETDATE()
 				WHERE CaseNumber = @CaseNo AND ClaimId = @ClaimId";
 
             SqlDataAdapter sd = new SqlDataAdapter();
