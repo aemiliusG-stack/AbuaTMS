@@ -32,6 +32,9 @@
                 <asp:Label ID="lbCaseNoHead" runat="server"></asp:Label>
                 <asp:Label ID="lblError" runat="server" CssClass="text-danger" Visible="False"></asp:Label>
                 <asp:Label ID="lblSuccess" runat="server" CssClass="text-success" Text=""></asp:Label>
+                <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
+                <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
+                <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
             </div>
         </div>
         <div class="ibox-content">
@@ -159,7 +162,7 @@
             </asp:LinkButton>--%>
             <asp:LinkButton ID="lnkClaimTab" runat="server" OnClick="lnkClaimTab_Click" CssClass="btn btn-warning ml-2">
                 <i class="fas fa-file-invoice-dollar"></i>
-                 Claim Tab
+                 Claim
             </asp:LinkButton>
 
             <asp:LinkButton ID="btnAttachments" runat="server" CssClass="btn btn-info ml-2">
@@ -176,31 +179,105 @@
         </div>
     </asp:Panel>
 
-    <asp:Panel ID="pnlICDDetails" runat="server">
-        <div class="ibox">
-            <!-- ICD Details Header -->
-            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                <div class="d-flex w-100 justify-content-center position-relative">
-                    <h3 class="m-0">ICD Details</h3>
-                </div>
-            </div>
-
-            <!-- Primary Diagnosis ICD Values -->
-            <div class="ibox-content">
-                <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                    <h4 class="m-0">Primary Diagnosis ICD Values</h4>
-                </div>
-                <asp:GridView ID="gvICDDetails" runat="server" AutoGenerateColumns="false" CssClass="table table-striped">
-                    <Columns>
-                        <asp:BoundField DataField="SNo" HeaderText="S No" />
-                        <asp:BoundField DataField="ICDCode" HeaderText="ICD CODE" />
-                        <asp:BoundField DataField="ICDDescription" HeaderText="ICD DESCRIPTION" />
-                        <asp:BoundField DataField="ActedByRole" HeaderText="Acted By Role" />
-                    </Columns>
-                </asp:GridView>
-            </div>
+    <div class="ibox mt-4">
+        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+            <h3 class="m-0">ICD Details</h3>
         </div>
-    </asp:Panel>
+        <asp:Panel ID="pClaimsPD" runat="server">
+            <div class="ibox-content">
+                <div class="ibox mt-4">
+                    <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                        <div class="d-flex w-100 justify-content-center position-relative">
+                            <h3 class="m-0">Primary Diagnosis ICD Values</h3>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <asp:GridView ID="gvPICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                            <AlternatingRowStyle BackColor="Gainsboro" />
+                            <Columns>
+                                <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="ICD Code">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimPICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="ICD Description">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimPICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Acted By Role">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimPActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+
+                    </div>
+                </div>
+            </div>
+        </asp:Panel>
+        <asp:Panel ID="pClaimsSD" runat="server" Visible="false">
+            <div class="ibox-content">
+                <div class="ibox mt-4">
+                    <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                        <div class="d-flex w-100 justify-content-center position-relative">
+                            <h3 class="m-0">Secondary Diagnosis ICD Values</h3>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <asp:GridView ID="gvSICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                            <AlternatingRowStyle BackColor="Gainsboro" />
+                            <Columns>
+                                <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimSICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="ICD Code">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimSICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="ICD Description">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimSICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Acted By Role">
+                                    <ItemTemplate>
+                                        <asp:Label ID="ClaimSActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                    </ItemTemplate>
+                                    <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                    <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+
+                    </div>
+                </div>
+            </div>
+        </asp:Panel>
+    </div>
 
     <asp:Panel ID="pnlClaimDetails" runat="server">
         <div class="ibox ">
@@ -267,7 +344,7 @@
                                     <%--<span class="font-weight-bold">Remarks:</span><br />
                  <textarea rows="4" cols="40" placeholder="Enter remarks here" class="form-control"></textarea>--%>
                                     <span class="font-weight-bold text-dark">Remarks</span>
-                                    <asp:TextBox ID="TextBox2" runat="server" OnKeypress="return isAlphaNumeric(event);" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
+                                    <asp:TextBox ID="TextBox2" runat="server" OnKeypress="return isAlphaNumeric(event);" TextMode="MultiLine" CssClass="form-control" Enabled="false"></asp:TextBox>
                                 </div>
                             </div>
                         </div>
@@ -277,7 +354,7 @@
         </div>
     </asp:Panel>
     <%--Non Technical Checklist--%>
-    <asp:Panel ID="pnlNonTechnicalChecklist" runat="server" Visible="false">
+    <asp:Panel ID="pnlNonTechnicalChecklist" runat="server">
         <div class="ibox mt-4">
             <div class="ibox-title d-flex justify-content-between align-items-center text-white">
                 <div class="w-100 text-center">
@@ -495,14 +572,14 @@
                                 <span class="form-label fw-bold" style="font-weight: 800;">Total Claims (Rs):</span><br />
                                 <asp:TextBox runat="server" Enabled="false" ID="tbTotalClaims" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" EnableViewState="true"></asp:TextBox>
                             </div>
-                            <div class="col-md-4">
-                                <span class="form-label fw-bold" style="font-weight: 800;">Insurance Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                <asp:TextBox runat="server" Enabled="false" ID="tbInsuranceApprovedAmt" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
-                            </div>
-                            <div class="col-md-4">
-                                <span class="form-label fw-bold" style="font-weight: 800;">Trust Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                <asp:TextBox runat="server" Enabled="false" ID="tbTrustApprovedAmt" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
-                            </div>
+                            <asp:Panel ID="plTechfinalAmountInusure" Visible="false" runat="server" CssClass="col-md-3 ">
+                                <span class="font-weight-bold">Final Approved Amount(Rs.):</span><br />
+                                <asp:Label ID="lbTechfinalAmountInusure" runat="server" CssClass="small-text"></asp:Label>
+                            </asp:Panel>
+                            <asp:Panel ID="plTechfinalAmountTrust" Visible="false" runat="server" CssClass="col-md-3 ">
+                                <span class="font-weight-bold">Final Approved Amount(Rs.):</span><br />
+                                <asp:Label ID="lbTechfinalAmountTrust" runat="server" CssClass="small-text"></asp:Label>
+                            </asp:Panel>
                         </div>
                         <div class="form-group row mb-3">
                             <div class="col-md-4">
@@ -599,10 +676,14 @@
                                 <span class="font-weight-bold">Total Claims (Rs):</span><br />
                                 <asp:Label ID="Label8" runat="server"></asp:Label>
                             </div>
-                            <div class="col-md-3 mt-3">
-                                <span class="font-weight-bold">Trust Liable (Rs):</span><br />
-                                <asp:Label ID="Label9" runat="server"></asp:Label>
-                            </div>
+                            <asp:Panel ID="pnlInsuranceamount" Visible="false" runat="server" CssClass="col-md-3 mt-3">
+                                <span class="font-weight-bold">Insurance liable Amount(Rs.):</span><br />
+                                <asp:Label ID="lbpnlInsuranceAmount" runat="server" CssClass="small-text"></asp:Label>
+                            </asp:Panel>
+                            <asp:Panel ID="pnlTrustAmount" Visible="false" runat="server" CssClass="col-md-3 mt-3">
+                                <span class="font-weight-bold">Trust liable Amount(Rs.):</span><br />
+                                <asp:Label ID="lbpnlTrustAmount" runat="server" CssClass="small-text"></asp:Label>
+                            </asp:Panel>
                             <div class="col-md-3 mt-3">
                                 <span class="font-weight-bold">Final Approved Amount (Rs):</span><br />
                                 <%--<asp:TextBox ID="TextBoxFinalApprovedAmount" runat="server" CssClass="form-control" AutoPostBack="True" OnTextChanged="TextBoxFinalApprovedAmount_TextChanged"></asp:TextBox>--%>
@@ -647,7 +728,7 @@
     </asp:Panel>
 
     <%--Work Flow--%>
-    <asp:Panel ID="pnlWorkflow" runat="server" Visible="false">
+    <asp:Panel ID="pnlWorkflow" runat="server">
         <div class="ibox mt-4">
             <div class="ibox-title d-flex justify-content-between text-white align-items-center">
                 <div class="d-flex w-100 justify-content-center position-relative">

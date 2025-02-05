@@ -89,7 +89,7 @@ public partial class ACO_BasicHospitalInfo : System.Web.UI.Page
     {
         try
         {
-            using (SqlCommand cmd = new SqlCommand("sp_GetAllHospitalTypesFromExcelHospital", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetAllHospitalTypesFromExcelHospital", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 con.Open();
@@ -158,7 +158,7 @@ public partial class ACO_BasicHospitalInfo : System.Web.UI.Page
         DataTable dt = new DataTable();
         try
         {
-            using (SqlCommand command = new SqlCommand("sp_GetAllDistrictsFromMasterDistrict", con))
+            using (SqlCommand command = new SqlCommand("TMS_ACO_GetAllDistrictsFromMasterDistrict", con))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 con.Open();

@@ -270,14 +270,14 @@
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Approved Amount(I)(Rs.)">
+                            <asp:TemplateField HeaderText="Approved Amount(Ins)(Rs.)">
                                 <ItemTemplate>
                                     <asp:Label ID="lbInsurerApprovedAmount" runat="server" Text='<%# Eval("InsurerApprovedAmount") %>'></asp:Label>
                                 </ItemTemplate>
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Approved Amount(T)(Rs.)">
+                            <asp:TemplateField HeaderText="Approved Amount(Trust)(Rs.)">
                                 <ItemTemplate>
                                     <asp:Label ID="lbTrustApprovedAmount" runat="server" Text='<%# Eval("TrustApprovedAmount") %>'></asp:Label>
                                 </ItemTemplate>
@@ -291,35 +291,35 @@
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Tds Amount(I)(Rs.)">
+                            <asp:TemplateField HeaderText="Tds Amount(Ins)(Rs.)">
                                 <ItemTemplate>
                                     <asp:Label ID="lbInsurerTDSAmount" runat="server" Text='<%# Eval("InsurerTDSAmount") %>'></asp:Label>
                                 </ItemTemplate>
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Final Amount(I)(Rs.)">
+                            <asp:TemplateField HeaderText="Final Amount(Ins)(Rs.)">
                                 <ItemTemplate>
                                     <asp:Label ID="lbInsurerFinalAmount" runat="server" Text='<%# Eval("InsurerFinalAmount") %>'></asp:Label>
                                 </ItemTemplate>
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Tds Amount(T)(Rs.)">
+                            <asp:TemplateField HeaderText="Tds Amount(Trust)(Rs.)">
                                 <ItemTemplate>
                                     <asp:Label ID="lbTrustTdsAmount" runat="server" Text='<%# Eval("TrustTdsAmount") %>'></asp:Label>
                                 </ItemTemplate>
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Final Amount(T)(Rs.)">
+                            <asp:TemplateField HeaderText="Final Amount(Trust)(Rs.)">
                                 <ItemTemplate>
                                     <asp:Label ID="lbTrustFinalAmount" runat="server" Text='<%# Eval("TrustFinalAmount") %>'></asp:Label>
                                 </ItemTemplate>
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="BFA Amount(T)(Rs.)">
+                            <asp:TemplateField HeaderText="BFA Amount(Trust)(Rs.)">
                                 <ItemTemplate>
                                     <asp:Label ID="lbBFAAmount" runat="server" Text='<%# Eval("BFAAmount") %>'></asp:Label>
                                 </ItemTemplate>

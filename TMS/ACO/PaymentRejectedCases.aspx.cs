@@ -53,7 +53,7 @@ public partial class ACO_PaymentRejectedCases : System.Web.UI.Page
         try
         {
             var hospitalId = string.IsNullOrEmpty(ddlHospitals.SelectedValue) ? DBNull.Value : (object)ddlHospitals.SelectedValue;
-            using (SqlCommand cmd = new SqlCommand("sp_GetHospitalPaymentRejectedCases", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetHospitalPaymentRejectedCases", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@BasicHospitalId", ddlHospitals.SelectedValue == "" ? DBNull.Value : (object)ddlHospitals.SelectedValue);

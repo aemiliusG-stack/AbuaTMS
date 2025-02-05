@@ -17,6 +17,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     private DataSet ds = new DataSet();
     private PreAuth preAuth = new PreAuth();
     CPD cpd = new CPD();
+    MasterData md = new MasterData();
     ACOHelper aco = new ACOHelper();
     string pageName;
     protected void Page_Load(object sender, EventArgs e)
@@ -35,6 +36,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             if (!string.IsNullOrEmpty(caseNumber))
             {
                 Session["CaseNumber"] = caseNumber;
+                hdRoleId.Value = Session["RoleId"].ToString();
                 // Call a method to fetch and display details for the given CaseNumber
                 LoadPatientDetails(caseNumber);
             }
@@ -44,8 +46,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 lblError.Text = "No Case Number provided!";
                 lblError.Visible = true;
             }
+            getPatientPrimaryDiagnosis();
+            getPatientSecondaryDiagnosis();
+            //getPatientPrimaryDiagnosis();
+            //getPatientSecondaryDiagnosis();
             BindActionTypeDropdown();
-            BindICDDetailsGrid();
+            //BindICDDetailsGrid();
             BindClaimsDetails();
             BindNonTechnicalChecklist(caseNumber);
             BindTechnicalChecklistData();
@@ -55,60 +61,63 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
 
     }
-    //protected void TextBoxFinalApprovedAmount_TextChanged(object sender, EventArgs e)
-    //{
-    //    try
-    //    {
-    //        // Retrieve Total Claims amount (assume it's already set in Label8.Text)
-    //        decimal totalClaims = Convert.ToDecimal(Label8.Text);
-    //        string caseNo = Session["CaseNumber"].ToString();
-    //        int parsedUserId;
-    //        int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
-    //        string roleName = "";
-    //        roleName = cpd.GetUserRole(userId);
+    protected void getPatientPrimaryDiagnosis()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cpd.GetPatientPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gvPICDDetails_Claim.DataSource = dt;
+                gvPICDDetails_Claim.DataBind();
+            }
+            else
+            {
+                gvPICDDetails_Claim.DataSource = null;
+                gvPICDDetails_Claim.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    protected void getPatientSecondaryDiagnosis()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = cpd.GetPatientSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gvSICDDetails_Claim.DataSource = dt;
+                gvSICDDetails_Claim.DataBind();
+                pClaimsSD.Visible = true;
+            }
+            else
+            {
+                gvSICDDetails_Claim.DataSource = null;
+                gvSICDDetails_Claim.DataBind();
+                pClaimsSD.Visible = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
 
-    //        if (roleName == "ACO(INSURER)")
-    //        {
-    //            if (!decimal.TryParse(tbInsuranceApprovedAmt.Text, out totalClaims))
-    //            {
-    //                LabelTotalDeduction.Text = "Invalid Insurance Approved Amount input";
-    //                return;
-    //            }
-    //        }
-    //        else if (roleName == "ACO(TRUST)")
-    //        {
-    //            if (!decimal.TryParse(tbTrustApprovedAmt.Text, out totalClaims))
-    //            {
-    //                LabelTotalDeduction.Text = "Invalid Trust Approved Amount input";
-    //                return;
-    //            }
-    //        }
-
-    //        // Get the entered Final Approved Amount
-    //        decimal finalApprovedAmount = 0;
-    //        if (!string.IsNullOrEmpty(TextBoxFinalApprovedAmount.Text))
-    //        {
-    //            finalApprovedAmount = Convert.ToDecimal(TextBoxFinalApprovedAmount.Text);
-    //        }
-
-    //        // Calculate the difference (deduction amount)
-    //        decimal deductionAmount = totalClaims - finalApprovedAmount;
-
-    //        // Update the Total Deduction Amount label
-    //        LabelTotalDeduction.Text = deductionAmount.ToString("N2");
-
-    //        // Save the deduction amount to the database
-    //        string remarks = "ACO Deduction"; // Define remarks
-    //        //aco.SaveDeductionAmount(userId, deductionAmount.ToString(), caseNo, TextBoxFinalApprovedAmount.Text);
-    //        aco.SaveDeductionAmount(userId, (int)deductionAmount, caseNo, TextBoxFinalApprovedAmount.Text);
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // Handle exceptions (e.g., invalid input)
-    //        LabelTotalDeduction.Text = "Error calculating deduction.";
-    //    }
-    //}
     private void BindDeductionTypes()
     {
         dropDeductionTypeACO.Items.Clear();
@@ -135,26 +144,43 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     private void BindACORemarks()
     {
         dt.Clear();
-        string claimId = Session["ClaimId"].ToString();
-        if (string.IsNullOrEmpty(claimId))
+        int parsedUserId;
+        int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
+        //string claimId = Session["ClaimId"].ToString();
+        long claimId = Convert.ToInt64(Session["ClaimId"]);
+        if (claimId == null)
         {
             lblError.Text = "Claim ID is missing!";
             lblError.Visible = true;
             return;
         }
-        dt = aco.GetACORemarks(claimId);
+        dt = aco.GetACORemarksFromSP(claimId, userId);
         if (dt.Rows.Count > 0)
         {
             DataRow row = dt.Rows[0];
             Label8.Text = row["TotalClaims"].ToString();
-            Label9.Text = row["TrustLiable"].ToString();
+            //Label9.Text = row["TrustLiable"].ToString();
             //Label10.Text = row["Final Approved Amount"].ToString();
-            tbFinalAmountByAco.Text = row["Final Approved Amount"].ToString();
+            if (hdRoleId.Value == "9")
+            {
+                pnlInsuranceamount.Visible = true;
+                pnlTrustAmount.Visible = false;
+                lbpnlInsuranceAmount.Text = row["InsurerLiable"].ToString();
+                tbFinalAmountByAco.Text = row["InsurerLiable"].ToString();
+
+            }
+            else if (hdRoleId.Value == "10")
+            {
+                pnlInsuranceamount.Visible = false;
+                pnlTrustAmount.Visible = true;
+                lbpnlTrustAmount.Text = row["TrustLiable"].ToString();
+                tbFinalAmountByAco.Text = row["TrustLiable"].ToString();
+            }
         }
         else
         {
-            Label8.Text = "N/A";
-            Label9.Text = "N/A";
+            //Label8.Text = "N/A";
+            //Label9.Text = "N/A";
             //Label10.Text = "N/A";
             tbFinalAmountByAco.Text = "N/A";
         }
@@ -184,6 +210,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     private void BindTechnicalChecklistData()
     {
         dt.Clear();
+        int parsedUserId;
+        int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
         string caseNo = Session["CaseNumber"].ToString();
         //string cardNo = Session["CardNumber"].ToString();
 
@@ -196,8 +224,20 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 DataRow row = dt.Rows[0];
 
                 tbTotalClaims.Text = row["TotalClaims"].ToString();
-                tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
-                tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
+                if (hdRoleId.Value == "9")
+                {
+                    plTechfinalAmountInusure.Visible = true;
+                    plTechfinalAmountTrust.Visible = false;
+                    lbTechfinalAmountInusure.Text = row["InsurerClaimAmountApproved"].ToString();
+                }
+                else if (hdRoleId.Value == "10")
+                {
+                    plTechfinalAmountInusure.Visible = false;
+                    plTechfinalAmountTrust.Visible = true;
+                    lbTechfinalAmountTrust.Text = row["TrustClaimAmountApproved"].ToString();
+                }
+                //tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
+                //tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
                 //rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
                 //rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
                 //rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
@@ -314,30 +354,30 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             lbPreauthApprovedAmt.Text = "Error: " + ex.Message;
         }
     }
-    private void BindICDDetailsGrid()
-    {
-        // Create a DataTable with the same structure as the GridView columns
-        DataTable dt = new DataTable();
-        dt.Columns.Add("SNo", typeof(string));
-        dt.Columns.Add("ICDCode", typeof(string));
-        dt.Columns.Add("ICDDescription", typeof(string));
-        dt.Columns.Add("ActedByRole", typeof(string));
+    //private void BindICDDetailsGrid()
+    //{
+    //    // Create a DataTable with the same structure as the GridView columns
+    //    DataTable dt = new DataTable();
+    //    dt.Columns.Add("SNo", typeof(string));
+    //    dt.Columns.Add("ICDCode", typeof(string));
+    //    dt.Columns.Add("ICDDescription", typeof(string));
+    //    dt.Columns.Add("ActedByRole", typeof(string));
 
-        // Add rows with "N/A" values
-        for (int i = 1; i <= 3; i++) // Create 3 placeholder rows
-        {
-            DataRow row = dt.NewRow();
-            row["SNo"] = "N/A";
-            row["ICDCode"] = "N/A";
-            row["ICDDescription"] = "N/A";
-            row["ActedByRole"] = "N/A";
-            dt.Rows.Add(row);
-        }
+    //    // Add rows with "N/A" values
+    //    for (int i = 1; i <= 3; i++) // Create 3 placeholder rows
+    //    {
+    //        DataRow row = dt.NewRow();
+    //        row["SNo"] = "N/A";
+    //        row["ICDCode"] = "N/A";
+    //        row["ICDDescription"] = "N/A";
+    //        row["ActedByRole"] = "N/A";
+    //        dt.Rows.Add(row);
+    //    }
 
-        // Bind the DataTable to the GridView
-        gvICDDetails.DataSource = dt;
-        gvICDDetails.DataBind();
-    }
+    //    // Bind the DataTable to the GridView
+    //    gvICDDetails.DataSource = dt;
+    //    gvICDDetails.DataBind();
+    //}
     private void BindActionTypeDropdown()
     {
         ACOHelper helper = new ACOHelper();
@@ -366,7 +406,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 if (long.TryParse(Session["UserId"].ToString(), out userId))
                 {
                     //using (SqlCommand cmd = new SqlCommand("ACOInsurer_ClaimUpdationDeatilsByCaseNumber", con))
-                    using (SqlCommand cmd = new SqlCommand("ACOInsurer_ClaimUpdationDeatilsByCaseNumberUpdated", con))
+                    using (SqlCommand cmd = new SqlCommand("TMS_ACOInsurer_ClaimUpdationDeatilsByCaseNumberUpdated", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
@@ -441,11 +481,24 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
 
     protected void btnAddDeduction_Click(object sender, EventArgs e)
     {
-        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-        //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
-        decimal totalClaimAmount = Convert.ToDecimal(tbInsuranceApprovedAmt.Text.ToString().Trim());
-        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-        lbFinalAmount.Text = finalDeductedAmount.ToString();
+        if (hdRoleId.Value == "9")
+        {
+            decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
+            //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
+            decimal totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.ToString().Trim());
+            decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
+            lbFinalAmount.Text = finalDeductedAmount.ToString();
+
+        }
+        else if (hdRoleId.Value == "10")
+        {
+            decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
+            //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
+            decimal totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.ToString().Trim());
+            decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
+            lbFinalAmount.Text = finalDeductedAmount.ToString();
+        }
+        
     }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
@@ -461,16 +514,24 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         string caseNo = Session["CaseNumber"].ToString();
         string deductionType = dropDeductionTypeACO.SelectedItem.Value;
         string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
-        //Add Deduction method down here
-        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-        decimal totalClaimAmount = Convert.ToDecimal(tbInsuranceApprovedAmt.Text.ToString().Trim());
-        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-        if (finalDeductedAmount > 0)
+        decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.Trim());
+        decimal totalClaimAmount = 0;
+        if (hdRoleId.Value == "9")
         {
-            aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount,totalFinalAmountByAco, caseNo, remarks, deductionType);
+            totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.Trim());
+            
 
         }
+        else if (hdRoleId.Value == "10")
+        {
+            totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.Trim());
+        }
+        decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
         lbFinalAmount.Text = finalDeductedAmount.ToString();
+        if (finalDeductedAmount > 0)
+        {
+            aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, caseNo, remarks, deductionType);
+        }
         // Save the deduction amount to the database
         long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
         long actionId = Convert.ToInt64(actionType.SelectedValue);
@@ -634,7 +695,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     protected void lnkClaimTab_Click(object sender, EventArgs e)
     {
         // Set all panels to visible
-        pnlICDDetails.Visible = true;
+        //pnlICDDetails.Visible = true;
         pnlClaimDetails.Visible=true;
         pnlNonTechnicalChecklist.Visible = true;
         pnlTechnicalChecklist.Visible = true;
@@ -644,7 +705,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         pnlActionType.Visible = true;
 
         // Optionally, set focus to the first section (e.g., ICD Details)
-        pnlICDDetails.Focus();
+        //pnlICDDetails.Focus();
     }
 
 }

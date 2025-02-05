@@ -46,7 +46,7 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
                     new SqlParameter("@UserId", userId)
                     };
                     //using (SqlCommand cmd = new SqlCommand("sp_GetClaimDetails", con))
-                    using (SqlCommand cmd = new SqlCommand("ACO_GetClaimDetailsUpdated", con))
+                    using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetClaimDetailsUpdated", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         // Add parameters to the command

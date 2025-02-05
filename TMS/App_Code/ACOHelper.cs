@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Collections;
+using WebGrease.Activities;
 
 /// <summary>
 /// Summary description for ACOHelper
@@ -77,7 +78,7 @@ public class ACOHelper
     public DataTable GetTechnicalChecklist(string CaseNo)
     {
         dt.Clear();
-        string Query = "SELECT\r\n    t2.TotalPackageCost AS TotalClaims,\r\n    CASE \r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t1.InsurerClaimAmountApproved)\r\n    END AS [InsurerClaimAmountApproved],\r\n    t1.TrustClaimAmountApproved,\r\n    t3.IsSpecialCase,\r\n    t4.DiagnosisSupportedEvidence,\r\n    t4.EvidenceTherapyConducted,\r\n    t4.CaseManagementSTP,\r\n    t4.MandatoryReports\r\nFROM\r\n    TMS_ClaimMaster t1\r\nINNER JOIN\r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId \r\nINNER JOIN\r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId \r\nINNER JOIN\r\n    TMS_CPDTechnicalCkecklist t4 ON t2.CardNumber = t4.CardNumber\r\nLEFT JOIN\r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber \r\n    AND t5.IsActive = 1 \r\n    AND t5.IsDeleted = 0\r\nWHERE\r\n    t1.CaseNumber = @CaseNo\r\n    AND t5.RoleId = 7\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0;";
+        string Query = "SELECT\r\n    t2.TotalPackageCost AS TotalClaims,\r\n    CASE \r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t1.InsurerClaimAmountApproved)\r\n    END AS [InsurerClaimAmountApproved],\r\n    t1.TrustClaimAmountApproved,\r\n    t3.IsSpecialCase,\r\n    t4.DiagnosisSupportedEvidence,\r\n    t4.EvidenceTherapyConducted,\r\n    t4.CaseManagementSTP,\r\n    t4.MandatoryReports\r\nFROM\r\n    TMS_ClaimMaster t1\r\nINNER JOIN\r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN\r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nINNER JOIN\r\n    TMS_CPDTechnicalCkecklist t4 ON t2.CardNumber = t4.CardNumber\r\nLEFT JOIN\r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber\r\n    AND t5.IsActive = 1 \r\n    AND t5.IsDeleted = 0\r\n\tAND t5.RoleId=7\r\nWHERE\r\n    t1.CaseNumber = @CaseNo\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0;";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
@@ -142,17 +143,47 @@ public class ACOHelper
         }
         return dt;
     }
-    public DataTable GetACORemarks(string claimId)
+    //public DataTable GetACORemarks(string claimId)
+    //{
+    //    string query = "SELECT \r\n    t2.TotalPackageCost as TotalClaims,\r\n    CASE \r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t1.TrustClaimAmountApproved)\r\n    END as TrustLiable,\r\n    CASE\r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t1.InsurerClaimAmountApproved)\r\n    END AS InsurerLiable\r\nFROM \r\n    TMS_ClaimMaster t1\r\nINNER JOIN \r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN \r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nLEFT JOIN \r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber AND t5.IsActive = 1 AND t5.IsDeleted = 0 and RoleId in (7,8)\r\nWHERE \r\n    t1.ClaimId = @claimId\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0;";
+    //    SqlCommand cmd = new SqlCommand(query, con);
+    //    cmd.Parameters.AddWithValue("@claimId", claimId);
+    //    con.Open();
+    //    SqlDataAdapter da = new SqlDataAdapter(cmd);
+    //    da.Fill(dt);
+    //    if (con.State == ConnectionState.Open)
+    //    {
+    //        con.Close();
+    //    }
+    //    return dt;
+    //}
+    public DataTable GetACORemarksFromSP(long claimId, long userId)
     {
-        string query = "\tSELECT \r\n\tt2.TotalPackageCost as TotalClaims,\r\n    t1.TrustClaimAmountApproved AS TrustLiable,\r\n\tcase\r\n\t   when t5.CaseNumber is not null then t5.TotalAmtAfterDeduction\r\n\t   else convert(bigint, t2.TotalPackageCost)\r\n\tend as [Final Approved Amount]\r\nFROM \r\n    TMS_ClaimMaster t1\r\nINNER JOIN \r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN \r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nLEFT JOIN \r\n    TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber AND t5.IsActive = 1 AND t5.IsDeleted = 0\r\nWHERE \r\n    t1.ClaimId = @claimId\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0;";
-        SqlCommand cmd = new SqlCommand(query, con);
-        cmd.Parameters.AddWithValue("@claimId", claimId);
-        con.Open();
-        SqlDataAdapter da = new SqlDataAdapter(cmd);
-        da.Fill(dt);
-        if (con.State == ConnectionState.Open)
+        DataTable dt = new DataTable();
+        using (SqlCommand cmd = new SqlCommand("TMS_ACO_ACORemarks", con))
         {
-            con.Close();
+            cmd.CommandType = CommandType.StoredProcedure;
+            // Add parameters for the stored procedure
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@ClaimId", claimId);
+            //cmd.Parameters.AddWithValue("@RoleId", roleId);
+            try
+            {
+                con.Open();
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt); // Fill the DataTable with the results
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error fetching action types: " + ex.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
         }
         return dt;
     }
@@ -186,15 +217,15 @@ public class ACOHelper
                 con.Close();
         }
     }
-    public void SaveDeductionAmount(int userId,int roleId, decimal acODeductionAmount, decimal totalFinalAmountByAco, string caseNo, string remarks, string deductionType)
+    public void SaveDeductionAmount(int userId, int roleId, decimal acODeductionAmount, decimal totalFinalAmountByAco, string caseNo, string remarks, string deductionType)
     {
-        SqlCommand cmd = new SqlCommand("ACO_InsertDeductionAndUpdateClaimMaster", con);
+        SqlCommand cmd = new SqlCommand("TMS_ACO_InsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.Parameters.AddWithValue("@UserId", userId);
         cmd.Parameters.AddWithValue("@RoleId", roleId);
         //cmd.Parameters.AddWithValue("@ACODeductionAmount", acODeductionAmount);
         cmd.Parameters.AddWithValue("@deductionAmount", acODeductionAmount);
-        cmd.Parameters.AddWithValue("@DeductionType",deductionType);
+        cmd.Parameters.AddWithValue("@DeductionType", deductionType);
         cmd.Parameters.AddWithValue("@totalFinalAmountByAco", totalFinalAmountByAco);
         cmd.Parameters.AddWithValue("@CaseNo", caseNo);
         cmd.Parameters.AddWithValue("@Remarks", remarks);

@@ -56,7 +56,7 @@ public partial class ACO_AmountRecoveryWorkList : System.Web.UI.Page
     {
         try
         {
-            using (SqlCommand cmd = new SqlCommand("sp_GetAllHospitalTypesFromExcelHospital", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetAllHospitalTypesFromExcelHospital", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 con.Open();

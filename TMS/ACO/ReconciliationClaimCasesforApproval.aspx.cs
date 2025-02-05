@@ -25,7 +25,7 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     {
         try
         {
-            using (SqlCommand cmd = new SqlCommand("sp_GetAllHospitalTypesFromExcelHospital", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetAllHospitalTypesFromExcelHospital", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 con.Open();
