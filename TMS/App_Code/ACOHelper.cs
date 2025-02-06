@@ -63,12 +63,12 @@ public class ACOHelper
         dt = ds.Tables[0];
         return dt;
     }
-    public DataTable GetNonTechnicalChecklist(string CaseNo)
+    public DataTable GetNonTechnicalChecklist(long claimId)
     {
         dt.Clear();
-        string Query = "SELECT CaseNo, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks FROM TMS_CEXNonTechChecklist WHERE IsActive = 1 AND CaseNo = @CaseNo";
+        string Query = "SELECT CaseNo, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks FROM TMS_CEXNonTechChecklist WHERE IsActive = 1 AND ClaimId = claimId";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", claimId);
         con.Open();
         sd.Fill(ds);
         con.Close();
@@ -78,8 +78,7 @@ public class ACOHelper
     public DataTable GetTechnicalChecklist(long claimId)
     {
         dt.Clear();
-        string Query = @"
-    SELECT
+        string Query = @" SELECT
         t2.TotalPackageCost AS TotalClaims,
         CASE 
             WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction
@@ -90,7 +89,8 @@ public class ACOHelper
         t4.DiagnosisSupportedEvidence,
         t4.EvidenceTherapyConducted,
         t4.CaseManagementSTP,
-        t4.MandatoryReports
+        t4.MandatoryReports,
+		t4.Remarks
     FROM
         TMS_ClaimMaster t1
     INNER JOIN
