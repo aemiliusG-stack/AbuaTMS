@@ -1617,7 +1617,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
         try
         {
             string folderName = lbDischargePhotoFolderName.Text;
-            string fileName = lbDischargeUploadedFileName.Text + ".jpeg";
+            string fileName = lbDischargePhotoUploadedFileName.Text + ".jpeg";
             string DocumentName = "After Discharge Photo";
             string base64Image = "";
             base64Image = preAuth.DisplayImage(folderName, fileName);

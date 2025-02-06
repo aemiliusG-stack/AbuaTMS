@@ -15,6 +15,8 @@
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
             <asp:HiddenField ID="hdRndNum" runat="server" />
+            <asp:HiddenField ID="hdUserId" runat="server" />
+            <asp:HiddenField ID="hdRoleId" runat="server" />
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ibox ">
@@ -45,7 +47,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>Password:</label><span class="text-danger">*</span>
-                                    <asp:TextBox ID="tbPassword" TextMode="Password" class="form-control" runat="server" AutoCompleteType="Disabled" autocomplete="off"></asp:TextBox>
+                                    <asp:TextBox ID="tbPassword" TextMode="Password" class="form-control" runat="server" AutoCompleteType="Disabled" autocomplete="new-password"></asp:TextBox>
                                 </div>
                             </div>
                             <br />
@@ -79,6 +81,7 @@
                             <div class="hr-line-dashed"></div>
                             <div class="col-md-12 text-center">
                                 <asp:Button ID="btnSubmit" runat="server" Text="Submit" class="btn btn-primary btn-rounded" ValidationGroup="a" OnClick="btnSubmit_Click" />
+                                <asp:Button ID="btnUpdate" runat="server" Text="Update" Visible="false" class="btn btn-warning btn-rounded" ValidationGroup="a" OnClick="btnUpdate_Click" />
                             </div>
                         </div>
                     </div>
@@ -99,7 +102,7 @@
                         <div class="ibox-content">
                             <div class="form-group  row">
                                 <div class="col-md-12">
-                                    <asp:GridView ID="gridUserDetail" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
+                                    <asp:GridView ID="gridUserDetail" runat="server" OnRowDataBound="gridUserDetail_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
                                         <AlternatingRowStyle BackColor="Gainsboro" />
                                         <Columns>
                                             <asp:TemplateField HeaderText="Sl No.">
@@ -112,56 +115,80 @@
                                             <asp:TemplateField HeaderText="Username">
                                                 <ItemTemplate>
                                                     <asp:Label ID="lbUsername" runat="server" Text='<%# Eval("Username") %>'></asp:Label>
-                                                    <%--<asp:Label ID="lbRegNo" runat="server" Text='<%# Eval("PatientRegId") %>'></asp:Label>--%>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Role">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbDistrict" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                    <asp:Label ID="lbRoleName" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                    <asp:Label ID="lbRoleId" runat="server" Text='<%# Eval("RoleId") %>' Visible="false"></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="District">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbName" runat="server" Text='<%# Eval("DistrictName") %>'></asp:Label>
+                                                    <asp:Label ID="lbDistrictName" runat="server" Text='<%# Eval("DistrictName") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Hospital">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbCardNo" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
+                                                    <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Full Name">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbAddress" runat="server" Text='<%# Eval("FullName") %>'></asp:Label>
+                                                    <asp:Label ID="lbFullName" runat="server" Text='<%# Eval("FullName") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Address">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbGender" runat="server" Text='<%# Eval("UserAddress") %>'></asp:Label>
+                                                    <asp:Label ID="lbAddress" runat="server" Text='<%# Eval("UserAddress") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Mobile No.">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbAge" runat="server" Text='<%# Eval("MobileNo") %>'></asp:Label>
+                                                    <asp:Label ID="lbMobile" runat="server" Text='<%# Eval("MobileNo") %>'></asp:Label>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Created On">
                                                 <ItemTemplate>
-                                                    <asp:Label ID="lbAge" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
+                                                    <asp:Label ID="lbCreatedOn" runat="server" Text='<%# Eval("CreatedOn") %>'></asp:Label>
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Status">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton ID="btnDelete" runat="server"
+                                                        Style="font-size: 12px;" OnClick="btnDelete_Click">
+                                                        <asp:Label ID="lbStatus" runat="server" Text='<%# Eval("IsActive") %>' CssClass="btn btn-success btn-sm rounded-pill" Style="padding: 4px 15px;"></asp:Label>
+                                                        <asp:Label ID="lbUserId" runat="server" Visible="false" Text='<%# Eval("UserId") %>' CssClass="btn btn-success btn-sm rounded-pill" Style="padding: 4px 15px;"></asp:Label>
+                                                    </asp:LinkButton>
+                                                </ItemTemplate>
+                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                            </asp:TemplateField>
+                                            <asp:TemplateField HeaderText="Action">
+                                                <ItemTemplate>
+                                                    <asp:LinkButton ID="btnEdit" runat="server"
+                                                        Style="font-size: 12px;" OnClick="btnEdit_Click">
+                                                        <asp:Label ID="lbHospitalId" runat="server" Text='<%# Eval("HospitalId") %>' Visible="false"></asp:Label>
+                                                        <asp:Label ID="lbDistrictId" runat="server" Text='<%# Eval("DistrictId") %>' Visible="false"></asp:Label>
+                                                        <asp:Label ID="lbUserPassword" runat="server" Text='<%# Eval("UserPassword") %>' Visible="false"></asp:Label>
+                                                        <asp:Label ID="Label1" runat="server" Text='Edit' CssClass="btn btn-warning btn-sm rounded-pill" Style="padding: 4px 15px;"></asp:Label>
+                                                    </asp:LinkButton>
                                                 </ItemTemplate>
                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
