@@ -1178,14 +1178,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             }
             else if (ActionId.Equals("4"))
             {
-                if (Session["RoleId"].ToString() == "3")
-                {
-                    strMessage = "window.alert('Case " + hdCaseId.Value + " sent to medical committee SHA (INSURER)');";
-                }
-                else if (Session["RoleId"].ToString() == "4")
-                {
-                    strMessage = "window.alert('Case " + hdCaseId.Value + " sent to medical committee SHA (TRUST)');";
-                }
+                strMessage = "window.alert('Case " + hdCaseId.Value + " sent to Medical Committee SHA');";
                 strMessage += "window.location='PPDUnspecifiedCases.aspx';";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
             }
