@@ -685,6 +685,11 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             lbRoomNo.Text = row["RoomNo"] != DBNull.Value ? row["RoomNo"].ToString() : "NA";
             rbIsSpecialCaseYes.Checked = row["IsSpecialCase"] != DBNull.Value && Convert.ToBoolean(row["IsSpecialCase"]);
             rbIsSpecialCaseNo.Checked = row["IsSpecialCase"] != DBNull.Value && !Convert.ToBoolean(row["IsSpecialCase"]);
+            if (rbIsSpecialCaseYes.Checked)
+            {
+                pnlSpecialCaseValue.Visible = true;
+                lbSpecialCaseValue.Text = row["SpecialCaseValue"].ToString();
+            }
             lbFinalDiagnosis.Text = row["FinalDiagnosis"] != DBNull.Value ? row["FinalDiagnosis"].ToString() : "NA";
             rbConsentYes.Checked = row["ProcedureConsent"] != DBNull.Value && Convert.ToBoolean(row["ProcedureConsent"]);
             rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);
@@ -833,7 +838,26 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
                 {
                     tbSpecialCase.Text = string.Empty;
                 }
+                if (row["ClaimMode"] != DBNull.Value)
+                {
+                    int claimMode = Convert.ToInt32(row["ClaimMode"]);
 
+                    if (claimMode == 1)
+                    {
+                        pInsuranceApprovedAmt.Visible = true;
+                        pTrustApprovedAmt.Visible = false;
+                    }
+                    else if (claimMode == 2)
+                    {
+                        pInsuranceApprovedAmt.Visible = false;
+                        pTrustApprovedAmt.Visible = true;
+                    }
+                    else if (claimMode == 3)
+                    {
+                        pInsuranceApprovedAmt.Visible = true;
+                        pTrustApprovedAmt.Visible = true;
+                    }
+                }
             }
         }
     }
@@ -995,7 +1019,6 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             ddlUserToAssign.Items.Insert(0, new ListItem("--Select--", "0"));
         }
     }
-
     private void BindTriggerType()
     {
         try
@@ -1012,7 +1035,6 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             Console.WriteLine("Error: " + ex.Message);
         }
     }
-
     protected void ddlActionType_SelectedIndexChanged(object sender, EventArgs e)
     {
         pUserRole.Visible = false;

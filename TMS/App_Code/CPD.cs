@@ -108,17 +108,17 @@ public class CPD
         bool exists = false;
         SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_ClaimAddDeduction WHERE CaseNumber = @CaseNo AND IsActive = 1", con);
         cmd.Parameters.AddWithValue("@CaseNo", caseNo);
-            con.Open();
-            int count = Convert.ToInt32(cmd.ExecuteScalar());
-            if (count > 0)
-            {
-                exists = true;
-            }
-            if (con.State == System.Data.ConnectionState.Open)
-            {
-                con.Close();
-            }
-            
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        if (count > 0)
+        {
+            exists = true;
+        }
+        if (con.State == System.Data.ConnectionState.Open)
+        {
+            con.Close();
+        }
+
         return exists;
     }
 
@@ -431,12 +431,12 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
-    public DataTable GetTechnicalChecklist(string CaseNo)
+    public DataTable GetTechnicalChecklist(string ClaimId)
     {
         dt.Clear();
-        string Query = "select t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountRequested, t1.TrustClaimAmountRequested, t3.IsSpecialCase from TMS_ClaimMaster t1 inner join TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId inner join TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId where t1.CaseNumber = @CaseNo and t1.IsActive = 1 and t1.IsDeleted = 0";
+        string Query = "select t1.ClaimMode, t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountRequested, t1.TrustClaimAmountRequested, t3.IsSpecialCase from TMS_ClaimMaster t1 inner join TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId inner join TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId where t1.ClaimId = @ClaimId and t1.IsActive = 1 and t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
         sd.Fill(ds);
         if (con.State == ConnectionState.Open)
@@ -446,12 +446,12 @@ public class CPD
         dt = ds.Tables[0];
         return dt;
     }
-    public DataTable GetTechnicalChecklist_CaseSearch(string CaseNo)
+    public DataTable GetTechnicalChecklist_CaseSearch(string ClaimId)
     {
         dt.Clear();
-        string Query = "select t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountRequested, t1.TrustClaimAmountRequested, t3.IsSpecialCase, t4.DiagnosisSupportedEvidence, t4.CaseManagementSTP, t4.EvidenceTherapyConducted, t4.MandatoryReports, t4.Remarks from TMS_ClaimMaster t1 LEFT JOIN TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId LEFT JOIN TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId LEFT JOIN TMS_CPDTechnicalCkecklist t4 on t1.CaseNumber = t4.CaseNumber where t1.CaseNumber = @CaseNo AND t1.IsActive = 1 AND t1.IsDeleted = 0 AND t2.IsDischarged = 1";
+        string Query = "select t1.ClaimMode, t2.TotalPackageCost as TotalClaims, t1.InsurerClaimAmountRequested, t1.TrustClaimAmountRequested, t3.IsSpecialCase, t4.DiagnosisSupportedEvidence, t4.CaseManagementSTP, t4.EvidenceTherapyConducted, t4.MandatoryReports, t4.Remarks from TMS_ClaimMaster t1 LEFT JOIN TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId LEFT JOIN TMS_DischargeDetail t3 on t1.ClaimId = t3.ClaimId LEFT JOIN TMS_CPDTechnicalCkecklist t4 on t1.CaseNumber = t4.CaseNumber where t1.ClaimId = @ClaimId AND t1.IsActive = 1 AND t1.IsDeleted = 0 AND t2.IsDischarged = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
         sd.Fill(ds);
         if (con.State == ConnectionState.Open)
@@ -487,37 +487,37 @@ public class CPD
     {
         dt.Clear();
         string Query = "";
-            if (!string.IsNullOrEmpty(PackageId) && !string.IsNullOrEmpty(ProcedureId))
-            {
-                Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
+        if (!string.IsNullOrEmpty(PackageId) && !string.IsNullOrEmpty(ProcedureId))
+        {
+            Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
                 FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2  ON t1.PackageId = t2.PackageId WHERE  t2.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId";
-            }
-            else if (!string.IsNullOrEmpty(PackageId))
-            {
-                Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName,t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
+        }
+        else if (!string.IsNullOrEmpty(PackageId))
+        {
+            Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName,t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
                 FROM TMS_MasterPackageDetail t1 
                 INNER JOIN TMS_MasterPackageMaster t2  ON t1.PackageId = t2.PackageId WHERE  t2.PackageId = @PackageId";
-            }
-            else
-            {
-                Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
+        }
+        else
+        {
+            Query = @"SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation 
                 FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId";
-            }
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            if (!string.IsNullOrEmpty(PackageId))
-            {
-                sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
-            }
-            if (!string.IsNullOrEmpty(ProcedureId))
-            {
-                sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
-            }
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            sd.Fill(dt);
+        }
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        if (!string.IsNullOrEmpty(PackageId))
+        {
+            sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
+        }
+        if (!string.IsNullOrEmpty(ProcedureId))
+        {
+            sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
+        }
+        if (con.State == ConnectionState.Open)
+        {
             con.Close();
+        }
+        sd.Fill(dt);
+        con.Close();
         return dt;
     }
     public DataTable GetProcedureName(int PackageId)
@@ -786,7 +786,7 @@ public class CPD
         }
         return dtTemp;
     }
-    
+
     public DataTable GetPatientSecondaryDiagnosis_CaseSearch(string CardNo)
     {
         dtTemp.Clear();
@@ -834,16 +834,16 @@ public class CPD
         string query = "SELECT COUNT(1) FROM TMS_CPDTechnicalCkecklist WHERE CaseNumber = @CaseNumber";
         SqlCommand cmd = new SqlCommand(query, con);
         cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
-            if (con.State == ConnectionState.Closed)
-            {
-                con.Open();
-            }
-            int count = (int)cmd.ExecuteScalar();
-            exists = count > 0;
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
+        if (con.State == ConnectionState.Closed)
+        {
+            con.Open();
+        }
+        int count = (int)cmd.ExecuteScalar();
+        exists = count > 0;
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
         return exists;
     }
     public int TransferCase(string ClaimId, string RoleId)
@@ -1038,7 +1038,7 @@ public class CPD
     }
     public DataTable GetTreatmentDischarge(string ClaimId)
     {
-        string Query = "SELECT T3.TypeOfMedicalExpertise, T3.DoctorName, T3.DoctorRegistrationNumber, T3.Qualification, T3.DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id LEFT JOIN HEM_Execl_DoctorRegistration T3 ON T1.DoctorId = T3.Sno WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
+        string Query = "SELECT T4.Title as TypeOfMedicalExpertise, T2.Name as DoctorName, T2.RegistrationNumber as DoctorRegistrationNumber, T5.Title as Qualification, T2.MobileNumber as DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase, T6.SpecialCaseValue, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id  LEFT JOIN HEM_MasterMedicalExpertiseSubTypes T4 ON T1.DoctorTypeId = T4.Id LEFT JOIN HEM_MasterQualifications T5 ON T2.QualificationId = T5.Id LEFT JOIN TMS_SpecialCasevalue T6 ON T1.SpecialCaseValue = T6.SpecialCaseId WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
@@ -1313,6 +1313,53 @@ public class CPD
 
         return exists;
     }
+    public bool IsACORemarksExists(string AdmissionId)
+    {
+        bool exists = false;
+
+        string query = @"
+        SELECT COUNT(*) 
+        FROM TMS_ClaimMaster 
+        WHERE 
+            ((IsACOInsurerApproved = 1 AND ACOInsurerId IS NOT NULL) 
+            OR (IsACOTrustApproved = 1 AND ACOTrustId IS NOT NULL)) 
+            AND AdmissionId = @AdmissionId 
+            AND IsActive = 1";
+
+        SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        con.Close();
+        exists = count > 0;
+        return exists;
+    }
+
+    public bool IsSHARemarksExists(string AdmissionId)
+    {
+        bool exists = false;
+
+        string query = @"
+        SELECT COUNT(*) 
+        FROM TMS_ClaimMaster 
+        WHERE 
+        ((IsSHAInsurerApproved = 1 AND SHAInsurerId IS NOT NULL) 
+        OR (IsSHATrustApproved = 1 AND SHATrustId IS NOT NULL)) 
+        AND AdmissionId = @AdmissionId 
+        AND IsActive = 1";
+
+        SqlCommand cmd = new SqlCommand(query, con);
+        cmd.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        con.Close();
+        exists = count > 0;
+        return exists;
+    }
+
+
     public bool IsTratmentDishargeExists(string AdmissionId)
     {
         bool exists = false;

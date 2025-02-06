@@ -20,7 +20,7 @@ public partial class CPD_CPDReconciliationRequest : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            BindGrid_RecociliationClaimUpdation();
+            //BindGrid_RecociliationClaimUpdation();
             getSpecialityName();
         }
     }
@@ -35,23 +35,23 @@ public partial class CPD_CPDReconciliationRequest : System.Web.UI.Page
         }
     }
 
-    private void BindGrid_RecociliationClaimUpdation()
-    {
-        dt.Clear();
-        dt = cpd.GetRecociliationClaimUpdation();
+    //private void BindGrid_RecociliationClaimUpdation()
+    //{
+    //    dt.Clear();
+    //    dt = cpd.GetRecociliationClaimUpdation();
 
-        if (dt != null && dt.Rows.Count > 0)
-        {
-            gvReconciliationClaim.DataSource = dt;
-            gvReconciliationClaim.DataBind();
-        }
-        else
-        {
-            gvReconciliationClaim.DataSource = null;
-            gvReconciliationClaim.EmptyDataText = "No record found.";
-            gvReconciliationClaim.DataBind();
-        }
-    }
+    //    if (dt != null && dt.Rows.Count > 0)
+    //    {
+    //        gvReconciliationClaim.DataSource = dt;
+    //        gvReconciliationClaim.DataBind();
+    //    }
+    //    else
+    //    {
+    //        gvReconciliationClaim.DataSource = null;
+    //        gvReconciliationClaim.EmptyDataText = "No record found.";
+    //        gvReconciliationClaim.DataBind();
+    //    }
+    //}
 
 
     protected void btnCPDSearch_Click(object sender, EventArgs e)
@@ -148,7 +148,7 @@ public partial class CPD_CPDReconciliationRequest : System.Web.UI.Page
     protected void btnCPDReset_Click(object sender, EventArgs e)
     {
         tbCaseNumber.Text = string.Empty;
-        BindGrid_RecociliationClaimUpdation();
+        //BindGrid_RecociliationClaimUpdation();
     }
 
 

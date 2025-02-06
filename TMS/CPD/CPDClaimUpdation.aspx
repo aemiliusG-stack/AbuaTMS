@@ -101,86 +101,84 @@
                                             <div class="row">
                                                 <div class="col-lg-9">
                                                     <div class="form-group row">
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Name:</span><br />
-                                                            <asp:Label ID="lbName" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Name:</span><br />
+                                                            <asp:Label ID="lbName" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Beneficiary Card ID:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Beneficiary Card ID:</span><br />
                                                             <asp:Label ID="lbBeneficiaryId" runat="server" Text="N/A"></asp:Label>
 
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Registration No:</span><br />
-                                                            <asp:Label ID="lbRegNo" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Registration No:</span><br />
+                                                            <asp:Label ID="lbRegNo" runat="server" Text="N/A"></asp:Label>
 
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Case No:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Case No:</span><br />
                                                             <asp:Label ID="lbCaseNo" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Case Status:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Case Status:</span><br />
                                                             <asp:Label ID="lbCaseStatus" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">IP No:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">IP No:</span><br />
                                                             <asp:Label ID="lbIPNo" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">IP Registered Date:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">IP Registered Date:</span><br />
                                                             <asp:Label ID="lbIPRegDate" runat="server" Text="N/A"></asp:Label>
 
                                                         </div>
 
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Actual Registration Date:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Actual Registration Date:</span><br />
                                                             <asp:Label ID="lbActualRegDate" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Contact No:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Contact No:</span><br />
                                                             <asp:Label ID="lbContactNo" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Hospital Type:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Hospital Type:</span><br />
                                                             <asp:Label ID="lbHospitalType" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Gender:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Gender:</span><br />
                                                             <asp:Label ID="lbGender" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Family ID:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Family ID:</span><br />
                                                             <asp:Label ID="lbFamilyId" runat="server" Text="N/A"></asp:Label>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Age:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Age:</span><br />
                                                             <asp:Label ID="lbAge" runat="server" Text="N/A"></asp:Label>
 
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Aadhar Verified:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Aadhar Verified:</span><br />
                                                             <asp:Label ID="lbAadharVerified" runat="server" Text="N/A"></asp:Label>
 
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Authentication at Reg/Dis:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Authentication at Reg/Dis:</span><br />
                                                             <asp:Label ID="lbAuthentication" runat="server" Text="N/A"></asp:Label>
 
                                                         </div>
-                                                        <div class="col-md-3">
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Patient District:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Patient District:</span><br />
                                                             <asp:Label ID="lbPatientDistrict" runat="server" Text="N/A"></asp:Label>
 
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <span class="form-label fw-semibold" style="font-weight: bold;">Patient Scheme:</span><br />
+                                                        <div class="col-md-3 mt-3">
+                                                            <span class="font-weight-bold">Patient Scheme:</span><br />
                                                             <asp:Label ID="lbPatientScheme" runat="server" Text="MMASSY"></asp:Label>
 
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-3 mt-3">
                                                         </div>
 
                                                     </div>
@@ -364,15 +362,15 @@
                                                     <div class="ibox-content text-dark">
                                                         <div class="row">
                                                             <div class="col-md-3">
-                                                                <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Hospital Name</span>
+                                                                <span class="font-weight-bold text-dark">Hospital Name</span>
                                                                 <asp:TextBox ID="tbHospitalName" runat="server" Enabled="false" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                             <div class="col-md-3">
-                                                                <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Type</span>
+                                                                <span class="font-weight-bold text-dark">Type</span>
                                                                 <asp:TextBox ID="tbType" runat="server" Enabled="false" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                             <div class="col-md-3">
-                                                                <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Address</span>
+                                                                <span class="font-weight-bold text-dark">Address</span>
                                                                 <asp:TextBox ID="tbAddress" runat="server" Enabled="false" CssClass="form-control" value="Ranchi, Jharkhand" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
                                                             </div>
                                                         </div>
@@ -1005,12 +1003,17 @@
                                             </div>
                                             <%--Surgery/Treatment Start Date Details--%>
                                             <div class="ibox ">
-                                                <div class="ibox-title d-flex justify-content-center">
+                                                <%-- <div class="ibox-title d-flex justify-content-center">
                                                     <h5 style="text-align: center;">Surgery/Treatment Start Date Details</h5>
                                                     <div class="ibox-tools">
                                                         <a class="collapse-link">
                                                             <i class="fa fa-chevron-up"></i>
                                                         </a>
+                                                    </div>
+                                                </div>--%>
+                                                <div class="ibox-title d-flex justify-content-between align-items-center text-white">
+                                                    <div class="w-100 text-center">
+                                                        <h3 class="m-0">Surgery/Treatment Start Date Details</h3>
                                                     </div>
                                                 </div>
                                                 <div class="ibox-content">
@@ -1180,6 +1183,10 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <asp:Panel ID="pnlSpecialCaseValue" Visible="false" runat="server" CssClass="form-group col-md-3 mb-3">
+                                                                <span class="font-weight-bold text-dark">Special Case Value:</span><br />
+                                                                <asp:Label ID="lbSpecialCaseValue" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
+                                                            </asp:Panel>
                                                             <div class="col-md-3 mb-3">
                                                                 <div class="form-group">
                                                                     <span class="font-weight-bold text-dark">Procedure Consent</span><br />
@@ -1735,14 +1742,18 @@
                                                                     <span class="font-weight-bold text-dark">Total Claims (Rs):</span><br />
                                                                     <asp:TextBox runat="server" ID="tbTotalClaims" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;" EnableViewState="true"></asp:TextBox>
                                                                 </div>
-                                                                <div class="col-md-4">
-                                                                    <span class="font-weight-bold text-dark">Insurance Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbInsuranceApprovedAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <span class="font-weight-bold text-dark">Trust Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
-                                                                    <asp:TextBox runat="server" ID="tbTrustApprovedAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
-                                                                </div>
+                                                                <asp:Panel ID="pInsuranceApprovedAmt" runat="server" Visible="false">
+                                                                    <div class="col-md-4">
+                                                                        <span class="font-weight-bold text-dark" style="white-space: nowrap;">Insurance Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
+                                                                        <asp:TextBox runat="server" ID="tbInsuranceApprovedAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    </div>
+                                                                </asp:Panel>
+                                                                <asp:Panel ID="pTrustApprovedAmt" runat="server" Visible="false">
+                                                                    <div class="col-md-4">
+                                                                        <span class="font-weight-bold text-dark" style="white-space: nowrap;">Trust Approved Amount (Rs)<span class="text-danger">*</span>:</span><br />
+                                                                        <asp:TextBox runat="server" ID="tbTrustApprovedAmt" ReadOnly="true" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;"></asp:TextBox>
+                                                                    </div>
+                                                                </asp:Panel>
                                                             </div>
                                                             <div class="form-group row mb-3">
                                                                 <div class="col-md-4 pt-3">
@@ -1966,22 +1977,22 @@
                                                                         <asp:Label ID="lbActionTypePreauth" runat="server" Text="Preauth"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbPreauthFromDate" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbPreauthFromDate" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbPreauthToDate" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbPreauthToDate" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbPreauthWardType" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbPreauthWardType" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbPreauthWardRent" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbPreauthWardRent" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbPreauthNoOfDays" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbPreauthNoOfDays" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbPreauthAmount" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbPreauthAmount" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -1989,22 +2000,22 @@
                                                                         <asp:Label ID="lbActionTypeEnhance" runat="server" Text="Preauth"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbEnhanceFromDate" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbEnhanceFromDate" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbEnhanceToDate" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbEnhanceToDate" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbEnhanceWardType" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbEnhanceWardType" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbEnhanceWardRent" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbEnhanceWardRent" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbEnhanceNoOfDays" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbEnhanceNoOfDays" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                     <td>
-                                                                            <asp:Label ID="lbEnhanceAmount" runat="server" Text="0"></asp:Label>
+                                                                        <asp:Label ID="lbEnhanceAmount" runat="server" Text="0"></asp:Label>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
