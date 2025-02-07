@@ -13,9 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Web.Security;
 
-
-
-
 public class CEX
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
@@ -69,6 +66,7 @@ public class CEX
         }
         return dt;
     }
+    
     public bool InsertCEXNonTechChecklist(string caseNo,string Role, string cardNumber, string userId, string claimId, string admissionId, int isNameCorrect, int isGenderCorrect, int doesPhotoMatch, string admissionDateCS, int doesAddDateMatchCS, string surgeryDateCS, int doesSurDateMatchCS, string dischargeDateCS, int doesDischargeDateMatchCS, int isPatientSignVerified, int isReportVerified, int isDateAndNameCorrect, string nonTechChecklistRemarks)
     {
         try
@@ -388,8 +386,8 @@ public class CEX
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
+	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,46,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
@@ -421,8 +419,8 @@ public class CEX
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Hybrid)',@Remarks,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
+	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Hybrid)', @Remarks, 44, @Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
@@ -454,8 +452,8 @@ public class CEX
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
+	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,45,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
@@ -572,7 +570,7 @@ public class CEX
 
     public DataTable GetTreatmentDischarge(string ClaimId)
     {
-        string Query = "SELECT T3.TypeOfMedicalExpertise, T3.DoctorName, T3.DoctorRegistrationNumber, T3.Qualification, T3.DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase,T1.SpecialCaseValue, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id LEFT JOIN HEM_Execl_DoctorRegistration T3 ON T1.DoctorId = T3.Sno WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
+        string Query = "SELECT T4.Title as TypeOfMedicalExpertise, T2.Name as DoctorName, T2.RegistrationNumber as DoctorRegistrationNumber, T5.Title as Qualification, T2.MobileNumber as DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase,T6.SpecialCaseValue, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id  LEFT JOIN HEM_MasterMedicalExpertiseSubTypes T4 ON T1.DoctorTypeId = T4.Id LEFT JOIN HEM_MasterQualifications T5 ON T2.QualificationId = T5.Id LEFT JOIN TMS_SpecialCasevalue T6 ON T1.SpecialCaseValue = T6.SpecialCaseId WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();

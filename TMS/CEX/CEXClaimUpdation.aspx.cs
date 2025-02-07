@@ -133,7 +133,8 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     lbAadharVerified.Text = dt.Rows[0]["IsAadharVerified"].ToString().Trim() == "False" ? "No" : "Yes";
                     lbPatientDistrict.Text = dt.Rows[0]["District"].ToString().Trim();
                     lbAge.Text = dt.Rows[0]["Age"].ToString().Trim();
-                    tbRemark.Text = dt.Rows[0]["Remarks"].ToString().Trim();
+                    tbAddmissionRemarks.Text = dt.Rows[0]["AddmissionRemarks"].ToString().Trim();
+                    tbRemark.Text = dt.Rows[0]["ClaimRemarks"].ToString().Trim();
                     lbHosName.Text = dt.Rows[0]["HospitalName"].ToString().Trim();
                     lbHosType.Text = dt.Rows[0]["HospitalParentType"].ToString().Trim();
                     lbHosAddress.Text = dt.Rows[0]["HospitalAddress"].ToString().Trim();
@@ -507,6 +508,12 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                 {
                     string errorMessage = "window.alert('Please select Action Type.');";
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                    return;
+                }
+                if (tbNonTechFormRemark.Text == "")
+                {
+                    strMessage = "window.alert('Please Fill Remarks!');";
+                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", strMessage, true);
                     return;
                 }
                 string caseNo = hdCaseNo.Value;

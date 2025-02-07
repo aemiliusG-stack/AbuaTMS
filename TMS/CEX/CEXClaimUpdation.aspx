@@ -589,7 +589,7 @@
                                                 <div class="col-md-12 mb-3">
                                                     <div class="form-group">
                                                         <span class="font-weight-bold text-dark">Remarks</span>
-                                                        <asp:TextBox ID="tbRemarks" runat="server" OnKeypress="return isAlphaNumeric(event);" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
+                                                        <asp:TextBox ID="tbAddmissionRemarks" runat="server" Enabled="false" OnKeypress="return isAlphaNumeric(event);" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12">
