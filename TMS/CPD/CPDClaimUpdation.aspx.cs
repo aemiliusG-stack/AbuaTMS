@@ -168,6 +168,12 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         {
                             pPreauthUtilization.Visible = false;
                         }
+                        bool IsOncologyCase = cpd.IsOncologyCase(hfCaseNumber.Value);
+                        if (IsOncologyCase)
+                        {
+                            btnOncology.Visible = true;
+                            btnOncology.CssClass = "btn btn-primary";
+                        }
                         displayPatientAdmissionImage();
                         BindGrid_TreatmentProtocol();
                         BindGrid_ICHIDetails();
@@ -609,6 +615,17 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         btnClaims.CssClass = "btn btn-warning";
         btnQuestionnaire.CssClass = "btn btn-primary";
 
+    }
+    protected void btnOncology_Click(object sender, EventArgs e)
+    {
+        mvCPDTabs.SetActiveView(ViewOncology);
+        btnOncology.Visible = true;
+        btnOncology.CssClass = "btn btn-warning";
+        btnPastHistory.CssClass = "btn btn-primary";
+        btnPreauth.CssClass = "btn btn-primary";
+        btnTreatment.CssClass = "btn btn-primary";
+        btnClaims.CssClass = "btn btn-primary";
+        btnAttachments.CssClass = "btn btn-primary";
     }
 
     protected void btnQuestionnaire_Click(object sender, EventArgs e)

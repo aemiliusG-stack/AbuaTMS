@@ -1413,6 +1413,31 @@ public class CPD
 
         return exists;
     }
+    public bool IsOncologyCase(string caseNo)
+    {
+        try
+        {
+            string query = @"SELECT COUNT(1) FROM TMS_PatientTreatmentProtocol t1 Left Join TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId
+                            Left Join TMS_PatientAdmissionDetail t3 ON t1.PatientRegId = t3.PatientRegId WHERE t3.CaseNumber = @CaseNumber AND t1.PackageId in (10,24,25)";
+
+            SqlCommand cmd = new SqlCommand(query, con);
+            cmd.Parameters.AddWithValue("@CaseNumber", caseNo);
+
+            con.Open();
+            int existingRecords = (int)cmd.ExecuteScalar();
+            con.Close();
+
+            return existingRecords > 0;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            return false;
+        }
+    }
 }
 
 

@@ -218,6 +218,9 @@
                                 <li class="nav-item ml-3">
                                     <asp:Button ID="btnQuestionnaire" runat="server" Text="Questionnaire" OnClick="btnQuestionnaire_Click" Style="padding: 1rem;" class="nav-link d-flex flex-column align-items-center" />
                                 </li>
+                                <li class="nav-item ml-3">
+                                    <asp:Button ID="btnOncology" runat="server" Text="Oncology Related Data" OnClick="btnOncology_Click" Visible="false" class="nav-link d-flex flex-column align-items-center" />
+                                </li>
                             </ul>
 
                             <div class="tab-content mt-4" id="myTabContent">
@@ -2568,6 +2571,61 @@
                                                 </div>
                                                 <div class="col-md-12 mt-2 mb-2">
                                                     <asp:Button ID="btnDownloadPdf" runat="server" Text="Download As One PDF" class="btn btn-primary rounded-pill" OnClick="btnDownloadPdf_Click" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </asp:View>
+                                    <asp:View ID="ViewOncology" runat="server">
+                                        <div class="tab-pane fade show active" id="oncology" role="tabpanel">
+                                            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                                                <div class="d-flex w-100 justify-content-center position-relative">
+                                                    <h3 class="m-0">Oncology Preauth HBCR Field</h3>
+                                                </div>
+                                            </div>
+                                            <div class="ibox-content">
+                                                <div class="row text-dark">
+                                                    <div class="col-md-3 mb-3">
+                                                        <div class="form-group">
+                                                            <span class="font-weight-bold text-dark">Method of Diagnosis</span><br />
+                                                            <asp:Label ID="lbMethodOfDiagnosis" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <div class="form-group">
+                                                            <span class="font-weight-bold text-dark">Laterality</span><br />
+                                                            <asp:Label ID="lbLaterality" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <div class="form-group">
+                                                            <span class="font-weight-bold text-dark">Clinical Extent of disease before treatment</span><br />
+                                                            <asp:Label ID="lbExtentdiseaseBTreat" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <div class="form-group">
+                                                            <span class="font-weight-bold text-dark">TNM Staging</span><br />
+                                                            <asp:Label ID="lbTNMStaging" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <div class="form-group">
+                                                            <span class="font-weight-bold text-dark">Intention to treat at the Hospital</span><br />
+                                                            <asp:Label ID="lbIntentionToTreatHos" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <div class="form-group">
+                                                            <span class="font-weight-bold text-dark">Treatment given prior to registeration at Hospital</span><br />
+                                                            <asp:Label ID="lbTreatmentgivenPrior" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <div class="form-group">
+                                                            <span class="font-weight-bold text-dark">Type Prior Treatment Given</span><br />
+                                                            <asp:Label ID="lbPriorTreatment" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
