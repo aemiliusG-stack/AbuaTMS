@@ -384,28 +384,28 @@
                                                                     <asp:GridView ID="gvPreauthPD" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                         <AlternatingRowStyle BackColor="Gainsboro" />
                                                                         <Columns>
-                                                                            <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>Sl.No.</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                                                 </ItemTemplate>
                                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="ICD Code">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Code</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthPICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
                                                                                 </ItemTemplate>
                                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="ICD Description">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Description</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthPICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                                 </ItemTemplate>
                                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>Acted By Role</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthPActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                                 </ItemTemplate>
@@ -431,28 +431,28 @@
                                                                     <asp:GridView ID="gvPraauthSD" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                         <AlternatingRowStyle BackColor="Gainsboro" />
                                                                         <Columns>
-                                                                            <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>Sl.No.</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthSICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                                                 </ItemTemplate>
                                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="ICD Code">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Code</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthSICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
                                                                                 </ItemTemplate>
                                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="ICD Description">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Description</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthSICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                                 </ItemTemplate>
                                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="Acted By Role">
+                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>Acted By Role</div>">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="PreauthSIActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                                 </ItemTemplate>
@@ -1173,7 +1173,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <asp:Panel ID="pnlSpecialCaseValue" Visible="false" runat="server" CssClass="form-group col-md-3 mb-3">
-                                                                    <span class="font-weight-bold text-dark">Special Case Value:</span><br />
+                                                                    <span class="font-weight-bold text-dark">Special Case Value</span><br />
                                                                     <asp:Label ID="lbSpecialCaseValue" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                                 </asp:Panel>
                                                                 <div class="col-md-3 mb-3">

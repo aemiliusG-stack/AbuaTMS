@@ -609,6 +609,23 @@ public class CPD
             }
         }
     }
+    public string ExecuteTDSCalculation(int claimId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("TMS_CPD_TDSCalculation", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@ClaimId", claimId);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            return "TDS Calculation executed successfully.";
+        }
+        catch (Exception ex)
+        {
+            return "Error executing TDS calculation: " + ex.Message;
+        }
+    }
     public DataTable GetClaimWorkFlow(int claimId)
     {
         string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId";

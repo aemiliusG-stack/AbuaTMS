@@ -1294,7 +1294,7 @@
                                                                 </div>
                                                             </div>
                                                             <asp:Panel ID="pnlSpecialCaseValue" Visible="false" runat="server" CssClass="form-group col-md-3 mb-3">
-                                                                <span class="font-weight-bold text-dark">Special Case Value:</span><br />
+                                                                <span class="font-weight-bold text-dark">Special Case Value</span><br />
                                                                 <asp:Label ID="lbSpecialCaseValue" runat="server" CssClass="d-block w-100 border-bottom p-2"></asp:Label>
                                                             </asp:Panel>
                                                             <div class="col-md-3 mb-3">
@@ -1362,7 +1362,7 @@
                                                                 <asp:GridView ID="gridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                     <AlternatingRowStyle BackColor="Gainsboro" />
                                                                     <Columns>
-                                                                        <asp:TemplateField HeaderText="Sl No.">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Sl.No.</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                                             </ItemTemplate>
@@ -1383,21 +1383,21 @@
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Diagnosis Name">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Diagnosis Name</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                             </ItemTemplate>
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Acted By Role</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="lbActedBy" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                             </ItemTemplate>
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Cancel">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Cancel</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:LinkButton ID="lnkDeletePrimaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeletePrimaryDiagnosis_Click" CommandArgument='<%# Eval("PDId") %>'>Remove</asp:LinkButton>
                                                                             </ItemTemplate>
@@ -1411,7 +1411,7 @@
                                                                 <asp:GridView ID="gridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" GridLines="Both" CellPadding="3" Width="100%">
                                                                     <AlternatingRowStyle BackColor="Gainsboro" />
                                                                     <Columns>
-                                                                        <asp:TemplateField HeaderText="Sl No.">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Sl.No.</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                                             </ItemTemplate>
@@ -1432,21 +1432,21 @@
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Diagnosis Name">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Diagnosis Name</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                             </ItemTemplate>
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Acted By Role</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="lbActedBy" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                             </ItemTemplate>
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                                            <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
+                                                                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Cancel">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Cancel</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:LinkButton ID="lnkDeleteSecondaryDiagnosis" runat="server" CssClass="text-danger" OnClick="lnkDeleteSecondaryDiagnosis_Click" CommandArgument='<%# Eval("PDId") %>'>Remove</asp:LinkButton>
                                                                             </ItemTemplate>
@@ -1479,28 +1479,28 @@
                                                             <asp:GridView ID="gvPICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                 <Columns>
-                                                                    <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                    <asp:TemplateField HeaderText="<div style='text-align:center;'>Sl.No.</div>">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="ClaimPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                     </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Code">
+                                                                    <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Code</div>">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="ClaimPICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                     </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="ICD Description">
+                                                                    <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Description</div>">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="ClaimPICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                     </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="Acted By Role">
+                                                                    <asp:TemplateField HeaderText="<div style='text-align:center;'>Acted By Role</div>">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="ClaimPActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                         </ItemTemplate>
@@ -1525,28 +1525,28 @@
                                                                 <asp:GridView ID="gvSICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                     <AlternatingRowStyle BackColor="Gainsboro" />
                                                                     <Columns>
-                                                                        <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Sl.No.</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="ClaimSICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                                             </ItemTemplate>
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="ICD Code">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Code</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="ClaimSICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
                                                                             </ItemTemplate>
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="ICD Description">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Description</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="ClaimSICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                             </ItemTemplate>
                                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                             <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                         </asp:TemplateField>
-                                                                        <asp:TemplateField HeaderText="Acted By Role">
+                                                                        <asp:TemplateField HeaderText="<div style='text-align:center;'>Acted By Role</div>">
                                                                             <ItemTemplate>
                                                                                 <asp:Label ID="ClaimSActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                             </ItemTemplate>
@@ -1933,7 +1933,7 @@
                                                             <div class="col-md-12 mb-3">
                                                                 <div class="form-group">
                                                                     <span class="font-weight-bold text-dark">Remarks</span>
-                                                                    <asp:TextBox ID="tbTechRemarks" runat="server" OnKeypress="return isAlphaNumeric(event);" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
+                                                                    <asp:TextBox ID="tbTechRemarks" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -1465,6 +1465,9 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                         cpd.InsertDeductionAndUpdateClaimMaster(Convert.ToInt32(Session["UserId"].ToString()), Convert.ToInt32(Session["RoleId"].ToString()), deductionType, deductedAmount, finalAmount, hfCaseNumber.Value, tbDedRemarks.Text, Convert.ToInt32(hfClaimId.Value));
 
                     }
+                    string result = cpd.ExecuteTDSCalculation(Convert.ToInt32(hfClaimId.Value));
+                    lblMessage.Text = result;
+
                     doAction(Session["claimId"].ToString(), Session["UserId"].ToString(), "", "", selectedValue, "", "", "", tbRejectRemarks.Text.ToString() + "");
                     bool specialCase = tbSpecialCase.Text == "Yes";
                     bool diagnosisSupported = rbDiagnosisSupportedYes.Checked;
