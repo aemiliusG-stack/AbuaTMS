@@ -63,6 +63,16 @@ public class LoginModule
         {
         }
     }
+    public DataTable getAdminDashboardData()
+    {
+        dtTemp.Clear();
+        string Query = "SELECT COUNT(UserId) AS TotalActiveUsers, SUM(CASE WHEN RoleName = 'ADMIN' THEN 1 ELSE 0 END) AS AdminUsers, SUM(CASE WHEN RoleName = 'MEDCO' THEN 1 ELSE 0 END) AS MEDCOUsers, SUM(CASE WHEN RoleName = 'PPD(INSURER)' THEN 1 ELSE 0 END) AS PPDInsurer, SUM(CASE WHEN RoleName = 'PPD(TRUST)' THEN 1 ELSE 0 END) AS PPDTrust, SUM(CASE WHEN RoleName = 'CEX(INSURER)' THEN 1 ELSE 0 END) AS CEXInsurer, SUM(CASE WHEN RoleName = 'CEX(TRUST)' THEN 1 ELSE 0 END) AS CEXTrust, SUM(CASE WHEN RoleName = 'CPD(INSURER)' THEN 1 ELSE 0 END) AS CPDInsurer, SUM(CASE WHEN RoleName = 'CPD(TRUST)' THEN 1 ELSE 0 END) AS CPDTrust, SUM(CASE WHEN RoleName = 'ACO(INSURER)' THEN 1 ELSE 0 END) AS ACOInsurer, SUM(CASE WHEN RoleName = 'ACO(TRUST)' THEN 1 ELSE 0 END) AS ACOTrust, SUM(CASE WHEN RoleName = 'SHA(INSURER)' THEN 1 ELSE 0 END) AS SHAInsurer, SUM(CASE WHEN RoleName = 'SHA(TRUST)' THEN 1 ELSE 0 END) AS SHATrust, SUM(CASE WHEN RoleName = 'MEDICAL COMMITTEE SHA' THEN 1 ELSE 0 END) AS MCSHA, SUM(CASE WHEN RoleName = 'CEO SHA' THEN 1 ELSE 0 END) AS CEOSHA, SUM(CASE WHEN RoleName = 'ACS' THEN 1 ELSE 0 END) AS ACS FROM TMS_Users WHERE IsActive = 1 AND IsDeleted = 0;";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
+    }
     public DataTable getMEDCOCaseCount(int HospitalId)
     {
         dtTemp.Clear();

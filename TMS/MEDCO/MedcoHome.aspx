@@ -3,10 +3,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
-    Welcome MEDCO
     <div class="row">
         <div class="col-lg-12">
-            <div class="ibox-title text-center">
+            <%--<div class="ibox-title text-center">
                 <h3 class="text-white">Dashboard</h3>
             </div>
             <div class="ibox-content">
@@ -29,11 +28,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>--%>
 
             <div class="ibox mt-4">
                 <div class="ibox-title text-center">
-                    <h3 class="text-white">Pendency at Insurer</h3>
+                    <h3 class="text-white">Dashboard</h3>
                 </div>
                 <div class="ibox-content table-responsive">
                     <table class="table table-bordered table-striped">
