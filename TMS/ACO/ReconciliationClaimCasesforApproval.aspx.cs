@@ -12,13 +12,41 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
 {
     private string strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
+    DataTable dt = new DataTable();
+    DataSet ds = new DataSet();
+    CPD cpd = new CPD();
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
             LoadHospitalTypes();
+            getSpecialityName();
+        }
+    }
+    protected void getSpecialityName()
+    {
+        try
+        {
+            dt = cpd.GetSpecialityName();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                ddCategory.Items.Clear();
+                ddCategory.DataValueField = "PackageId";
+                ddCategory.DataTextField = "SpecialityName";
+                ddCategory.DataSource = dt;
+                ddCategory.DataBind();
+                ddCategory.Items.Insert(0, new ListItem("--Select--", "0"));
+            }
+            else
+            {
+                ddCategory.Items.Clear();
+                ddCategory.Items.Insert(0, new ListItem("--No Speciality Name Available--", "0"));
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     private void LoadHospitalTypes()
@@ -67,6 +95,43 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
             {
                 con.Close();
             }
+        }
+    }
+    protected void ddCategory_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            dt.Clear();
+            int packageId;
+            if (int.TryParse(ddCategory.SelectedValue, out packageId))
+            {
+                dt = cpd.GetProcedureName(packageId);
+                if (dt.Rows.Count > 0)
+                {
+                    ddProcedureName.Items.Clear();
+                    ddProcedureName.DataValueField = "ProcedureId";
+                    ddProcedureName.DataTextField = "ProcedureName";
+                    ddProcedureName.DataSource = dt;
+                    ddProcedureName.DataBind();
+                    ddProcedureName.Items.Insert(0, new ListItem("--SELECT--", "0"));
+                }
+                else
+                {
+                    ddProcedureName.Items.Clear();
+                    ddProcedureName.Items.Insert(0, new ListItem("--No Procedure Available--", "0"));
+                }
+            }
+            else
+            {
+                ddProcedureName.Items.Clear();
+                ddProcedureName.Items.Insert(0, new ListItem("--SELECT SPECIALITY FIRST--", "0"));
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Response.Redirect("~/Unauthorize.aspx", false);
+            return;
         }
     }
     protected void btnReset_Click(object sender, EventArgs e)
