@@ -92,6 +92,7 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
     {
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
+            Label lbClaimMode = (Label)e.Row.FindControl("lbClaimMode");
             Label lbTdsExemption = (Label)e.Row.FindControl("lbTdsExemption");
             Label lbTdsPercentage = (Label)e.Row.FindControl("lbTdsPercentage");
             Label lbApprovedAmount = (Label)e.Row.FindControl("lbApprovedAmount");
@@ -103,7 +104,11 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
             Label lbFinalAmountTrust = (Label)e.Row.FindControl("lbFinalAmountTrust");
             Label lbInsurerApprovedAmount = (Label)e.Row.FindControl("lbInsurerApprovedAmount");
             Label lbTrustApprovedAmount = (Label)e.Row.FindControl("lbTrustApprovedAmount");
-            string IsActive = lbTdsExemption.Text.ToString();
+            Label lbClaimPayableAmount = (Label)e.Row.FindControl("lbClaimPayableAmount");
+            string TdsExemption = lbTdsExemption.Text.ToString();
+            double tdsPercentage = Convert.ToDouble(lbTdsPercentage.Text.ToString());
+            double insurerAmount = Convert.ToDouble(lbInsurerApprovedAmount.Text.ToString());
+            double trustAmount = Convert.ToDouble(lbTrustApprovedAmount.Text.ToString());
             if (Session["RoleId"].ToString().Equals("11"))
             {
                 lbApprovedAmountInsurer.Visible = true;
@@ -114,28 +119,57 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
                 lbApprovedAmountInsurer.Visible = false;
                 lbApprovedAmountTrust.Visible = true;
             }
-            if (IsActive != null && IsActive.Equals("False"))
+            if (TdsExemption != null && TdsExemption.Equals("False"))
             {
                 lbTdsExemption.Text = "Yes";
-                double tdsPercentage = Convert.ToDouble(lbTdsPercentage.Text.ToString());
-                double insurerAmount = Convert.ToDouble(lbInsurerApprovedAmount.Text.ToString());
-                double trustAmount = Convert.ToDouble(lbTrustApprovedAmount.Text.ToString());
                 if (tdsPercentage > 0.0)
                 {
-                    double tdsInsurerAmount = (insurerAmount * tdsPercentage) / 100;
-                    double tdsTrustAmount = (trustAmount * tdsPercentage) / 100;
-                    double insurerFinalAmount = insurerAmount - tdsInsurerAmount;
-                    double trustFinalAmount = trustAmount - tdsTrustAmount;
-                    lbTdsAmountInsurer.Text = tdsInsurerAmount.ToString();
-                    lbTdsAmountTrust.Text = tdsTrustAmount.ToString();
-                    lbFinalAmountInsurer.Text = insurerFinalAmount.ToString();
-                    lbFinalAmountTrust.Text = trustFinalAmount.ToString();
+                    if (lbClaimMode.Text.ToString().Equals("1"))
+                    {
+                        double tdsInsurerAmount = (insurerAmount * tdsPercentage) / 100;
+                        double insurerFinalAmount = insurerAmount - tdsInsurerAmount;
+                        lbTdsAmountInsurer.Text = tdsInsurerAmount.ToString();
+                        lbFinalAmountInsurer.Text = insurerFinalAmount.ToString();
+                        lbClaimPayableAmount.Text = insurerFinalAmount.ToString();
+                        lbTrustApprovedAmount.Text = "NA";
+                        lbTdsAmountTrust.Text = "NA";
+                        lbFinalAmountTrust.Text = "NA";
+                    }
+                    else if (lbClaimMode.Text.ToString().Equals("2"))
+                    {
+                        double tdsTrustAmount = (trustAmount * tdsPercentage) / 100;
+                        double trustFinalAmount = trustAmount - tdsTrustAmount;
+                        lbTdsAmountTrust.Text = tdsTrustAmount.ToString();
+                        lbFinalAmountTrust.Text = trustFinalAmount.ToString();
+                        lbClaimPayableAmount.Text = trustFinalAmount.ToString();
+                        lbInsurerApprovedAmount.Text = "NA";
+                        lbTdsAmountInsurer.Text = "NA";
+                        lbFinalAmountInsurer.Text = "NA";
+                    }
+                    else if (lbClaimMode.Text.ToString().Equals("3"))
+                    {
+                        double tdsInsurerAmount = (insurerAmount * tdsPercentage) / 100;
+                        double tdsTrustAmount = (trustAmount * tdsPercentage) / 100;
+                        double insurerFinalAmount = insurerAmount - tdsInsurerAmount;
+                        double trustFinalAmount = trustAmount - tdsTrustAmount;
+                        lbTdsAmountInsurer.Text = tdsInsurerAmount.ToString();
+                        lbTdsAmountTrust.Text = tdsTrustAmount.ToString();
+                        lbFinalAmountInsurer.Text = insurerFinalAmount.ToString();
+                        lbFinalAmountTrust.Text = trustFinalAmount.ToString();
+                        lbClaimPayableAmount.Text = Convert.ToString((insurerFinalAmount + trustFinalAmount));
+                    }
                 }
             }
             else
             {
                 lbTdsExemption.Text = "No";
                 lbTdsPercentage.Text = "NA";
+                lbTdsAmountInsurer.Text = "NA";
+                lbTdsAmountTrust.Text = "NA";
+                lbFinalAmountInsurer.Text = insurerAmount.ToString();
+                lbFinalAmountTrust.Text = trustAmount.ToString();
+                double claimPayableAmount = (insurerAmount + trustAmount);
+                lbClaimPayableAmount.Text = claimPayableAmount.ToString();
             }
         }
     }
