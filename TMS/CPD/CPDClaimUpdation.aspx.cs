@@ -769,10 +769,9 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
     private void BindTechnicalChecklistData()
     {
         dt.Clear();
-        string cardNo = Session["CardNumber"].ToString();
-        if (!string.IsNullOrEmpty(hfCaseNumber.Value))
+        if (!string.IsNullOrEmpty(hfClaimId.Value))
         {
-            dt = cpd.GetTechnicalChecklist(hfCaseNumber.Value);
+            dt = cpd.GetTechnicalChecklist(hfClaimId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -790,7 +789,26 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                 {
                     tbSpecialCase.Text = string.Empty;
                 }
+                if (row["ClaimMode"] != DBNull.Value)
+                {
+                    int claimMode = Convert.ToInt32(row["ClaimMode"]);
 
+                    if (claimMode == 1)
+                    {
+                        pInsuranceApprovedAmt.Visible = true;
+                        pTrustApprovedAmt.Visible = false;
+                    }
+                    else if (claimMode == 2)
+                    {
+                        pInsuranceApprovedAmt.Visible = false;
+                        pTrustApprovedAmt.Visible = true;
+                    }
+                    else if (claimMode == 3)
+                    {
+                        pInsuranceApprovedAmt.Visible = true;
+                        pTrustApprovedAmt.Visible = true;
+                    }
+                }
             }
         }
     }
@@ -810,53 +828,6 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
         }
         dropDeductionType.Items.Insert(0, new ListItem("--Select--", ""));
     }
-
-    //protected void AddDeduction_Click(object sender, EventArgs e)
-    //{
-    //    hdUserId.Value = Session["UserId"].ToString();
-    //    hdRoleId.Value = Session["RoleId"].ToString();
-    //    try
-    //    {
-    //        decimal totalClaims = 0, deductionAmount = 0, totalDeductionAmount = 0;
-    //        string roleName = cpd.GetUserRole(Convert.ToInt32(Session["UserId"].ToString()));
-
-    //        if (!decimal.TryParse(tbAmount.Text, out deductionAmount) || deductionAmount < 0)
-    //        {
-    //            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid deduction amount. It must be a positive number.');", true);
-    //            return;
-    //        }
-    //        if (roleName == "CPD(INSURER)")
-    //        {
-    //            totalClaims = Convert.ToDecimal(hfInsurerApprovedAmount.Value);
-    //        }
-    //        else if (roleName == "CPD(TRUST)")
-    //        {
-    //            totalClaims = Convert.ToDecimal(hfTrustApprovedAmount.Value);
-    //        }
-    //        else
-    //        {
-    //            return; // Exit if the role is unknown
-    //        }
-    //        if (deductionAmount > totalClaims)
-    //        {
-    //            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claims');", true);
-    //            return;
-    //        }
-
-    //        totalDeductionAmount = totalClaims - deductionAmount;
-
-    //        tbTotalDeductedAmt.Text = deductionAmount.ToString();
-    //        tbFinalAmt.Text = totalClaims.ToString();
-    //        tbFinalAmtAfterDeduction.Text = totalDeductionAmount.ToString();
-
-    //        hfDeductedAmount.Value = deductionAmount.ToString();
-    //        hfFinalAmount.Value = totalDeductionAmount.ToString();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('An error occurred. Please try again.');", true);
-    //    }
-    //}
     protected void AddDeduction_Click(object sender, EventArgs e)
     {
         hdUserId.Value = Session["UserId"].ToString();
@@ -955,8 +926,8 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
 
             foreach (DataRow row in dt.Rows)
             {
-                DateTime preauthFrom = Convert.ToDateTime(row["PreauthDate"]); 
-                DateTime preauthTo = Convert.ToDateTime(row["PreauthDate"]);  
+                DateTime preauthFrom = Convert.ToDateTime(row["PreauthDate"]);
+                DateTime preauthTo = Convert.ToDateTime(row["PreauthDate"]);
 
                 int preauthNoOfDaysForRecord = (preauthTo - preauthFrom).Days + 1;  // Add 1 to include both start and end dates
 
@@ -977,7 +948,7 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
                 DateTime enhancementFrom = Convert.ToDateTime(row["EnhancementFrom"]);
                 DateTime enhancementTo = Convert.ToDateTime(row["EnhancementTo"]);
 
-                int enhanceNoOfDaysForRecord = (enhancementTo - enhancementFrom).Days + 1;  
+                int enhanceNoOfDaysForRecord = (enhancementTo - enhancementFrom).Days + 1;
 
                 decimal enhanceWardRentPerDay = Convert.ToDecimal(row["EnhanceWardRent"]);
                 decimal enhanceAmountForRecord = enhanceWardRentPerDay * enhanceNoOfDaysForRecord;
@@ -1717,6 +1688,11 @@ public partial class CPD_CPDClaimUpdation : System.Web.UI.Page
             lbRoomNo.Text = row["RoomNo"] != DBNull.Value ? row["RoomNo"].ToString() : "NA";
             rbIsSpecialCaseYes.Checked = row["IsSpecialCase"] != DBNull.Value && Convert.ToBoolean(row["IsSpecialCase"]);
             rbIsSpecialCaseNo.Checked = row["IsSpecialCase"] != DBNull.Value && !Convert.ToBoolean(row["IsSpecialCase"]);
+            if (rbIsSpecialCaseYes.Checked)
+            {
+                pnlSpecialCaseValue.Visible = true;
+                lbSpecialCaseValue.Text = row["SpecialCaseValue"].ToString();
+            }
             lbFinalDiagnosis.Text = row["FinalDiagnosis"] != DBNull.Value ? row["FinalDiagnosis"].ToString() : "NA";
             rbConsentYes.Checked = row["ProcedureConsent"] != DBNull.Value && Convert.ToBoolean(row["ProcedureConsent"]);
             rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);

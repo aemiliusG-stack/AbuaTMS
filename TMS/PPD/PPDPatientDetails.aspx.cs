@@ -8,6 +8,7 @@ using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
+using System.Web.WebPages;
 
 public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 {
@@ -877,43 +878,51 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             }
             else
             {
-                // For Case Approval
-                if (selectedValue.Equals("2"))
+                if (tbRemark.Text.ToString().IsEmpty())
                 {
-                    doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
+                    strMessage = "window.alert('Remarks is required.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
-                // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
-                else if (selectedValue.Equals("3"))
+                else
                 {
-                    string selectedUserId = dlUserRole.SelectedItem.Value;
-                    string selectedUserName = dlUserRole.SelectedItem.Text;
-                    if (selectedUserId.Equals("0"))
+                    // For Case Approval
+                    if (selectedValue.Equals("2"))
                     {
-                        strMessage = "window.alert('Please select user to assign this case.');";
-                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
                     }
-                    else
+                    // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
+                    else if (selectedValue.Equals("3"))
                     {
-                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, selectedUserId, selectedUserName, selectedValue, "", "", tbRemark.Text.ToString() + "");
+                        string selectedUserId = dlUserRole.SelectedItem.Value;
+                        string selectedUserName = dlUserRole.SelectedItem.Text;
+                        if (selectedUserId.Equals("0"))
+                        {
+                            strMessage = "window.alert('Please select user to assign this case.');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            doAction(Session["ClaimId"].ToString(), hdUserId.Value, selectedUserId, selectedUserName, selectedValue, "", "", tbRemark.Text.ToString() + "");
+                        }
                     }
-                }
-                // For Case Raising Query
-                else if (selectedValue.Equals("5"))
-                {
+                    // For Case Raising Query
+                    else if (selectedValue.Equals("5"))
+                    {
 
-                }
-                // For Case Reject
-                else if (selectedValue.Equals("6") || selectedValue.Equals("8"))
-                {
-                    string selectedRejectReason = dlReason.SelectedItem.Value;
-                    if (selectedRejectReason.Equals("0"))
-                    {
-                        strMessage = "window.alert('Please select reject reason.');";
-                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     }
-                    else
+                    // For Case Reject
+                    else if (selectedValue.Equals("6") || selectedValue.Equals("8"))
                     {
-                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedRejectReason, "", tbRemark.Text.ToString() + "");
+                        string selectedRejectReason = dlReason.SelectedItem.Value;
+                        if (selectedRejectReason.Equals("0"))
+                        {
+                            strMessage = "window.alert('Please select reject reason.');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedRejectReason, "", tbRemark.Text.ToString() + "");
+                        }
                     }
                 }
             }
@@ -1105,21 +1114,29 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         string selectedValue = dlAction.SelectedItem.Value;
         string selectedReason = dlReason.SelectedItem.Value;
         string selectedSubReason = dlSubReason.SelectedItem.Value;
-        if (selectedReason.Equals("0"))
+        if (tbRemark.Text.ToString().IsEmpty())
         {
-            strMessage = "window.alert('Please select query reason.');";
+            strMessage = "window.alert('Remarks is required.');";
             ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
         }
         else
         {
-            if (selectedSubReason.Equals("0"))
+            if (selectedReason.Equals("0"))
             {
-                strMessage = "window.alert('Please select query sub reason.');";
+                strMessage = "window.alert('Please select query reason.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
             }
             else
             {
-                doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
+                if (selectedSubReason.Equals("0"))
+                {
+                    strMessage = "window.alert('Please select query sub reason.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else
+                {
+                    doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
+                }
             }
         }
     }

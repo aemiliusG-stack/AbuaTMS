@@ -18,6 +18,8 @@ using System.Web.Helpers;
 using System.Configuration;
 using System.Web.UI.WebControls;
 using System.Web.UI;
+using System.Xml;
+using System.Web.WebPages;
 
 partial class Admin_CreateUser : System.Web.UI.Page
 {
@@ -80,71 +82,28 @@ partial class Admin_CreateUser : System.Web.UI.Page
     }
     protected void dropRole_SelectedIndexChanged(object sender, EventArgs e)
     {
-        try
+        if (dropRole.SelectedItem.Text == "MEDCO")
         {
-            if (dropRole.SelectedItem.Text == "MEDCO")
-            {
-                divMEDCO.Visible = true;
-                lbDistrict.Visible = true;
-                lbHospital.Visible = true;
-                dropDistrict.Visible = true;
-                dropHospital.Visible = true;
-            }
-            else
-            {
-                divMEDCO.Visible = false;
-                lbDistrict.Visible = false;
-                lbHospital.Visible = false;
-                dropDistrict.Visible = false;
-                dropHospital.Visible = false;
-            }
-
-            dt.Clear();
-            dt = md.GetDistrict();
-            dropDistrict.Items.Clear();
-            if (dt.Rows.Count > 0)
-            {
-                dropDistrict.Items.Clear();
-                dropDistrict.DataValueField = "Id";
-                dropDistrict.DataTextField = "Title";
-                dropDistrict.DataSource = dt;
-                dropDistrict.DataBind();
-                dropDistrict.Items.Insert(0, new ListItem("--SELECT--", "0"));
-            }
-            else
-                dropDistrict.Items.Clear();
+            divMEDCO.Visible = true;
+            lbDistrict.Visible = true;
+            lbHospital.Visible = true;
+            dropDistrict.Visible = true;
+            dropHospital.Visible = true;
         }
-        catch (Exception ex)
+        else
         {
-            Response.Redirect("~/Unauthorize.aspx", false);
-            return;
+            divMEDCO.Visible = false;
+            lbDistrict.Visible = false;
+            lbHospital.Visible = false;
+            dropDistrict.Visible = false;
+            dropHospital.Visible = false;
         }
+        GetDistrict();
     }
 
     protected void dropDistrict_SelectedIndexChanged(object sender, EventArgs e)
     {
-        try
-        {
-            dt.Clear();
-            dt = md.GetHospitalList();
-            dropHospital.Items.Clear();
-            if (dt.Rows.Count > 0)
-            {
-                dropHospital.Items.Clear();
-                dropHospital.DataValueField = "HospitalId";
-                dropHospital.DataTextField = "HospitalName";
-                dropHospital.DataSource = dt;
-                dropHospital.DataBind();
-                dropHospital.Items.Insert(0, new ListItem("--SELECT--", "0"));
-            }
-            else
-                dropHospital.Items.Clear();
-        }
-        catch (Exception ex)
-        {
-            Response.Redirect("~/Unauthorize.aspx", false);
-            return;
-        }
+        GetHospitals();
     }
     protected void ClearAll()
     {
@@ -199,7 +158,7 @@ partial class Admin_CreateUser : System.Web.UI.Page
             }
             else
                 goto Register;
-Register:
+            Register:
             ;
             string StrPasswd;
             // Dim StrSql As String
@@ -244,6 +203,170 @@ Register:
         {
             Response.Redirect("~/Unauthorize.aspx", false);
             return;
+        }
+    }
+
+    protected void btnDelete_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+        GridViewRow row = (GridViewRow)btn.NamingContainer;
+        Label lbUserId = (Label)row.FindControl("lbUserId");
+        Label lbIsActive = (Label)row.FindControl("lbStatus");
+        string IsActive = lbIsActive.Text.ToString();
+        string UserId = lbUserId.Text.ToString();
+
+        if (IsActive.Equals("InActive"))
+        {
+            md.ToogleUser(UserId, true);
+        }
+        else
+        {
+            md.ToogleUser(UserId, false);
+        }
+        strMessage = "window.alert('User Status Update Successfully...!!');";
+        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+        GetUserDetail();
+    }
+
+    protected void btnEdit_Click(object sender, EventArgs e)
+    {
+        LinkButton btn = (LinkButton)sender;
+        GridViewRow row = (GridViewRow)btn.NamingContainer;
+        Label lbUserId = (Label)row.FindControl("lbUserId");
+        Label lbHospitalId = (Label)row.FindControl("lbHospitalId");
+        Label lbDistrictId = (Label)row.FindControl("lbDistrictId");
+        Label lbRoleId = (Label)row.FindControl("lbRoleId");
+        Label lbUsername = (Label)row.FindControl("lbUsername");
+        Label lbFullName = (Label)row.FindControl("lbFullName");
+        Label lbAddress = (Label)row.FindControl("lbAddress");
+        Label lbMobile = (Label)row.FindControl("lbMobile");
+        hdUserId.Value = lbUserId.Text.ToString();
+        hdRoleId.Value = lbRoleId.Text.ToString();
+        tbFullName.Text = lbFullName.Text.ToString();
+        tbAddress.Text = lbAddress.Text.ToString();
+        tbMobileNo.Text = lbMobile.Text.ToString();
+        tbUserName.Text = lbUsername.Text.ToString();
+        tbUserName.Enabled = false;
+        tbUserName.CssClass = "form-control";
+        dropRole.SelectedValue = lbRoleId.Text.ToString();
+        dropRole.Enabled = false;
+        dropRole.CssClass = "form-control";
+        btnUpdate.Visible = true;
+        if (lbRoleId.Text.ToString().Equals("2"))
+        {
+            GetDistrict();
+            GetHospitals();
+            divMEDCO.Visible = true;
+            lbDistrict.Visible = true;
+            lbHospital.Visible = true;
+            dropDistrict.Visible = true;
+            dropHospital.Visible = true;
+            dropDistrict.SelectedValue = lbDistrictId.Text.ToString();
+            dropHospital.SelectedValue = lbHospitalId.Text.ToString();
+        }
+        else
+        {
+            divMEDCO.Visible = false;
+            lbDistrict.Visible = false;
+            lbHospital.Visible = false;
+            dropDistrict.Visible = false;
+            dropHospital.Visible = false;
+        }
+
+    }
+
+    protected void gridUserDetail_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Label lbStatus = (Label)e.Row.FindControl("lbStatus");
+            string IsActive = lbStatus.Text.ToString();
+            if (IsActive != null && IsActive.Equals("False"))
+            {
+                lbStatus.Text = "InActive";
+                lbStatus.CssClass = "btn btn-danger btn-sm rounded-pill";
+            }
+            else
+            {
+                lbStatus.Text = "Active";
+                lbStatus.CssClass = "btn btn-success btn-sm rounded-pill";
+            }
+        }
+    }
+
+    public void GetDistrict()
+    {
+        try
+        {
+            dt.Clear();
+            dt = md.GetDistrict();
+            dropDistrict.Items.Clear();
+            if (dt.Rows.Count > 0)
+            {
+                dropDistrict.Items.Clear();
+                dropDistrict.DataValueField = "Id";
+                dropDistrict.DataTextField = "Title";
+                dropDistrict.DataSource = dt;
+                dropDistrict.DataBind();
+                dropDistrict.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+                dropDistrict.Items.Clear();
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Unauthorize.aspx", false);
+            return;
+        }
+    }
+
+    public void GetHospitals()
+    {
+        try
+        {
+            dt.Clear();
+            dt = md.GetHospitalList();
+            dropHospital.Items.Clear();
+            if (dt.Rows.Count > 0)
+            {
+                dropHospital.Items.Clear();
+                dropHospital.DataValueField = "HospitalId";
+                dropHospital.DataTextField = "HospitalName";
+                dropHospital.DataSource = dt;
+                dropHospital.DataBind();
+                dropHospital.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+                dropHospital.Items.Clear();
+        }
+        catch (Exception ex)
+        {
+            Response.Redirect("~/Unauthorize.aspx", false);
+            return;
+        }
+    }
+
+    protected void btnUpdate_Click(object sender, EventArgs e)
+    {
+        if (tbFullName.Text == "" | tbAddress.Text == "" | tbMobileNo.Text == "")
+        {
+            strMessage = "window.alert('Please Fill Required Details!');";
+            ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
+            return;
+        }
+        else
+        {
+            string Password = null;
+            if (!tbPassword.Text.ToString().IsEmpty())
+            {
+                Password = Crypto.SHA256(tbPassword.Text);
+            }
+            md.UpdateUser(hdRoleId.Value, dropHospital.SelectedValue, dropDistrict.SelectedValue, tbFullName.Text.ToString(), tbAddress.Text.ToString(), tbMobileNo.Text.ToString(), hdUserId.Value, Password);
+            hdRoleId.Value = "";
+            hdUserId.Value = "";
+            strMessage = "window.alert('User updated successfully!');window.location.reload();";
+            ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
+            GetUserDetail();
         }
     }
 }

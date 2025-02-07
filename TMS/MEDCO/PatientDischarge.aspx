@@ -3,10 +3,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <script>
         function activateTab(tabId) {
-            // Activate the tab by adding the required classes
             $('.tab-pane').removeClass('active show');
             $(tabId).addClass('active show');
-            return false; // Prevent postback if only client-side activation is needed
+            return false;
         }
     </script>
     <style>
@@ -14,29 +13,27 @@
             font-weight: 700;
             font-size: 14px;
         }
-
-        /* Override Bootstrap tab background color */
         .nav-tabs .nav-link {
             background-color: #1ab394;
-            color: white; /* White text color for all tabs */
-            border: none; /* Remove borders */
+            color: white;
+            border: none;
         }
 
             .nav-tabs .nav-link.active {
-                background-color: #c9b412; /* Yellow background for the active tab */
-                color: black; /* Change text color to black when active */
+                background-color: #c9b412;
+                color: black;
             }
 
         .nav-tabs .nav-attach {
             background-color: #e1e1e1;
-            color: black !important; /* White text color for all tabs */
-            border: none; /* Remove borders */
+            color: black !important;
+            border: none;
         }
 
             .nav-tabs .nav-attach.active {
                 background-color: #ff9800;
-                color: white !important; /* White text color for all tabs */
-                border: none; /* Remove borders */
+                color: white !important;
+                border: none;
             }
     </style>
 </asp:Content>

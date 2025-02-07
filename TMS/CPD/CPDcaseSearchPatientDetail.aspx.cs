@@ -41,6 +41,8 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             if (!string.IsNullOrEmpty(caseNo))
             {
                 Session["CaseNumber"] = caseNo;
+                hdUserId.Value = Session["UserId"].ToString();
+                hdRoleId.Value = Session["RoleId"].ToString();
 
                 BindPatientName(caseNo);
             }
@@ -93,6 +95,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     lbCaseNo.Text = "Case No: " + dt.Rows[0]["CaseNumber"].ToString().Trim();
                     lbCaseNo.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     Session["CaseNumber"] = caseNo;
+                    lbCaseNoHead.Text = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     lbCaseNo.Text = caseNo;
                     hfCaseNumber.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     lbActualRegDate.Text = registrationDate.ToString("dd-MM-yyyy");
@@ -181,6 +184,22 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                         btnPreauth.CssClass = "btn btn-warning";
 
                     }
+                    if (cpd.IsACORemarksExists(hfAdmissionId.Value))
+                    {
+                        pACORemarks.Visible = true;
+                    }
+                    else
+                    {
+                        pACORemarks.Visible = false;
+                    }
+                    if (cpd.IsSHARemarksExists(hfAdmissionId.Value))
+                    {
+                        pSHARemarks.Visible = true;
+                    }
+                    else
+                    {
+                        pSHARemarks.Visible = false;
+                    }
                     displayPatientAdmissionImage();
                     getNetworkHospitalDetails();
                     BindClaimsDetails();
@@ -197,6 +216,7 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     BindDeductionGrid();
                     gvQuestionnaire.DataSource = CreateQuestionnaireData();
                     gvQuestionnaire.DataBind();
+                    BindPreauthUtilizationData();
                 }
             }
         }
@@ -348,6 +368,28 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
 
         gvICHIDetails.DataSource = dt;
         gvICHIDetails.DataBind();
+    }
+    private void BindGrid_PreauthWorkFlow()
+    {
+        dt.Clear();
+        string claimId = Session["ClaimId"].ToString();
+        dt = cpd.GetClaimWorkFlow(Convert.ToInt32(claimId));
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            dt.Columns.Add("SlNo", typeof(int));
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                dt.Rows[i]["SlNo"] = i + 1;
+            }
+            gvPreauthWorkFlow.DataSource = dt;
+            gvPreauthWorkFlow.DataBind();
+        }
+        else
+        {
+            gvPreauthWorkFlow.DataSource = null;
+            gvPreauthWorkFlow.EmptyDataText = "No record found.";
+            gvPreauthWorkFlow.DataBind();
+        }
     }
     protected void btnTransactionDataReferences_Click(object sender, EventArgs e)
     {
@@ -540,9 +582,9 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     private void BindTechnicalChecklistData()
     {
         dt.Clear();
-        if (!string.IsNullOrEmpty(hfCaseNumber.Value))
+        if (!string.IsNullOrEmpty(hfClaimId.Value))
         {
-            dt = cpd.GetTechnicalChecklist_CaseSearch(hfCaseNumber.Value);
+            dt = cpd.GetTechnicalChecklist_CaseSearch(hfClaimId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -560,6 +602,26 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 {
                     tbSpecialCase.Text = string.Empty;
                 }
+                if (row["ClaimMode"] != DBNull.Value)
+                {
+                    int claimMode = Convert.ToInt32(row["ClaimMode"]);
+
+                    if (claimMode == 1)
+                    {
+                        pInsuranceApprovedAmt.Visible = true;
+                        pTrustApprovedAmt.Visible = false;
+                    }
+                    else if (claimMode == 2)
+                    {
+                        pInsuranceApprovedAmt.Visible = false;
+                        pTrustApprovedAmt.Visible = true;
+                    }
+                    else if (claimMode == 3)
+                    {
+                        pInsuranceApprovedAmt.Visible = true;
+                        pTrustApprovedAmt.Visible = true;
+                    }
+                }
                 rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
                 rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
                 rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && Convert.ToBoolean(row["CaseManagementSTP"]);
@@ -568,8 +630,74 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
                 rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && Convert.ToBoolean(row["MandatoryReports"]);
                 rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
-                tbTechRemarks.Text = row["TotalClaims"].ToString();
+                tbTechRemarks.Text = row["Remarks"].ToString();
             }
+        }
+    }
+    public void BindPreauthUtilizationData()
+    {
+        DataTable dt = cpd.GetPreauthUtilization(hfAdmissionId.Value);
+
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            //decimal totalNoOfDays = 0;
+            //decimal totalAmount = 0;
+
+            int preauthNoOfDays = 0;
+            decimal preauthAmount = 0;
+
+            int enhanceNoOfDays = 0;
+            decimal enhanceAmount = 0;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                DateTime preauthFrom = Convert.ToDateTime(row["PreauthDate"]);
+                DateTime preauthTo = Convert.ToDateTime(row["PreauthDate"]);
+
+                int preauthNoOfDaysForRecord = (preauthTo - preauthFrom).Days + 1;  // Add 1 to include both start and end dates
+
+                decimal preauthWardRentPerDay = Convert.ToDecimal(row["PrauthWardRent"]);
+                decimal preauthAmountForRecord = preauthWardRentPerDay * preauthNoOfDaysForRecord;
+
+                preauthNoOfDays += preauthNoOfDaysForRecord;
+                preauthAmount += preauthAmountForRecord;
+
+                lbActionTypePreauth.Text = "Preauth";
+                lbPreauthFromDate.Text = preauthFrom.ToString("dd-MM-yyyy");
+                lbPreauthToDate.Text = preauthTo.ToString("dd-MM-yyyy");
+                lbPreauthWardType.Text = row["PreauthWardType"].ToString();
+                lbPreauthWardRent.Text = preauthWardRentPerDay.ToString();
+                lbPreauthNoOfDays.Text = preauthNoOfDaysForRecord.ToString();
+                lbPreauthAmount.Text = preauthAmountForRecord.ToString("C");
+
+                DateTime enhancementFrom = Convert.ToDateTime(row["EnhancementFrom"]);
+                DateTime enhancementTo = Convert.ToDateTime(row["EnhancementTo"]);
+
+                int enhanceNoOfDaysForRecord = (enhancementTo - enhancementFrom).Days + 1;
+
+                decimal enhanceWardRentPerDay = Convert.ToDecimal(row["EnhanceWardRent"]);
+                decimal enhanceAmountForRecord = enhanceWardRentPerDay * enhanceNoOfDaysForRecord;
+
+                enhanceNoOfDays += enhanceNoOfDaysForRecord;
+                enhanceAmount += enhanceAmountForRecord;
+
+                lbActionTypeEnhance.Text = "Enhancement";
+                lbEnhanceFromDate.Text = enhancementFrom.ToString("dd-MM-yyyy");
+                lbEnhanceToDate.Text = enhancementTo.ToString("dd-MM-yyyy");
+                lbEnhanceWardType.Text = row["EnhanceWardType"].ToString();
+                lbEnhanceWardRent.Text = enhanceWardRentPerDay.ToString();
+                lbEnhanceNoOfDays.Text = enhanceNoOfDaysForRecord.ToString();
+                lbEnhanceAmount.Text = enhanceAmountForRecord.ToString("C");
+            }
+
+            tbSumActualDay.Text = (preauthNoOfDays + enhanceNoOfDays).ToString();
+            tbSumTotalAmt.Text = (preauthAmount + enhanceAmount).ToString("C");
+
+            pPreauthUtilization.Visible = true;
+        }
+        else
+        {
+            pPreauthUtilization.Visible = false;
         }
     }
     private void BindClaimWorkflow()
@@ -735,6 +863,11 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             lbRoomNo.Text = row["RoomNo"] != DBNull.Value ? row["RoomNo"].ToString() : "NA";
             rbIsSpecialCaseYes.Checked = row["IsSpecialCase"] != DBNull.Value && Convert.ToBoolean(row["IsSpecialCase"]);
             rbIsSpecialCaseNo.Checked = row["IsSpecialCase"] != DBNull.Value && !Convert.ToBoolean(row["IsSpecialCase"]);
+            if (rbIsSpecialCaseYes.Checked)
+            {
+                pnlSpecialCaseValue.Visible = true;
+                lbSpecialCaseValue.Text = row["SpecialCaseValue"].ToString();
+            }
             lbFinalDiagnosis.Text = row["FinalDiagnosis"] != DBNull.Value ? row["FinalDiagnosis"].ToString() : "NA";
             rbConsentYes.Checked = row["ProcedureConsent"] != DBNull.Value && Convert.ToBoolean(row["ProcedureConsent"]);
             rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);
@@ -1171,12 +1304,18 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     {
         try
         {
-            DataTable dt = new DataTable();
+            DataTable dtSpecialDocument = new DataTable();
+            DataTable dtManditoryDocument = new DataTable();
+            DataTable dtDischargeDocument = new DataTable();
+            DataTable dtPostDocument = new DataTable();
             List<string> images = new List<string>();
-            dt = ppdHelper.GetPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
-            if (dt != null && dt.Rows.Count > 0)
+            dtSpecialDocument = ppdHelper.GetPreInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtManditoryDocument = ppdHelper.GetManditoryDocuments(hfHospitalId.Value, hdPatientRegId.Value);
+            dtDischargeDocument = ppdHelper.GetDischargeDocuments(hfHospitalId.Value, hdPatientRegId.Value);
+            dtPostDocument = ppdHelper.GetPostInvestigationDocuments(hfHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
             {
-                foreach (DataRow row in dt.Rows)
+                foreach (DataRow row in dtManditoryDocument.Rows)
                 {
                     string folderName = row["FolderName"].ToString().Trim();
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
@@ -1189,16 +1328,64 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                         }
                     }
                 }
-                if (images.Count > 0)
+            }
+            if (dtSpecialDocument != null && dtSpecialDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtSpecialDocument.Rows)
                 {
-                    byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
-                    Response.Clear();
-                    Response.ContentType = "application/pdf";
-                    Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
-                    Response.BinaryWrite(pdfBytes);
-                    Response.Flush();
-                    HttpContext.Current.ApplicationInstance.CompleteRequest();
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
                 }
+            }
+            if (dtDischargeDocument != null && dtDischargeDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtDischargeDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (dtPostDocument != null && dtPostDocument.Rows.Count > 0)
+            {
+                foreach (DataRow row in dtPostDocument.Rows)
+                {
+                    string folderName = row["FolderName"].ToString().Trim();
+                    string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
+                    if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
+                    {
+                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        if (!string.IsNullOrEmpty(base64Image))
+                        {
+                            images.Add("data:image/jpeg;base64," + base64Image);
+                        }
+                    }
+                }
+            }
+            if (images.Count > 0)
+            {
+                byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
+                Response.Clear();
+                Response.ContentType = "application/pdf";
+                Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
+                Response.BinaryWrite(pdfBytes);
+                Response.Flush();
+                HttpContext.Current.ApplicationInstance.CompleteRequest();
             }
         }
         catch (Exception ex)

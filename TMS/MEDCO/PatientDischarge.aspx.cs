@@ -13,6 +13,7 @@ using AbuaTMS;
 using System.Text;
 using Org.BouncyCastle.Asn1.Pkcs;
 using System.Collections.Generic;
+using Antlr.Runtime;
 
 public partial class MEDCO_PatientDischarge : System.Web.UI.Page
 {
@@ -750,6 +751,10 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Update Successfully!');", true);
                 }
             }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please select Surgery/Treatment start date!');", true);
+            }
         }
     }
     protected void btnAttachments_Click(object sender, EventArgs e)
@@ -853,109 +858,149 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     {
         getDischargeDocument();
     }
+
+    //*****Submit Discharge details*****//
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
         try
         {
             if (cbDeclaration.Checked)
             {
-                bool dischargeType = false, ProcedureConsent = false, OPPhotosWebex = false, VideoRecording = false, SpecimenRequired = false, ComplicationsIfAny = false;
-                SqlParameter[] p = new SqlParameter[40];
-                p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
-                p[0].DbType = DbType.String;
-                p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
-                p[1].DbType = DbType.String;
-                p[2] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
-                p[2].DbType = DbType.String;
-                p[3] = new SqlParameter("@ClaimId", hdClaimId.Value);
-                p[3].DbType = DbType.String;
-                p[4] = new SqlParameter("@DischargeById", hdUserId.Value);
-                p[4].DbType = DbType.String;
-                p[5] = new SqlParameter("@DischargeType", dischargeType.ToString());
-                p[5].DbType = DbType.String;
-                p[6] = new SqlParameter("@DischargeDate", tbDischargeDate.Text);
-                p[6].DbType = DbType.String;
-                p[7] = new SqlParameter("@NextFollowUpDate", tbNextFollowUpDate.Text);
-                p[7].DbType = DbType.String;
-                p[8] = new SqlParameter("@ConsultAtBlock", tbConsultAtBlockName.Text);
-                p[8].DbType = DbType.String;
-                p[9] = new SqlParameter("@FloorNo", tbFloor.Text);
-                p[9].DbType = DbType.String;
-                p[10] = new SqlParameter("@RoomNo", tbRoomNo.Text);
-                p[10].DbType = DbType.String;
-                p[11] = new SqlParameter("@IsSpecialCase", dropIsSpecialCase.SelectedValue);
-                p[11].DbType = DbType.String;
-                p[12] = new SqlParameter("@SpecialCaseValue", dropSpecialCaseValue.SelectedValue);
-                p[12].DbType = DbType.String;
-                p[13] = new SqlParameter("@FinalDiagnosis", dropFinalDiagnosis.SelectedValue);
-                p[13].DbType = DbType.String;
-                p[14] = new SqlParameter("@FinalDiagnosisDesc", tbFinalDiagnosisDesc.Text);
-                p[14].DbType = DbType.String;
-                p[15] = new SqlParameter("@ProcedureConsent", ProcedureConsent.ToString());
-                p[15].DbType = DbType.String;
-                p[16] = new SqlParameter("@DoctorTypeId", dropDroctorType.SelectedValue);
-                p[16].DbType = DbType.String;
-                p[17] = new SqlParameter("@DoctorId", dropDoctorId.SelectedValue);
-                p[17].DbType = DbType.String;
-                p[18] = new SqlParameter("@AnesthetistId", dropAnesName.SelectedValue);
-                p[18].DbType = DbType.String;
-                p[19] = new SqlParameter("@IncisionType", tbIncisionType.Text);
-                p[19].DbType = DbType.String;
-                p[20] = new SqlParameter("@OPPhotosWebexTaken", OPPhotosWebex.ToString());
-                p[20].DbType = DbType.String;
-                p[21] = new SqlParameter("@VideoRecordingDone", VideoRecording.ToString());
-                p[21].DbType = DbType.String;
-                p[22] = new SqlParameter("@SwabCountInstrumentsCount", tbSwabCount.Text);
-                p[22].DbType = DbType.String;
-                p[23] = new SqlParameter("@SuturesLigatures", tbSutures.Text);
-                p[23].DbType = DbType.String;
-                p[24] = new SqlParameter("@SpecimenRequired", SpecimenRequired.ToString());
-                p[24].DbType = DbType.String;
-                p[25] = new SqlParameter("@DrainageCount", tbDrainageCount.Text);
-                p[25].DbType = DbType.String;
-                p[26] = new SqlParameter("@BloodLoss", tbBloodLoss.Text);
-                p[26].DbType = DbType.String;
-                p[27] = new SqlParameter("@PostOperativeInstructions", tbPostOperativeInstructions.Text);
-                p[27].DbType = DbType.String;
-                p[28] = new SqlParameter("@PatientCondition", tbPatientCondition.Text);
-                p[28].DbType = DbType.String;
-                p[29] = new SqlParameter("@ComplicationsIfAny", ComplicationsIfAny.ToString());
-                p[29].DbType = DbType.String;
-                p[30] = new SqlParameter("@TreatmentSurgeryStartDate", tbTreatmentSurgeryDate.Text);
-                p[30].DbType = DbType.String;
-                p[31] = new SqlParameter("@SurgeryStartTime", tbSurgeryStartTime.Text);
-                p[31].DbType = DbType.String;
-                p[32] = new SqlParameter("@SurgeryEndTime", tbSurgeryEndTime.Text);
-                p[32].DbType = DbType.String;
-                p[33] = new SqlParameter("@TreatmentGiven", tbTreatmentGiven.Text);
-                p[33].DbType = DbType.String;
-                p[34] = new SqlParameter("@OperativeFindings", tbOperativeFindings.Text);
-                p[34].DbType = DbType.String;
-                p[35] = new SqlParameter("@PostOperativePeriod", tbPostOperativePeriod.Text);
-                p[35].DbType = DbType.String;
-                p[36] = new SqlParameter("@PostSurgeryInvestigationGiven", tbPostSurgeryTherapy.Text);
-                p[36].DbType = DbType.String;
-                p[37] = new SqlParameter("@StatusAtDischarge", tbStatusDischarge.Text);
-                p[37].DbType = DbType.String;
-                p[38] = new SqlParameter("@Review", tbReview.Text);
-                p[38].DbType = DbType.String;
-                p[39] = new SqlParameter("@Advice", tbAdvice.Text);
-                p[39].DbType = DbType.String;
-                ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientDischargeDetails", p);
-                if (con.State == ConnectionState.Open)
-                    con.Close();
-                if (ds != null)
+                if (dropDroctorType.SelectedValue != "0" && dropAnesName.SelectedValue != "0" && tbTreatmentSurgeryDate.Text != "" && tbSurgeryStartTime.Text != "" && tbSurgeryEndTime.Text != "" && tbDischargeDate.Text != "" && tbNextFollowUpDate.Text != "" && dropIsSpecialCase.SelectedValue != "0")
                 {
-                    if (ds.Tables[0].Rows[0]["ClaimNumber"].ToString() == "0")
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Already Discharged!');", true);
-                    }
+                    bool dischargeType = false, ProcedureConsent = false, OPPhotosWebex = false, VideoRecording = false, SpecimenRequired = false, ComplicationsIfAny = false;
+                    if (rbOPPhotosYes.Checked)
+                        OPPhotosWebex = true;
                     else
+                        OPPhotosWebex = false;
+
+                    if (rbVideoRecordingYes.Checked)
+                        VideoRecording = true;
+                    else
+                        VideoRecording = false;
+
+                    if (rbSpecimenYes.Checked)
+                        SpecimenRequired = true;
+                    else
+                        SpecimenRequired = false;
+
+                    if (rbComplicationsYes.Checked)
+                        ComplicationsIfAny = true;
+                    else
+                        ComplicationsIfAny = false;
+
+                    if (rbProcedureConsentYes.Checked)
+                        ProcedureConsent = true;
+                    else
+                        ProcedureConsent = false;
+
+                    if (rbDischarge.Checked)
+                        dischargeType = true;
+                    else
+                        dischargeType = false;
+
+                    SqlParameter[] p = new SqlParameter[40];
+                    p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+                    p[0].DbType = DbType.String;
+                    p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+                    p[1].DbType = DbType.String;
+                    p[2] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
+                    p[2].DbType = DbType.String;
+                    p[3] = new SqlParameter("@ClaimId", hdClaimId.Value);
+                    p[3].DbType = DbType.String;
+                    p[4] = new SqlParameter("@DischargeById", hdUserId.Value);
+                    p[4].DbType = DbType.String;
+                    p[5] = new SqlParameter("@DischargeType", dischargeType.ToString());
+                    p[5].DbType = DbType.String;
+                    p[6] = new SqlParameter("@DischargeDate", tbDischargeDate.Text);
+                    p[6].DbType = DbType.String;
+                    p[7] = new SqlParameter("@NextFollowUpDate", tbNextFollowUpDate.Text);
+                    p[7].DbType = DbType.String;
+                    p[8] = new SqlParameter("@ConsultAtBlock", tbConsultAtBlockName.Text);
+                    p[8].DbType = DbType.String;
+                    p[9] = new SqlParameter("@FloorNo", tbFloor.Text);
+                    p[9].DbType = DbType.String;
+                    p[10] = new SqlParameter("@RoomNo", tbRoomNo.Text);
+                    p[10].DbType = DbType.String;
+                    p[11] = new SqlParameter("@IsSpecialCase", dropIsSpecialCase.SelectedValue);
+                    p[11].DbType = DbType.String;
+                    p[12] = new SqlParameter("@SpecialCaseValue", dropSpecialCaseValue.SelectedValue);
+                    p[12].DbType = DbType.String;
+                    p[13] = new SqlParameter("@FinalDiagnosis", dropFinalDiagnosis.SelectedValue);
+                    p[13].DbType = DbType.String;
+                    p[14] = new SqlParameter("@FinalDiagnosisDesc", tbFinalDiagnosisDesc.Text);
+                    p[14].DbType = DbType.String;
+                    p[15] = new SqlParameter("@ProcedureConsent", ProcedureConsent.ToString());
+                    p[15].DbType = DbType.String;
+                    p[16] = new SqlParameter("@DoctorTypeId", dropDroctorType.SelectedValue);
+                    p[16].DbType = DbType.String;
+                    p[17] = new SqlParameter("@DoctorId", dropDoctorId.SelectedValue);
+                    p[17].DbType = DbType.String;
+                    p[18] = new SqlParameter("@AnesthetistId", dropAnesName.SelectedValue);
+                    p[18].DbType = DbType.String;
+                    p[19] = new SqlParameter("@IncisionType", tbIncisionType.Text);
+                    p[19].DbType = DbType.String;
+                    p[20] = new SqlParameter("@OPPhotosWebexTaken", OPPhotosWebex.ToString());
+                    p[20].DbType = DbType.String;
+                    p[21] = new SqlParameter("@VideoRecordingDone", VideoRecording.ToString());
+                    p[21].DbType = DbType.String;
+                    p[22] = new SqlParameter("@SwabCountInstrumentsCount", tbSwabCount.Text);
+                    p[22].DbType = DbType.String;
+                    p[23] = new SqlParameter("@SuturesLigatures", tbSutures.Text);
+                    p[23].DbType = DbType.String;
+                    p[24] = new SqlParameter("@SpecimenRequired", SpecimenRequired.ToString());
+                    p[24].DbType = DbType.String;
+                    p[25] = new SqlParameter("@DrainageCount", tbDrainageCount.Text);
+                    p[25].DbType = DbType.String;
+                    p[26] = new SqlParameter("@BloodLoss", tbBloodLoss.Text);
+                    p[26].DbType = DbType.String;
+                    p[27] = new SqlParameter("@PostOperativeInstructions", tbPostOperativeInstructions.Text);
+                    p[27].DbType = DbType.String;
+                    p[28] = new SqlParameter("@PatientCondition", tbPatientCondition.Text);
+                    p[28].DbType = DbType.String;
+                    p[29] = new SqlParameter("@ComplicationsIfAny", ComplicationsIfAny.ToString());
+                    p[29].DbType = DbType.String;
+                    p[30] = new SqlParameter("@TreatmentSurgeryStartDate", tbTreatmentSurgeryDate.Text);
+                    p[30].DbType = DbType.String;
+                    p[31] = new SqlParameter("@SurgeryStartTime", tbSurgeryStartTime.Text);
+                    p[31].DbType = DbType.String;
+                    p[32] = new SqlParameter("@SurgeryEndTime", tbSurgeryEndTime.Text);
+                    p[32].DbType = DbType.String;
+                    p[33] = new SqlParameter("@TreatmentGiven", tbTreatmentGiven.Text);
+                    p[33].DbType = DbType.String;
+                    p[34] = new SqlParameter("@OperativeFindings", tbOperativeFindings.Text);
+                    p[34].DbType = DbType.String;
+                    p[35] = new SqlParameter("@PostOperativePeriod", tbPostOperativePeriod.Text);
+                    p[35].DbType = DbType.String;
+                    p[36] = new SqlParameter("@PostSurgeryInvestigationGiven", tbPostSurgeryTherapy.Text);
+                    p[36].DbType = DbType.String;
+                    p[37] = new SqlParameter("@StatusAtDischarge", tbStatusDischarge.Text);
+                    p[37].DbType = DbType.String;
+                    p[38] = new SqlParameter("@Review", tbReview.Text);
+                    p[38].DbType = DbType.String;
+                    p[39] = new SqlParameter("@Advice", tbAdvice.Text);
+                    p[39].DbType = DbType.String;
+                    ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientDischargeDetails", p);
+                    if (con.State == ConnectionState.Open)
+                        con.Close();
+                    if (ds != null)
                     {
-                        MultiView1.SetActiveView(viewPatientList);
-                        GetPatientForDischarge();
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Claim Initiated! " + ds.Tables[0].Rows[0]["ClaimNumber"].ToString() + "');", true);
+                        if (ds.Tables[0].Rows[0]["ClaimNumber"].ToString() == "0")
+                        {
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Already Discharged!');", true);
+                            return;
+                        }
+                        else
+                        {
+                            MultiView1.SetActiveView(viewPatientList);
+                            GetPatientForDischarge();
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Claim Initiated! " + ds.Tables[0].Rows[0]["ClaimNumber"].ToString() + "');", true);
+                        }
                     }
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please fill the required fields!');", true);
                 }
             }
             else
@@ -1617,7 +1662,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
         try
         {
             string folderName = lbDischargePhotoFolderName.Text;
-            string fileName = lbDischargeUploadedFileName.Text + ".jpeg";
+            string fileName = lbDischargePhotoUploadedFileName.Text + ".jpeg";
             string DocumentName = "After Discharge Photo";
             string base64Image = "";
             base64Image = preAuth.DisplayImage(folderName, fileName);

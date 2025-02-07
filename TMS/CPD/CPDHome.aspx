@@ -3,55 +3,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
-    <%--<div class="form-group row">
-        <div class="col-md-4">
-            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Scheme</span><span class="text-danger">*</span><br />
-            <asp:DropDownList ID="dropCPDScheme" runat="server" class="form-control" AutoPostBack="True"></asp:DropDownList>
-        </div>
-        <div class="col-md-4">
-            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Policy</span><span class="text-danger">*</span><br />
-            <asp:DropDownList ID="dropCPDPolicy" runat="server" class="form-control" AutoPostBack="True"></asp:DropDownList>
-        </div>
-        <div class="col-md-4 d-flex align-items-end">
-            <asp:Button ID="btnSearch" runat="server" Text="Search" CssClass="btn btn-primary" />
-        </div>
-    </div>
-    <div class="card mt-4">
-        <div class="card-body table-responsive">
-            <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                <div class="d-flex w-100 justify-content-center position-relative">
-                    <h3 class="m-0">Pendency at Insurer</h3>
-                </div>
-            </div>
-            <asp:GridView ID="gvCaseSearch" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
-                <AlternatingRowStyle BackColor="Gainsboro" />
-                <Columns>
-                    <asp:TemplateField HeaderText="">
-                        <ItemTemplate>
-                            <asp:Label ID="lbSlNo" runat="server" Text='<%# Eval("Id") %>'></asp:Label>
-                        </ItemTemplate>
-                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Today">
-                        <ItemTemplate>
-                            <asp:Label ID="lbToday" runat="server" Text='<%# Eval("Today") %>'></asp:Label>
-                        </ItemTemplate>
-                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Overall">
-                        <ItemTemplate>
-                            <asp:Label ID="lbOverall" runat="server" Text='<%# Eval("Overall") %>'></asp:Label>
-                        </ItemTemplate>
-                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
-        </div>
-    </div>--%>
-
     <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
         <ContentTemplate>
@@ -82,51 +33,49 @@
                     </div>
                     <div class="container-fluid text-center">
 
-                        <div class="row bg-secondary text-white align-items-center">
+                        <div class="row ibox-title text-center text-white align-items-center">
                             <div class="col">
                                 <h3>Pendency at Insurer</h3>
                             </div>
-                            <div class="col-auto">
+                            <%--<div class="col-auto">
                                 <asp:LinkButton ID="RefreshButton" runat="server" CssClass="btn btn-link text-white">
-                 <i class="bi bi-arrow-clockwise"></i>
-                             </asp:LinkButton>
-                            </div>
+                                       <i class="bi bi-arrow-clockwise"></i>
+                                </asp:LinkButton>
+                            </div>--%>
                         </div>
 
-                        <div class="row align-items-center mt-1 text-dark" style="background-color: #dee0e0;">
-                            <div class="col">
-                                <h4></h4>
-                            </div>
-                            <div class="col">
-                                <h4>Today</h4>
-                            </div>
-                            <div class="col">
-                                <h4>Overall</h4>
-                            </div>
+
+                        <div class="ibox-content table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th scope="col" style="background-color: #007e72; color: white;">Details</th>
+                                        <th scope="col" style="background-color: #007e72; color: white;">Today</th>
+                                        <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Claim Processing Doctor Insurer</td>
+                                        <td>
+                                            <asp:Label ID="lbTodayPendency" runat="server"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lbOverallPendency" runat="server"></asp:Label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Claim Processing Doctor Insurer (Assigned)</td>
+                                        <td>
+                                            <asp:Label ID="lbTodayPendencyAssigned" runat="server"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lbOverallPendencyAssigned" runat="server"></asp:Label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="row bg-light text-dark mt-1 align-items-center">
-                            <div class="col">
-                                <h4>Claim Processing Doctor Insurer</h4>
-                            </div>
-                            <div class="col">
-                                <asp:Label ID="lbTodayPendency" runat="server"></asp:Label>
-                            </div>
-                            <div class="col">
-                                <asp:Label ID="lbOverallPendency" runat="server"></asp:Label>
-                            </div>
-                        </div>
-                        <div class="row bg-light text-dark mt-1 align-items-center">
-                            <div class="col">
-                                <h4>Claim Processing Doctor Insurer(Assigned)</h4>
-                            </div>
-                            <div class="col">
-                                <asp:Label ID="lbTodayPendencyAssigned" runat="server"></asp:Label>
-                            </div>
-                            <div class="col">
-                                <asp:Label ID="lbOverallPendencyAssigned" runat="server"></asp:Label>
-                            </div>
-                        </div>
-                    </div>
                 </asp:View>
                 <asp:View ID="ViewForTrust" runat="server">
                     <div class="row">
@@ -159,7 +108,7 @@
                             <div class="col-auto">
                                 <asp:LinkButton ID="LinkButton1" runat="server" CssClass="btn btn-link text-white">
                                  <i class="bi bi-arrow-clockwise"></i>
-                             </asp:LinkButton>
+                                </asp:LinkButton>
                             </div>
                         </div>
 

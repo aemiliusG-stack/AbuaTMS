@@ -48,7 +48,7 @@ public class MasterData
     {
         try
         {
-            string Query = "Select DISTINCT t1.UserId, t1.Username, r1.RoleName, IsNull(d1.Title,'NA') as DistrictName, IsNull(h1.HospitalName, 'NA') as HospitalName, t1.FullName, t1.UserAddress, t1.MobileNo, FORMAT (t1.CreatedOn, 'dd-MMM-yyyy ') as CreatedOn from TMS_Users t1 LEFT JOIN TMS_Roles r1 ON t1.RoleId = r1.RoleId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId LEFT JOIN HEM_MasterDistricts d1 ON t1.DistrictId = d1.Id";
+            string Query = "Select DISTINCT t1.UserId, t1.Username, t1.UserPassword, r1.RoleName, r1.RoleId, h1.HospitalId, t1.DistrictId, IsNull(d1.Title,'NA') as DistrictName, IsNull(h1.HospitalName, 'NA') as HospitalName, t1.FullName, t1.UserAddress, t1.MobileNo, FORMAT (t1.CreatedOn, 'dd-MMM-yyyy ') as CreatedOn, t1.IsActive from TMS_Users t1 LEFT JOIN TMS_Roles r1 ON t1.RoleId = r1.RoleId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId LEFT JOIN HEM_MasterDistricts d1 ON t1.DistrictId = d1.Id WHERE t1.RoleId != 1";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             con.Open();
             sd.Fill(ds);
@@ -2704,4 +2704,77 @@ public class MasterData
         return dt;
 
     }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_Users.
+        Managing status active or inactive TMS_Users.
+    */
+    public void ToogleUser(string UserId, bool Status)
+    {
+        string Query;
+        if (Status)
+        {
+            Query = "UPDATE TMS_Users SET IsActive = 1, IsDeleted = 0, UpdatedOn = GETDATE(), DeletedOn = NULL WHERE UserId = @UserId";
+        }
+        else
+        {
+            Query = "UPDATE TMS_Users SET IsActive = 0, IsDeleted = 1, UpdatedOn = GETDATE(), DeletedOn = GETDATE() WHERE UserId = @UserId";
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
+    /*
+        Added by Nirmal.
+        Table: TMS_Users.
+        Updating table TMS_Users.
+    */
+    public void UpdateUser(string RoleId, string HospitalId, string DistrictId, string FullName, string UserAddress, string MobileNo, string UserId, string Password)
+    {
+        string Query = "";
+        if (RoleId.Equals("2"))
+        {
+            if (Password != null)
+            {
+                Query = "UPDATE TMS_Users SET HospitalId = @HospitalId, DistrictId = @DistrictId, FullName = @FullName, UserPassword = @UserPassword, UserAddress = @UserAddress, MobileNo = @MobileNo, UpdatedOn = GETDATE() WHERE UserId = @UserId";
+            }
+            else
+            {
+                Query = "UPDATE TMS_Users SET HospitalId = @HospitalId, DistrictId = @DistrictId, FullName = @FullName, UserAddress = @UserAddress, MobileNo = @MobileNo, UpdatedOn = GETDATE() WHERE UserId = @UserId";
+            }
+        }
+        else
+        {
+            if (Password != null)
+            {
+                Query = "UPDATE TMS_Users SET FullName = @FullName, UserPassword = @UserPassword, UserAddress = @UserAddress, MobileNo = @MobileNo, UpdatedOn = GETDATE() WHERE UserId = @UserId";
+            }
+            else
+            {
+                Query = "UPDATE TMS_Users SET FullName = @FullName, UserAddress = @UserAddress, MobileNo = @MobileNo, UpdatedOn = GETDATE() WHERE UserId = @UserId";
+            }
+        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        if (RoleId.Equals("2"))
+        {
+            cmd.Parameters.AddWithValue("@HospitalId", HospitalId);
+            cmd.Parameters.AddWithValue("@DistrictId", DistrictId);
+        }
+        if (Password != null)
+        {
+            cmd.Parameters.AddWithValue("@UserPassword", Password);
+        }
+        cmd.Parameters.AddWithValue("@FullName", FullName);
+        cmd.Parameters.AddWithValue("@UserAddress", UserAddress);
+        cmd.Parameters.AddWithValue("@MobileNo", MobileNo);
+        cmd.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+
 }

@@ -53,7 +53,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             BindActionTypeDropdown();
             //BindICDDetailsGrid();
             BindClaimsDetails();
-            BindNonTechnicalChecklist(caseNumber);
+            BindNonTechnicalChecklist();
             BindTechnicalChecklistData();
             BindClaimWorkflow();
             BindACORemarks();
@@ -230,12 +230,14 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                     plTechfinalAmountInusure.Visible = true;
                     plTechfinalAmountTrust.Visible = false;
                     lbTechfinalAmountInusure.Text = row["InsurerClaimAmountApproved"].ToString();
+                    tbTechRemarks.Text = row["Remarks"].ToString();
                 }
                 else if (hdRoleId.Value == "10")
                 {
                     plTechfinalAmountInusure.Visible = false;
                     plTechfinalAmountTrust.Visible = true;
                     lbTechfinalAmountTrust.Text = row["TrustClaimAmountApproved"].ToString();
+                    tbTechRemarks.Text = row["Remarks"].ToString();
                 }
                 //tbInsuranceApprovedAmt.Text = row["InsurerClaimAmountApproved"].ToString();
                 //tbTrustApprovedAmt.Text = row["TrustClaimAmountApproved"].ToString();
@@ -267,11 +269,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
         }
     }
-    public void BindNonTechnicalChecklist(string caseNo)
+    public void BindNonTechnicalChecklist()
     {
         try
         {
-            DataTable dtNonTechChecklist = aco.GetNonTechnicalChecklist(caseNo);
+            long claimId = Convert.ToInt64(Session["ClaimId"]);
+            DataTable dtNonTechChecklist = aco.GetNonTechnicalChecklist(claimId);
 
             if (dtNonTechChecklist.Rows.Count > 0)
             {

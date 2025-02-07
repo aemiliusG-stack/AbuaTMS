@@ -99,7 +99,7 @@
                             </div>
                             <div class="hr-line-dashed"></div>
                             <p>
-                                Note: *<b>ID Number should be ABUA Card Number</b><br />
+                                Note: <b style="color:red;">*ID Number should be ABUA Card Number</b><br />
                                 Please select "Child Below 5 years" option if ABUA ID is not available for the child.
                             </p>
                             <div class="col-md-12 text-center">
