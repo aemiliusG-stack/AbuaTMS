@@ -28,9 +28,9 @@ public class CEOSHA
         base64String = Convert.ToBase64String(imageBytes);
         return base64String;
     }
-    public DataTable GetRecociliationClaimUpdation()
+    public DataTable GetUnspecifiedCases()
     {
-        string Query = "SELECT t1.CaseNumber, t1.ClaimNumber, CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, t3.HospitalName, t2.AdmissionDate, t2.TotalPackageCost as ClaimInitiatedAmt, (t1.InsurerClaimAmountApproved + t1.TrustClaimAmountApproved) AS ClaimApprovedAmt FROM TMS_ClaimMaster t1 LEFT JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber =t2.CaseNumber LEFT JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId LEFT JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId LEFT JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId LEFT JOIN  TMS_PatientTreatmentProtocol t6 ON  t2.PatientRegId = t6.PatientRegId WHERE t6.PackageId = 28";
+        string Query = "SELECT t1.CaseNumber, t1.ClaimNumber, t7.PatientName, t2.CardNumber, CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, t3.HospitalName, t2.AdmissionDate FROM TMS_ClaimMaster t1 LEFT JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber =t2.CaseNumber LEFT JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId LEFT JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId LEFT JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId LEFT JOIN  TMS_PatientTreatmentProtocol t6 ON  t2.PatientRegId = t6.PatientRegId LEFT JOIN TMS_PatientRegistration t7 ON t1.PatientRegId = t7.PatientRegId WHERE t1.IsUnspecifiedCase = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
         sd.Fill(dt);

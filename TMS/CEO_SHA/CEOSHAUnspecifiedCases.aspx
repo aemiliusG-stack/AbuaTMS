@@ -60,7 +60,7 @@
 
                     <div class="card mt-4">
                         <div class="card-body table-responsive">
-                            <asp:GridView ID="gvReconciliationClaim" runat="server" OnRowDataBound="gvReconciliationClaim_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
+                            <asp:GridView ID="gvUnspecifiedCases" runat="server" OnRowDataBound="gvUnspecifiedCases_RowDataBound" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                 <Columns>
                                     <asp:TemplateField HeaderText="Sl.No.">
@@ -88,7 +88,20 @@
                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
-
+                                    <asp:TemplateField HeaderText="Patient Name">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbPatientName" runat="server" Text='<%# Eval("PatientName") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
+                                    <asp:TemplateField HeaderText="Beneficiary Card Number">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lbCardNumber" runat="server" Text='<%# Eval("CardNumber") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                                    </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Case Status">
                                         <ItemTemplate>
                                             <asp:Label ID="lbCaseStatus" runat="server" Text='<%# Eval("CaseStatus") %>'></asp:Label>
@@ -112,41 +125,8 @@
                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                         <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                     </asp:TemplateField>
-
-                                    <asp:TemplateField HeaderText="Claim Initiated Amount">
-                                        <ItemTemplate>
-                                            <asp:Label ID="lbClaimInitiatedAmt" runat="server" Text='<%# Eval("ClaimInitiatedAmt") %>'></asp:Label>
-                                        </ItemTemplate>
-                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                    </asp:TemplateField>
-
-                                    <asp:TemplateField HeaderText="Claim Approved Amount">
-                                        <ItemTemplate>
-                                            <asp:Label ID="lbClaimApprovedAmt" runat="server" Text='<%# Eval("ClaimApprovedAmt") %>'></asp:Label>
-                                        </ItemTemplate>
-                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                        <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                    </asp:TemplateField>
-
-                                    <%-- <asp:TemplateField HeaderText="Erroneous Amount">
-                       <itemtemplate>
-                           <asp:Label ID="lbErroneousAmt" runat="server" Text='<%# Eval("ErroneousAmt") %>'></asp:Label>
-                       </itemtemplate>
-                       <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                       <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                   </asp:TemplateField>
-
-                   <asp:TemplateField HeaderText="Erroneous Initiated Amount">
-                       <itemtemplate>
-                           <asp:Label ID="lbErroneousInitiatedAmt" runat="server" Text='<%# Eval("ErroneousInitiatedAmt") %>'></asp:Label>
-                       </itemtemplate>
-                       <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                       <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                   </asp:TemplateField>--%>
                                 </Columns>
                             </asp:GridView>
-
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination justify-content-end">
                                     <li class="page-item disabled">

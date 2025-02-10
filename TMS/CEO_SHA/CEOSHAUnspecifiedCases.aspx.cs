@@ -30,7 +30,7 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
         else if (!IsPostBack)
         {
             getSpecialityName();
-            BindGrid_RecociliationClaimUpdation();
+            BindGrid_UnspecifiedCases();
         }
     }
     protected void getSpecialityName()
@@ -107,24 +107,24 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
         dropCategory.SelectedIndex = 0;
         dropProcedureName.SelectedIndex = 0;
     }
-    private void BindGrid_RecociliationClaimUpdation()
+    private void BindGrid_UnspecifiedCases()
     {
         dt.Clear();
-        dt = CEOSHA.GetRecociliationClaimUpdation();
+        dt = CEOSHA.GetUnspecifiedCases();
 
         if (dt != null && dt.Rows.Count > 0)
         {
-            gvReconciliationClaim.DataSource = dt;
-            gvReconciliationClaim.DataBind();
+            gvUnspecifiedCases.DataSource = dt;
+            gvUnspecifiedCases.DataBind();
         }
         else
         {
-            gvReconciliationClaim.DataSource = null;
-            gvReconciliationClaim.EmptyDataText = "No record found.";
-            gvReconciliationClaim.DataBind();
+            gvUnspecifiedCases.DataSource = null;
+            gvUnspecifiedCases.EmptyDataText = "No record found.";
+            gvUnspecifiedCases.DataBind();
         }
     }
-    protected void gvReconciliationClaim_RowDataBound(object sender, GridViewRowEventArgs e)
+    protected void gvUnspecifiedCases_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowType == DataControlRowType.DataRow)
         {

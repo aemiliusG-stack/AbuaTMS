@@ -21,7 +21,7 @@ public partial class CEO_SHA_SHA_CEO : System.Web.UI.MasterPage
         }
         else if (!IsPostBack)
         {
-            if (Session["RoleName"].ToString() == "CEO_SHA(INSURER)" || Session["RoleName"].ToString() == "CEO_SHA(TRUST)")
+            if (Session["RoleName"].ToString() == "CEO SHA")
             {
                 hdUserId.Value = Session["UserId"].ToString();
                 hdUserName.Value = Session["Username"].ToString();
