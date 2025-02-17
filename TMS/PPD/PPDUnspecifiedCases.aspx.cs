@@ -71,6 +71,7 @@ public partial class PPD_PPDUnspecifiedCases : System.Web.UI.Page
                 lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
                 gridUnspecifiedCases.DataSource = dt;
                 gridUnspecifiedCases.DataBind();
+                panelNoData.Visible = false;
             }
             else
             {
@@ -93,6 +94,21 @@ public partial class PPD_PPDUnspecifiedCases : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridUnspecifiedCases_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Label lbCaseStatus = (Label)e.Row.FindControl("lbCaseStatus");
+            Label lbClaimId = (Label)e.Row.FindControl("lbClaimId");
+            DataTable dt = ppdHelper.GetCaseStatus(lbClaimId.Text.ToString());
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                string actionTaken = dt.Rows[0]["ActionTaken"].ToString().Trim();
+                lbCaseStatus.Text = actionTaken;
+            }
         }
     }
 

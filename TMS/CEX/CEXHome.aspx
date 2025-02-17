@@ -30,61 +30,51 @@
                 </div>--%>
                 <asp:MultiView ID="MultiView1" runat="server">
                     <asp:View ID="ViewForInsurer" runat="server">
-                        <div class="ibox mt-4">
-                            <div class="ibox-title text-center">
-                                <h3 class="text-white">Pendency at Insurer</h3>
-                            </div>
-                            <div class="ibox-content table-responsive">
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr class="table-primary">
-                                            <th scope="col" style="background-color: #007e72; color: white;">Details</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Today</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td style="font-weight:bold">Claim Executive Insurer</td>
-                                            <td>
-                                                <asp:Label ID="lbTodayPendency" runat="server" Text="0"></asp:Label>
-                                            </td>
-                                            <td>
-                                                <asp:Label ID="lbOverallPendency" runat="server" Text="0"></asp:Label>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="ibox-content table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th scope="col" style="background-color: #007e72; color: white;">Pendency at Insurer</th>
+                                        <th scope="col" style="background-color: #007e72; color: white;">Today</th>
+                                        <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-weight: bold">Claim Executive Insurer</td>
+                                        <td>
+                                            <asp:Label ID="lbTodayPendency" runat="server" Text="0"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lbOverallPendency" runat="server" Text="0"></asp:Label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </asp:View>
                     <asp:View ID="ViewForTrust" runat="server">
-                        <div class="ibox mt-4">
-                            <div class="ibox-title text-center">
-                                <h3 class="text-white">Pendency at Trust</h3>
-                            </div>
-                            <div class="ibox-content table-responsive">
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr class="table-primary">
-                                            <th scope="col" style="background-color: #007e72; color: white;">Details</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Today</th>
-                                            <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td style="font-weight:bold">Claim Executive Trust</td>
-                                            <td>
-                                                <asp:Label ID="lbTrustToday" runat="server" Text="0"></asp:Label>
-                                            </td>
-                                            <td>
-                                                <asp:Label ID="lbTrustOverall" runat="server" Text="0"></asp:Label>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="ibox-content table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th scope="col" style="background-color: #007e72; color: white;">Pendency at Trust</th>
+                                        <th scope="col" style="background-color: #007e72; color: white;">Today</th>
+                                        <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-weight: bold">Claim Executive Trust</td>
+                                        <td>
+                                            <asp:Label ID="lbTrustToday" runat="server" Text="0"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:Label ID="lbTrustOverall" runat="server" Text="0"></asp:Label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </asp:View>
                 </asp:MultiView>

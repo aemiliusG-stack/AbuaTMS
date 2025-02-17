@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebGrease.Css.Ast;
 
 public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Page
 {
@@ -15,10 +16,18 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     DataTable dt = new DataTable();
     DataSet ds = new DataSet();
     CPD cpd = new CPD();
+    string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        if (Session["UserId"] == null)
         {
+            Response.Redirect("~/Unauthorize.aspx", false);
+            return;
+        }
+        else if (!IsPostBack)
+        {
+            hdUserId.Value = Session["UserId"].ToString();
+            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             LoadHospitalTypes();
             getSpecialityName();
         }

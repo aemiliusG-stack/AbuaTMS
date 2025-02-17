@@ -53,8 +53,8 @@ public class CEX
 
     public DataTable GetClaimWorkFlow(int claimId)
     {
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId";
-     
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 1";
+
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
         con.Open();
@@ -66,8 +66,23 @@ public class CEX
         }
         return dt;
     }
-    
-    public bool InsertCEXNonTechChecklist(string caseNo,string Role, string cardNumber, string userId, string claimId, string admissionId, int isNameCorrect, int isGenderCorrect, int doesPhotoMatch, string admissionDateCS, int doesAddDateMatchCS, string surgeryDateCS, int doesSurDateMatchCS, string dischargeDateCS, int doesDischargeDateMatchCS, int isPatientSignVerified, int isReportVerified, int isDateAndNameCorrect, string nonTechChecklistRemarks)
+    public DataTable GetPreauthWorkFlow(int claimId)
+    {
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 INNER JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0";
+
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@claimId", claimId);
+        con.Open();
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        return dt;
+    }
+
+    public bool InsertCEXNonTechChecklist(string caseNo, string Role, string cardNumber, string userId, string claimId, string admissionId, int isNameCorrect, int isGenderCorrect, int doesPhotoMatch, string admissionDateCS, int doesAddDateMatchCS, string surgeryDateCS, int doesSurDateMatchCS, string dischargeDateCS, int doesDischargeDateMatchCS, int isPatientSignVerified, int isReportVerified, int isDateAndNameCorrect, string nonTechChecklistRemarks)
     {
         try
         {
@@ -321,7 +336,7 @@ public class CEX
             return false;
         }
     }
-    public bool UpdateIfHybride( string claimId, string userId)
+    public bool UpdateIfHybride(string claimId, string userId)
     {
         try
         {
@@ -382,12 +397,12 @@ public class CEX
             return false;
         }
     }
-    public bool PatientActionForCEXInsurer(string userId, string claimId,string admissionId, int amount, string nonTechChecklistRemarks)
+    public bool PatientActionForCEXInsurer(string userId, string claimId, string admissionId, int amount, string nonTechChecklistRemarks)
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,46,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId, IsClaimInitiated,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
+	VALUES( @ClaimId,1,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,46,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
@@ -415,7 +430,7 @@ public class CEX
             return false;
         }
     }
-    public bool PatientActionForCEXHybrid(string userId, string claimId,string admissionId, int amount, string nonTechChecklistRemarks)
+    public bool PatientActionForCEXHybrid(string userId, string claimId, string admissionId, int amount, string nonTechChecklistRemarks)
     {
         try
         {
@@ -448,7 +463,7 @@ public class CEX
             return false;
         }
     }
-    public bool PatientActionForCEXTrust(string userId, string claimId,string admissionId, int amount, string nonTechChecklistRemarks)
+    public bool PatientActionForCEXTrust(string userId, string claimId, string admissionId, int amount, string nonTechChecklistRemarks)
     {
         try
         {
@@ -506,7 +521,7 @@ public class CEX
             return false;
         }
     }
-    public bool IfSecondaryDiagnosisPresent(string cardNo,string PatientRegId)
+    public bool IfSecondaryDiagnosisPresent(string cardNo, string PatientRegId)
     {
         try
         {
@@ -517,7 +532,7 @@ public class CEX
             cmd.Parameters.AddWithValue("@PatientRegId", PatientRegId);
 
             con.Open();
-            int existingRecords = (int)cmd.ExecuteScalar(); 
+            int existingRecords = (int)cmd.ExecuteScalar();
             con.Close();
 
             return existingRecords > 0;
@@ -570,7 +585,7 @@ public class CEX
 
     public DataTable GetTreatmentDischarge(string ClaimId)
     {
-        string Query = "SELECT T4.Title as TypeOfMedicalExpertise, T2.Name as DoctorName, T2.RegistrationNumber as DoctorRegistrationNumber, T5.Title as Qualification, T2.MobileNumber as DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase,T6.SpecialCaseValue, T1.FinalDiagnosis, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id  LEFT JOIN HEM_MasterMedicalExpertiseSubTypes T4 ON T1.DoctorTypeId = T4.Id LEFT JOIN HEM_MasterQualifications T5 ON T2.QualificationId = T5.Id LEFT JOIN TMS_SpecialCasevalue T6 ON T1.SpecialCaseValue = T6.SpecialCaseId WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
+        string Query = "SELECT T4.Title as TypeOfMedicalExpertise, T2.Name as DoctorName, T2.RegistrationNumber as DoctorRegistrationNumber, T5.Title as Qualification, T2.MobileNumber as DoctorContactNumber, T2.Name AS AnaesthetistName, T2.RegistrationNumber AS AnaesthetistRegNo, T2.MobileNumber AS AnaesthetistMobNo, T1.IncisionType, T1.OPPhotosWebexTaken, T1.VideoRecordingDone, T1.SwabCountInstrumentsCount, T1.SuturesLigatures, T1.SpecimenRequired, T1.DrainageCount, T1.BloodLoss, T1.PostOperativeInstructions, T1.PatientCondition, T1.ComplicationsIfAny, T1.TreatmentSurgeryStartDate, T1.SurgeryStartTime, T1.SurgeryEndTime, T1.TreatmentGiven, T1.OperativeFindings, T1.PostOperativePeriod, T1.PostSurgeryInvestigationGiven, T1.StatusAtDischarge, T1.Review, T1.Advice, T1.IsDischarged, T1.DischargeDate, T1.NextFollowUpDate, T1.ConsultAtBlock, T1.FloorNo, T1.RoomNo, T1.IsSpecialCase,T6.SpecialCaseValue, T1.FinalDiagnosis,T1.FinalDiagnosisDesc, T1.ProcedureConsent FROM TMS_DischargeDetail T1 LEFT JOIN HEM_HospitalManPowers T2 ON T1.AnesthetistId = T2.Id  LEFT JOIN HEM_MasterMedicalExpertiseSubTypes T4 ON T1.DoctorTypeId = T4.Id LEFT JOIN HEM_MasterQualifications T5 ON T2.QualificationId = T5.Id LEFT JOIN TMS_SpecialCasevalue T6 ON T1.SpecialCaseValue = T6.SpecialCaseId WHERE T1.ClaimId = @ClaimId AND T1.IsActive = 1 AND T1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();

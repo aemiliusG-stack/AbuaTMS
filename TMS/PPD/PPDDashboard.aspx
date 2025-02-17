@@ -42,6 +42,7 @@
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr class="table-primary text-center">
+                                        <th scope="col" style="background-color: #007e72; color: white;">Sl.No</th>
                                         <th scope="col" style="background-color: #007e72; color: white;"></th>
                                         <th scope="col" style="background-color: #007e72; color: white;">Today</th>
                                         <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
@@ -49,6 +50,7 @@
                                 </thead>
                                 <tbody class="text-center">
                                     <tr>
+                                        <td>1</td>
                                         <td>
                                             <asp:Label ID="lbUserRole" runat="server" Text="Preauth Panel Doctor"></asp:Label>
                                         </td>
@@ -64,6 +66,7 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>2</td>
                                         <td>
                                             <asp:Label ID="lbUserRoleAssigned" runat="server" Text="Preauth Panel Doctor (Assigned)"></asp:Label>
                                         </td>
@@ -79,6 +82,7 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>3</td>
                                         <td>
                                             <asp:Label ID="lbUnspecifiedCase" runat="server" Text="Unspecified Case"></asp:Label>
                                         </td>
@@ -94,6 +98,7 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>4</td>
                                         <td>
                                             <asp:Label ID="lbPreauthCount" runat="server" Text="Preauth Count"></asp:Label>
                                         </td>

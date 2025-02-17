@@ -583,14 +583,14 @@
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Role">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label10" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
+                                                                        <asp:Label ID="Label10" runat="server" Text='<%# Eval("Role") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                     <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Action">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label13" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
+                                                                        <asp:Label ID="Label13" runat="server" Text='<%# Eval("Action") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                     <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
@@ -611,7 +611,7 @@
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Claim Query/Rejection Reasons">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label16" runat="server" Text='<%# Eval("RejectName") %>'></asp:Label>
+                                                                        <asp:Label ID="Label16" runat="server" Text='<%# Eval("RejectedReason") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                     <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />
@@ -661,10 +661,10 @@
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PPD Query">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbPpdQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                <asp:Label ID="lbPpdQuery" runat="server" Text='<%# Eval("PpdQuery") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="15%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Medco Reply">
                                                             <ItemTemplate>
@@ -672,7 +672,7 @@
                                                                 <asp:TextBox ID="tbMedcoReply" TextMode="MultiLine" Visible="false" Rows="2" runat="server" placeholder="Enter reply" OnKeypress="return isAlphaNumeric(event)" CssClass="form-control" />
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="15%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Status">
                                                             <ItemTemplate>
@@ -690,7 +690,6 @@
                                                         <asp:TemplateField HeaderText="Attachment">
                                                             <ItemTemplate>
                                                                 <asp:Label ID="lbQueryId" Visible="false" runat="server" Text='<%# Eval("QueryId") %>'></asp:Label>
-                                                                <asp:Label ID="lbQueryRasiedByRole" Visible="false" runat="server" Text='<%# Eval("QueryRasiedByRole") %>'></asp:Label>
                                                                 <asp:LinkButton ID="lnkAttachment" runat="server" Enabled="false" class="btn btn-primary btn-sm rounded-pill text-white" Style="font-size: 12px;" OnClick="lnkAttachment_Click">
                                                                     Upload <i class="fa fa-upload"></i>
                                                                 </asp:LinkButton>

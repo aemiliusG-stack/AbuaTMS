@@ -93,23 +93,29 @@ public partial class CEO_SHA_CEOSHAUnspecifiedPatientDetails : System.Web.UI.Pag
                     lbHospitalType.Text = dt.Rows[0]["HospitalType"].ToString().Trim();
 
                     //MultiViewMain.ActiveViewIndex = 0;
-                    //string patientImageBase64 = Convert.ToString(dt.Rows[0]["ImageURL"].ToString());
-                    //string folderName = hdAbuaId.Value;
-                    //string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
-                    //string base64String = "";
+                    string patientImageBase64 = Convert.ToString(dt.Rows[0]["ImageURL"].ToString());
+                    string folderName = hdAbuaId.Value;
+                    string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
+                    string base64String = "";
 
-                    //base64String = CEOSHA.DisplayImage(folderName, imageFileName);
-                    //if (!string.IsNullOrEmpty(base64String))
-                    //{
-                    //    imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
-                    //}
-                    //else
-                    //{
-                    //    imgPatientPhoto.ImageUrl = "~/img/profile.jpeg";
-                    //}
+                    base64String = ceosha.DisplayImage(folderName, imageFileName);
+                    if (base64String != "")
+                    {
+                        imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
+                        //imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64String;
+                    }
+
+                    else
+                    {
+                        imgPatientPhoto.ImageUrl = "~/img/profile.jpeg";
+                        //imgPatientPhotosecond.ImageUrl = "~/img/profile.jpeg";
+                    }
+                    displayPatientAdmissionImage();
                     BindGrid_TreatmentProtocol();
                     BindAdmissionDetails();
                     BindGrid_WorkFlow();
+                    BindActionType();
+                    BindRejectReason();
                 }
             }
         }
@@ -123,6 +129,35 @@ public partial class CEO_SHA_CEOSHAUnspecifiedPatientDetails : System.Web.UI.Pag
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+    public void displayPatientAdmissionImage()
+    {
+        try
+        {
+            dt.Clear();
+            dt = ceosha.GetManditoryDocument(hdAbuaId.Value.ToString());
+            if (dt.Rows.Count > 0)
+            {
+                string DocumentId = dt.Rows[0]["DocumentId"].ToString().Trim();
+                string FolderName = dt.Rows[0]["FolderName"].ToString().Trim();
+                string UploadedFileName = dt.Rows[0]["UploadedFileName"].ToString().Trim() + ".jpeg";
+                string base64Image = ceosha.DisplayImage(FolderName, UploadedFileName);
+                if (base64Image != "")
+                {
+                    imgPatientPhotosecond.ImageUrl = "data:image/jpeg;base64," + base64Image;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
     private void BindGrid_TreatmentProtocol()
     {
         dt = ceosha.GetTreatmentProtocol(hfCaseNumber.Value);
@@ -208,4 +243,143 @@ public partial class CEO_SHA_CEOSHAUnspecifiedPatientDetails : System.Web.UI.Pag
             gvPreauthWorkFlow.DataBind();
         }
     }
+    private void BindActionType()
+    {
+        try
+        {
+            DataTable dt = ceosha.GetActionType();
+            ddlActionType.DataSource = dt;
+            ddlActionType.DataTextField = "ActionName";
+            ddlActionType.DataValueField = "ActionId";
+            ddlActionType.DataBind();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+        ddlActionType.Items.Insert(0, new ListItem("--Select--", ""));
+    }
+    protected void ddlActionType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        pUserRole.Visible = false;
+        pReason.Visible = false;
+        pRemarks.Visible = false;
+        pSubReason.Visible = false;
+        pUserRole.Visible = false;
+        pUserToAssign.Visible = false;
+        if (ddlActionType.SelectedValue == "2")
+        {
+            pRemarks.Visible = true;
+            pTriggerType.Visible = false;
+            BindRejectReason();
+        }
+        else if (ddlActionType.SelectedValue == "6")
+        {
+            pReason.Visible = true;
+            pRemarks.Visible = true;
+            BindRejectReason();
+        }
+        else if (ddlActionType.SelectedValue == "13")
+        {
+            pReason.Visible = true;
+            pSubReason.Visible = true;
+            pRemarks.Visible = true;
+            pTriggerType.Visible = false;
+            BindQueryReason();
+
+        }
+        else if (ddlActionType.SelectedValue == "15")
+        {
+            pReason.Visible = true;
+            pSubReason.Visible = true;
+            pRemarks.Visible = true;
+            pTriggerType.Visible = false;
+            BindQueryReason();
+        }
+        else
+        {
+            pReason.Visible = false;
+            pSubReason.Visible = false;
+            pRemarks.Visible = false;
+            pUserRole.Visible = false;
+            pUserToAssign.Visible = false;
+            pTriggerType.Visible = false;
+        }
+    }
+    private void BindRejectReason()
+    {
+        try
+        {
+            DataTable dt = ceosha.GetRejectReason();
+            ddlReason.DataSource = dt;
+            ddlReason.DataTextField = "RejectName";
+            ddlReason.DataValueField = "RejectId";
+            ddlReason.DataBind();
+            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+    }
+    private void BindQueryReason()
+    {
+        try
+        {
+            DataTable dt = ceosha.GetQueryReason();
+            ddlReason.DataSource = dt;
+            ddlReason.DataTextField = "ReasonName";
+            ddlReason.DataValueField = "ReasonId";
+            ddlReason.DataBind();
+            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+        }
+
+    }
+
+    protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            dt.Clear();
+
+            int ReasonId = 0;
+
+            if (int.TryParse(ddlReason.SelectedValue, out ReasonId) && ReasonId > 0)
+            {
+                dt = ceosha.GetQuerySubReason(ReasonId.ToString());
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    ddlSubReason.Items.Clear();
+                    ddlSubReason.DataValueField = "SubReasonId";
+                    ddlSubReason.DataTextField = "SubReasonName";
+                    ddlSubReason.DataSource = dt;
+                    ddlSubReason.DataBind();
+                    ddlSubReason.Items.Insert(0, new ListItem("--Select--", "0"));
+                }
+                else
+                {
+                    ddlSubReason.Items.Clear();
+                    ddlSubReason.Items.Insert(0, new ListItem("--No Sub Reason Available--", "0"));
+                }
+            }
+            else
+            {
+                ddlSubReason.Items.Clear();
+                ddlSubReason.Items.Insert(0, new ListItem("--Select Reason First--", "0"));
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error: " + ex.Message);
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    
+   
+
 }

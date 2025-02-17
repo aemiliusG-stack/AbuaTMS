@@ -199,6 +199,13 @@
                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                             </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Claim No">
+                                <ItemTemplate>
+                                     <asp:Label ID="lbClaimNumber" runat="server" Text='<%# Eval("ClaimNo") %>'></asp:Label>
+                                </ItemTemplate>
+                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
+                            </asp:TemplateField>
 
                             <asp:TemplateField HeaderText="Beneficiary CardNumber">
                                 <ItemTemplate>

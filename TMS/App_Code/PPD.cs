@@ -226,7 +226,7 @@ public class PPDHelper
         try
         {
             DataTable dt = new DataTable();
-            string Query = "SELECT t1.ActionDate, t2.RoleName AS Role, t1.Remarks, t1.ActionTaken AS Action, t1.Amount, ISNULL(t3.RejectName, 'NA') AS RejectedReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Users t2 ON t1.ActionTakenBy = t2.UserId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1";
+            string Query = "SELECT t1.ActionDate, t2.RoleName AS Role, t1.Remarks, t1.ActionTaken AS Action, t1.Amount, ISNULL(t3.RejectName, 'NA') AS RejectedReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Users t2 ON t1.ActionTakenBy = t2.UserId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0 AND t1.IsActive = 1";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
             con.Open();
@@ -334,7 +334,7 @@ public class PPDHelper
         try
         {
             DataTable dt = new DataTable();
-            string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, t1.Remarks, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 inner join TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId inner join TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
             SqlDataAdapter sd = new SqlDataAdapter(Query, con);
             sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
             con.Open();
@@ -354,8 +354,33 @@ public class PPDHelper
 
             }
         }
+    }
 
+    public DataTable GetClaimQuery(string ClaimId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 1 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
 
+            }
+        }
     }
 
     public DataTable GetSpecialityName()
@@ -784,6 +809,33 @@ public class PPDHelper
             {
                 dt = ds.Tables[0];
             }
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
+
+    public DataTable GetCaseStatus(string ClaimId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT TOP 1 ActionTaken FROM TMS_PatientActionHistory WHERE ClaimId = @ClaimId AND IsActive = 1 ORDER BY ActionId DESC";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
             return dt;
         }
         catch (Exception ex)

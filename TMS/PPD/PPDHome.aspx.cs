@@ -64,11 +64,12 @@ public partial class PPD_PPDHome : System.Web.UI.Page
         {
             dt.Clear();
             dt = ppdHelper.GetAssignedCases(hdUserId.Value, CaseNumber, CardNumber, FromDate, ToDate);
-            if (dt.Rows.Count > 0)
+            if (dt != null && dt.Rows.Count > 0)
             {
                 lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();
                 gridAssignedCases.DataSource = dt;
                 gridAssignedCases.DataBind();
+                panelNoData.Visible = false;
             }
             else
             {
@@ -94,6 +95,21 @@ public partial class PPD_PPDHome : System.Web.UI.Page
         }
     }
 
+    protected void gridAssignedCases_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Label lbCaseStatus = (Label)e.Row.FindControl("lbCaseStatus");
+            Label lbClaimId = (Label)e.Row.FindControl("lbClaimId");
+            DataTable dt = ppdHelper.GetCaseStatus(lbClaimId.Text.ToString());
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                string actionTaken = dt.Rows[0]["ActionTaken"].ToString().Trim();
+                lbCaseStatus.Text = actionTaken;
+            }
+        }
+    }
+
     protected void gridAssignedCases_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         gridAssignedCases.PageIndex = e.NewPageIndex;
@@ -106,19 +122,16 @@ public partial class PPD_PPDHome : System.Web.UI.Page
         GridViewRow row = (GridViewRow)btn.NamingContainer;
         Label lbAdmissionId = (Label)row.FindControl("lbAdmissionId");
         Label lbClaimId = (Label)row.FindControl("lbClaimId");
+        Label lbClaimMode = (Label)row.FindControl("lbClaimMode");
         Label lbPackageId = (Label)row.FindControl("lbPackageId");
         LinkButton lnkCaseNo = (LinkButton)row.FindControl("lnkCaseNo");
-        string CaseNumber = lnkCaseNo.Text.ToString();
-        string AdmissionId = lbAdmissionId.Text.ToString();
-        string PackageId = lbPackageId.Text.ToString();
-        if (!PackageId.Equals("28"))
+        if (!lbPackageId.Text.ToString().Equals("28"))
         {
-            Response.Redirect("PPDPatientDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
+            Response.Redirect("PPDPatientDetails.aspx?CaseNumber=" + lnkCaseNo.Text.ToString() + "&AdmissionId=" + lbAdmissionId.Text.ToString() + "&ClaimId=" + lbClaimId.Text.ToString(), false);
         }
         else
         {
-            Response.Redirect("PPDUnspecifiedCaseDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
+            Response.Redirect("PPDUnspecifiedCaseDetails.aspx?CaseNumber=" + lnkCaseNo.Text.ToString() + "&AdmissionId=" + lbAdmissionId.Text.ToString() + "&ClaimId=" + lbClaimId.Text.ToString(), false);
         }
     }
-
 }

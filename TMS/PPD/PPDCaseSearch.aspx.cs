@@ -55,8 +55,16 @@ public partial class PPD_PPDCaseSearch : System.Web.UI.Page
     {
         if (e.Row.RowType == DataControlRowType.DataRow)
         {
+            Label lbCaseStatus = (Label)e.Row.FindControl("lbCaseStatus");
+            Label lbClaimId = (Label)e.Row.FindControl("lbClaimId");
             Label lbDischargeDate = (Label)e.Row.FindControl("lbDischargeDate");
             string DischargeDate = lbDischargeDate.Text.ToString();
+            DataTable dt = ppdHelper.GetCaseStatus(lbClaimId.Text.ToString());
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                string actionTaken = dt.Rows[0]["ActionTaken"].ToString().Trim();
+                lbCaseStatus.Text = actionTaken;
+            }
             if (DischargeDate.IsEmpty())
             {
                 lbDischargeDate.Text = "Under Treatement";

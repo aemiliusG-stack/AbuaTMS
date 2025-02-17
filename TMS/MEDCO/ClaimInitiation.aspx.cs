@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
+using System.Data;
 using System.Web.UI.WebControls;
 using System.Web.UI;
-using System.Web;
 using CareerPath.DAL;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
-
-public partial class MEDCO_PatientDischarge : System.Web.UI.Page
+using System.Web;
+public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private string strMessage;
@@ -39,7 +38,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 {
                     hdUserId.Value = Session["UserId"].ToString();
                     hdHospitalId.Value = Session["HospitalId"].ToString();
-                    GetPatientForDischarge();
+                    GetPatientForClaimInitiation();
                     MultiView1.SetActiveView(viewPatientList);
                 }
                 else
@@ -59,12 +58,12 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    protected void GetPatientForDischarge()
+    protected void GetPatientForClaimInitiation()
     {
         gridPatientForDischarge.DataSource = "";
         gridPatientForDischarge.DataBind();
         dt.Clear();
-        dt = preAuth.GetPatientForDischarge(Convert.ToInt32(hdHospitalId.Value));
+        dt = preAuth.GetPatientForClaimInitiation(Convert.ToInt32(hdHospitalId.Value));
         if (dt.Rows.Count > 0)
         {
             hdAdmissionDate.Value = dt.Rows[0]["AdmissionDate"].ToString();
@@ -451,7 +450,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                     {
                         if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
                         {
-                            GetPatientForDischarge();
+                            GetPatientForClaimInitiation();
                             MultiView1.SetActiveView(viewPatientList);
                             ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement Raised Successfully!');", true);
                         }
@@ -516,7 +515,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             {
                 if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
                 {
-                    GetPatientForDischarge();
+                    GetPatientForClaimInitiation();
                     MultiView1.SetActiveView(viewPatientList);
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Successful! Please modify package through Initiate Pre-Auth');", true);
                 }
@@ -545,7 +544,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     {
         dt.Clear();
         string claimId = claimIds.ToString();
-        dt = ppdHelper.GetWorkFlow(hdClaimId.Value);
+        dt = preAuth.GetClaimWorkFlow(Convert.ToInt32(hdClaimId.Value));
         if (dt != null && dt.Rows.Count > 0)
         {
             gridWorkFlow.DataSource = dt;
@@ -920,7 +919,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             else
                 dischargeType = false;
 
-            SqlParameter[] p = new SqlParameter[42];
+            SqlParameter[] p = new SqlParameter[41];
             p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
             p[0].DbType = DbType.String;
             p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
@@ -1003,8 +1002,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             p[39].DbType = DbType.String;
             p[40] = new SqlParameter("@IsClaimInitiated", isClaimInitiated.ToString());
             p[40].DbType = DbType.String;
-            p[41] = new SqlParameter("@UserId", hdUserId.Value);
-            p[41].DbType = DbType.String;
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientDischargeDetails", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
@@ -1018,7 +1015,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                 else
                 {
                     MultiView1.SetActiveView(viewPatientList);
-                    GetPatientForDischarge();
+                    GetPatientForClaimInitiation();
                     if (isClaimInitiated.ToString() == "1")
                     {
                         ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Claim Initiated! " + ds.Tables[0].Rows[0]["ClaimNumber"].ToString() + "');", true);

@@ -144,10 +144,13 @@
                     <footer>
                         <div class="footer">
                             <div class="d-flex flex-md-row flex-sm-column justify-content-md-between">
-                                <span><strong>Copyright</strong> ©
+                                <span style="font-size: 12px;">
+                                    <strong>Copyright
+                                    </strong>©
                                     <script>document.write(new Date().getFullYear())</script>
+                                    - All Rights Reserved, Department of Health, Medical Education & Family Welfare, Government of Jharkhand | Powered by JAPIT
                                 </span>
-                                <span>Version <strong>1.0</strong></span>
+                                <span style="font-size: 12px;">Version <strong>1.0</strong></span>
                             </div>
                         </div>
                     </footer>

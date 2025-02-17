@@ -271,27 +271,77 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();
         }
-        dt = ds.Tables[0];
         return dt;
     }
+    public DataTable GetPreauthWorkFlow(string ClaimId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId AND t1.IsClaimInitiated = 0";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
 
+            }
+        }
+    }
+    public DataTable GetPreauthQuery(string ClaimId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+            return dt;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+
+            }
+        }
+    }
     public DataTable GetTreatmentProtocol(string CaseNo)
     {
+        dt.Clear();
         string Query = "SELECT t2.SpecialityName, t3.ProcedureName, t1.ProcedureAmountFinal, COUNT(t3.ProcedureName) AS Quantity, CASE WHEN t1.ImplantId IS NULL OR t1.ImplantId = 0 THEN 'NA' ELSE t4.ImplantName END AS ImplantName,CASE WHEN t1.StratificationId IS NULL OR t1.StratificationId = 0 THEN 'NA' ELSE t5.StratificationName END AS StratificationName FROM TMS_PatientTreatmentProtocol t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId LEFT JOIN TMS_MasterImplantMaster t4 on t1.ImplantId= t4.ImplantId LEFT JOIN TMS_MasterStratificationMaster t5 on t5.StratificationId=t1.StratificationId INNER JOIN TMS_PatientAdmissionDetail t6 on t6.PatientRegId = t1.PatientRegId WHERE t6.CaseNumber = @CaseNo GROUP BY t2.SpecialityName, t3.ProcedureName, t1.ProcedureAmountFinal, t1.ImplantId, t4.ImplantName, t1.StratificationId, t5.StratificationName";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();
         }
-        dt = ds.Tables[0];
         return dt;
     }
 
@@ -302,12 +352,11 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();
         }
-        dt = ds.Tables[0];
         return dt;
     }
 
@@ -337,12 +386,11 @@ public class CPD
         string Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE CPD = 1 AND IsActive = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();
         }
-        dt = ds.Tables[0];
         return dt;
     }
 
@@ -438,12 +486,11 @@ public class CPD
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();
         }
-        dt = ds.Tables[0];
         return dt;
     }
     public DataTable GetTechnicalChecklist_CaseSearch(string ClaimId)
@@ -626,9 +673,9 @@ public class CPD
             return "Error executing TDS calculation: " + ex.Message;
         }
     }
-    public DataTable GetClaimWorkFlow(int claimId)
+    public DataTable GetClaimWorkFlow(string claimId)
     {
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId";
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, t3.RejectName AS RejectionReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId AND t1.IsClaimInitiated = 1";
         //DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand(Query, con);
         cmd.Parameters.AddWithValue("@claimId", claimId);
@@ -644,7 +691,26 @@ public class CPD
     public bool IsClaimQueryExists(string Claimid)
     {
         bool exists = false;
-        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_ClaimQuery WHERE  ClaimId= @Claimid AND IsActive = 1", con);
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_ClaimQuery WHERE  ClaimId= @Claimid AND IsActive = 1 AND CpdQuery is not null OR AcoQuery is not null OR ShaQuery is not null", con);
+        cmd.Parameters.AddWithValue("@Claimid", Claimid);
+
+        con.Open();
+        int count = Convert.ToInt32(cmd.ExecuteScalar());
+        if (count > 0)
+        {
+            exists = true;
+        }
+        if (con.State == System.Data.ConnectionState.Open)
+        {
+            con.Close();
+        }
+
+        return exists;
+    }
+    public bool IsPreauthQueryExists(string Claimid)
+    {
+        bool exists = false;
+        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM TMS_ClaimQuery WHERE  ClaimId= @Claimid AND IsActive = 1 AND PpdQuery is not null", con);
         cmd.Parameters.AddWithValue("@Claimid", Claimid);
 
         con.Open();
@@ -662,19 +728,31 @@ public class CPD
     }
     public DataTable GetClaimQuery(string ClaimId)
     {
-        dt.Clear();
-        string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, t1.Remarks, t1.IsQueryReplied, t1.QueryReply, t1.QueryReplyDate FROM TMS_ClaimQuery t1 inner join TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId inner join TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
-        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
-        con.Open();
-        sd.Fill(dt);
-        if (con.State == ConnectionState.Open)
+        try
         {
+            DataTable dt = new DataTable();
+            string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 1 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+            con.Open();
+            sd.Fill(dt);
             con.Close();
+            return dt;
         }
-        return dt;
-    }
+        catch (Exception ex)
+        {
+            throw new Exception("An error occurred while fetching assigned cases", ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
 
+            }
+        }
+    }
+    
     public void UpdateWorkflowStatus(string CaseNo)
     {
         try

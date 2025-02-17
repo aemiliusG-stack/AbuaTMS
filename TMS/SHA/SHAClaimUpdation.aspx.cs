@@ -182,6 +182,13 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
 
     protected void lnkCaseNo_Click(object sender, EventArgs e)
     {
-
+        LinkButton btn = (LinkButton)sender;
+        GridViewRow row = (GridViewRow)btn.NamingContainer;
+        Label lbAdmissionId = (Label)row.FindControl("lbAdmissionId");
+        Label lbClaimId = (Label)row.FindControl("lbClaimId");
+        LinkButton lnkCaseNo = (LinkButton)row.FindControl("lnkCaseNo");
+        string CaseNumber = lnkCaseNo.Text.ToString();
+        string AdmissionId = lbAdmissionId.Text.ToString();
+        Response.Redirect("SHAClaimUpdationDetails.aspx?CaseNumber=" + CaseNumber + "&AdmissionId=" + AdmissionId + "&ClaimId=" + lbClaimId.Text.ToString(), false);
     }
 }

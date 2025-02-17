@@ -1,7 +1,7 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/CPD/CPD.master" AutoEventWireup="true" CodeFile="CPDcaseSearchPatientDetail.aspx.cs" Inherits="CPD_CPDcaseSearchPatientDetail" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ACOCaseSearchPatientDetail.aspx.cs" Inherits="ACO_ACOCaseSearchPatientDetail" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
-    <script type="text/javascript">
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+ <script type="text/javascript">
         function setView(viewIndex) {
             __doPostBack('<%= mvCPDTabs.UniqueID %>', viewIndex.toString());
         }
@@ -765,14 +765,14 @@
                                                                 </asp:GridView>
                                                             </div>
                                                         </div>
-                                                        <%--  <div style="margin-top: 20px;">
+                                                        <div style="margin-top: 20px;">
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                                                                 <label class="form-check-label" for="flexCheckDefault">
                                                                     I have reviewed the cases with the best of my knowledge and have validated all documents before making any decision
                                                                 </label>
                                                             </div>
-                                                        </div>--%>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1278,32 +1278,32 @@
                                                                     <asp:GridView ID="gvSICDDetails_Claim" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%">
                                                                         <AlternatingRowStyle BackColor="Gainsboro" />
                                                                         <Columns>
-                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>Sl.No.</div>">
+                                                                            <asp:TemplateField HeaderText="Sl.No." ControlStyle-Font-Size="Small">
                                                                                 <ItemTemplate>
-                                                                                    <asp:Label ID="ClaimSICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                                    <asp:Label ID="ClaimPICDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                                                 </ItemTemplate>
                                                                                 <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Code</div>">
+                                                                            <asp:TemplateField HeaderText="ICD Value">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="ClaimSICDCode" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
                                                                                 </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>ICD Description</div>">
+                                                                            <asp:TemplateField HeaderText="Diagnosis Name">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="ClaimSICDDescription" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                                 </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
-                                                                            <asp:TemplateField HeaderText="<div style='text-align:center;'>Acted By Role</div>">
+                                                                            <asp:TemplateField HeaderText="Acted By Role">
                                                                                 <ItemTemplate>
                                                                                     <asp:Label ID="ClaimSActRole" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                                 </ItemTemplate>
-                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" Font-Size="14px" />
+                                                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" VerticalAlign="Middle" ForeColor="White" Font-Size="14px" />
                                                                                 <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" Font-Size="12px" />
                                                                             </asp:TemplateField>
                                                                         </Columns>
@@ -1997,60 +1997,51 @@
                                                             <h3 class="text-white">Claim Query/ Rejection Reason</h3>
                                                         </div>
                                                         <div class="ibox-content table-responsive">
-                                                            <asp:GridView ID="gvClaimQuery" OnRowDataBound="gvClaimQuery_RowDataBound" runat="server" AutoGenerateColumns="false" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
-                                                                <AlternatingRowStyle BackColor="gainsboro" />
+                                                            <asp:GridView ID="gridClaimQueryRejectionReason" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
+                                                                <AlternatingRowStyle BackColor="Gainsboro" />
                                                                 <Columns>
                                                                     <asp:TemplateField HeaderText="Sl. No.">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="label1" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                            <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                                         </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                                        <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="5%" />
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="5%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Query Date">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="lbQueryDate" runat="server" Text='<%# Eval("QueryRaisedDate") %>'></asp:Label>
                                                                         </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                                        <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="10%" />
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Main Reason">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbClaimMainReason" runat="server" Text='<%# Eval("ReasonName") %>'></asp:Label>
+                                                                            <asp:Label ID="lbMainReason" runat="server" Text='<%# Eval("ReasonName") %>'></asp:Label>
                                                                         </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                                        <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="10%" />
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Sub Reason">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbClaimSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
+                                                                            <asp:Label ID="lbSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
                                                                         </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                                        <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="30%" />
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="30%" />
                                                                     </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="CPD Query">
+                                                                    <asp:TemplateField HeaderText="PPD Query">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbCpdQuery" runat="server" Text='<%# Eval("CpdQuery") %>'></asp:Label>
+                                                                            <asp:Label ID="lbPPDQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
                                                                         </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                                        <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="20%" />
-                                                                    </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="Medco Reply">
-                                                                        <ItemTemplate>
-                                                                            <asp:Label ID="lbMedcoReplyClaim" runat="server" Text='<%# Eval("QueryReply") %>'></asp:Label>
-                                                                        </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                                        <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="25%" />
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Audit">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbClaimIsQueryReplied" Visible="false" runat="server" Text='<%# Eval("IsQueryReplied") %>'></asp:Label>
-                                                                            <asp:Label ID="lbClaimQueryFolderName" Visible="false" runat="server" Text='<%# Eval("QueryFolderName") %>'></asp:Label>
-                                                                            <asp:Label ID="lbClaimQueryUploadedFileName" Visible="false" runat="server" Text='<%# Eval("QueryUploadedFileName") %>'></asp:Label>
-                                                                            <asp:Button ID="btnClaimViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" OnClick="btnClaimViewAudit_Click" />
+                                                                            <asp:Button ID="btnViewAudit" runat="server" Text="Pending" class="btn btn-warning btn-sm rounded-pill" Style="font-size: 12px;" />
+                                                                            <%--OnClick="btnViewAudit_Click"--%>
                                                                         </ItemTemplate>
-                                                                        <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                                        <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="10%" />
+                                                                        <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
+                                                                        <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                                     </asp:TemplateField>
                                                                 </Columns>
                                                             </asp:GridView>
@@ -2884,4 +2875,5 @@
         </Triggers>
     </asp:UpdatePanel>
 </asp:Content>
+
 

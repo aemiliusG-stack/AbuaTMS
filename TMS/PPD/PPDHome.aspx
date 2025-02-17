@@ -171,7 +171,7 @@
                         <div class="card-body">
                             <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
                             <div class="table-responsive mt-2">
-                                <asp:GridView ID="gridAssignedCases" runat="server" AllowPaging="True" OnPageIndexChanging="gridAssignedCases_PageIndexChanging" PageSize="10" AutoGenerateColumns="False" Width="100%" CssClass="table table-bordered table-striped">
+                                <asp:GridView ID="gridAssignedCases" runat="server" AllowPaging="True" OnRowDataBound="gridAssignedCases_RowDataBound" OnPageIndexChanging="gridAssignedCases_PageIndexChanging" PageSize="10" AutoGenerateColumns="False" Width="100%" CssClass="table table-bordered table-striped">
                                     <AlternatingRowStyle BackColor="Gainsboro" />
                                     <Columns>
                                         <asp:TemplateField HeaderText="Sl. No.">
@@ -185,6 +185,7 @@
                                             <ItemTemplate>
                                                 <asp:Label Visible="false" ID="lbAdmissionId" runat="server" Text='<%# Eval("AdmissionId") %>'></asp:Label>
                                                 <asp:Label Visible="false" ID="lbClaimId" runat="server" Text='<%# Eval("ClaimId") %>'></asp:Label>
+                                                <asp:Label Visible="false" ID="lbClaimMode" runat="server" Text='<%# Eval("ClaimMode") %>'></asp:Label>
                                                 <asp:Label Visible="false" ID="lbPackageId" runat="server" Text='<%# Eval("PackageId") %>'></asp:Label>
                                                 <asp:LinkButton ID="lnkCaseNo" runat="server" OnClick="lnkCaseNo_Click" Text='<%# Eval("CaseNumber") %>'></asp:LinkButton>
                                             </ItemTemplate>
@@ -214,7 +215,7 @@
                                         </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Case Status">
                                             <ItemTemplate>
-                                                <asp:Label ID="lbCaseStatus" runat="server" Text="Procedure auto approved insurance (Insurance)"></asp:Label>
+                                                <asp:Label ID="lbCaseStatus" runat="server" Text="NA"></asp:Label>
                                             </ItemTemplate>
                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="25%" />
@@ -238,7 +239,7 @@
                                 <asp:Panel ID="panelNoData" runat="server" Visible="false">
                                     <div class="row ibox-content" style="background-color: #f0f0f0;">
                                         <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
-                                            <img src="../images/search.svg" />
+                                            <i class="fa fa-search" style="font-size: 20px;"></i>
                                             <span class="mt-2">No Record Found</span>
                                             <span class="text-body-tertiary">Currently, no cases assigned to you at this moment.</span>
                                         </div>

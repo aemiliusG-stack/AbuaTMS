@@ -129,7 +129,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             {
                 gridTransactionDataReferences.DataSource = null;
                 gridTransactionDataReferences.DataBind();
-                strMessage = "window.alert('There is no enhancement available at the moment.');";
+                strMessage = "window.alert('There is no enhancement available at this moment.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
             }
         }
@@ -549,6 +549,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
                 gridPrimaryDiagnosis.DataBind();
                 gridPrimaryDiagnosisValues.DataSource = dt;
                 gridPrimaryDiagnosisValues.DataBind();
+                panelNoPrimaryDiagnosis.Visible = false;
             }
             else
             {
@@ -556,6 +557,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
                 gridPrimaryDiagnosis.DataBind();
                 gridPrimaryDiagnosisValues.DataSource = null;
                 gridPrimaryDiagnosisValues.DataBind();
+                panelNoPrimaryDiagnosis.Visible = true;
             }
         }
         catch (Exception ex)
@@ -581,6 +583,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
                 gridSecondaryDiagnosis.DataBind();
                 gridSecondaryDiagnosisValues.DataSource = dt;
                 gridSecondaryDiagnosisValues.DataBind();
+                panelNoSecondaryDiagnosis.Visible = false;
             }
             else
             {
@@ -588,6 +591,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
                 gridSecondaryDiagnosis.DataBind();
                 gridSecondaryDiagnosisValues.DataSource = null;
                 gridSecondaryDiagnosisValues.DataBind();
+                panelNoSecondaryDiagnosis.Visible = true;
             }
         }
         catch (Exception ex)
@@ -608,7 +612,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             int i;
             GridViewRow row = (GridViewRow)((Control)sender).Parent.Parent;
             i = row.RowIndex;
-            Label lbPPDId = (Label)gridPrimaryDiagnosis.Rows[i].FindControl("lbPPDId");
+            Label lbPPDId = (Label)gridPrimaryDiagnosis.Rows[i].FindControl("lbPDId");
             int rowsAffected = 0;
             rowsAffected = preAuth.DeletePrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbPPDId.Text));
             getPatientPrimaryDiagnosis();
@@ -630,7 +634,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             int i;
             GridViewRow row = (GridViewRow)((Control)sender).Parent.Parent;
             i = row.RowIndex;
-            Label lbSPDId = (Label)gridSecondaryDiagnosis.Rows[i].FindControl("lbSPDId");
+            Label lbSPDId = (Label)gridSecondaryDiagnosis.Rows[i].FindControl("lbSDId");
             int rowsAffected = 0;
             rowsAffected = preAuth.DeleteSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbSPDId.Text));
             getPatientSecondaryDiagnosis();
@@ -965,11 +969,13 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             {
                 gridPreauthQueryRejectionReason.DataSource = dt;
                 gridPreauthQueryRejectionReason.DataBind();
+                panelNoPreauthQuery.Visible = false;
             }
             else
             {
                 gridPreauthQueryRejectionReason.DataSource = null;
                 gridPreauthQueryRejectionReason.DataBind();
+                panelNoPreauthQuery.Visible = true;
             }
         }
         catch (Exception ex)
@@ -986,7 +992,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             Button btnViewaudit = (Button)e.Row.FindControl("btnViewaudit");
             Label lbIsQueryReplied = (Label)e.Row.FindControl("lbIsQueryReplied");
             string IsQueryReplied = lbIsQueryReplied.Text.ToString();
-            if (IsQueryReplied != null && !IsQueryReplied.Equals(""))
+            if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
             {
                 btnViewaudit.Text = "View Audit";
                 btnViewaudit.Enabled = true;
@@ -1116,29 +1122,36 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
         string selectedValue = dlAction.SelectedItem.Value;
         string selectedReason = dlReason.SelectedItem.Value;
         string selectedSubReason = dlSubReason.SelectedItem.Value;
-
-        if (tbRemark.Text.ToString().IsEmpty())
+        if (!cbTerms.Checked)
         {
-            strMessage = "window.alert('Remarks is required.');";
+            strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
             ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
         }
         else
         {
-            if (selectedReason.Equals("0"))
+            if (tbRemark.Text.ToString().IsEmpty())
             {
-                strMessage = "window.alert('Please select query reason.');";
+                strMessage = "window.alert('Remarks is required.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
             }
             else
             {
-                if (selectedSubReason.Equals("0"))
+                if (selectedReason.Equals("0"))
                 {
-                    strMessage = "window.alert('Please select query sub reason.');";
+                    strMessage = "window.alert('Please select query reason.');";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
                 else
                 {
-                    doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
+                    if (selectedSubReason.Equals("0"))
+                    {
+                        strMessage = "window.alert('Please select query sub reason.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
+                    }
                 }
             }
         }
@@ -1178,7 +1191,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             }
             else if (ActionId.Equals("4"))
             {
-                strMessage = "window.alert('Case " + hdCaseId.Value + " sent to Medical Committee SHA');";
+                strMessage = "window.alert('Case No:" + hdCaseId.Value + " Successfully Forwarded To Medical Committee SHA.');";
                 strMessage += "window.location='PPDUnspecifiedCases.aspx';";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
             }
@@ -1455,10 +1468,12 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             }
             if (images.Count > 0)
             {
+                string todayDate = DateTime.Now.ToString("ddMMyyyy");
+                string documentName = hdAbuaId.Value + "_" + todayDate + ".pdf";
                 byte[] pdfBytes = ppdHelper.CreatePdfWithImagesInMemory(images);
                 Response.Clear();
                 Response.ContentType = "application/pdf";
-                Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
+                Response.AppendHeader("Content-Disposition", "attachment; filename=" + documentName);
                 Response.BinaryWrite(pdfBytes);
                 Response.Flush();
                 HttpContext.Current.ApplicationInstance.CompleteRequest();

@@ -1,14 +1,17 @@
-﻿using System;
+﻿using CareerPath.DAL;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using CareerPath.DAL;
+using Org.BouncyCastle.Asn1.X509;
+using System.Web.WebPages;
 
-public partial class PPD_PPDCaseDetails : System.Web.UI.Page
+public partial class SHA_SHAClaimUpdationDetails : System.Web.UI.Page
 {
     private string pageName, childImageUrl, caseNumber, admissionId, claimId, strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
@@ -16,6 +19,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
     private DataSet ds = new DataSet();
     private MasterData md = new MasterData();
     private PreAuth preAuth = new PreAuth();
+    private SHAHelper shaHelper = new SHAHelper();
     public static PPDHelper ppdHelper = new PPDHelper();
 
     protected void Page_Load(object sender, EventArgs e)
@@ -35,6 +39,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                 admissionId = Request.QueryString["AdmissionId"];
                 claimId = Request.QueryString["ClaimId"];
                 hdUserId.Value = Session["UserId"].ToString();
+                hdRoleId.Value = Session["RoleId"].ToString();
                 if (!IsPostBack)
                 {
                     MultiView1.SetActiveView(viewPreauth);
@@ -62,6 +67,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         btnPreauth.CssClass = "btn btn-primary p-3";
         btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
         btnAttachmanet.CssClass = "btn btn-primary p-3";
+        btnClaim.CssClass = "btn btn-primary p-3";
     }
 
     protected void btnPreauth_Click(object sender, EventArgs e)
@@ -71,6 +77,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         btnPastHistory.CssClass = "btn btn-primary p-3";
         btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
         btnAttachmanet.CssClass = "btn btn-primary p-3";
+        btnClaim.CssClass = "btn btn-primary p-3";
     }
 
     protected void btnTreatmentDischarge_Click(object sender, EventArgs e)
@@ -80,10 +87,28 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         btnPastHistory.CssClass = "btn btn-primary p-3";
         btnTreatmentDischarge.CssClass = "btn btn-warning p-3";
         btnAttachmanet.CssClass = "btn btn-primary p-3";
+        btnClaim.CssClass = "btn btn-primary p-3";
         if (!hdDischargeId.Value.ToString().Equals(""))
         {
             getSurgeonDetails(hdDischargeId.Value.ToString());
         }
+    }
+
+    protected void btnClaim_Click(object sender, EventArgs e)
+    {
+        MultiView1.SetActiveView(viewClaim);
+        btnPreauth.CssClass = "btn btn-primary p-3";
+        btnPastHistory.CssClass = "btn btn-primary p-3";
+        btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
+        btnAttachmanet.CssClass = "btn btn-primary p-3";
+        btnClaim.CssClass = "btn btn-warning p-3";
+        getClaimDetails();
+        getNonTechnicalCheckList();
+        getTechnicalCheckList();
+        getDeductionTable();
+        getClaimWorkFlow(claimId);
+        getClaimQuery(claimId);
+        getActions();
     }
 
     protected void btnAttachmanet_Click(object sender, EventArgs e)
@@ -94,6 +119,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         btnPreauth.CssClass = "btn btn-primary p-3";
         btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
         btnPastHistory.CssClass = "btn btn-primary p-3";
+        btnClaim.CssClass = "btn btn-primary p-3";
         lnkPreauthorization.CssClass = "nav-link active nav-attach";
         lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
         lnkDischarge.CssClass = "nav-link nav-attach";
@@ -377,7 +403,6 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
                     DateTime admissionDate = Convert.ToDateTime(dt.Rows[0]["AdmissionDate"].ToString().Trim());
                     string IsDischarged = dt.Rows[0]["IsDischarged"].ToString().Trim();
                     hdAdmissionId.Value = dt.Rows[0]["AdmissionId"].ToString().Trim();
-                    hdEnhancementId.Value = dt.Rows[0]["EnhancementId"].ToString().Trim();
                     hdCaseId.Value = dt.Rows[0]["CaseNumber"].ToString().Trim();
                     hdAbuaId.Value = dt.Rows[0]["CardNumber"].ToString().Trim();
                     hdPatientRegId.Value = dt.Rows[0]["PatientRegId"].ToString().Trim();
@@ -1283,6 +1308,669 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         {
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void getClaimDetails()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = shaHelper.GetClaimsDetails(claimId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                lbPreauthApprovedAmount.Text = Convert.ToDecimal(dt.Rows[0]["PreAuthApprovedAmt"]).ToString("C");
+                lbPreauthDate.Text = Convert.ToDateTime(dt.Rows[0]["PreAuthApprovedDate"]).ToString("dd/MM/yyyy hh:mm tt");
+                lbClaimSubmittedDate.Text = Convert.ToDateTime(dt.Rows[0]["ClaimSubmittedDate"]).ToString("dd/MM/yyyy hh:mm tt");
+                lbClaimUpdatedDate.Text = Convert.ToDateTime(dt.Rows[0]["ClaimUpdatedDate"]).ToString("dd/MM/yyyy hh:mm tt");
+                lbPenaltyAmount.Text = "NA";
+                lbClaimAmount.Text = Convert.ToDecimal(dt.Rows[0]["ClaimAmount"]).ToString("C");
+                lbInsuranceLiableAmount.Text = Convert.ToDecimal(dt.Rows[0]["InsuranceLiableAmt"]).ToString("C");
+                lbTrustLiableAmount.Text = Convert.ToDecimal(dt.Rows[0]["TrustLiableAmt"]).ToString("C");
+                lbBillAmount.Text = Convert.ToDecimal(dt.Rows[0]["BillAmt"]).ToString("C");
+                lbFinalVoucherAmount.Text = "NA";
+                tbClaimRemarks.Text = dt.Rows[0]["ClaimRemarks"].ToString();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void getNonTechnicalCheckList()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = shaHelper.GetNonTechnicalChecklist(claimId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow row = dt.Rows[0];
+                rbIsNameCorrectYes.Checked = row["IsNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsNameCorrect"]);
+                rbIsNameCorrectNo.Checked = row["IsNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsNameCorrect"]);
+                rbIsGenderCorrectYes.Checked = row["IsGenderCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsGenderCorrect"]);
+                rbIsGenderCorrectNo.Checked = row["IsGenderCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsGenderCorrect"]);
+                rbIsPhotoVerifiedYes.Checked = row["DoesPhotoMatch"] != DBNull.Value && Convert.ToBoolean(row["DoesPhotoMatch"]);
+                rbIsPhotoVerifiedNo.Checked = row["DoesPhotoMatch"] != DBNull.Value && !Convert.ToBoolean(row["DoesPhotoMatch"]);
+                rbIsAdmissionDateVerifiedYes.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesAddDateMatchCS"]);
+                rbIsAdmissionDateVerifiedNo.Checked = row["DoesAddDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesAddDateMatchCS"]);
+                rbIsSurgeryDateVerifiedYes.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesSurDateMatchCS"]);
+                rbIsSurgeryDateVerifiedNo.Checked = row["DoesSurDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesSurDateMatchCS"]);
+                rbIsDischargeDateCSVerifiedYes.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && Convert.ToBoolean(row["DoesDischDateMatchCS"]);
+                rbIsDischargeDateCSVerifiedNo.Checked = row["DoesDischDateMatchCS"] != DBNull.Value && !Convert.ToBoolean(row["DoesDischDateMatchCS"]);
+                rbIsSignVerifiedYes.Checked = row["IsPatientSignVerified"] != DBNull.Value && Convert.ToBoolean(row["IsPatientSignVerified"]);
+                rbIsSignVerifiedNo.Checked = row["IsPatientSignVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsPatientSignVerified"]);
+                rbIsReportCorrectYes.Checked = row["IsReportVerified"] != DBNull.Value && Convert.ToBoolean(row["IsReportVerified"]);
+                rbIsReportCorrectNo.Checked = row["IsReportVerified"] != DBNull.Value && !Convert.ToBoolean(row["IsReportVerified"]);
+                rbIsReportVerifiedYes.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && Convert.ToBoolean(row["IsDateAndNameCorrect"]);
+                rbIsReportVerifiedNo.Checked = row["IsDateAndNameCorrect"] != DBNull.Value && !Convert.ToBoolean(row["IsDateAndNameCorrect"]);
+                lbNonTechAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSAdmissionDate.Text = row["AdmissionDateCS"] != DBNull.Value ? Convert.ToDateTime(row["AdmissionDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbNonTechSurgeryDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSTherepyDate.Text = row["SurgeryDateCS"] != DBNull.Value ? Convert.ToDateTime(row["SurgeryDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbNonTechDeathDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
+                lbCSDischargeDate.Text = row["DischargeDateCS"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDateCS"]).ToString("yyyy-MM-dd") : "";
+                tbNonTechnicalRemark.Text = row["NonTechChecklistRemarks"] != DBNull.Value ? row["NonTechChecklistRemarks"].ToString() : "";
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void getTechnicalCheckList()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = shaHelper.GetTechnicalChecklist(claimId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow row = dt.Rows[0];
+                lbTotalClaimAmount.Text = Convert.ToDecimal(row["TotalPackageCost"]).ToString("C");
+                lbAcoTotalClaimAmount.Text = Convert.ToDecimal(row["TotalPackageCost"]).ToString("C");
+                lbShaTotalClaimAmount.Text = Convert.ToDecimal(row["TotalPackageCost"]).ToString("C");
+                lbSpecialCase.Text = (row["TotalPackageCost"].ToString().Equals("True") ? "Yes" : "No");
+                rbDiagnosisYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                rbDiagnosisNo.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && Convert.ToBoolean(row["CaseManagementSTP"]);
+                rbCaseManagementNo.Checked = row["CaseManagementSTP"] != DBNull.Value && !Convert.ToBoolean(row["CaseManagementSTP"]);
+                rbEvidenceYes.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                rbEvidenceNo.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                rbMandatoryReportYes.Checked = row["MandatoryReports"] != DBNull.Value && Convert.ToBoolean(row["MandatoryReports"]);
+                rbMandatoryReportNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
+                tbTechnicalRemarks.Text = row["Remarks"].ToString();
+
+                if (Session["RoleId"].ToString().Equals("11"))
+                {
+                    lbCpdRole.Text = "Insurance Liable Amount (Rs.)";
+                    lbAcoRole.Text = "Insurance Liable Amount (Rs.)";
+                    lbShaRole.Text = "Insurance Liable Amount (Rs.)";
+                    lbCpdLiableAmount.Text = Convert.ToDecimal(row["InsurerClaimAmountRequested"]).ToString("C");
+                    lbAcoLiableAmount.Text = Convert.ToDecimal(row["InsurerClaimAmountRequested"]).ToString("C");
+                    lbShaLiableAmount.Text = Convert.ToDecimal(row["InsurerClaimAmountRequested"]).ToString("C");
+                    lbCpdFinalAprovedAmount.Text = Convert.ToDecimal(row["InsurerClaimAmountApproved"]).ToString("C");
+                    getAcoDetails(row["InsurerClaimAmountRequested"].ToString());
+                    DataTable dtDeductionDetails = shaHelper.GetDeductedAmountDetails(claimId, "7");
+                    if (dtDeductionDetails != null && dtDeductionDetails.Rows.Count > 0)
+                    {
+                        lbCpdFinalAprovedAmount.Text = Convert.ToDecimal(dtDeductionDetails.Rows[0]["TotalAmtAfterDeduction"]).ToString("C");
+                    }
+                }
+                else
+                {
+                    lbCpdRole.Text = "Trust Liable Amount (Rs.)";
+                    lbAcoRole.Text = "Trust Liable Amount (Rs.)";
+                    lbShaRole.Text = "Trust Liable Amount (Rs.)";
+                    lbCpdLiableAmount.Text = Convert.ToDecimal(row["TrustClaimAmountRequested"]).ToString("C");
+                    lbAcoLiableAmount.Text = Convert.ToDecimal(row["TrustClaimAmountRequested"]).ToString("C");
+                    lbShaLiableAmount.Text = Convert.ToDecimal(row["TrustClaimAmountRequested"]).ToString("C");
+                    lbCpdFinalAprovedAmount.Text = Convert.ToDecimal(row["TrustClaimAmountApproved"]).ToString("C");
+                    getAcoDetails(row["TrustClaimAmountRequested"].ToString());
+                    DataTable dtDeductionDetails = shaHelper.GetDeductedAmountDetails(claimId, "8");
+                    if (dtDeductionDetails != null && dtDeductionDetails.Rows.Count > 0)
+                    {
+                        lbCpdFinalAprovedAmount.Text = Convert.ToDecimal(dtDeductionDetails.Rows[0]["TotalAmtAfterDeduction"]).ToString("C");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void getAcoDetails(string ApprovedAmount)
+    {
+        try
+        {
+            lbAcoFinalAprovedAmount.Text = Convert.ToDecimal(ApprovedAmount).ToString("C");
+            tbShaFinalApprovedAmount.Text = Convert.ToDecimal(ApprovedAmount).ToString();
+            hdCurrentApprovedAmount.Value = Convert.ToDecimal(ApprovedAmount).ToString();
+
+            DataTable dt = new DataTable();
+            if (Session["RoleId"].ToString().Equals("11"))
+            {
+                dt = shaHelper.GetDeductedAmountDetails(claimId, "9");
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    tbAcoRemarks.Text = dt.Rows[0]["Remarks"].ToString();
+                    lbAcoFinalAprovedAmount.Text = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]).ToString("C");
+                    tbShaFinalApprovedAmount.Text = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]).ToString();
+                    hdCurrentApprovedAmount.Value = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]).ToString();
+                }
+            }
+            if (Session["RoleId"].ToString().Equals("12"))
+            {
+                dt = shaHelper.GetDeductedAmountDetails(claimId, "10");
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    tbAcoRemarks.Text = dt.Rows[0]["Remarks"].ToString();
+                    lbAcoFinalAprovedAmount.Text = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]).ToString("C");
+                    tbShaFinalApprovedAmount.Text = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]).ToString();
+                    hdCurrentApprovedAmount.Value = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]).ToString();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getDeductionTable()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = shaHelper.GetDeductionTable();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridDeductionTable.DataSource = dt;
+                gridDeductionTable.DataBind();
+                double totalDeductionAmount = 0.0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    totalDeductionAmount += Convert.ToDouble(row["DeductionAmt"].ToString());
+                }
+                lbTotalDeductionAmount.Text = totalDeductionAmount.ToString("C");
+            }
+            else
+            {
+                gridDeductionTable.DataSource = null;
+                gridDeductionTable.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getClaimWorkFlow(string ClaimId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = shaHelper.GetClaimWorkFlow(ClaimId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridClaimWorkFlow.DataSource = dt;
+                gridClaimWorkFlow.DataBind();
+            }
+            else
+            {
+                gridClaimWorkFlow.DataSource = null;
+                gridClaimWorkFlow.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getClaimQuery(string ClaimId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetClaimQuery(ClaimId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                gridClaimQuery.DataSource = dt;
+                gridClaimQuery.DataBind();
+            }
+            else
+            {
+                gridClaimQuery.DataSource = null;
+                gridClaimQuery.DataBind();
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void gridClaimQuery_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            Button btnClaimViewAudit = (Button)e.Row.FindControl("btnClaimViewAudit");
+            Label lbClaimIsQueryReplied = (Label)e.Row.FindControl("lbClaimIsQueryReplied");
+            string IsQueryReplied = lbClaimIsQueryReplied.Text.ToString();
+            if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
+            {
+                btnClaimViewAudit.Text = "View Audit";
+                btnClaimViewAudit.Enabled = true;
+                btnClaimViewAudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+            }
+            else
+            {
+                btnClaimViewAudit.Text = "Query Pending";
+                btnClaimViewAudit.Enabled = false;
+                btnClaimViewAudit.CssClass = "btn btn-warning btn-sm rounded-pill";
+            }
+        }
+    }
+
+    protected void btnClaimViewAudit_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Button btn = (Button)sender;
+            GridViewRow row = (GridViewRow)btn.NamingContainer;
+            Label lbClaimMainReason = (Label)row.FindControl("lbClaimMainReason");
+            Label lbClaimSubReason = (Label)row.FindControl("lbClaimSubReason");
+            Label lbFolderName = (Label)row.FindControl("lbClaimQueryFolderName");
+            Label lbFileName = (Label)row.FindControl("lbClaimQueryUploadedFileName");
+            string folderName = lbFolderName.Text;
+            string fileName = lbFileName.Text + ".jpeg";
+            string DocumentName = lbClaimMainReason.Text.ToString() + " (" + lbClaimSubReason.Text.ToString() + ")";
+            string base64Image = "";
+            base64Image = preAuth.DisplayImage(folderName, fileName);
+            if (base64Image != "")
+            {
+                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
+            }
+            lbTitle.Text = DocumentName;
+            MultiView3.SetActiveView(viewPhoto);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getActions()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = shaHelper.GetMasterActions();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                dlAction.Items.Clear();
+                dlAction.DataValueField = "ActionId";
+                dlAction.DataTextField = "ActionName";
+                dlAction.DataSource = dt;
+                dlAction.DataBind();
+                dlAction.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                dlAction.Items.Clear();
+                dlAction.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getQueryReasons()
+    {
+        DataTable dt = new DataTable();
+        dt = ppdHelper.GetQueryReasons();
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            dlReason.Items.Clear();
+            dlReason.DataValueField = "ReasonId";
+            dlReason.DataTextField = "ReasonName";
+            dlReason.DataSource = dt;
+            dlReason.DataBind();
+            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+        }
+        else
+        {
+            dlReason.Items.Clear();
+            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+        }
+    }
+
+    public void getSubReasons(string ReasonId)
+    {
+        DataTable dt = new DataTable();
+        dt = ppdHelper.GetSubQueryReasons(ReasonId);
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            dlSubReason.Items.Clear();
+            dlSubReason.DataValueField = "SubReasonId";
+            dlSubReason.DataTextField = "SubReasonName";
+            dlSubReason.DataSource = dt;
+            dlSubReason.DataBind();
+            dlSubReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+        }
+        else
+        {
+            dlSubReason.Items.Clear();
+            dlSubReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+        }
+    }
+
+    public void getRejectedReasons()
+    {
+        DataTable dt = new DataTable();
+        dt = ppdHelper.GetRejectReasons();
+        if (dt != null && dt.Rows.Count > 0)
+        {
+            dlReason.Items.Clear();
+            dlReason.DataValueField = "RejectId";
+            dlReason.DataTextField = "RejectName";
+            dlReason.DataSource = dt;
+            dlReason.DataBind();
+            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+        }
+        else
+        {
+            dlReason.Items.Clear();
+            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+        }
+    }
+
+    protected void dlAction_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string selectedValue = dlAction.SelectedItem.Value;
+        // Select Case
+        if (selectedValue.Equals("0"))
+        {
+            pReason.Visible = false;
+            pSubReason.Visible = false;
+            pRemarks.Visible = false;
+            pAddReason.Visible = false;
+        }
+        // Approve Case
+        else if (selectedValue.Equals("2"))
+        {
+            pReason.Visible = false;
+            pSubReason.Visible = false;
+            pRemarks.Visible = true;
+            pAddReason.Visible = false;
+        }
+        // Query Raise Case
+        else if (selectedValue.Equals("5"))
+        {
+            pReason.Visible = true;
+            pSubReason.Visible = true;
+            pRemarks.Visible = true;
+            pAddReason.Visible = true;
+            getQueryReasons();
+            getSubReasons("0");
+        }
+        // Reject Case
+        else if (selectedValue.Equals("6"))
+        {
+            pReason.Visible = true;
+            pSubReason.Visible = false;
+            pRemarks.Visible = true;
+            pAddReason.Visible = false;
+            getRejectedReasons();
+        }
+    }
+
+    protected void dlReason_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        string selectedValue = dlReason.SelectedItem.Value;
+        string selectedAction = dlAction.SelectedItem.Value;
+        if (!selectedAction.Equals("6"))
+        {
+            getSubReasons(selectedValue);
+        }
+    }
+
+    protected void btnRaiseQuery_Click(object sender, EventArgs e)
+    {
+        string selectedValue = dlAction.SelectedItem.Value;
+        string selectedReason = dlReason.SelectedItem.Value;
+        string selectedSubReason = dlSubReason.SelectedItem.Value;
+        if (!cbTerms.Checked)
+        {
+            strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
+            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+        }
+        else
+        {
+            if (tbRemark.Text.ToString().IsEmpty())
+            {
+                strMessage = "window.alert('Remarks is required.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            }
+            else
+            {
+                if (selectedReason.Equals("0"))
+                {
+                    strMessage = "window.alert('Please select query reason.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else
+                {
+                    if (selectedSubReason.Equals("0"))
+                    {
+                        strMessage = "window.alert('Please select query sub reason.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
+                    else
+                    {
+                        doAction(claimId, hdUserId.Value, selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString());
+                    }
+                }
+            }
+        }
+    }
+
+    protected void btnSubmit_Click(object sender, EventArgs e)
+    {
+        if (!cbTerms.Checked)
+        {
+            strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
+            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+        }
+        else
+        {
+            string selectedValue = dlAction.SelectedItem.Value;
+            if (selectedValue.Equals("0"))
+            {
+                strMessage = "window.alert('Claim action is required.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            }
+            else
+            {
+                if (tbRemark.Text.ToString().IsEmpty())
+                {
+                    strMessage = "window.alert('Remarks is required.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else
+                {
+                    // For Case Approval
+                    if (selectedValue.Equals("2"))
+                    {
+                        decimal finalDeductedAmount = Convert.ToDecimal(hdCurrentApprovedAmount.Value) - Convert.ToDecimal(tbShaFinalApprovedAmount.Text.ToString());
+                        if (finalDeductedAmount > 0)
+                        {
+                            if (!tbShaRemarks.Text.ToString().IsEmpty())
+                            {
+                                addDeduction(claimId, hdUserId.Value, hdRoleId.Value, tbShaFinalApprovedAmount.Text.ToString(), finalDeductedAmount.ToString(), "0", tbShaRemarks.Text.ToString());
+                            }
+                            else
+                            {
+                                strMessage = "window.alert('SHA Remarks is required.');";
+                                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            }
+                        }
+                        doAction(claimId, hdUserId.Value, selectedValue, "", "", tbRemark.Text.ToString());
+                    }
+                    // For Case Reject
+                    else if (selectedValue.Equals("6"))
+                    {
+                        string selectedReason = dlReason.SelectedItem.Value;
+                        if (selectedReason.Equals("0"))
+                        {
+                            strMessage = "window.alert('Please select reject reason.');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            doAction(claimId, hdUserId.Value, selectedValue, selectedReason, "", tbRemark.Text.ToString());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void addDeduction(string ClaimId, string UserId, string RoleId, string FinalAmount, string DeductedAmount, string DeductionType, string Remarks)
+    {
+        try
+        {
+            SqlParameter[] p = new SqlParameter[7];
+            p[0] = new SqlParameter("@ClaimId", ClaimId);
+            p[0].DbType = DbType.String;
+            p[1] = new SqlParameter("@UserId", UserId);
+            p[1].DbType = DbType.String;
+            p[2] = new SqlParameter("@RoleId", RoleId);
+            p[2].DbType = DbType.String;
+            p[3] = new SqlParameter("@DeductionType", DeductionType);
+            p[3].DbType = DbType.String;
+            p[4] = new SqlParameter("@FinalAmount", Convert.ToDecimal(FinalAmount));
+            p[4].DbType = DbType.Decimal;
+            p[5] = new SqlParameter("@DeductedAmount", Convert.ToDecimal(DeductedAmount));
+            p[5].DbType = DbType.Decimal;
+            p[6] = new SqlParameter("@Remarks", Remarks);
+            p[6].DbType = DbType.String;
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_SHA_AddDeduction", p);
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+        }
+    }
+
+    public void doAction(string ClaimId, string UserId, string ActionId, string ReasonId, string SubReasonId, string Remarks)
+    {
+        try
+        {
+            SqlParameter[] p = new SqlParameter[7];
+            p[0] = new SqlParameter("@ClaimId", ClaimId);
+            p[0].DbType = DbType.String;
+            p[1] = new SqlParameter("@UserId", UserId);
+            p[1].DbType = DbType.String;
+            p[2] = new SqlParameter("@ActionId", ActionId);
+            p[2].DbType = DbType.String;
+            p[3] = new SqlParameter("@ReasonId", ReasonId);
+            p[3].DbType = DbType.String;
+            p[4] = new SqlParameter("@SubReasonId", SubReasonId);
+            p[4].DbType = DbType.String;
+            p[5] = new SqlParameter("@Remarks", Remarks);
+            p[5].DbType = DbType.String;
+            p[6] = new SqlParameter("@Amount", Convert.ToDecimal(tbShaFinalApprovedAmount.Text.ToString()));
+            p[6].DbType = DbType.Decimal;
+            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_SHA_InsertActions", p);
+            if (con.State == ConnectionState.Open)
+                con.Close();
+            if (ActionId.Equals("2"))
+            {
+                if (Session["RoleId"].ToString() == "11")
+                {
+                    strMessage = "window.alert('Claim has been approved by SHA(Insurer). " + hdCaseId.Value + "');";
+                    strMessage += "window.location='SHAClaimUpdation.aspx';";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else if (Session["RoleId"].ToString() == "12")
+                {
+                    strMessage = "window.alert('Claim has been approved by SHA(Trust). " + hdCaseId.Value + "');";
+                    strMessage += "window.location='SHAClaimUpdation.aspx';";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+            }
+            else if (ActionId.Equals("5"))
+            {
+                dlAction.SelectedIndex = 0;
+                strMessage = "window.alert('Query Raised Successfully.');";
+                strMessage += "window.location='SHAClaimUpdation.aspx';";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            }
+            else if (ActionId.Equals("6"))
+            {
+                strMessage = "window.alert('Claim Rejected Successfully.');";
+                strMessage += "window.location='SHAClaimUpdation.aspx';";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            }
+            cbTerms.Checked = false;
+            tbRemark.Text = "";
+            pReason.Visible = false;
+            pSubReason.Visible = false;
+            pRemarks.Visible = false;
+            pAddReason.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
         }
     }
 

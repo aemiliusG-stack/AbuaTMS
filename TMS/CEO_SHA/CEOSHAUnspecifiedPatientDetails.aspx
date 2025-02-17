@@ -363,21 +363,55 @@
                                 <asp:TextBox ID="tbAmount" CssClass="form-control border-0 border-bottom" OnKeypress="return isNumeric(event);" runat="server"></asp:TextBox>
                             </div>
                         </div>
-                        <div class="col-md-3 mt-4">
-                            <div class="form-group">
-                                <asp:Label ID="ibActionType" runat="server" CssClass="form-label font-weight-bold text-dark" Text="Action Type"></asp:Label>
-                                <asp:DropDownList ID="dropActionType" runat="server" CssClass="form-control" AutoPostBack="true">
-                                    <asp:ListItem Value="0">Select</asp:ListItem>
-                                    <asp:ListItem Value="1">Query To Medco</asp:ListItem>
-                                    <asp:ListItem Value="2">Approve</asp:ListItem>
-                                    <asp:ListItem Value="3">Reject</asp:ListItem>
-                                    <asp:ListItem Value="4">Query to Medical Committee SHA</asp:ListItem>
-                                </asp:DropDownList>
+                        <div class="row form-group">
+                            <div class="col-md-3 mt-4">
+                                <div class="form-group">
+                                    <span class="form-label fw-semibold font-weight-bold text-dark">Action<span class="text-danger">*</span></span>
+                                    <asp:DropDownList ID="ddlActionType" runat="server" CssClass="form-control mt-2" AutoPostBack="True" OnSelectedIndexChanged="ddlActionType_SelectedIndexChanged">
+                                    </asp:DropDownList>
+                                </div>
                             </div>
+
+                            <asp:Panel ID="pUserRole" runat="server" Visible="false" CssClass="col-md-3 mt-4">
+                                <span class="form-label font-bold text-dark">Select User Role<span class="text-danger font-bold">*</span></span>
+                                <asp:DropDownList ID="ddlUserRole" runat="server" CssClass="form-control mt-2" AutoPostBack="True">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                    <asp:ListItem Text="CPD INSURER" Value="1"></asp:ListItem>
+                                </asp:DropDownList>
+                            </asp:Panel>
+                            <asp:Panel ID="pUserToAssign" runat="server" Visible="false" CssClass="col-md-3 mt-4">
+                                <span class="form-label font-bold text-dark">Select User To Assign<span class="text-danger font-bold">*</span></span>
+                                <asp:DropDownList ID="ddlUserToAssign" runat="server" CssClass="form-control mt-2" AutoPostBack="True">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </asp:Panel>
+                            <asp:Panel ID="pReason" runat="server" Visible="false" CssClass="col-md-3 mt-4">
+                                <span class="form-label font-bold text-dark">Reason<span class="text-danger font-bold">*</span></span>
+                                <asp:DropDownList ID="ddlReason" runat="server" CssClass="form-control mt-2" AutoPostBack="true" OnSelectedIndexChanged="ddlReason_SelectedIndexChanged">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </asp:Panel>
+                            <asp:Panel ID="pSubReason" runat="server" Visible="false" CssClass="col-md-3 mt-4">
+                                <span class="form-label font-bold text-dark">Sub Reason<span class="text-danger font-bold">*</span></span>
+                                <asp:DropDownList ID="ddlSubReason" runat="server" CssClass="form-control mt-2">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </asp:Panel>
+                            <asp:Panel ID="pRemarks" runat="server" Visible="false" CssClass="col-md-3 mt-4">
+                                <span class="form-label font-bold text-dark">Remarks</span>
+                                <asp:TextBox runat="server" ID="tbRejectRemarks" class="form-control mt-2"></asp:TextBox>
+                            </asp:Panel>
+                            <asp:Panel ID="pTriggerType" runat="server" Visible="false" CssClass="col-md-3 mt-4">
+                                <span class="form-label font-bold text-dark">Select Trigger Type<span class="text-danger font-bold">*</span></span>
+                                <asp:DropDownList ID="ddTriggerType" runat="server" CssClass="form-control mt-2" AutoPostBack="True">
+                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                            </asp:Panel>
                         </div>
-                        <div class="col-lg-12 text-center mb-3">
-                            <asp:Button ID="btnSubmitCEOSHAUnspecifiedDetails" runat="server" CssClass="btn btn-success rounded-pill" Text="Submit" />
-                        </div>
+
+                    <div class="col-lg-12 text-center mb-3">
+                        <asp:Button ID="btnSubmitCEOSHAUnspecifiedDetails" runat="server" CssClass="btn btn-success rounded-pill" Text="Submit" />
+                    </div>
                     </div>
                 </div>
             </div>

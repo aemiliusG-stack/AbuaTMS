@@ -370,7 +370,7 @@ public class PreAuth
     public DataTable GetClaimWorkFlow(int ClaimId)
     {
         dtTemp.Clear();
-        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, IsNULL(t3.RejectName, 'NA') as RejectName FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId";
+        string Query = "SELECT t1.ActionDate, t2.RoleName, t1.Remarks, t1.ActionTaken, t1.Amount, IsNULL(t3.RejectName, 'NA') as RejectName FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 1 AND t1.IsActive = 1";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
         con.Open();
@@ -379,12 +379,27 @@ public class PreAuth
         dtTemp = ds.Tables[0];
         return dtTemp;
     }
+    
     // Added By Nirmal
     // Preauth Query Reply
     public DataTable GetQueryCases(int HospitalId)
     {
         dtTemp.Clear();
-        string Query = "Select t1.PatientRegId, t1.AdmissionId, t1.AdmissionDate, t1.ClaimId, t1.CaseNumber, t2.ClaimNumber, t3.PatientName, t1.CardNumber, 'Query Raised By PPD' as CaseStatus, h1.HospitalName, FORMAT (t3.RegDate, 'dd-MMM-yyyy ') as RegDate from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.AdmissionId = t2.AdmissionId AND t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId where t1.HospitalId = @HospitalId AND t1.IsClaimInitiated = 0 AND t1.IsDischarged = 0 AND t1.IsQueryRaised = 1 AND t1.IsActive = 1 AND t1.IsDeleted = 0 ORDER BY t1.AdmissionId DESC";
+        string Query = "Select t1.PatientRegId, t1.AdmissionId, t1.AdmissionDate, t1.ClaimId, t1.CaseNumber, t2.ClaimNumber, t3.PatientName, t1.CardNumber, 'Query Raised By PPD' as CaseStatus, h1.HospitalName, FORMAT (t3.RegDate, 'dd-MMM-yyyy ') as RegDate from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.AdmissionId = t2.AdmissionId AND t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId where t1.HospitalId = @HospitalId AND t1.IsClaimInitiated = 0 AND t1.IsDischarged = 0 AND t1.IsQueryRaised = 1 AND (t2.QueryRaisedByRoleInsurer = 3 OR t2.QueryRaisedByRoleTrust = 4) AND t1.IsActive = 1 AND t1.IsDeleted = 0 ORDER BY t1.AdmissionId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
+    }
+
+    // Added By Nirmal
+    // Preauth Query Reply
+    public DataTable GetClaimQueryCases(int HospitalId)
+    {
+        dtTemp.Clear();
+        string Query = "Select t1.PatientRegId, t1.AdmissionId, t1.AdmissionDate, t1.ClaimId, t1.CaseNumber, t2.ClaimNumber, t3.PatientName, t1.CardNumber, 'Claim Query Raised' as CaseStatus, h1.HospitalName, FORMAT (t3.RegDate, 'dd-MMM-yyyy ') as RegDate from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.AdmissionId = t2.AdmissionId AND t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId where t1.HospitalId = @HospitalId AND t1.IsClaimInitiated = 1 AND t1.IsDischarged = 1 AND t1.IsQueryRaised = 1 AND (t2.QueryRaisedByRoleInsurer != 3 OR t2.QueryRaisedByRoleTrust != 4) AND t1.IsActive = 1 AND t1.IsDeleted = 0 ORDER BY t1.AdmissionId DESC";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
         con.Open();
@@ -405,6 +420,19 @@ public class PreAuth
         con.Open();
         cmd.ExecuteNonQuery();
         con.Close();
+    }
+
+    //*****Claim Initiation*****//
+    public DataTable GetPatientForClaimInitiation(int HospitalId)
+    {
+        dtTemp.Clear();
+        string Query = "Select t1.PatientRegId, t1.AdmissionId, t1.AdmissionDate, t1.ClaimId, t1.CaseNumber, t2.ClaimNumber, t3.PatientName, t1.CardNumber, 'PPD Approved' as CaseStatus, h1.HospitalName, FORMAT (t3.RegDate, 'dd-MMM-yyyy ') as RegDate from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.AdmissionId = t2.AdmissionId AND t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails h1 ON t1.HospitalId = h1.HospitalId where t1.HospitalId = @HospitalId AND t1.IsClaimInitiated = 0 AND t1.IsDischarged = 1 AND ((ClaimMode = 1 AND t2.ForwardedToInsurer = 2 AND IsPPDInsurerApproved = 1) OR (ClaimMode = 2 AND t2.ForwardedToTrust = 2 AND IsPPDTrustApproved = 1) OR (ClaimMode = 3 AND t2.ForwardedToInsurer = 2 AND t2.ForwardedToTrust = 2 AND IsPPDInsurerApproved = 1 AND IsPPDTrustApproved = 1)) AND t3.CurrentAction = 1 AND t3.IsReferedBeforePreAuth = 0 AND t1.IsActive = 1 AND t1.IsDeleted = 0 ORDER BY t1.AdmissionId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        con.Open();
+        sd.Fill(dtTemp);
+        con.Close();
+        return dtTemp;
     }
 
 }

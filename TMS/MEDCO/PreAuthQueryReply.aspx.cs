@@ -246,7 +246,7 @@ public partial class MEDCO_PreAuthQueryReply : System.Web.UI.Page
     {
         dt.Clear();
         string claimId = claimIds.ToString();
-        dt = preAuth.GetClaimWorkFlow(Convert.ToInt32(hdClaimId.Value));
+        dt = ppdHelper.GetWorkFlow(hdClaimId.Value);
         if (dt != null && dt.Rows.Count > 0)
         {
             gridWorkFlow.DataSource = dt;
@@ -643,7 +643,6 @@ public partial class MEDCO_PreAuthQueryReply : System.Web.UI.Page
             LinkButton btn = (LinkButton)sender;
             GridViewRow row = (GridViewRow)btn.NamingContainer;
             Label lbQueryId = (Label)row.FindControl("lbQueryId");
-            Label lbQueryRasiedByRole = (Label)row.FindControl("lbQueryRasiedByRole");
             TextBox tbMedcoReply = (TextBox)row.FindControl("tbMedcoReply");
             hdQueryId.Value = lbQueryId.Text.ToString();
             hdMedcoReply.Value = tbMedcoReply.Text.ToString();

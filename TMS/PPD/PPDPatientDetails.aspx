@@ -112,18 +112,6 @@
                                                     <span class="form-label span-title">Case No:</span><br />
                                                     <asp:Label ID="lbCaseNo" runat="server" Text="" Style="font-size: 12px;"></asp:Label>
                                                 </div>
-                                                <%--<div class="col-md-3 mb-3">
-                                            <span class="form-label span-title">Case Status:</span><br />
-                                            <asp:Label ID="lbCaseStatus" runat="server" Text="Procedure Insurance" Style="font-size: 12px;"></asp:Label>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <span class="form-label span-title">IP No:</span><br />
-                                            <asp:Label ID="lbIpNo" runat="server" Text="NA" Style="font-size: 12px;"></asp:Label>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
-                                            <span class="form-label span-title">IP Registered Date:</span><br />
-                                            <asp:Label ID="lbIpRegisteredDate" runat="server" Text="06/04/2024" Style="font-size: 12px;"></asp:Label>
-                                        </div>--%>
                                                 <div class="col-md-3 mb-3">
                                                     <span class="form-label span-title">Actual Registration Date:</span><br />
                                                     <asp:Label ID="lbActualRegistrationDate" runat="server" Text="" Style="font-size: 12px;"></asp:Label>
@@ -253,7 +241,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="ibox-content table-responsive">
+                                            <%--<div class="ibox-content table-responsive">
                                                 <table class="table table-bordered table-striped">
                                                     <thead>
                                                         <tr class="table-primary">
@@ -287,90 +275,18 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-
-                                                <%--<asp:GridView ID="gridPastHistory" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%">
-                                            <alternatingrowstyle backcolor="Gainsboro" />
-                                            <columns>
-                                                <asp:TemplateField HeaderText="Sl No.">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbSlNo" runat="server" Text="1"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Case Id">
-                                                    <itemtemplate>
-                                                        <asp:LinkButton ID="lnkCaseId" runat="server">CASE/00001</asp:LinkButton>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Patient Name">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbPatientName" runat="server" Text="Demo Name"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Hospital Name">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbHospitalName" runat="server" Text="Demo Hospital"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Case Status">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbCaseStat" runat="server" Text="Claim Forwarded by CEX(Insurance)"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Registered Date">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbRegisteredDate" runat="server" Text="16-08-2024"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Preauth Amount">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbPreauthAmount" runat="server" Text="0.00"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="15%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Claim Amount">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbClaimAmount" runat="server" Text="0.00"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Procedure">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbProcedure" runat="server" Text="High end radiological"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Admission Date">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbAdmissionDate" runat="server" Text="16-08-2024"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="10%" />
-                                                </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Preauth Initiation Date">
-                                                    <itemtemplate>
-                                                        <asp:Label ID="lbPreauthInitiateDate" runat="server" Text="16-08-2024"></asp:Label>
-                                                    </itemtemplate>
-                                                    <headerstyle backcolor="#1E8C86" font-bold="True" forecolor="White" />
-                                                    <itemstyle horizontalalign="Center" verticalalign="Middle" width="5%" />
-                                                </asp:TemplateField>
-                                            </columns>
-                                        </asp:GridView>--%>
-                                            </div>
+                                            </div>--%>
+                                            <asp:Panel ID="panelNoPastHistory" runat="server" Visible="true">
+                                                <div class="ibox-content table-responsive">
+                                                    <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                        <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                            <i class="fa fa-search" style="font-size: 20px;"></i>
+                                                            <span class="mt-2">No Record Found</span>
+                                                            <span class="text-body-tertiary">Currently, the past history for the patient is not available.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </asp:Panel>
                                         </div>
                                     </div>
                                 </asp:View>
@@ -384,15 +300,15 @@
                                                 <div class="ibox-content text-dark">
                                                     <div class="row">
                                                         <div class="col-md-3">
-                                                            <span class="form-label fw-semibold">Hospital Name<span class="text-danger">*</span></span>
+                                                            <span class="form-label fw-semibold">Hospital Name</span>
                                                             <asp:TextBox runat="server" ID="tbHospitalName" class="form-control mt-2" Text="Demo Hospital" ReadOnly="true"></asp:TextBox>
                                                         </div>
                                                         <div class="col-md-3">
-                                                            <span class="form-label fw-semibold">Hospital Type<span class="text-danger">*</span></span>
+                                                            <span class="form-label fw-semibold">Hospital Type</span>
                                                             <asp:TextBox runat="server" ID="tbHospitalType" class="form-control mt-2" Text="Private" ReadOnly="true"></asp:TextBox>
                                                         </div>
                                                         <div class="col-md-3">
-                                                            <span class="form-label fw-semibold">Hospital Address<span class="text-danger">*</span></span>
+                                                            <span class="form-label fw-semibold">Hospital Address</span>
                                                             <asp:TextBox runat="server" ID="tbHospitalAddress" class="form-control mt-2" Text="Ranchi, Jharkhand" ReadOnly="true"></asp:TextBox>
                                                         </div>
                                                     </div>
@@ -408,13 +324,13 @@
                                                 <div class="ibox-content text-dark">
                                                     <div class="row">
                                                         <div class="col-md-3 mb-3">
-                                                            <sapn class="form-label fw-semibold">Primary Diagnosis<span class="text-danger">*</span></sapn>
+                                                            <sapn class="form-label fw-semibold">Primary Diagnosis</sapn>
                                                             <asp:DropDownList ID="dropPrimaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropPrimaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                             </asp:DropDownList>
                                                         </div>
                                                         <div class="col-md-3"></div>
                                                         <div class="col-md-3 mb-3">
-                                                            <span class="form-label fw-semibold">Secondary Diagnosis<span class="text-danger">*</span></span>
+                                                            <span class="form-label fw-semibold">Secondary Diagnosis</span>
                                                             <asp:DropDownList ID="dropSecondaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropSecondaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                             </asp:DropDownList>
                                                         </div>
@@ -423,30 +339,30 @@
                                                         <div class="col-md-6 table-responsive">
                                                             <asp:GridView ID="gridPrimaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                 <Columns>
-                                                                    <asp:TemplateField HeaderText="Sl No.">
+                                                                    <asp:TemplateField HeaderText="Sl. No.">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                            <asp:Label ID="lbPId" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="PD Id" Visible="false">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbPPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            <asp:Label ID="lbPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Diagnosis Name">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            <asp:Label ID="lbPName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Acted By Role">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
+                                                                            <asp:Label ID="lbPActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
@@ -466,30 +382,30 @@
                                                             <asp:GridView ID="gridSecondaryDiagnosis" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                                 <AlternatingRowStyle BackColor="Gainsboro" />
                                                                 <Columns>
-                                                                    <asp:TemplateField HeaderText="Sl No.">
+                                                                    <asp:TemplateField HeaderText="Sl. No.">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                            <asp:Label ID="lbSId" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="15%" />
                                                                     </asp:TemplateField>
-                                                                    <asp:TemplateField HeaderText="PD Id" Visible="false">
+                                                                    <asp:TemplateField HeaderText="SD Id" Visible="false">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbSPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                            <asp:Label ID="lbSDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Diagnosis Name">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                            <asp:Label ID="lbSName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Acted By Role">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
+                                                                            <asp:Label ID="lbSActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                                         <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
@@ -520,44 +436,54 @@
                                             <div class="ibox-content table-responsive">
                                                 <asp:GridView ID="gridPrimaryDiagnosisValues" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                     <Columns>
-                                                        <asp:TemplateField HeaderText="Sl No.">
+                                                        <asp:TemplateField HeaderText="Sl. No.">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                <asp:Label ID="lbPrimaryId" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PD Id" Visible="false">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbPPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                <asp:Label ID="lbPrimaryDiagnosisId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="ICD Value">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbIcd" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                                                <asp:Label ID="lbPrimaryIcd" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Diagnosis Name">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                <asp:Label ID="lbPrimaryName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Acted By Role">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
+                                                                <asp:Label ID="lbPrimaryActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                         </asp:TemplateField>
                                                     </Columns>
                                                 </asp:GridView>
-
+                                                <asp:Panel ID="panelNoPrimaryDiagnosis" runat="server" Visible="false">
+                                                    <div class="ibox-content table-responsive">
+                                                        <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                            <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                <i class="fa fa-search" style="font-size: 20px;"></i>
+                                                                <span class="mt-2">No Record Found</span>
+                                                                <span class="text-body-tertiary">Currently, the primary diagnosis is not available.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </asp:Panel>
                                             </div>
                                         </div>
 
@@ -569,44 +495,54 @@
                                                 <asp:GridView ID="gridSecondaryDiagnosisValues" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Width="100%" CssClass="table table-bordered table-striped">
                                                     <AlternatingRowStyle BackColor="Gainsboro" />
                                                     <Columns>
-                                                        <asp:TemplateField HeaderText="Sl No.">
+                                                        <asp:TemplateField HeaderText="Sl. No.">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
+                                                                <asp:Label ID="lbSecondaryId" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="10%" />
                                                         </asp:TemplateField>
-                                                        <asp:TemplateField HeaderText="PD Id" Visible="false">
+                                                        <asp:TemplateField HeaderText="SD Id" Visible="false">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbSPDId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
+                                                                <asp:Label ID="lbSecondaryDiagnosisId" runat="server" Text='<%# Eval("PDId") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="0%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="ICD Value">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbIcd" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
+                                                                <asp:Label ID="lbSecondaryIcd" runat="server" Text='<%# Eval("ICDValue") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Diagnosis Name">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
+                                                                <asp:Label ID="lbSecondaryName" runat="server" Text='<%# Eval("PrimaryDiagnosisName") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="50%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Acted By Role">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
+                                                                <asp:Label ID="lbSecondaryActedBy" runat="server" Text='<%# getRegisteredByText(Eval("RegisteredBy")) %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
                                                             <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="20%" />
                                                         </asp:TemplateField>
                                                     </Columns>
                                                 </asp:GridView>
-
+                                                <asp:Panel ID="panelNoSecondaryDiagnosis" runat="server" Visible="false">
+                                                    <div class="ibox-content table-responsive">
+                                                        <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                            <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                <i class="fa fa-search" style="font-size: 20px;"></i>
+                                                                <span class="mt-2">No Record Found</span>
+                                                                <span class="text-body-tertiary">Currently, the secondary diagnosis is not available.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </asp:Panel>
                                             </div>
                                         </div>
 
@@ -771,7 +707,7 @@
                                             <div class="ibox-content">
                                                 <div class="row">
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Admission Type<span class="text-danger">*</span></span><br />
+                                                        <span class="form-label fw-semibold">Admission Type</span><br />
                                                         <div class="form-check form-check-inline mt-2">
                                                             <asp:RadioButton ID="rbPlanned" runat="server" class="form-check-label" GroupName="AdmissionType" Text="&nbsp;&nbsp;Planned" Enabled="false" />
                                                             &nbsp;&nbsp;
@@ -779,12 +715,12 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Admission Date<span class="text-danger">*</span></span>
+                                                        <span class="form-label fw-semibold">Admission Date</span>
                                                         <asp:TextBox runat="server" ReadOnly="true" ID="tbAdmissionDate" class="form-control mt-2"></asp:TextBox>
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Package Cost<span class="text-danger">*</span></span>
+                                                        <span class="form-label fw-semibold">Package Cost</span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
@@ -796,7 +732,7 @@
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Incentive Cost<span class="text-danger">*</span></span>
+                                                        <span class="form-label fw-semibold">Incentive Cost</span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
@@ -809,7 +745,7 @@
                                                     <div class="col-md-4 mb-3"></div>
                                                     <asp:Panel ID="panelImplant" runat="server" CssClass="row p-0 w-100" Visible="true">
                                                         <div class="col-md-4 mb-3">
-                                                            <span class="form-label fw-semibold">Implant Cost<span class="text-danger">*</span></span>
+                                                            <span class="form-label fw-semibold">Implant Cost</span>
                                                         </div>
                                                         <div class="col-md-4 mb-3">
                                                             <div class="input-group">
@@ -822,7 +758,7 @@
                                                         <div class="col-md-4 mb-3"></div>
                                                     </asp:Panel>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Total Package Cost<span class="text-danger">*</span></span><br />
+                                                        <span class="form-label fw-semibold">Total Package Cost</span><br />
                                                         <span class="text-danger"><span class="font-weight-bold">(Note:</span> Incentive Applicable)</span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
@@ -841,7 +777,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <span class="form-label fw-semibold">
                                                             <asp:Label ID="lbInsurance" runat="server" Text="The amount liable by Insurance is"></asp:Label>
-                                                            <span class="text-danger">*</span>
+
                                                         </span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
@@ -856,7 +792,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <span class="form-label fw-semibold">
                                                             <asp:Label ID="lbTrust" runat="server" Text="The amount liable by Trust is"></asp:Label>
-                                                            <span class="text-danger">*</span>
+
                                                         </span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
@@ -876,7 +812,7 @@
                                                         <span class="text-danger"><span class="font-weight-bold">Note:</span> Only ()?,./ special characters are allowed for Remarks and remarks are mandatory while assigning.</span>
                                                     </div>
                                                     <div class="col-lg-12 mt-4">
-                                                        <asp:Button ID="btnTransactionDataReferences" runat="server" class="btn btn-primary rounded-pill" Text="Transaction Data References" OnClick="btnTransactionDataReferences_Click" />
+                                                        <asp:Button ID="btnTransactionDataReferences" runat="server" class="btn btn-primary rounded-pill" Text="Enhancement Details" OnClick="btnTransactionDataReferences_Click" />
                                                     </div>
 
                                                 </div>
@@ -958,7 +894,7 @@
                                                                 <asp:Label ID="label1" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="5%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Query Date">
                                                             <ItemTemplate>
@@ -972,21 +908,28 @@
                                                                 <asp:Label ID="lbMainReason" runat="server" Text='<%# Eval("ReasonName") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="20%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="10%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Sub Reason">
                                                             <ItemTemplate>
                                                                 <asp:Label ID="lbSubReason" runat="server" Text='<%# Eval("SubReasonName") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="30%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="PPD Query">
                                                             <ItemTemplate>
-                                                                <asp:Label ID="lbPpdQuery" runat="server" Text='<%# Eval("Remarks") %>'></asp:Label>
+                                                                <asp:Label ID="lbPpdQuery" runat="server" Text='<%# Eval("PpdQuery") %>'></asp:Label>
                                                             </ItemTemplate>
                                                             <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
-                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="25%" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="20%" />
+                                                        </asp:TemplateField>
+                                                        <asp:TemplateField HeaderText="Medco Reply">
+                                                            <ItemTemplate>
+                                                                <asp:Label ID="lbMedcoReply" runat="server" Text='<%# Eval("QueryReply") %>'></asp:Label>
+                                                            </ItemTemplate>
+                                                            <HeaderStyle BackColor="#1e8c86" Font-Bold="true" ForeColor="white" />
+                                                            <ItemStyle HorizontalAlign="left" VerticalAlign="middle" Width="20%" />
                                                         </asp:TemplateField>
                                                         <asp:TemplateField HeaderText="Audit">
                                                             <ItemTemplate>
@@ -1000,6 +943,17 @@
                                                         </asp:TemplateField>
                                                     </Columns>
                                                 </asp:GridView>
+                                                <asp:Panel ID="panelNoPreauthQuery" runat="server" Visible="false">
+                                                    <div class="ibox-content table-responsive">
+                                                        <div class="row ibox-content" style="background-color: #f0f0f0;">
+                                                            <div class="col-md-12 d-flex flex-column justify-content-center align-items-center" style="height: 200px;">
+                                                                <i class="fa fa-search" style="font-size: 20px;"></i>
+                                                                <span class="mt-2">No Record Found</span>
+                                                                <span class="text-body-tertiary">Currently, the preauth query is not available.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </asp:Panel>
                                             </div>
                                         </div>
 
@@ -1020,12 +974,12 @@
                                                         </asp:DropDownList>
                                                     </asp:Panel>
                                                     <asp:Panel ID="pReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
-                                                        <span class="form-label fw-semibold">Reason<span class="text-danger">*</span></span>
+                                                        <span class="form-label fw-semibold">Reason</span>
                                                         <asp:DropDownList ID="dlReason" runat="server" class="form-control mt-2" AutoPostBack="True" OnSelectedIndexChanged="dlReason_SelectedIndexChanged">
                                                         </asp:DropDownList>
                                                     </asp:Panel>
                                                     <asp:Panel ID="pSubReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
-                                                        <span class="form-label fw-semibold">Sub Reason<span class="text-danger">*</span></span>
+                                                        <span class="form-label fw-semibold">Sub Reason</span>
                                                         <asp:DropDownList ID="dlSubReason" runat="server" class="form-control mt-2" AutoPostBack="True">
                                                         </asp:DropDownList>
                                                     </asp:Panel>

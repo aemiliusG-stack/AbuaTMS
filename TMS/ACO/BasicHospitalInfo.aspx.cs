@@ -61,7 +61,7 @@ public partial class ACO_BasicHospitalInfo : System.Web.UI.Page
     {
         try
         {
-            using (SqlCommand cmd = new SqlCommand("sp_HospitalNamelist", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_HospitalNamelist", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 con.Open();
@@ -251,7 +251,7 @@ public partial class ACO_BasicHospitalInfo : System.Web.UI.Page
             string district = DropDownListDistricts.SelectedIndex == 0 ? null : DropDownListDistricts.SelectedItem.Text;
 
             // SQL connection and command to call the stored procedure
-            using (SqlCommand cmd = new SqlCommand("sp_SearchHospitalsDetails", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_SearchHospitalsDetails", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
 

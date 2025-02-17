@@ -80,7 +80,19 @@
                                 <li style="display: flex; justify-content: space-between; align-items: center;"><a href="ReferPatient.aspx">Refer Patients</a><asp:Label ID="lbReferPatient" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
                             </ul>
                         </li>
-                    </ul>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-cog"></i>
+                                <span class="nav-label">Claims</span>
+                                <span class="fa arrow"></span>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="ClaimInitiation.aspx">Initiate Claim</a><asp:Label ID="Label2" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="ClaimQueryReply.aspx">ClaimQueryReply</a><asp:Label ID="Label3" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="PreAuthCancellation.aspx">Reconciliation Request</a><asp:Label ID="Label4" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
+                                <li style="display: flex; justify-content: space-between; align-items: center;"><a href="ReferPatient.aspx">Reconciliation Request Updation</a><asp:Label ID="Label5" runat="server" Text="0" CssClass="masterCaseCount"></asp:Label></li>
+                            </ul>
+                        </li>
                 </div>
             </nav>
 

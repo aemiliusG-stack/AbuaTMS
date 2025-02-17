@@ -31,6 +31,7 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
         {
             getSpecialityName();
             BindGrid_UnspecifiedCases();
+            //BindUnspecifiedCases();
         }
     }
     protected void getSpecialityName()
@@ -124,6 +125,29 @@ public partial class CEO_SHA_CEOSHAUnspecifiedCases : System.Web.UI.Page
             gvUnspecifiedCases.DataBind();
         }
     }
+    //private void BindUnspecifiedCases()
+    //{
+    //    try
+    //    {
+    //        DataTable dt = CEOSHA.GetUnspecifiedCases(null, null, null, null);
+
+    //        if (dt.Rows.Count > 0)
+    //        {
+    //            gvUnspecifiedCases.DataSource = dt;
+    //            gvUnspecifiedCases.DataBind();
+    //        }
+    //        else
+    //        {
+    //            gvUnspecifiedCases.DataSource = null;
+    //            gvUnspecifiedCases.DataBind();
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        //lblMessage.Text = "Error: " + ex.Message;
+    //        //lblMessage.ForeColor = System.Drawing.Color.Red;
+    //    }
+    //}
     protected void gvUnspecifiedCases_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowType == DataControlRowType.DataRow)

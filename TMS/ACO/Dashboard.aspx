@@ -12,6 +12,8 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
+    <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+    <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox">
@@ -61,56 +63,209 @@
             </div>
         </div>
     </div>
-    <asp:Repeater ID="PendencyRepeater" runat="server">
-        <HeaderTemplate>
-            <div class="container-fluid text-center">
-                <div class="row bg-secondary text-white align-items-center">
-                    <div class="col">
-                        <h3>Pendency at Trust</h3>
-                    </div>
-                    <div class="col-auto">
-                        <asp:LinkButton ID="RefreshButton" runat="server" CssClass="btn btn-link text-white">
-                        <i class="bi bi-arrow-clockwise"></i>
-                        </asp:LinkButton>
-                    </div>
-                </div>
-                <div class="row align-items-center text-dark" style="background-color: #dee0e0;">
-                    <div class="col">
-                        <h4>S No</h4>
-                    </div>
-                    <div class="col">
-                        <h4>Role Name</h4>
-                    </div>
-                    <div class="col">
-                        <h4>Today</h4>
-                    </div>
-                    <div class="col">
-                        <h4>Overall</h4>
-                    </div>
-                </div>
-        </HeaderTemplate>
-
-        <ItemTemplate>
-            <div class="row bg-light text-dark align-items-center">
-                <div class="col">
-                    <%# Eval("SNo") %>
-                </div>
-                <div class="col">
-                    <%# Eval("RoleName") %>
-                </div>
-                <div class="col">
-                    <%# Eval("Today") %>
-                </div>
-                <div class="col">
-                    <%# Eval("Overall") %>
-                </div>
-            </div>
-        </ItemTemplate>
-
-        <FooterTemplate>
-            </div>
-        </FooterTemplate>
-    </asp:Repeater>
+    <div class="ibox mt-4">
+        <div class="ibox-title text-center">
+            <h3 class="text-white">
+                <asp:Label ID="lbTitle" runat="server" Text="Pendency Dashboard"></asp:Label>
+            </h3>
+        </div>
+        <div class="ibox-content table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr class="table-primary text-center">
+                        <%--<th scope="col" style="background-color: #007e72; color: white;">S.No</th>--%>
+                        <th scope="col" style="background-color: #007e72; color: white;">Role</th>
+                        <th scope="col" style="background-color: #007e72; color: white;">Today</th>
+                        <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    <!-- Preauth Panel Doctor Insurer -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbPreauthPanelDoctorInsurer" runat="server" Text="Preauth Panel Doctor Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Preauth Panel Doctor trust -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="Label1" runat="server" Text="Preauth Panel Doctor Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Preauth Panel Doctor Insurer (Assigned) -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbPreauthPanelDoctorInsurerAssigned" runat="server" Text="Preauth Panel Doctor Insurer (Assigned)"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Preauth Panel Doctor Trust(Assigned) -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbPreauthPanelDoctorTrust" runat="server" Text="Preauth Panel Doctor Trust (Assigned)"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Executive Officer Insurer -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimExecutiveInsurer" runat="server" Text="Claim Executive Officer Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Executive Officer TRUST -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimExecutiveTrust" runat="server" Text="Claim Executive Officer Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveTrustToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveTrustOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Panel Doctor Insurer -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorInsurer" runat="server" Text="Claim Panel Doctor Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Panel Doctor Insurer (Assigned) -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorInsurerAssigned" runat="server" Text="Claim Panel Doctor Insurer (Assigned)"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Panel Doctor Trust (Assigned)-->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorTrustAssigned" runat="server" Text="Claim Panel Doctor Trust(Assigned) "></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Panel Doctor Trust -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorTrust" runat="server" Text="Claim Panel Doctor Trust "></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Account Claim Officer Insurer -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbACOInsurer" runat="server" Text="Account Claim Officer Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Account Claim Officer Trsut -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbACOTrust" runat="server" Text="Account Claim Officer Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOTrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOTrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- SHA Insurer -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbSHAInsurer" runat="server" Text="SHA Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHAInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHAInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- SHA Trsut -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbSHATrust" runat="server" Text="SHA Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHATrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHATrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </asp:Content>
 

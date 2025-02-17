@@ -1,21 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using CareerPath.DAL;
 using System.Web.UI.WebControls;
-using WebGrease.Css.Ast;
-using Antlr.Runtime.Misc;
-using System.Collections.Generic;
-using iText.IO.Image;
-using System.Web.WebPages;
-using System.Web.Security;
-using AbuaTMS;
+using CareerPath.DAL;
 
-public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
+public partial class ACO_ACOCaseSearchPatientDetail : System.Web.UI.Page
 {
     SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     DataTable dt = new DataTable();
@@ -25,7 +19,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     string pageName;
     private PreAuth preAuth = new PreAuth();
     public static PPDHelper ppdHelper = new PPDHelper();
-
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -50,7 +43,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             {
                 lbName.Text = "No CaseNo provided.";
             }
-
         }
     }
     public void BindPatientName(string caseNo)
@@ -217,8 +209,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                     gvQuestionnaire.DataSource = CreateQuestionnaireData();
                     gvQuestionnaire.DataBind();
                     BindPreauthUtilizationData();
-                    BindGrid_PreauthWorkFlow();
-                    getClaimQuery(hfClaimId.Value);
                 }
             }
         }
@@ -374,7 +364,8 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     private void BindGrid_PreauthWorkFlow()
     {
         dt.Clear();
-        dt = cpd.GetPreauthWorkFlow(hfClaimId.Value);
+        string claimId = Session["ClaimId"].ToString();
+        dt = cpd.GetClaimWorkFlow(claimId);
         if (dt != null && dt.Rows.Count > 0)
         {
             dt.Columns.Add("SlNo", typeof(int));
@@ -704,7 +695,8 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
     private void BindClaimWorkflow()
     {
         dt.Clear();
-        dt = cpd.GetClaimWorkFlow(hfClaimId.Value);
+        string claimId = Session["ClaimId"].ToString();
+        dt = cpd.GetClaimWorkFlow(claimId);
         if (dt != null && dt.Rows.Count > 0)
         {
             dt.Columns.Add("SerialNo", typeof(int));
@@ -766,7 +758,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 gvPraauthSD.DataBind();
                 gvSICDDetails_Claim.DataSource = dt;
                 gvSICDDetails_Claim.DataBind();
-                pClaimsSD.Visible = true;
             }
             else
             {
@@ -774,7 +765,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 gvPraauthSD.DataBind();
                 gvSICDDetails_Claim.DataSource = null;
                 gvSICDDetails_Claim.DataBind();
-                pClaimsSD.Visible = false;
             }
 
         }
@@ -798,13 +788,13 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             dt = cpd.GetClaimQuery(ClaimId);
             if (dt != null && dt.Rows.Count > 0)
             {
-                gvClaimQuery.DataSource = dt;
-                gvClaimQuery.DataBind();
+                gridClaimQueryRejectionReason.DataSource = dt;
+                gridClaimQueryRejectionReason.DataBind();
             }
             else
             {
-                gvClaimQuery.DataSource = null;
-                gvClaimQuery.DataBind();
+                gridClaimQueryRejectionReason.DataSource = "";
+                gridClaimQueryRejectionReason.DataBind();
             }
         }
         catch (Exception ex)
@@ -813,96 +803,67 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
     //Treatment and Discharge tab
     private void getTreatmentDischarge()
     {
         string claimId = Session["ClaimId"] as string;
         dt.Clear();
         dt = cpd.GetTreatmentDischarge(claimId);
-
         if (dt != null && dt.Rows.Count > 0)
         {
             DataRow row = dt.Rows[0];
 
-            // String values with DBNull and whitespace handling
-            lbDoctorType.Text = GetStringValue(row["TypeOfMedicalExpertise"]);
-            lbDoctorName.Text = GetStringValue(row["DoctorName"]);
-            lbDocRegnNo.Text = GetStringValue(row["DoctorRegistrationNumber"]);
-            lbDocQualification.Text = GetStringValue(row["Qualification"]);
-            lbDocContactNo.Text = GetStringValue(row["DoctorContactNumber"]);
-            lbAnaesthetistName.Text = GetStringValue(row["AnaesthetistName"]);
-            lbAnaesthetistRegNo.Text = GetStringValue(row["AnaesthetistRegNo"]);
-            lbAnaesthetistContactNo.Text = GetStringValue(row["AnaesthetistMobNo"]);
-            lbIncisionType.Text = GetStringValue(row["IncisionType"]);
-            lbSwabCounts.Text = GetStringValue(row["SwabCountInstrumentsCount"]);
-            lbSurutes.Text = GetStringValue(row["SuturesLigatures"]);
-            lbDranageCount.Text = GetStringValue(row["DrainageCount"]);
-            lbBloodLoss.Text = GetStringValue(row["BloodLoss"]);
-            lbOperativeInstructions.Text = GetStringValue(row["PostOperativeInstructions"]);
-            lbPatientCondition.Text = GetStringValue(row["PatientCondition"]);
-            tbTreatmentGiven.Text = GetStringValue(row["TreatmentGiven"]);
-            tbOperativeFindings.Text = GetStringValue(row["OperativeFindings"]);
-            tbPostOperativePeriod.Text = GetStringValue(row["PostOperativePeriod"]);
-            tbSpecialInvestigationGiven.Text = GetStringValue(row["PostSurgeryInvestigationGiven"]);
-            tbStatusAtDischarge.Text = GetStringValue(row["StatusAtDischarge"]);
-            tbReview.Text = GetStringValue(row["Review"]);
-            tbAdvice.Text = GetStringValue(row["Advice"]);
-            lbConsultBlockName.Text = GetStringValue(row["ConsultAtBlock"]);
-            lbFloor.Text = GetStringValue(row["FloorNo"]);
-            lbRoomNo.Text = GetStringValue(row["RoomNo"]);
-            lbFinalDiagnosis.Text = GetStringValue(row["FinalDiagnosis"]);
-
-            rbOPPhotoYes.Checked = GetBooleanValue(row["OPPhotosWebexTaken"]);
-            rbOPPhotoNo.Checked = !GetBooleanValue(row["OPPhotosWebexTaken"]);
-            rbVedioRecDoneYes.Checked = GetBooleanValue(row["VideoRecordingDone"]);
-            rbVedioRecDoneNo.Checked = !GetBooleanValue(row["VideoRecordingDone"]);
-            rbSpecimenRemoveYes.Checked = GetBooleanValue(row["SpecimenRequired"]);
-            rbSpecimenRemoveNo.Checked = !GetBooleanValue(row["SpecimenRequired"]);
-            rbComplicationsYes.Checked = GetBooleanValue(row["ComplicationsIfAny"]);
-            rbComplicationsNo.Checked = !GetBooleanValue(row["ComplicationsIfAny"]);
-            rbDischarge.Checked = GetBooleanValue(row["IsDischarged"]);
-            rbDeath.Checked = !GetBooleanValue(row["IsDischarged"]);
-            rbConsentYes.Checked = GetBooleanValue(row["ProcedureConsent"]);
-            rbConsentNo.Checked = !GetBooleanValue(row["ProcedureConsent"]);
-            rbIsSpecialCaseYes.Checked = GetBooleanValue(row["IsSpecialCase"]);
-            rbIsSpecialCaseNo.Checked = !GetBooleanValue(row["IsSpecialCase"]);
-
+            lbDoctorType.Text = row["TypeOfMedicalExpertise"] != DBNull.Value ? row["TypeOfMedicalExpertise"].ToString() : "NA";
+            lbDoctorName.Text = row["DoctorName"] != DBNull.Value ? row["DoctorName"].ToString() : "NA";
+            lbDocRegnNo.Text = row["DoctorRegistrationNumber"] != DBNull.Value ? row["DoctorRegistrationNumber"].ToString() : "NA";
+            lbDocQualification.Text = row["Qualification"] != DBNull.Value ? row["Qualification"].ToString() : "NA";
+            lbDocContactNo.Text = row["DoctorContactNumber"] != DBNull.Value ? row["DoctorContactNumber"].ToString() : "NA";
+            lbAnaesthetistName.Text = row["AnaesthetistName"] != DBNull.Value ? row["AnaesthetistName"].ToString() : "NA";
+            lbAnaesthetistRegNo.Text = row["AnaesthetistRegNo"] != DBNull.Value ? row["AnaesthetistRegNo"].ToString() : "NA";
+            lbAnaesthetistContactNo.Text = row["AnaesthetistMobNo"] != DBNull.Value ? row["AnaesthetistMobNo"].ToString() : "NA";
+            lbIncisionType.Text = row["IncisionType"] != DBNull.Value ? row["IncisionType"].ToString() : "NA";
+            rbOPPhotoYes.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && Convert.ToBoolean(row["OPPhotosWebexTaken"]);
+            rbOPPhotoNo.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && !Convert.ToBoolean(row["OPPhotosWebexTaken"]);
+            rbVedioRecDoneYes.Checked = row["VideoRecordingDone"] != DBNull.Value && Convert.ToBoolean(row["VideoRecordingDone"]);
+            rbVedioRecDoneNo.Checked = row["VideoRecordingDone"] != DBNull.Value && !Convert.ToBoolean(row["VideoRecordingDone"]);
+            lbSwabCounts.Text = row["SwabCountInstrumentsCount"] != DBNull.Value ? row["SwabCountInstrumentsCount"].ToString() : "NA";
+            lbSurutes.Text = row["SuturesLigatures"] != DBNull.Value ? row["SuturesLigatures"].ToString() : "NA";
+            rbSpecimenRemoveYes.Checked = row["SpecimenRequired"] != DBNull.Value && Convert.ToBoolean(row["SpecimenRequired"]);
+            rbSpecimenRemoveNo.Checked = row["SpecimenRequired"] != DBNull.Value && !Convert.ToBoolean(row["SpecimenRequired"]);
+            lbDranageCount.Text = row["DrainageCount"] != DBNull.Value ? row["DrainageCount"].ToString() : "NA";
+            lbBloodLoss.Text = row["BloodLoss"] != DBNull.Value ? row["BloodLoss"].ToString() : "NA";
+            lbOperativeInstructions.Text = row["PostOperativeInstructions"] != DBNull.Value ? row["PostOperativeInstructions"].ToString() : "NA";
+            lbPatientCondition.Text = row["PatientCondition"] != DBNull.Value ? row["PatientCondition"].ToString() : "NA";
+            rbComplicationsYes.Checked = row["ComplicationsIfAny"] != DBNull.Value && Convert.ToBoolean(row["ComplicationsIfAny"]);
+            rbComplicationsNo.Checked = row["ComplicationsIfAny"] != DBNull.Value && !Convert.ToBoolean(row["ComplicationsIfAny"]);
+            lbTraetmentDate.Text = row["TreatmentSurgeryStartDate"] != DBNull.Value ? Convert.ToDateTime(row["TreatmentSurgeryStartDate"]).ToString("dd/MM/yyyy") : "NA";
+            tbSurgeryStartTime.Text = row["SurgeryStartTime"] != DBNull.Value ? TimeSpan.Parse(row["SurgeryStartTime"].ToString()).ToString(@"hh\:mm") : "NA";
+            tbSurgeryEndTime.Text = row["SurgeryEndTime"] != DBNull.Value ? TimeSpan.Parse(row["SurgeryEndTime"].ToString()).ToString(@"hh\:mm") : "NA";
+            tbTreatmentGiven.Text = row["TreatmentGiven"] != DBNull.Value ? row["TreatmentGiven"].ToString() : "NA";
+            tbOperativeFindings.Text = row["OperativeFindings"] != DBNull.Value ? row["OperativeFindings"].ToString() : "NA";
+            tbPostOperativePeriod.Text = row["PostOperativePeriod"] != DBNull.Value ? row["PostOperativePeriod"].ToString() : "NA";
+            tbSpecialInvestigationGiven.Text = row["PostSurgeryInvestigationGiven"] != DBNull.Value ? row["PostSurgeryInvestigationGiven"].ToString() : "NA";
+            tbStatusAtDischarge.Text = row["StatusAtDischarge"] != DBNull.Value ? row["StatusAtDischarge"].ToString() : "NA";
+            tbReview.Text = row["Review"] != DBNull.Value ? row["Review"].ToString() : "NA";
+            tbAdvice.Text = row["Advice"] != DBNull.Value ? row["Advice"].ToString() : "NA";
+            rbDischarge.Checked = row["IsDischarged"] != DBNull.Value && Convert.ToBoolean(row["IsDischarged"]);
+            rbDeath.Checked = row["IsDischarged"] != DBNull.Value && !Convert.ToBoolean(row["IsDischarged"]);
+            lbDischargeDate.Text = row["DischargeDate"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDate"]).ToString("dd-MM-yyyy") : "NA";
+            lbNextFollowUp.Text = row["NextFollowUpDate"] != DBNull.Value ? Convert.ToDateTime(row["NextFollowUpDate"]).ToString("dd-MM-yyyy") : "NA";
+            lbConsultBlockName.Text = row["ConsultAtBlock"] != DBNull.Value ? row["ConsultAtBlock"].ToString() : "NA";
+            lbFloor.Text = row["FloorNo"] != DBNull.Value ? row["FloorNo"].ToString() : "NA";
+            lbRoomNo.Text = row["RoomNo"] != DBNull.Value ? row["RoomNo"].ToString() : "NA";
+            rbIsSpecialCaseYes.Checked = row["IsSpecialCase"] != DBNull.Value && Convert.ToBoolean(row["IsSpecialCase"]);
+            rbIsSpecialCaseNo.Checked = row["IsSpecialCase"] != DBNull.Value && !Convert.ToBoolean(row["IsSpecialCase"]);
             if (rbIsSpecialCaseYes.Checked)
             {
                 pnlSpecialCaseValue.Visible = true;
-                lbSpecialCaseValue.Text = GetStringValue(row["SpecialCaseValue"]);
+                lbSpecialCaseValue.Text = row["SpecialCaseValue"].ToString();
             }
-
-            // Date values handling
-            lbTraetmentDate.Text = GetDateValue(row["TreatmentSurgeryStartDate"]);
-            lbDischargeDate.Text = GetDateValue(row["DischargeDate"]);
-            lbNextFollowUp.Text = GetDateValue(row["NextFollowUpDate"]);
-
-            // Time values handling
-            tbSurgeryStartTime.Text = GetTimeValue(row["SurgeryStartTime"]);
-            tbSurgeryEndTime.Text = GetTimeValue(row["SurgeryEndTime"]);
+            lbFinalDiagnosis.Text = row["FinalDiagnosis"] != DBNull.Value ? row["FinalDiagnosis"].ToString() : "NA";
+            rbConsentYes.Checked = row["ProcedureConsent"] != DBNull.Value && Convert.ToBoolean(row["ProcedureConsent"]);
+            rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);
         }
-    }
-
-    private string GetStringValue(object value)
-    {
-        return (value == null || value == DBNull.Value || string.IsNullOrWhiteSpace(value.ToString())) ? "NA" : value.ToString();
-    }
-
-    private bool GetBooleanValue(object value)
-    {
-        return (value != DBNull.Value) && Convert.ToBoolean(value);
-    }
-
-    private string GetDateValue(object value)
-    {
-        return (value == null || value == DBNull.Value || string.IsNullOrWhiteSpace(value.ToString())) ? "NA" : Convert.ToDateTime(value).ToString("dd/MM/yyyy");
-    }
-
-    private string GetTimeValue(object value)
-    {
-        return (value == null || value == DBNull.Value || string.IsNullOrWhiteSpace(value.ToString())) ? "NA" : TimeSpan.Parse(value.ToString()).ToString(@"hh\:mm");
     }
     protected void BindGrid_TreatmentSurgeryDate()
     {
@@ -1243,8 +1204,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = DocumentName;
-            mvCPDTabs.SetActiveView(ViewAttachment);
-            MultiView2.SetActiveView(viewDischarge);
             MultiView3.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
         }
@@ -1323,8 +1282,6 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
             }
             lbTitle.Text = packageName + " / " + investigationName;
-            mvCPDTabs.SetActiveView(ViewAttachment);
-            MultiView2.SetActiveView(viewPostInvestigation);
             MultiView3.SetActiveView(viewPhoto);
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
         }
@@ -1441,56 +1398,5 @@ public partial class CPD_CPDcaseSearchPatientDetail : System.Web.UI.Page
         dt.Rows.Add("Is the Discharge summary with follow-up advice at the time of discharge?");
 
         return dt;
-    }
-    protected void gvClaimQuery_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowType == DataControlRowType.DataRow)
-        {
-            Button btnClaimViewAudit = (Button)e.Row.FindControl("btnClaimViewAudit");
-            Label lbClaimIsQueryReplied = (Label)e.Row.FindControl("lbClaimIsQueryReplied");
-            string IsQueryReplied = lbClaimIsQueryReplied.Text.ToString();
-            if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
-            {
-                btnClaimViewAudit.Text = "View Audit";
-                btnClaimViewAudit.Enabled = true;
-                btnClaimViewAudit.CssClass = "btn btn-primary btn-sm rounded-pill";
-            }
-            else
-            {
-                btnClaimViewAudit.Text = "Query Pending";
-                btnClaimViewAudit.Enabled = false;
-                btnClaimViewAudit.CssClass = "btn btn-warning btn-sm rounded-pill";
-            }
-        }
-    }
-
-    protected void btnClaimViewAudit_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            Button btn = (Button)sender;
-            GridViewRow row = (GridViewRow)btn.NamingContainer;
-            Label lbClaimMainReason = (Label)row.FindControl("lbClaimMainReason");
-            Label lbClaimSubReason = (Label)row.FindControl("lbClaimSubReason");
-            Label lbFolderName = (Label)row.FindControl("lbClaimQueryFolderName");
-            Label lbFileName = (Label)row.FindControl("lbClaimQueryUploadedFileName");
-            string folderName = lbFolderName.Text;
-            string fileName = lbFileName.Text + ".jpeg";
-            string DocumentName = lbClaimMainReason.Text.ToString() + " (" + lbClaimSubReason.Text.ToString() + ")";
-            string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
-            if (base64Image != "")
-            {
-                imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
-            }
-            lbTitle.Text = DocumentName;
-            MultiView3.SetActiveView(viewPhoto);
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "showModal", "showModal();", true);
-        }
-        catch (Exception ex)
-        {
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
     }
 }

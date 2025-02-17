@@ -39,8 +39,8 @@ public partial class ACO_HospitalDetails : System.Web.UI.Page
         {
             // Open a SQL connection
 
-            using (SqlCommand cmd = new SqlCommand("sp_HospitalDetailsByHospitalCode", con))
-            //using (SqlCommand cmd = new SqlCommand("sp_GetHospitalDetailsByHospitalCode", con))
+            //using (SqlCommand cmd = new SqlCommand("sp_HospitalDetailsByHospitalCode", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_HospitalDetailsByHospitalCode", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@HospitalId", hospitalId);

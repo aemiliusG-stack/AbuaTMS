@@ -40,18 +40,57 @@ public class CEOSHA
         }
         return dt;
     }
+
+    //public DataTable GetUnspecifiedCases(string caseNumber, string cardNumber, long? packageId, long? procedureId)
+    //{
+    //    SqlConnection con = null;
+    //    SqlCommand cmd = null;
+    //    SqlDataAdapter da = null;
+    //    DataTable dt = new DataTable();
+
+    //    try
+    //    {
+    //        con.Open();
+
+    //        cmd = new SqlCommand("TMS_CEOSHAUnspecifiedCaseFilter", con);
+    //        cmd.CommandType = CommandType.StoredProcedure;
+
+    //        // Handle nullable parameters
+    //        cmd.Parameters.AddWithValue("@CaseNumber", string.IsNullOrEmpty(caseNumber) ? (object)DBNull.Value : caseNumber);
+    //        cmd.Parameters.AddWithValue("@CardNumber", string.IsNullOrEmpty(cardNumber) ? (object)DBNull.Value : cardNumber);
+    //        cmd.Parameters.AddWithValue("@PackageId", packageId.HasValue ? (object)packageId : DBNull.Value);
+    //        cmd.Parameters.AddWithValue("@ProcedureId", procedureId.HasValue ? (object)procedureId : DBNull.Value);
+
+    //        da = new SqlDataAdapter(cmd);
+    //        da.Fill(dt);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        throw new Exception("Error fetching unspecified cases: " + ex.Message);
+    //    }
+    //    finally
+    //    {
+    //        if (da != null)
+    //            da.Dispose();
+    //        if (cmd != null)
+    //            cmd.Dispose();
+    //        if (con != null && con.State == ConnectionState.Open)
+    //            con.Close();
+    //    }
+
+    //    return dt;
+    //}
     public DataTable GetTreatmentProtocol(string CaseNo)
     {
         string Query = "SELECT t2.SpecialityName, t3.ProcedureName, t1.ProcedureAmountFinal, COUNT(t3.ProcedureName) AS Quantity, CASE WHEN t1.ImplantId IS NULL OR t1.ImplantId = 0 THEN 'NA' ELSE t4.ImplantName END AS ImplantName,CASE WHEN t1.StratificationId IS NULL OR t1.StratificationId = 0 THEN 'NA' ELSE t5.StratificationName END AS StratificationName FROM TMS_PatientTreatmentProtocol t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId LEFT JOIN TMS_MasterImplantMaster t4 on t1.ImplantId= t4.ImplantId LEFT JOIN TMS_MasterStratificationMaster t5 on t5.StratificationId=t1.StratificationId INNER JOIN TMS_PatientAdmissionDetail t6 on t6.PatientRegId = t1.PatientRegId WHERE t6.CaseNumber = @CaseNo GROUP BY t2.SpecialityName, t3.ProcedureName, t1.ProcedureAmountFinal, t1.ImplantId, t4.ImplantName, t1.StratificationId, t5.StratificationName";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();
         }
-        dt = ds.Tables[0];
         return dt;
     }
     public DataTable GetAdmissionDetails(string CaseNo)
@@ -61,12 +100,11 @@ public class CEOSHA
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();
         }
-        dt = ds.Tables[0];
         return dt;
     }
     public DataTable GetClaimWorkFlow(int claimId)
@@ -78,6 +116,76 @@ public class CEOSHA
         con.Open();
         SqlDataAdapter da = new SqlDataAdapter(cmd);
         da.Fill(dt);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        return dt;
+    }
+    public DataTable GetManditoryDocument(string CardNumber)
+    {
+        dtTemp.Clear();
+        string Query = "SELECT DocumentId, DocumentFor, FolderName, UploadedFileName, UploadStatus FROM TMS_PatientMandatoryDocument WHERE CardNumber = @CardNumber AND DocumentId = 3 AND IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        con.Open();
+        sd.Fill(ds);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        dtTemp = ds.Tables[0];
+        return dtTemp;
+    }
+    public DataTable GetActionType()
+    {
+        dt.Clear();
+        string Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE CEOSHA = 1 AND IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        return dt;
+    }
+    public DataTable GetRejectReason()
+    {
+        dt.Clear();
+        string Query = "select RejectId, RejectName from TMS_MasterRejectReason where IsActive = 1 and IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        dt = ds.Tables[0];
+        return dt;
+    }
+    public DataTable GetQueryReason()
+    {
+        dt.Clear();
+        string Query = "select ReasonId, ReasonName from TMS_MasterQueryReason where IsActive=1 and IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(ds);
+        if (con.State == ConnectionState.Open)
+        {
+            con.Close();
+        }
+        dt = ds.Tables[0];
+        return dt;
+    }
+    public DataTable GetQuerySubReason(string ReasonId)
+    {
+        dt.Clear();
+        string Query = "select ReasonId,SubReasonId, SubReasonName from TMS_MasterQuerySubReason where ReasonId= @ReasonId and IsActive=1 and IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ReasonId", ReasonId);
+        con.Open();
+        sd.Fill(dt);
         if (con.State == ConnectionState.Open)
         {
             con.Close();

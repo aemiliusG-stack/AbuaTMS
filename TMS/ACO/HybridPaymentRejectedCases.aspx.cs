@@ -26,7 +26,7 @@ public partial class ACO_HybridPaymentRejectedCases : System.Web.UI.Page
         try
         {
             //using (SqlCommand cmd = new SqlCommand("sp_GetAllHospitalsFromExcelHospital", con))
-            using (SqlCommand cmd = new SqlCommand("sp_HospitalNamelist", con))
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_HospitalNamelist", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 con.Open();

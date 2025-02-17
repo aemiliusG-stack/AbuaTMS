@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Web;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
+using Org.BouncyCastle.Asn1.Esf;
 
 
 public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
@@ -264,54 +265,65 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
         if (dt != null && dt.Rows.Count > 0)
         {
             DataRow row = dt.Rows[0];
-            lbDocType.Text = row["TypeOfMedicalExpertise"].ToString();
-            lbDoctorName.Text = row["DoctorName"].ToString();
-            lbDocRegnNo.Text = row["DoctorRegistrationNumber"].ToString();
-            lbDocQualification.Text = row["Qualification"].ToString();
-            lbDocContactNo.Text = row["DoctorContactNumber"].ToString();
-            lbAnaesthetistName.Text = row["AnaesthetistName"].ToString();
-            lbAnaesthetistRegNo.Text = row["AnaesthetistRegNo"].ToString();
-            lbAnaesthetistContactNo.Text = row["AnaesthetistMobNo"].ToString();
-            lbIncisionType.Text = row["IncisionType"].ToString();
+            lbDocType.Text = string.IsNullOrWhiteSpace(row.Field<string>("TypeOfMedicalExpertise")) ? "NA" : row.Field<string>("TypeOfMedicalExpertise").Trim();
+            lbDoctorName.Text = string.IsNullOrWhiteSpace(row.Field<string>("DoctorName")) ? "NA" : row.Field<string>("DoctorName").Trim();
+            lbDocRegnNo.Text = string.IsNullOrWhiteSpace(row.Field<string>("DoctorRegistrationNumber")) ? "NA" : row.Field<string>("DoctorRegistrationNumber").Trim();
+            lbDocQualification.Text = string.IsNullOrWhiteSpace(row.Field<string>("Qualification")) ? "NA" : row.Field<string>("Qualification").Trim();
+            lbDocContactNo.Text = string.IsNullOrWhiteSpace(row.Field<string>("DoctorContactNumber")) ? "NA" : row.Field<string>("DoctorContactNumber").Trim();
+            lbAnaesthetistName.Text = string.IsNullOrWhiteSpace(row.Field<string>("AnaesthetistName")) ? "NA" : row.Field<string>("AnaesthetistName").Trim();
+            lbAnaesthetistRegNo.Text = string.IsNullOrWhiteSpace(row.Field<string>("AnaesthetistRegNo")) ? "NA" : row.Field<string>("AnaesthetistRegNo").Trim();
+            lbAnaesthetistContactNo.Text = string.IsNullOrWhiteSpace(row.Field<string>("AnaesthetistMobNo")) ? "NA" : row.Field<string>("AnaesthetistMobNo").Trim();
+            lbIncisionType.Text = string.IsNullOrWhiteSpace(row.Field<string>("IncisionType")) ? "NA" : row.Field<string>("IncisionType").Trim();
             rbOPPhotoYes.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && Convert.ToBoolean(row["OPPhotosWebexTaken"]);
             rbOPPhotoNo.Checked = row["OPPhotosWebexTaken"] != DBNull.Value && !Convert.ToBoolean(row["OPPhotosWebexTaken"]);
             rbVedioRecDoneYes.Checked = row["VideoRecordingDone"] != DBNull.Value && Convert.ToBoolean(row["VideoRecordingDone"]);
             rbVedioRecDoneNo.Checked = row["VideoRecordingDone"] != DBNull.Value && !Convert.ToBoolean(row["VideoRecordingDone"]);
-            lbSwabCounts.Text = row["SwabCountInstrumentsCount"].ToString();
-            lbSurutes.Text = row["SuturesLigatures"].ToString();
+            lbSwabCounts.Text = string.IsNullOrWhiteSpace(row.Field<string>("SwabCountInstrumentsCount")) ? "NA" : row.Field<string>("SwabCountInstrumentsCount").Trim();
+            lbSurutes.Text = string.IsNullOrWhiteSpace(row.Field<string>("SuturesLigatures")) ? "NA" : row.Field<string>("SuturesLigatures").Trim();
             rbSpecimenRemoveYes.Checked = row["SpecimenRequired"] != DBNull.Value && Convert.ToBoolean(row["SpecimenRequired"]);
             rbSpecimenRemoveNo.Checked = row["SpecimenRequired"] != DBNull.Value && !Convert.ToBoolean(row["SpecimenRequired"]);
-            lbDranageCount.Text = row["DrainageCount"].ToString();
-            lbBloodLoss.Text = row["BloodLoss"].ToString();
-            lbOperativeInstructions.Text = row["PostOperativeInstructions"].ToString();
-            lbPatientCondition.Text = row["PatientCondition"].ToString();
+            lbDranageCount.Text = string.IsNullOrWhiteSpace(row.Field<string>("DrainageCount")) ? "NA" : row.Field<string>("DrainageCount").Trim();
+            lbBloodLoss.Text = string.IsNullOrWhiteSpace(row.Field<string>("BloodLoss")) ? "NA" : row.Field<string>("BloodLoss").Trim();
+            lbOperativeInstructions.Text = string.IsNullOrWhiteSpace(row.Field<string>("PostOperativeInstructions")) ? "NA" : row.Field<string>("PostOperativeInstructions").Trim();
+            lbPatientCondition.Text = string.IsNullOrWhiteSpace(row.Field<string>("PatientCondition")) ? "NA" : row.Field<string>("PatientCondition").Trim();
             rbComplicationsYes.Checked = row["ComplicationsIfAny"] != DBNull.Value && Convert.ToBoolean(row["ComplicationsIfAny"]);
             rbComplicationsNo.Checked = row["ComplicationsIfAny"] != DBNull.Value && !Convert.ToBoolean(row["ComplicationsIfAny"]);
-            lbTraetmentDate.Text = Convert.ToDateTime(row["TreatmentSurgeryStartDate"]).ToString("dd/MM/yyyy");
-            tbSurgeryStartTime.Text = TimeSpan.Parse(row["SurgeryStartTime"].ToString()).ToString(@"hh\:mm");
-            tbSurgeryEndTime.Text = TimeSpan.Parse(row["SurgeryEndTime"].ToString()).ToString(@"hh\:mm");
-            tbTreatmentGiven.Text = row["TreatmentGiven"].ToString();
-            tbOperativeFindings.Text = row["OperativeFindings"].ToString();
-            tbPostOperativePeriod.Text = row["PostOperativePeriod"].ToString();
-            tbSpecialInvestigationGiven.Text = row["PostSurgeryInvestigationGiven"].ToString();
-            tbStatusAtDischarge.Text = row["StatusAtDischarge"].ToString();
-            tbReview.Text = row["Review"].ToString();
-            tbAdvice.Text = row["Advice"].ToString();
+            lbTraetmentDate.Text = row["TreatmentSurgeryStartDate"] != DBNull.Value ? Convert.ToDateTime(row["TreatmentSurgeryStartDate"]).ToString("dd/MM/yyyy") : "NA";
+            tbSurgeryStartTime.Text = row["SurgeryStartTime"] != DBNull.Value ? TimeSpan.Parse(row["SurgeryStartTime"].ToString()).ToString(@"hh\:mm") : "NA";
+            tbSurgeryEndTime.Text =row["SurgeryEndTime"] != DBNull.Value ? TimeSpan.Parse(row["SurgeryEndTime"].ToString()).ToString(@"hh\:mm") : "NA";
+            tbTreatmentGiven.Text = string.IsNullOrWhiteSpace(row.Field<string>("TreatmentGiven")) ? "NA" : row.Field<string>("TreatmentGiven").Trim();
+            tbOperativeFindings.Text = string.IsNullOrWhiteSpace(row.Field<string>("OperativeFindings")) ? "NA" : row.Field<string>("OperativeFindings").Trim();
+            tbPostOperativePeriod.Text = string.IsNullOrWhiteSpace(row.Field<string>("PostOperativePeriod")) ? "NA" : row.Field<string>("PostOperativePeriod").Trim();
+            tbSpecialInvestigationGiven.Text = string.IsNullOrWhiteSpace(row.Field<string>("PostSurgeryInvestigationGiven")) ? "NA" : row.Field<string>("PostSurgeryInvestigationGiven").Trim();
+            tbStatusAtDischarge.Text = string.IsNullOrWhiteSpace(row.Field<string>("StatusAtDischarge")) ? "NA" : row.Field<string>("StatusAtDischarge").Trim();
+            tbReview.Text = string.IsNullOrWhiteSpace(row.Field<string>("Review")) ? "NA" : row.Field<string>("Review").Trim();
+            tbAdvice.Text = string.IsNullOrWhiteSpace(row.Field<string>("Advice")) ? "NA" : row.Field<string>("Advice").Trim();
             rbDischarge.Checked = row["IsDischarged"] != DBNull.Value && Convert.ToBoolean(row["IsDischarged"]);
             rbDeath.Checked = row["IsDischarged"] != DBNull.Value && !Convert.ToBoolean(row["IsDischarged"]);
-            lbDischargeDate.Text = Convert.ToDateTime(row["DischargeDate"]).ToString("dd-MM-yyyy");
-            lbNextFollowUp.Text = Convert.ToDateTime(row["NextFollowUpDate"]).ToString("dd-MM-yyyy");
-            lbConsultBlockName.Text = row["ConsultAtBlock"].ToString();
-            lbFloor.Text = row["FloorNo"].ToString();
-            lbRoomNo.Text = row["RoomNo"].ToString();
+            lbDischargeDate.Text = row["DischargeDate"] != DBNull.Value ? Convert.ToDateTime(row["DischargeDate"]).ToString("dd-MM-yyyy") : "NA"; 
+            lbNextFollowUp.Text = row["NextFollowUpDate"] != DBNull.Value ? Convert.ToDateTime(row["NextFollowUpDate"]).ToString("dd-MM-yyyy") : "NA";
+            lbConsultBlockName.Text = string.IsNullOrWhiteSpace(row.Field<string>("ConsultAtBlock")) ? "NA" : row.Field<string>("ConsultAtBlock").Trim();
+            lbFloor.Text = string.IsNullOrWhiteSpace(row.Field<string>("FloorNo")) ? "NA" : row.Field<string>("FloorNo").Trim();
+            lbRoomNo.Text = string.IsNullOrWhiteSpace(row.Field<string>("RoomNo")) ? "NA" : row.Field<string>("RoomNo").Trim();
             rbIsSpecialCaseYes.Checked = row["IsSpecialCase"] != DBNull.Value && Convert.ToBoolean(row["IsSpecialCase"]);
             rbIsSpecialCaseNo.Checked = row["IsSpecialCase"] != DBNull.Value && !Convert.ToBoolean(row["IsSpecialCase"]);
             if (rbIsSpecialCaseYes.Checked)
             {
-                pnlSpecialCaseValue.Visible = true; 
-                lbSpecialCaseValue.Text = row["SpecialCaseValue"].ToString(); 
+                pnlSpecialCaseValue.Visible = true;
+                lbSpecialCaseValue.Text = string.IsNullOrWhiteSpace(row.Field<string>("SpecialCaseValue")) ? "NA" : row.Field<string>("SpecialCaseValue").Trim();
             }
-            lbFinalDiagnosis.Text = row["FinalDiagnosis"].ToString();
+
+            lbFinalDiagnosis.Text = row["FinalDiagnosis"] != DBNull.Value ? row["FinalDiagnosis"].ToString() : "NA";
+            if (lbFinalDiagnosis.Text == "1")
+            {
+                lbFinalDiagnosis.Text = "Other";
+                divFinalDiagnosisDesc.Visible = true;
+                lbFinalDiagnosisDesc.Text = string.IsNullOrWhiteSpace(row.Field<string>("FinalDiagnosisDesc")) ? "NA" : row.Field<string>("FinalDiagnosisDesc").Trim();
+            }
+            else
+            {
+                lbFinalDiagnosis.Text = "NA";
+            }
             rbConsentYes.Checked = row["ProcedureConsent"] != DBNull.Value && Convert.ToBoolean(row["ProcedureConsent"]);
             rbConsentNo.Checked = row["ProcedureConsent"] != DBNull.Value && !Convert.ToBoolean(row["ProcedureConsent"]);
         }
@@ -504,18 +516,25 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
                     return;
                 }
-                if (dropActionType.SelectedValue == "0")
-                {
-                    string errorMessage = "window.alert('Please select Action Type.');";
-                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
-                    return;
-                }
                 if (tbNonTechFormRemark.Text == "")
                 {
                     strMessage = "window.alert('Please Fill Remarks!');";
                     ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", strMessage, true);
                     return;
                 }
+                if (dropActionType.SelectedValue == "0")
+                {
+                    string errorMessage = "window.alert('Please select Action Type.');";
+                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                    return;
+                }
+                if(!cbcheckbox.Checked)
+                {
+                    string errorMessage = "window.alert('Confirm the declaration to proceed further.');";
+                    ScriptManager.RegisterStartupScript(btnSubmitNonTechChecklist, btnSubmitNonTechChecklist.GetType(), "Error", errorMessage, true);
+                    return;
+                }
+                
                 string caseNo = hdCaseNo.Value;
                 string cardNumber = hdAbuaId.Value;
                 string userId = hdUserId.Value;
@@ -776,7 +795,7 @@ public partial class CEX_CEXClaimUpdation : System.Web.UI.Page
     {
         dt.Clear();
         string claimId = hdClaimId.Value;
-        dt = cex.GetClaimWorkFlow(Convert.ToInt32(claimId));
+        dt = cex.GetPreauthWorkFlow(Convert.ToInt32(claimId));
         if (dt != null && dt.Rows.Count > 0)
         {
             gvPreauthWorkFlow.DataSource = dt;
