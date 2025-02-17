@@ -401,8 +401,7 @@ public class CEX
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId, IsClaimInitiated,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,1,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,46,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId, IsClaimInitiated,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)VALUES(@ClaimId,1,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Insurance)',@Remarks,46,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
@@ -434,8 +433,7 @@ public class CEX
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Hybrid)', @Remarks, 44, @Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId, IsClaimInitiated,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)VALUES(@ClaimId,1,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX(Hybrid)', @Remarks, 44, @Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
@@ -467,8 +465,7 @@ public class CEX
     {
         try
         {
-            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)
-	VALUES( @ClaimId,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,45,@Amount, 1, GETDATE())";
+            string query = @"INSERT INTO TMS_PatientActionHistory(ClaimId,IsClaimInitiated,AdmissionId,ActionDate,ActionTakenBy,ActionTaken,Remarks,CaseStatusId,Amount, IsActive,CreatedOn)VALUES(@ClaimId,1,@AdmissionId,GETDATE(),@UserId,'Claim Forwarded by CEX',@Remarks,45,@Amount, 1, GETDATE())";
 
             SqlDataAdapter sd = new SqlDataAdapter();
             sd.InsertCommand = new SqlCommand(query, con);
