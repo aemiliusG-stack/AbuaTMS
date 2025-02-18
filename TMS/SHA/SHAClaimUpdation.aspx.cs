@@ -63,7 +63,7 @@ public partial class SHA_SHAClaimUpdation : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = shaHelper.GetShaCases();
+            dt = shaHelper.GetShaCases(Session["RoleId"].ToString());
             if (dt.Rows.Count > 0)
             {
                 lbRecordCount.Text = "Total No Records: " + dt.Rows.Count.ToString();

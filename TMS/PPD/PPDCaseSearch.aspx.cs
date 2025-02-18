@@ -5,6 +5,9 @@ using System.Data;
 using System.Web.UI.WebControls;
 using CareerPath.DAL;
 using System.Web.WebPages;
+using System.IO;
+using System.Web.UI;
+using System.Web;
 
 public partial class PPD_PPDCaseSearch : System.Web.UI.Page
 {
@@ -32,7 +35,7 @@ public partial class PPD_PPDCaseSearch : System.Web.UI.Page
                     GetPatients();
                 }
             }
-            
+
         }
         catch (Exception ex)
         {
@@ -112,7 +115,6 @@ public partial class PPD_PPDCaseSearch : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
 
     protected void lnkCaseNo_Click(object sender, EventArgs e)
     {
