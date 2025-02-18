@@ -1159,6 +1159,12 @@
                                                                         <asp:Label ID="lbFinalDiagnosis" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
                                                                     </div>
                                                                 </div>
+                                                                <div id="divFinalDiagnosisDesc" runat="server" class="col-md-3 mb-3" visible="false">
+                                                                    <div class="form-group">
+                                                                        <span class="font-weight-bold text-dark">Final Diagnosis Description:</span><br />
+                                                                        <asp:Label ID="lbFinalDiagnosisDesc" runat="server" CssClass="d-block w-100 border-bottom p-2" Text="&nbsp;"></asp:Label>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <div class="form-group">
                                                                         <span class="font-weight-bold text-dark">Is Special Case</span><br />

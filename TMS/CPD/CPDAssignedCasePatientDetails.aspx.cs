@@ -807,7 +807,19 @@ public partial class CPD_CPDAssignedCasePatientDetails : System.Web.UI.Page
             lbConsultBlockName.Text = GetStringValue(row["ConsultAtBlock"]);
             lbFloor.Text = GetStringValue(row["FloorNo"]);
             lbRoomNo.Text = GetStringValue(row["RoomNo"]);
-            lbFinalDiagnosis.Text = GetStringValue(row["FinalDiagnosis"]);
+            //lbFinalDiagnosis.Text = GetStringValue(row["FinalDiagnosis"]);
+
+            lbFinalDiagnosis.Text = row["FinalDiagnosis"] != DBNull.Value ? row["FinalDiagnosis"].ToString() : "NA";
+            if (lbFinalDiagnosis.Text == "1")
+            {
+                lbFinalDiagnosis.Text = "Other";
+                divFinalDiagnosisDesc.Visible = true;
+                lbFinalDiagnosisDesc.Text = string.IsNullOrWhiteSpace(row.Field<string>("FinalDiagnosisDesc")) ? "NA" : row.Field<string>("FinalDiagnosisDesc").Trim();
+            }
+            else
+            {
+                lbFinalDiagnosis.Text = "NA";
+            }
 
             rbOPPhotoYes.Checked = GetBooleanValue(row["OPPhotosWebexTaken"]);
             rbOPPhotoNo.Checked = !GetBooleanValue(row["OPPhotosWebexTaken"]);
