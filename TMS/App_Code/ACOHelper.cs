@@ -93,11 +93,11 @@ public class ACOHelper
 		t4.Remarks
     FROM
         TMS_ClaimMaster t1
-    INNER JOIN
+    LEFT JOIN
         TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId
-    INNER JOIN
+    LEFT JOIN
         TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId
-    INNER JOIN
+    LEFT JOIN
         TMS_CPDTechnicalCkecklist t4 ON t2.CardNumber = t4.CardNumber
     LEFT JOIN
         TMS_ClaimAddDeduction t5 ON t1.ClaimId = t5.ClaimId

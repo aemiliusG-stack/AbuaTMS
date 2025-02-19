@@ -47,6 +47,7 @@
                         <asp:Label ID="lblError" runat="server" CssClass="text-danger" Visible="False"></asp:Label>
                         <asp:Label ID="lblSuccess" runat="server" CssClass="text-success" Text=""></asp:Label>
                         <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
+                        <asp:HiddenField ID="hdClaimId" runat="server" Visible="false" />
                         <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
                         <asp:HiddenField ID="hdPatientRegId" runat="server" Visible="false" />
                         <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />

@@ -39,7 +39,9 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             // Get the CaseNumber from the query string
             string caseNumber = Request.QueryString["CaseNumber"];
-            if (!string.IsNullOrEmpty(caseNumber))
+            string claimId = Request.QueryString["ClaimId"];
+            hdClaimId.Value = claimId;
+            if (!string.IsNullOrEmpty(caseNumber) && !string.IsNullOrEmpty(claimId))
             {
                 Session["CaseNumber"] = caseNumber;
                 hdRoleId.Value = Session["RoleId"].ToString();
@@ -253,7 +255,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             dt.Clear();
-            string claimId = Session["ClaimId"].ToString();
+            string claimId = hdClaimId.Value;
             dt = cpd.GetClaimWorkFlow(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -341,7 +343,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     {
         try
         {
-            string claimId = Session["ClaimId"] as string;
+            string claimId = hdClaimId.Value;
             dt.Clear();
             dt = cpd.GetTreatmentDischarge(claimId);
             if (dt != null && dt.Rows.Count > 0)
