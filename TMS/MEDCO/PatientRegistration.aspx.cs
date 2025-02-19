@@ -269,6 +269,7 @@ partial class MEDCO_PatientRegistration : System.Web.UI.Page
             MultiView1.SetActiveView(viewRetrieve);
             strMessage = "window.alert('Invalid AbuaId! Please Contact BIS Team!');";
             ScriptManager.RegisterStartupScript(btnSubmit, btnSubmit.GetType(), "Error", strMessage, true);
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             return;
         }
     }

@@ -545,7 +545,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
     {
         dt.Clear();
         string claimId = claimIds.ToString();
-        dt = ppdHelper.GetWorkFlow(hdClaimId.Value);
+        dt = preAuth.GetClaimWorkFlow(Convert.ToInt32(hdClaimId.Value));
         if (dt != null && dt.Rows.Count > 0)
         {
             gridWorkFlow.DataSource = dt;
@@ -920,7 +920,7 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             else
                 dischargeType = false;
 
-            SqlParameter[] p = new SqlParameter[42];
+            SqlParameter[] p = new SqlParameter[41];
             p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
             p[0].DbType = DbType.String;
             p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
@@ -1003,8 +1003,6 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
             p[39].DbType = DbType.String;
             p[40] = new SqlParameter("@IsClaimInitiated", isClaimInitiated.ToString());
             p[40].DbType = DbType.String;
-            p[41] = new SqlParameter("@UserId", hdUserId.Value);
-            p[41].DbType = DbType.String;
             ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientDischargeDetails", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
@@ -1854,7 +1852,8 @@ public partial class MEDCO_PatientDischarge : System.Web.UI.Page
                         if (!Directory.Exists(destinationFolderPath))
                             Directory.CreateDirectory(destinationFolderPath);
 
-                        string fileName = hdPackageId.Value + "_" + hdProcedureId.Value + "_" + hdPostInvestigationId.Value + "_" + DateTime.Now.ToShortDateString();
+                        string fileName = hdPackageId.Value + "_" + hdProcedureId.Value + "_" + hdPostInvestigationId.Value;
+
                         string imagePath = Path.Combine(destinationFolderPath, fileName + ".jpeg");
 
                         // Save the file to the specified path

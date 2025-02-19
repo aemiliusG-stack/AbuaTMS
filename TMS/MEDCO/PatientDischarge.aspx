@@ -918,14 +918,14 @@
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Role">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label10" runat="server" Text='<%# Eval("Role") %>'></asp:Label>
+                                                                        <asp:Label ID="Label10" runat="server" Text='<%# Eval("RoleName") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                     <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Action">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label13" runat="server" Text='<%# Eval("Action") %>'></asp:Label>
+                                                                        <asp:Label ID="Label13" runat="server" Text='<%# Eval("ActionTaken") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                     <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="15%" />
@@ -946,7 +946,7 @@
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Claim Query/Rejection Reasons">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label16" runat="server" Text='<%# Eval("RejectedReason") %>'></asp:Label>
+                                                                        <asp:Label ID="Label16" runat="server" Text='<%# Eval("RejectName") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" CssClass="text-center" />
                                                                     <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="20%" />

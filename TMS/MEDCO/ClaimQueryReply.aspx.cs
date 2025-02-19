@@ -263,7 +263,7 @@ public partial class MEDCO_ClaimQueryReply : System.Web.UI.Page
     {
         dt.Clear();
         string claimId = claimIds.ToString();
-        dt = ppdHelper.GetWorkFlow(hdClaimId.Value);
+        dt = preAuth.GetClaimWorkFlow(Convert.ToInt32(hdClaimId.Value));
         if (dt != null && dt.Rows.Count > 0)
         {
             gridWorkFlow.DataSource = dt;
@@ -1057,24 +1057,6 @@ public partial class MEDCO_ClaimQueryReply : System.Web.UI.Page
                 lbBillAmount.Text = Convert.ToDecimal(dt.Rows[0]["BillAmt"]).ToString("C");
                 lbFinalVoucherAmount.Text = "NA";
                 tbClaimRemarks.Text = dt.Rows[0]["ClaimRemarks"].ToString();
-
-                string QueryRaisedRoleInsurer = dt.Rows[0]["QueryRaisedByRoleInsurer"].ToString();
-                string QueryRaisedRoleTrust = dt.Rows[0]["QueryRaisedByRoleTrust"].ToString();
-                if (QueryRaisedRoleInsurer.Equals("7") || QueryRaisedRoleTrust.Equals("8"))
-                {
-                    panelTechnical.Visible = false;
-                    panelAco.Visible = false;
-                }
-                else if (QueryRaisedRoleInsurer.Equals("9") || QueryRaisedRoleTrust.Equals("10"))
-                {
-                    panelTechnical.Visible = true;
-                    panelAco.Visible = false;
-                }
-                else if(QueryRaisedRoleInsurer.Equals("11") || QueryRaisedRoleTrust.Equals("12"))
-                {
-                    panelTechnical.Visible = true;
-                    panelAco.Visible = true;
-                }
             }
         }
         catch (Exception ex)
@@ -1195,7 +1177,6 @@ public partial class MEDCO_ClaimQueryReply : System.Web.UI.Page
         {
             lbAcoFinalAprovedAmountInsurer.Text = Convert.ToDecimal(ApprovedAmountInsurer).ToString("C");
             lbAcoFinalAprovedAmountTrust.Text = Convert.ToDecimal(ApprovedAmountTrust).ToString("C");
-
             DataTable dt = new DataTable();
             dt = shaHelper.GetDeductedAmountDetails(hdClaimId.Value, "9");
             if (dt != null && dt.Rows.Count > 0)
@@ -1206,7 +1187,6 @@ public partial class MEDCO_ClaimQueryReply : System.Web.UI.Page
             dt = shaHelper.GetDeductedAmountDetails(hdClaimId.Value, "10");
             if (dt != null && dt.Rows.Count > 0)
             {
-                tbAcoRemarks.Text = dt.Rows[0]["Remarks"].ToString();
                 lbAcoFinalAprovedAmountTrust.Text = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]).ToString("C");
             }
         }
@@ -1237,13 +1217,11 @@ public partial class MEDCO_ClaimQueryReply : System.Web.UI.Page
                     totalDeductionAmount += Convert.ToDouble(row["DeductionAmt"].ToString());
                 }
                 lbTotalDeductionAmount.Text = totalDeductionAmount.ToString("C");
-                panelAddDeduction.Visible = true;
             }
             else
             {
                 gridDeductionTable.DataSource = null;
                 gridDeductionTable.DataBind();
-                panelAddDeduction.Visible = false;
             }
         }
         catch (Exception ex)
