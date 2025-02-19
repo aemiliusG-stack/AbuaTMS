@@ -16,6 +16,7 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     DataTable dt = new DataTable();
     DataSet ds = new DataSet();
     CPD cpd = new CPD();
+    ACOHelper aco = new ACOHelper();
     string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -71,10 +72,10 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
                 {
                     adapter.Fill(dt);
                 }
-                ddlTypeS.DataSource = dt;
-                ddlTypeS.DataTextField = "HospitalType";
-                ddlTypeS.DataValueField = "HospitalType";
-                ddlTypeS.DataBind();
+                ddlHospitalType.DataSource = dt;
+                ddlHospitalType.DataTextField = "HospitalType";
+                ddlHospitalType.DataValueField = "HospitalType";
+                ddlHospitalType.DataBind();
             }
         }
         finally
@@ -84,13 +85,34 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
                 con.Close();
             }
         }
-        ddlTypeS.Items.Insert(0, new ListItem("---select---", ""));
+        ddlHospitalType.Items.Insert(0, new ListItem("---select---", ""));
     }
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         try
         {
-
+            string caseNumber = tbCaseNumber.Text.Trim();
+            string beneficiaryCardNumber = tbBeneficiaryNo.Text.Trim();
+            DateTime? regFromDate = string.IsNullOrEmpty(tbRegFromDate.Text) ? (DateTime?)null : Convert.ToDateTime(tbRegFromDate.Text);
+            DateTime? regToDate = string.IsNullOrEmpty(tbRegToDate.Text) ? (DateTime?)null : Convert.ToDateTime(tbRegToDate.Text);
+            int schemeId;
+            if (!int.TryParse(ddSchemeId.SelectedValue, out schemeId))
+            {
+                schemeId = 0;
+            }
+            int categoryId;
+            if (!int.TryParse(ddCategory.SelectedValue, out categoryId))
+            {
+                categoryId = 0;
+            }
+            int procedureId;
+            if (!int.TryParse(ddProcedureName.SelectedValue, out procedureId))
+            {
+                procedureId = 0;
+            }
+            DataTable dt = aco.GetRecociliationCU_Filter(caseNumber, beneficiaryCardNumber, regFromDate, regToDate, schemeId, categoryId, procedureId);
+            gridrptReconciliationCases.DataSource = dt;
+            gridrptReconciliationCases.DataBind();
         }
         catch (Exception ex)
         {
@@ -145,9 +167,10 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     }
     protected void btnReset_Click(object sender, EventArgs e)
     {
-        txtHospitalCode.Text = string.Empty;
+        tbCaseNumber.Text = string.Empty;
+        tbBeneficiaryNo.Text = string.Empty;
         //ddlHospitals.SelectedIndex = 0;
-        ddlTypeS.SelectedIndex = 0;
+        ddlHospitalType.SelectedIndex = 0;
         //DropDownListDistricts.SelectedIndex = 0;
         //GridView1.DataSource = null;
         //GridView1.DataBind();

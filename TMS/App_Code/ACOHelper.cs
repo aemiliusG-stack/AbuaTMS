@@ -290,4 +290,103 @@ public class ACOHelper
             }
         }
     }
+    public DataTable GetRecociliationCU_Filter(string caseNumber, string beneficiaryCardNumber, DateTime? regFromDate, DateTime? regToDate, int schemeId, int categoryId, int procedureId)
+    {
+        // Define base query
+        string query = @"
+        SELECT 
+            t1.CaseNumber,
+            t1.ClaimId,
+            t1.ClaimNumber As ClaimNo,
+            CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, 
+            t3.HospitalName,
+            t2.AdmissionDate as RegisteredDate,
+            t1.TrustClaimAmountRequested as ClaimInitiatedAmount,
+            t1.TrustClaimAmountApproved AS ClaimApprovedAmount,
+            NULL AS ErroneousAmount,
+            NULL AS ErroneousInitiatedAmount,
+            t9.AccountNumber As HospitalAccountNo,
+            t9.IFSCCode As HospitalIFSCCode,
+            t10.TDSExemptPercentage As TDSPercentage,
+            CASE 
+                WHEN t10.IsCPDTrustApproved = 1 THEN t10.TrustClaimAmountApproved 
+                ELSE NULL 
+            END AS CPDApprovedAmountTrust,
+            t10.TrustClaimAmountApproved As ApprovedAmountTrust,
+            t10.TrustTDSAmount As TDSAmountTrust,
+            t10.TrustClaimAmountApproved As FinalAmountTrust
+        FROM TMS_ClaimMaster t1
+        INNER JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber = t2.CaseNumber
+        INNER JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId
+        INNER JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId
+        INNER JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId
+        INNER JOIN TMS_PatientTreatmentProtocol t6 ON t2.PatientRegId = t6.PatientRegId
+        INNER JOIN TMS_MasterPackageMaster t7 ON t6.PackageId = t7.PackageId
+        INNER JOIN TMS_MasterPackageDetail t8 ON t6.ProcedureId = t8.ProcedureId
+        LEFT JOIN HEM_FinancialDetails t9 ON t1.HospitalId = t9.HospitalId
+        LEFT JOIN TMS_ClaimMaster t10 ON t1.CaseNumber = t10.CardNumber
+        WHERE 1 = 1 ";
+
+        // Dynamically add filters to the query based on provided parameters
+        if (!string.IsNullOrEmpty(caseNumber))
+            query += " AND t2.CaseNumber = @CaseNumber";
+        if (!string.IsNullOrEmpty(beneficiaryCardNumber))
+            query += " AND t2.CardNumber = @BeneficiaryCardNumber";
+        if (regFromDate.HasValue)
+            query += " AND t2.AdmissionDate >= @RegFromDate";
+        if (regToDate.HasValue)
+            query += " AND t2.AdmissionDate <= @RegToDate";
+        if (schemeId > 0)
+            query += " AND t7.PackageId = @SchemeId";
+        if (categoryId > 0)
+            query += " AND t8.CategoryId = @CategoryId";
+        if (procedureId > 0)
+            query += " AND t8.ProcedureId = @ProcedureId";
+
+        SqlCommand cmd = null;
+        SqlDataAdapter sd = null;
+        DataTable dt = new DataTable();
+
+        try
+        {
+            // Prepare command with parameters
+            cmd = new SqlCommand(query, con);
+
+            // Add parameters if applicable
+            if (!string.IsNullOrEmpty(caseNumber))
+                cmd.Parameters.AddWithValue("@CaseNumber", caseNumber);
+            if (!string.IsNullOrEmpty(beneficiaryCardNumber))
+                cmd.Parameters.AddWithValue("@BeneficiaryCardNumber", beneficiaryCardNumber);
+            if (regFromDate.HasValue)
+                cmd.Parameters.AddWithValue("@RegFromDate", regFromDate.Value);
+            if (regToDate.HasValue)
+                cmd.Parameters.AddWithValue("@RegToDate", regToDate.Value);
+            if (schemeId > 0)
+                cmd.Parameters.AddWithValue("@SchemeId", schemeId);
+            if (categoryId > 0)
+                cmd.Parameters.AddWithValue("@CategoryId", categoryId);
+            if (procedureId > 0)
+                cmd.Parameters.AddWithValue("@ProcedureId", procedureId);
+
+            // Execute the query and fill the dataset
+            sd = new SqlDataAdapter(cmd);
+            con.Open();
+            sd.Fill(dt);
+        }
+        catch (SqlException ex)
+        {
+            // Log or handle the SQL exceptions as needed
+            throw new Exception("Database error: " + ex.Message);
+        }
+        finally
+        {
+            if (sd != null) sd.Dispose();
+            if (cmd != null) cmd.Dispose();
+            if (con.State == ConnectionState.Open) con.Close();
+        }
+
+        return dt;
+    }
+
+
 }

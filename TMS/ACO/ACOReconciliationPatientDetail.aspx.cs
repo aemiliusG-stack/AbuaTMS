@@ -1,33 +1,36 @@
-﻿using AbuaTMS;
-using CareerPath.DAL;
+﻿using CareerPath.DAL;
 using System;
-using System.Configuration;
-using System.Data;
-using System.Web.Services;
-using System.Data.SqlClient;
-using System.Reflection.Emit;
-using System.Web.UI;
-using System.Web;
-using System.Web.UI.WebControls;
-using WebGrease.Css.Ast;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using AbuaTMS;
+using System.Reflection.Emit;
 using Label = System.Web.UI.WebControls.Label;
 
-public partial class ACO_CaseDetails : System.Web.UI.Page
+public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
 {
-    private string strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
-    private PreAuth preAuth = new PreAuth();
-    CPD cpd = new CPD();
-    CEX cex = new CEX();
-    public PPDHelper ppdHelper = new PPDHelper();
+    DataTable dt = new DataTable();
+    DataSet ds = new DataSet();
     MasterData md = new MasterData();
+    private PreAuth preAuth = new PreAuth();
+    CEX cex = new CEX();
+    CPD cpd = new CPD();
     ACOHelper aco = new ACOHelper();
+    public static PPDHelper ppdHelper = new PPDHelper();
+    private string caseNo;
+    private string claimNo;
     string pageName;
+    private string strMessage;
+
     protected void Page_Load(object sender, EventArgs e)
     {
+        //mvCPDTabs.SetActiveView(ViewClaims);
         if (Session["UserId"] == null)
         {
             Response.Redirect("~/Unauthorize.aspx", false);
@@ -37,31 +40,30 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             hdUserId.Value = Session["UserId"].ToString();
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
-            // Get the CaseNumber from the query string
+            string cardNo = Session["CardNumber"] as string;
+            string claimId = Session["ClaimId"] as string;
+            string patientRedgNo = Session["PatientRegId"] as string;
             string caseNumber = Request.QueryString["CaseNumber"];
+            Session["CaseNumber"] = caseNumber;
             if (!string.IsNullOrEmpty(caseNumber))
             {
-                Session["CaseNumber"] = caseNumber;
                 hdRoleId.Value = Session["RoleId"].ToString();
-                // Call a method to fetch and display details for the given CaseNumber
                 LoadPatientDetails(caseNumber);
             }
             else
             {
-                // Handle the case where no CaseNumber is provided
-                lblError.Text = "No Case Number provided!";
-                lblError.Visible = true;
+                lbName.Text = "No CaseNo provided.";
             }
-            getTreatmentDischarge();
-            BindPreauthAdmissionDetails();
             getPatientPrimaryDiagnosis();
             getPatientSecondaryDiagnosis();
+            getTreatmentDischarge();
             getNetworkHospitalDetails();
+            BindPreauthAdmissionDetails();
             BindGrid_TreatmentProtocol();
             BindGrid_ICHIDetails();
             BindGrid_PreauthWorkFlow();
+            getTreatmentDischarge();
         }
-
     }
     protected void BindGrid_PrimaryDiagnosis()
     {
@@ -177,7 +179,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-       
+
     }
     private void BindGrid_TreatmentProtocol()
     {
@@ -204,12 +206,25 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-        
+
     }
     private void BindGrid_ICHIDetails()
     {
         try
         {
+            //dt.Clear();
+            //dt = cpd.GetICHIDetails();
+            //if (dt != null && dt.Rows.Count > 0)
+            //{
+            //    gvICHIDetails.DataSource = dt;
+            //    gvICHIDetails.DataBind();
+            //}
+            //else
+            //{
+            //    gvICHIDetails.DataSource = null;
+            //    gvICHIDetails.EmptyDataText = "No ICHI Details found.";
+            //    gvICHIDetails.DataBind();
+            //}
             DataTable dt = new DataTable();
             dt.Columns.Add("lbProcedureName");
             dt.Columns.Add("lbICHIMedco");
@@ -246,7 +261,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             throw;
             throw;
         }
-        
+
     }
     private void BindGrid_PreauthWorkFlow()
     {
@@ -282,7 +297,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-       
+
     }
     private void BindPreauthAdmissionDetails()
     {
@@ -334,14 +349,16 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-        
+
     }
     //Tratment and discharge
     private void getTreatmentDischarge()
     {
         try
         {
-            string claimId = Session["ClaimId"] as string;
+            //string claimId = Session["ClaimId"] as string;
+            long claimId2 = Convert.ToInt64(Session["ClaimId"]);
+            string claimId = claimId2.ToString();
             dt.Clear();
             dt = cpd.GetTreatmentDischarge(claimId);
             if (dt != null && dt.Rows.Count > 0)
@@ -410,7 +427,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-        
+
     }
     private void BindDeductionTypes()
     {
@@ -446,7 +463,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-        
+
     }
 
     private void BindACORemarks()
@@ -506,7 +523,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             throw;
             throw;
         }
-        
+
     }
     private void BindClaimWorkflow()
     {
@@ -542,7 +559,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-        
+
     }
     private void BindTechnicalChecklistData()
     {
@@ -618,7 +635,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-        
+
     }
     public void BindNonTechnicalChecklist()
     {
@@ -709,6 +726,30 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             lbPreauthApprovedAmt.Text = "Error: " + ex.Message;
         }
     }
+    //private void BindICDDetailsGrid()
+    //{
+    //    // Create a DataTable with the same structure as the GridView columns
+    //    DataTable dt = new DataTable();
+    //    dt.Columns.Add("SNo", typeof(string));
+    //    dt.Columns.Add("ICDCode", typeof(string));
+    //    dt.Columns.Add("ICDDescription", typeof(string));
+    //    dt.Columns.Add("ActedByRole", typeof(string));
+
+    //    // Add rows with "N/A" values
+    //    for (int i = 1; i <= 3; i++) // Create 3 placeholder rows
+    //    {
+    //        DataRow row = dt.NewRow();
+    //        row["SNo"] = "N/A";
+    //        row["ICDCode"] = "N/A";
+    //        row["ICDDescription"] = "N/A";
+    //        row["ActedByRole"] = "N/A";
+    //        dt.Rows.Add(row);
+    //    }
+
+    //    // Bind the DataTable to the GridView
+    //    gvICDDetails.DataSource = dt;
+    //    gvICDDetails.DataBind();
+    //}
     private void BindActionTypeDropdown()
     {
         try
@@ -737,7 +778,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
             throw;
         }
-        
+
     }
 
     private void LoadPatientDetails(string caseNumber)
@@ -770,7 +811,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                                 lnkClaimTab.CssClass = "btn btn-warning";
                                 btnAttachments.CssClass = "btn btn-primary";
                                 lbCaseNoHead.Text = caseNumber;
-                                Label11.Text = reader["Name"].ToString() ?? "N/A";
+                                lbName.Text = reader["Name"].ToString() ?? "N/A";
                                 lbBeneficiaryId.Text = reader["BeneficiaryCardID"].ToString() ?? "N/A";
                                 hdAbuaId.Value = reader["BeneficiaryCardID"].ToString().Trim();
                                 lbRegNo.Text = reader["RegistrationNo"].ToString() ?? "N/A";

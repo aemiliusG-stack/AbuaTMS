@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="CaseDetails.aspx.cs" Inherits="ACO_CaseDetails" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ACOReconciliationPatientDetail.aspx.cs" Inherits="ACO_ACOReconciliationPatientDetail" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -58,7 +58,7 @@
                             <div class="form-group row">
                                 <div class="col-md-3">
                                     <span class="form-label fw-semibold" style="font-weight: bold;">Name:</span><br />
-                                    <asp:Label ID="Label11" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
+                                    <asp:Label ID="lbName" Style="font-size: 12px;" runat="server" Text="N/A"></asp:Label>
                                 </div>
                                 <div class="col-md-3">
                                     <span class="form-label fw-semibold" style="font-weight: bold;">Beneficiary Card ID:</span><br />
@@ -740,7 +740,7 @@
                                             </asp:GridView>
                                         </div>
                                     </div>
-                                   <%-- <div style="margin-top: 20px;">
+                                    <%-- <div style="margin-top: 20px;">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                                             <label class="form-check-label" for="flexCheckDefault">
@@ -1690,7 +1690,7 @@
                                                 <div class="col-md-3 mt-3">
                                                     <span class="font-weight-bold">Final Approved Amount (Rs):</span><br />
                                                     <%--<asp:TextBox ID="TextBoxFinalApprovedAmount" runat="server" CssClass="form-control" AutoPostBack="True" OnTextChanged="TextBoxFinalApprovedAmount_TextChanged"></asp:TextBox>--%>
-                                                    <asp:TextBox ID="tbFinalAmountByAco" runat="server" CssClass="form-control" OnKeypress="return isNumeric(event);"></asp:TextBox>
+                                                    <asp:TextBox ID="tbFinalAmountByAco" runat="server" CssClass="form-control"></asp:TextBox>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -2635,4 +2635,8 @@
         </Triggers>
     </asp:UpdatePanel>
 </asp:Content>
+
+
+
+
 
