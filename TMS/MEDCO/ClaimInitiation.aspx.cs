@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web;
+using iText.IO.Image;
 public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
@@ -21,6 +22,7 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
     private static CEX cex = new CEX();
     public static PPDHelper ppdHelper = new PPDHelper();
     private TextboxValidation validateTB = new TextboxValidation();
+    private SHAHelper shaHelper = new SHAHelper();
     string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -67,11 +69,6 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
         if (dt.Rows.Count > 0)
         {
             hdAdmissionDate.Value = dt.Rows[0]["AdmissionDate"].ToString();
-            string minDate = DateTime.Parse(hdAdmissionDate.Value).AddDays(1).ToString("yyyy-MM-dd");
-            string maxDate = DateTime.Parse(hdAdmissionDate.Value).AddDays(5).ToString("yyyy-MM-dd");
-            t3tbEnhancementFromDate.Attributes["min"] = minDate;
-            t3tbEnhancementToDate.Attributes["min"] = minDate;
-            t3tbEnhancementToDate.Attributes["max"] = maxDate;
             gridPatientForDischarge.DataSource = dt;
             gridPatientForDischarge.DataBind();
         }
@@ -87,7 +84,6 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
             Label lbGridAdmissionId = (Label)gridPatientForDischarge.Rows[i].FindControl("lbAdmissionId");
             Label lbClaimId = (Label)gridPatientForDischarge.Rows[i].FindControl("lbClaimId");
             Label lbGridCardNo = (Label)gridPatientForDischarge.Rows[i].FindControl("lbCardNo");
-            //Label lbGridCardNo = (Label)gridPatientForDischarge.Rows[i].FindControl("lbPatientCardNo");
             hdPatientRegId.Value = lbGridPatientRegId.Text;
             hdAdmissionId.Value = lbGridAdmissionId.Text;
             hdClaimId.Value = lbClaimId.Text;
@@ -111,6 +107,10 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
                 lbAadharVerified.Text = dt.Rows[0]["IsAadharVerified"].ToString();
                 lbBiometricVerified.Text = dt.Rows[0]["IsBiometricVerified"].ToString();
                 lbPatientDistrict.Text = dt.Rows[0]["District"].ToString();
+                if (dt.Rows[0]["IsDischarged"].ToString().Trim().Equals("True"))
+                {
+                    hdDischargeId.Value = dt.Rows[0]["DischargeId"].ToString().Trim();
+                }
 
                 string patientImageBase64 = Convert.ToString(dt.Rows[0]["ImageURL"].ToString());
                 string folderName = hdAbuaId.Value;
@@ -149,7 +149,6 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
                     }
                 }
                 BindClaimWorkflow(lbClaimId.Text);
-                ShowPreInvestigationDocuments();
             }
             MultiView1.SetActiveView(viewDischarge);
         }
@@ -174,6 +173,7 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
         btnPreAutoriztion.CssClass = "btn btn-primary p-3";
         btnTreatment.CssClass = "btn btn-primary p-3";
         btnAttachments.CssClass = "btn btn-primary p-3";
+        btnClaim.CssClass = "btn btn-primary p-3";
     }
 
     //*****Past History Display*****//
@@ -185,6 +185,7 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
         btnPreAutoriztion.CssClass = "btn btn-primary p-3";
         btnTreatment.CssClass = "btn btn-primary p-3";
         btnAttachments.CssClass = "btn btn-primary p-3";
+        btnClaim.CssClass = "btn btn-primary p-3";
     }
 
     //*****PreAuth Display*****//
@@ -227,13 +228,13 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
                 t3lbHospitalIncentive.Text = dt.Rows[0]["IncentivePercentage"].ToString();
             }
             getAddedProcedure();
-            checkForEnhancement();
             MultiView2.SetActiveView(viewPreAuth);
             btnInitialAssessment.CssClass = "btn btn-primary p-3";
             btnPastHistory.CssClass = "btn btn-primary p-3";
             btnPreAutoriztion.CssClass = "btn btn-warning p-3";
             btnTreatment.CssClass = "btn btn-primary p-3";
             btnAttachments.CssClass = "btn btn-primary p-3";
+            btnClaim.CssClass = "btn btn-primary p-3";
         }
         catch (Exception ex)
         {
@@ -246,305 +247,12 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
         }
     }
 
-
-    //*****Enhancement Work*****//
-    protected void checkForEnhancement()
-    {
-        dt.Clear();
-        dt = dis.checkIsEnhancementApplicable(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, Convert.ToInt32(hdPatientRegId.Value));
-        if (dt.Rows.Count > 0)
-        {
-            if (dt.Rows[0]["checkId"].ToString() == "1")
-            {
-                btnRequestEnhancement.Visible = true;
-            }
-            else
-            {
-                btnRequestEnhancement.Visible = false;
-            }
-        }
-        else
-        {
-            btnRequestEnhancement.Visible = false;
-        }
-    }
-
-    protected void btnRequestEnhancement_Click(object sender, EventArgs e)
-    {
-        StringBuilder procedureIdBuilder = new StringBuilder();
-
-        foreach (GridViewRow row in t3gridAddedpackageProcedure.Rows)
-        {
-            Label lbProcedureId = row.FindControl("lbProcedureId") as Label;
-            if (lbProcedureId != null)
-            {
-                procedureIdBuilder.Append(lbProcedureId.Text).Append(", ");
-            }
-        }
-        string procedureIdFinal = procedureIdBuilder.ToString().TrimEnd(',', ' ');
-        if (!string.IsNullOrEmpty(procedureIdFinal))
-        {
-            dt.Clear();
-            SqlParameter[] p = new SqlParameter[1];
-            p[0] = new SqlParameter("@ProcedureId", procedureIdFinal.ToString());
-            p[0].DbType = DbType.String;
-
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_GetStratificationForMultipleProcedure", p);
-            if (con.State == ConnectionState.Open)
-                con.Close();
-            if (ds.Tables[0].Rows.Count > 0)
-            {
-                //dt = dis.GetStratificationForEnhancement(procedureIdFinal.ToString());
-                dt = ds.Tables[0];
-                if (dt.Rows.Count > 0)
-                {
-                    t3DropEnhancementStratification.Items.Clear();
-                    t3DropEnhancementStratification.DataValueField = "StratificationId";
-                    t3DropEnhancementStratification.DataTextField = "StratificationDetail";
-                    t3DropEnhancementStratification.DataSource = dt;
-                    t3DropEnhancementStratification.DataBind();
-                    t3DropEnhancementStratification.Items.Insert(0, new ListItem("--SELECT--", "0"));
-                }
-            }
-        }
-        MultiView3.SetActiveView(viewEnhancement);
-    }
-    protected void t3tbEnhancementFromDate_TextChanged(object sender, EventArgs e)
-    {
-        if (DateTime.Parse(t3tbEnhancementFromDate.Text) < DateTime.Parse(hdAdmissionDate.Value))
-        {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement from date should be less than admission date!');", true);
-            t3tbEnhancementFromDate.Text = "";
-            t3tbEnhancementToDate.Text = "";
-        }
-    }
-    protected void t3tbEnhancementToDate_TextChanged(object sender, EventArgs e)
-    {
-        DateTime fromDate;
-        DateTime toDate;
-
-        if (DateTime.TryParse(t3tbEnhancementFromDate.Text, out fromDate) &&
-            DateTime.TryParse(t3tbEnhancementToDate.Text, out toDate))
-        {
-            TimeSpan difference = toDate - fromDate;
-            t3lbEnhancementNoOfDays.Text = (difference.Days + 1).ToString();
-        }
-        else
-        {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid Date!');", true);
-            t3tbEnhancementFromDate.Text = "";
-            t3tbEnhancementToDate.Text = "";
-        }
-    }
-    protected void btnInitiateEnhancement_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            // Nirmal 
-            if (fuEnhancementPatientPhoto.HasFile && fuEnhancementJustification.HasFile && fuEnhancementIcp.HasFile)
-            {
-                string PatientPhotoExtension = Path.GetExtension(fuEnhancementPatientPhoto.FileName).ToLower();
-                int PatientPhotoFileSize = fuEnhancementPatientPhoto.PostedFile.ContentLength;
-                string PatientPhotoMimeType = fuEnhancementPatientPhoto.PostedFile.ContentType;
-
-                string JustificationPhotoExtension = Path.GetExtension(fuEnhancementJustification.FileName).ToLower();
-                int JustificationFileSize = fuEnhancementJustification.PostedFile.ContentLength;
-                string JustificationMimeType = fuEnhancementJustification.PostedFile.ContentType;
-
-                string IcpExtension = Path.GetExtension(fuEnhancementIcp.FileName).ToLower();
-                int IcpFileSize = fuEnhancementIcp.PostedFile.ContentLength;
-                string IcpMimeType = fuEnhancementIcp.PostedFile.ContentType;
-
-                if (PatientPhotoExtension == ".jpg" || PatientPhotoExtension == ".jpeg" || PatientPhotoExtension == ".png" || JustificationPhotoExtension == ".jpg" || JustificationPhotoExtension == ".jpeg" || JustificationPhotoExtension == ".png" || IcpExtension == ".jpg" || IcpExtension == ".jpeg" || IcpExtension == ".png")
-                {
-                    //Patient Photo
-                    Stream filePatientPhotoStream = fuEnhancementPatientPhoto.PostedFile.InputStream;
-                    byte[] filePatientPhotoBytes = new byte[filePatientPhotoStream.Length];
-                    filePatientPhotoStream.Read(filePatientPhotoBytes, 0, filePatientPhotoBytes.Length);
-
-                    string base64StringPatientPhoto = Convert.ToBase64String(filePatientPhotoBytes);
-                    string randomPatientFolderName = hdAbuaId.Value;
-                    string basePatientFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
-                    string destinationPatientFolderPath = Path.Combine(basePatientFolderPath, randomPatientFolderName);
-
-                    if (!Directory.Exists(destinationPatientFolderPath))
-                        Directory.CreateDirectory(destinationPatientFolderPath);
-                    string patientFileName = "EnhancementPatient_" + "_" + hdAbuaId.Value;
-                    string patientImagePath = Path.Combine(destinationPatientFolderPath, patientFileName + ".jpeg");
-                    File.WriteAllBytes(patientImagePath, filePatientPhotoBytes);
-
-                    //Justification Photo
-                    Stream fileJustificationPhotoStream = fuEnhancementJustification.PostedFile.InputStream;
-                    byte[] fileJustificationPhotoBytes = new byte[fileJustificationPhotoStream.Length];
-                    fileJustificationPhotoStream.Read(fileJustificationPhotoBytes, 0, fileJustificationPhotoBytes.Length);
-
-                    string base64StringJustificationPhoto = Convert.ToBase64String(fileJustificationPhotoBytes);
-                    string randomJustificationFolderName = hdAbuaId.Value;
-                    string baseJustificationFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
-                    string destinationJustificationFolderPath = Path.Combine(baseJustificationFolderPath, randomJustificationFolderName);
-
-                    if (!Directory.Exists(destinationJustificationFolderPath))
-                        Directory.CreateDirectory(destinationJustificationFolderPath);
-                    string justificationFileName = "EnhancementJustification_" + "_" + hdAbuaId.Value;
-                    string justificationImagePath = Path.Combine(destinationJustificationFolderPath, justificationFileName + ".jpeg");
-                    File.WriteAllBytes(justificationImagePath, fileJustificationPhotoBytes);
-
-                    //Icp Photo
-                    Stream fileIcpPhotoStream = fuEnhancementIcp.PostedFile.InputStream;
-                    byte[] fileIcpPhotoBytes = new byte[fileIcpPhotoStream.Length];
-                    fileIcpPhotoStream.Read(fileIcpPhotoBytes, 0, fileIcpPhotoBytes.Length);
-
-                    string base64StringIcpPhoto = Convert.ToBase64String(fileIcpPhotoBytes);
-                    string randomIcpFolderName = hdAbuaId.Value;
-                    string baseIcpFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
-                    string destinationIcpFolderPath = Path.Combine(baseIcpFolderPath, randomIcpFolderName);
-
-                    if (!Directory.Exists(destinationIcpFolderPath))
-                        Directory.CreateDirectory(destinationIcpFolderPath);
-                    string icpFileName = "EnhancementIcp_" + "_" + hdAbuaId.Value;
-                    string icpImagePath = Path.Combine(destinationIcpFolderPath, icpFileName + ".jpeg");
-                    File.WriteAllBytes(icpImagePath, fileIcpPhotoBytes);
-
-                    SqlParameter[] p = new SqlParameter[18];
-                    p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
-                    p[0].DbType = DbType.String;
-                    p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
-                    p[1].DbType = DbType.String;
-                    p[2] = new SqlParameter("@Cardnumber", hdAbuaId.Value);
-                    p[2].DbType = DbType.String;
-                    p[3] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
-                    p[3].DbType = DbType.String;
-                    p[4] = new SqlParameter("@EnhancementFrom", t3tbEnhancementFromDate.Text);
-                    p[4].DbType = DbType.String;
-                    p[5] = new SqlParameter("@EnhancementTo", t3tbEnhancementToDate.Text);
-                    p[5].DbType = DbType.String;
-                    p[6] = new SqlParameter("@StratificationId", t3DropEnhancementStratification.SelectedValue);
-                    p[6].DbType = DbType.String;
-                    p[7] = new SqlParameter("@Remarks", t3EnhancementRemarks.Text);
-                    p[7].DbType = DbType.String;
-                    p[8] = new SqlParameter("@UserId", hdUserId.Value);
-                    p[8].DbType = DbType.String;
-                    p[9] = new SqlParameter("@PatientFolderName", randomPatientFolderName);
-                    p[9].DbType = DbType.String;
-                    p[10] = new SqlParameter("@PatientUploadedFileName", patientFileName);
-                    p[10].DbType = DbType.String;
-                    p[11] = new SqlParameter("@PatientFilePath", patientImagePath);
-                    p[11].DbType = DbType.String;
-                    p[12] = new SqlParameter("@JustificationFolderName", randomJustificationFolderName);
-                    p[12].DbType = DbType.String;
-                    p[13] = new SqlParameter("@JustificationUploadedFileName", justificationFileName);
-                    p[13].DbType = DbType.String;
-                    p[14] = new SqlParameter("@JustificationFilePath", justificationImagePath);
-                    p[14].DbType = DbType.String;
-                    p[15] = new SqlParameter("@IcpFolderName", randomIcpFolderName);
-                    p[15].DbType = DbType.String;
-                    p[16] = new SqlParameter("@IcpUploadedFileName", icpFileName);
-                    p[16].DbType = DbType.String;
-                    p[17] = new SqlParameter("@IcpFilePath", icpImagePath);
-                    p[17].DbType = DbType.String;
-
-                    ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientEnhancementDetail", p);
-                    if (con.State == ConnectionState.Open)
-                        con.Close();
-                    if (ds != null && ds.Tables[0].Rows.Count > 0)
-                    {
-                        if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
-                        {
-                            GetPatientForClaimInitiation();
-                            MultiView1.SetActiveView(viewPatientList);
-                            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement Raised Successfully!');", true);
-                        }
-                        else
-                        {
-                            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid Request!');", true);
-                        }
-                    }
-                    else
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement already in progess!');", true);
-                    }
-                }
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Enhancement Document Required!');", true);
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-        }
-    }
-    protected void btnChangeWard_Click(object sender, EventArgs e)
-    {
-        MultiView3.SetActiveView(viewChangeWard);
-    }
-    protected void btnInitiateChangeOfWard_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    protected void btnModifyPackage_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            SqlParameter[] p = new SqlParameter[7];
-            p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
-            p[0].DbType = DbType.String;
-            p[1] = new SqlParameter("@Cardnumber", hdAbuaId.Value);
-            p[1].DbType = DbType.String;
-            p[2] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
-            p[2].DbType = DbType.String;
-            p[3] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
-            p[3].DbType = DbType.String;
-            p[4] = new SqlParameter("@ClaimId", hdClaimId.Value);
-            p[4].DbType = DbType.String;
-            p[5] = new SqlParameter("@Remarks", tbModifyPackageRemarks.Text);
-            p[5].DbType = DbType.String;
-            p[6] = new SqlParameter("@UserId", hdUserId.Value);
-            p[6].DbType = DbType.String;
-
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthModifyPackage", p);
-            if (con.State == ConnectionState.Open)
-                con.Close();
-            if (ds.Tables[0].Rows.Count > 0)
-            {
-                if (ds.Tables[0].Rows[0]["Id"].ToString() == "1")
-                {
-                    GetPatientForClaimInitiation();
-                    MultiView1.SetActiveView(viewPatientList);
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Successful! Please modify package through Initiate Pre-Auth');", true);
-                }
-                else
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid Request!');", true);
-                }
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid Request!');", true);
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-        }
-    }
-
     //*****Display Work Flow*****//
     private void BindClaimWorkflow(string claimIds)
     {
         dt.Clear();
         string claimId = claimIds.ToString();
-        dt = preAuth.GetClaimWorkFlow(Convert.ToInt32(hdClaimId.Value));
+        dt = preAuth.GetWorkFlow(Convert.ToInt32(hdClaimId.Value));
         if (dt != null && dt.Rows.Count > 0)
         {
             gridWorkFlow.DataSource = dt;
@@ -566,100 +274,32 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
         if (dt.Rows.Count > 0)
         {
             t3gridAddedpackageProcedure.DataSource = dt;
+            gridSurgeryTreatementDate.DataSource = dt;
             t3gridAddedpackageProcedure.DataBind();
+            gridSurgeryTreatementDate.DataBind();
         }
         else
         {
             t3gridAddedpackageProcedure.DataSource = "";
             t3gridAddedpackageProcedure.DataBind();
+            gridSurgeryTreatementDate.DataSource = "";
+            gridSurgeryTreatementDate.DataBind();
         }
     }
     protected void btnTreatment_Click(object sender, EventArgs e)
     {
         try
         {
-            dt = dis.getDoctorType();
-            if (dt.Rows.Count > 0)
-            {
-                dropDroctorType.Items.Clear();
-                dropDroctorType.DataValueField = "Id";
-                dropDroctorType.DataTextField = "Title";
-                dropDroctorType.DataSource = dt;
-                dropDroctorType.DataBind();
-                dropDroctorType.Items.Insert(0, new ListItem("--SELECT--", "0"));
-            }
-            else
-            {
-                dropDroctorType.Items.Insert(0, new ListItem("--SELECT--", "0"));
-                dropDroctorType.Items.Clear();
-            }
-
-            dt = dis.getAnesthetistList();
-            if (dt.Rows.Count > 0)
-            {
-                dropAnesName.Items.Clear();
-                dropAnesName.DataValueField = "Id";
-                dropAnesName.DataTextField = "Name";
-                dropAnesName.DataSource = dt;
-                dropAnesName.DataBind();
-                dropAnesName.Items.Insert(0, new ListItem("--SELECT--", "0"));
-            }
-            else
-            {
-                dropAnesName.Items.Insert(0, new ListItem("--SELECT--", "0"));
-                dropAnesName.Items.Clear();
-            }
-            getAddedProcedureForDischarge();
             MultiView2.SetActiveView(viewTreatmentDischarge);
             btnInitialAssessment.CssClass = "btn btn-primary p-3";
             btnPastHistory.CssClass = "btn btn-primary p-3";
             btnPreAutoriztion.CssClass = "btn btn-primary p-3";
             btnTreatment.CssClass = "btn btn-warning p-3";
             btnAttachments.CssClass = "btn btn-primary p-3";
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
+            btnClaim.CssClass = "btn btn-primary p-3";
+            if (!hdDischargeId.Value.ToString().Equals(""))
             {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
-    protected void getAddedProcedureForDischarge()
-    {
-        DataTable dt = null;
-        dt = preAuth.getPatientAddedProcedureForDischarge(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, hdPatientRegId.Value);
-        if (dt.Rows.Count > 0)
-        {
-            t4gridAddedProcedure.DataSource = dt;
-            t4gridAddedProcedure.DataBind();
-        }
-        else
-        {
-            t4gridAddedProcedure.DataSource = "";
-            t4gridAddedProcedure.DataBind();
-        }
-    }
-    protected void dropDroctorType_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            dt = dis.getDoctorList(Convert.ToInt32(dropDroctorType.SelectedValue));
-            if (dt.Rows.Count > 0)
-            {
-                dropDoctorId.Items.Clear();
-                dropDoctorId.DataValueField = "Id";
-                dropDoctorId.DataTextField = "Name";
-                dropDoctorId.DataSource = dt;
-                dropDoctorId.DataBind();
-                dropDoctorId.Items.Insert(0, new ListItem("--SELECT--", "0"));
-            }
-            else
-            {
-                dropDoctorId.Items.Insert(0, new ListItem("--SELECT--", "0"));
-                dropDoctorId.Items.Clear();
+                getSurgeonDetails(hdDischargeId.Value.ToString());
             }
         }
         catch (Exception ex)
@@ -672,85 +312,7 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    protected void dropDoctorId_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            dt = dis.getDoctorDetailByDoctorId(Convert.ToInt32(dropDoctorId.SelectedValue));
-            if (dt.Rows.Count > 0)
-            {
-                lbSurgeonRegNo.Text = dt.Rows[0]["RegistrationNumber"].ToString();
-                lbSurgeonQualification.Text = dt.Rows[0]["Qualification"].ToString();
-                lbSurgeonContactNo.Text = dt.Rows[0]["MobileNumber"].ToString();
-            }
-            else
-            {
-                lbSurgeonRegNo.Text = "";
-                lbSurgeonQualification.Text = "";
-                lbSurgeonContactNo.Text = "";
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
-    protected void dropAnesName_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            dt = dis.getDoctorDetailByDoctorId(Convert.ToInt32(dropAnesName.SelectedValue));
-            if (dt.Rows.Count > 0)
-            {
-                lbAnesRegNo.Text = dt.Rows[0]["RegistrationNumber"].ToString();
-                lbAnesContactNo.Text = dt.Rows[0]["MobileNumber"].ToString();
-                lbAnesthesiaType.Text = "NA";
-            }
-            else
-            {
-                lbSurgeonRegNo.Text = "";
-                lbSurgeonQualification.Text = "";
-                lbSurgeonContactNo.Text = "";
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
-    protected void btnSaveSurgeryDate_Click(object sender, EventArgs e)
-    {
-        foreach (GridViewRow row in t4gridAddedProcedure.Rows)
-        {
-            Label lbProcedureId = row.FindControl("lbProcedureId") as Label;
-            TextBox tbSurgeryDateTime = row.FindControl("tbSurgeryDateTime") as TextBox;
 
-            if (lbProcedureId != null && tbSurgeryDateTime.Text != null && tbSurgeryDateTime.Text != "")
-            {
-                string procedureId = lbProcedureId.Text;
-                string surgeryDate = tbSurgeryDateTime.Text;
-                int res = preAuth.UpdateTreatmentStartDate(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, hdPatientRegId.Value, Convert.ToInt32(lbProcedureId.Text), Convert.ToDateTime(surgeryDate.ToString()));
-                if (res != 0)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Update Successfully!');", true);
-                }
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please select Surgery/Treatment start date!');", true);
-            }
-        }
-    }
     protected void btnAttachments_Click(object sender, EventArgs e)
     {
         MultiView2.SetActiveView(viewAttachment);
@@ -759,283 +321,12 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
         btnPreAutoriztion.CssClass = "btn btn-primary p-3";
         btnTreatment.CssClass = "btn btn-primary p-3";
         btnAttachments.CssClass = "btn btn-warning p-3";
+        btnClaim.CssClass = "btn btn-primary p-3";
         getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
-    }
-    protected void rbDischarge_CheckedChanged(object sender, EventArgs e)
-    {
-        panelDischarge.Visible = true;
-        dropIsSpecialCase.SelectedValue = "0";
-        dropSpecialCaseValue.SelectedValue = "0";
-        dropIsSpecialCase.Enabled = true;
-        dropSpecialCaseValue.Enabled = true;
-    }
-    protected void rbDeath_CheckedChanged(object sender, EventArgs e)
-    {
-        panelDischarge.Visible = true;
-        dropIsSpecialCase.SelectedValue = "1";
-        dropSpecialCaseValue.SelectedIndex = dropSpecialCaseValue.Items.IndexOf(dropSpecialCaseValue.Items.FindByText("Death"));
-        dropIsSpecialCase.Enabled = false;
-        dropSpecialCaseValue.Enabled = false;
-    }
-    protected void dropIsSpecialCase_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            if (Convert.ToInt32(dropIsSpecialCase.SelectedValue) == 1)
-            {
-                getSpecialCaseValue();
-                dropSpecialCaseValue.SelectedValue = "0";
-                divSpecialCaseValue.Visible = true;
-            }
-            else
-            {
-                divSpecialCaseValue.Visible = false;
-            }
-        }
-        catch (Exception ex)
-        {
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            return;
-        }
-    }
-    protected void dropFinalDiagnosis_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            if (Convert.ToInt32(dropFinalDiagnosis.SelectedValue) > 0)
-            {
-                getSpecialCaseValue();
-                divFinalDiagnosisDesc.Visible = true;
-            }
-            else
-            {
-                divFinalDiagnosisDesc.Visible = false;
-            }
-        }
-        catch (Exception ex)
-        {
-            Response.Redirect("~/Unauthorize.aspx", false);
-            return;
-        }
-    }
-    protected void getSpecialCaseValue()
-    {
-        if (Convert.ToInt32(dropIsSpecialCase.SelectedValue) == 1)
-        {
-
-            dt.Clear();
-            dt = preAuth.GetSpecialCaseValue();
-            if (dt.Rows.Count > 0)
-            {
-                dropSpecialCaseValue.Items.Clear();
-                dropSpecialCaseValue.DataValueField = "SpecialCaseId";
-                dropSpecialCaseValue.DataTextField = "SpecialCaseValue";
-                dropSpecialCaseValue.DataSource = dt;
-                dropSpecialCaseValue.DataBind();
-                dropSpecialCaseValue.Items.Insert(0, new ListItem("--SELECT--", "0"));
-                divSpecialCaseValue.Visible = true;
-            }
-            else
-            {
-                dropSpecialCaseValue.Items.Clear();
-                divSpecialCaseValue.Visible = false;
-            }
-        }
-        else
-        {
-            divSpecialCaseValue.Visible = false;
-        }
-
     }
     protected void btnAttachment_Click(object sender, EventArgs e)
     {
         getDischargeDocument();
-    }
-
-    //*****Submit Discharge details*****//
-    protected void btnSubmit_Click(object sender, EventArgs e)
-    {
-        if (cbDeclaration.Checked)
-        {
-            if (dropDroctorType.SelectedValue != "0" && dropAnesName.SelectedValue != "0" && tbTreatmentSurgeryDate.Text != "" && tbSurgeryStartTime.Text != "" && tbSurgeryEndTime.Text != "" && tbDischargeDate.Text != "" && tbNextFollowUpDate.Text != "" && dropIsSpecialCase.SelectedValue != "0")
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "showInitiateClaimModal", "showInitiateClaimModal();", true);
-
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please fill the required fields!');", true);
-            }
-        }
-        else
-        {
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Please check declaration!');", true);
-        }
-    }
-    protected void btnInitiateClaimYes_Click(object sender, EventArgs e)
-    {
-        insertDischargeDetail(1);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "hideInitiateClaimModal", "hideInitiateClaimModal();", true);
-    }
-    protected void btnInitiateClaimNo_Click(object sender, EventArgs e)
-    {
-        insertDischargeDetail(0);
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "hideInitiateClaimModal", "hideInitiateClaimModal();", true);
-    }
-    private void insertDischargeDetail(int isClaimInitiated)
-    {
-        try
-        {
-
-            bool dischargeType = false, ProcedureConsent = false, OPPhotosWebex = false, VideoRecording = false, SpecimenRequired = false, ComplicationsIfAny = false;
-            if (rbOPPhotosYes.Checked)
-                OPPhotosWebex = true;
-            else
-                OPPhotosWebex = false;
-
-            if (rbVideoRecordingYes.Checked)
-                VideoRecording = true;
-            else
-                VideoRecording = false;
-
-            if (rbSpecimenYes.Checked)
-                SpecimenRequired = true;
-            else
-                SpecimenRequired = false;
-
-            if (rbComplicationsYes.Checked)
-                ComplicationsIfAny = true;
-            else
-                ComplicationsIfAny = false;
-
-            if (rbProcedureConsentYes.Checked)
-                ProcedureConsent = true;
-            else
-                ProcedureConsent = false;
-
-            if (rbDischarge.Checked)
-                dischargeType = true;
-            else
-                dischargeType = false;
-
-            SqlParameter[] p = new SqlParameter[41];
-            p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
-            p[0].DbType = DbType.String;
-            p[1] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
-            p[1].DbType = DbType.String;
-            p[2] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
-            p[2].DbType = DbType.String;
-            p[3] = new SqlParameter("@ClaimId", hdClaimId.Value);
-            p[3].DbType = DbType.String;
-            p[4] = new SqlParameter("@DischargeById", hdUserId.Value);
-            p[4].DbType = DbType.String;
-            p[5] = new SqlParameter("@DischargeType", dischargeType.ToString());
-            p[5].DbType = DbType.String;
-            p[6] = new SqlParameter("@DischargeDate", tbDischargeDate.Text);
-            p[6].DbType = DbType.String;
-            p[7] = new SqlParameter("@NextFollowUpDate", tbNextFollowUpDate.Text);
-            p[7].DbType = DbType.String;
-            p[8] = new SqlParameter("@ConsultAtBlock", tbConsultAtBlockName.Text);
-            p[8].DbType = DbType.String;
-            p[9] = new SqlParameter("@FloorNo", tbFloor.Text);
-            p[9].DbType = DbType.String;
-            p[10] = new SqlParameter("@RoomNo", tbRoomNo.Text);
-            p[10].DbType = DbType.String;
-            p[11] = new SqlParameter("@IsSpecialCase", dropIsSpecialCase.SelectedValue);
-            p[11].DbType = DbType.String;
-            p[12] = new SqlParameter("@SpecialCaseValue", dropSpecialCaseValue.SelectedValue);
-            p[12].DbType = DbType.String;
-            p[13] = new SqlParameter("@FinalDiagnosis", dropFinalDiagnosis.SelectedValue);
-            p[13].DbType = DbType.String;
-            p[14] = new SqlParameter("@FinalDiagnosisDesc", tbFinalDiagnosisDesc.Text);
-            p[14].DbType = DbType.String;
-            p[15] = new SqlParameter("@ProcedureConsent", ProcedureConsent.ToString());
-            p[15].DbType = DbType.String;
-            p[16] = new SqlParameter("@DoctorTypeId", dropDroctorType.SelectedValue);
-            p[16].DbType = DbType.String;
-            p[17] = new SqlParameter("@DoctorId", dropDoctorId.SelectedValue);
-            p[17].DbType = DbType.String;
-            p[18] = new SqlParameter("@AnesthetistId", dropAnesName.SelectedValue);
-            p[18].DbType = DbType.String;
-            p[19] = new SqlParameter("@IncisionType", tbIncisionType.Text);
-            p[19].DbType = DbType.String;
-            p[20] = new SqlParameter("@OPPhotosWebexTaken", OPPhotosWebex.ToString());
-            p[20].DbType = DbType.String;
-            p[21] = new SqlParameter("@VideoRecordingDone", VideoRecording.ToString());
-            p[21].DbType = DbType.String;
-            p[22] = new SqlParameter("@SwabCountInstrumentsCount", tbSwabCount.Text);
-            p[22].DbType = DbType.String;
-            p[23] = new SqlParameter("@SuturesLigatures", tbSutures.Text);
-            p[23].DbType = DbType.String;
-            p[24] = new SqlParameter("@SpecimenRequired", SpecimenRequired.ToString());
-            p[24].DbType = DbType.String;
-            p[25] = new SqlParameter("@DrainageCount", tbDrainageCount.Text);
-            p[25].DbType = DbType.String;
-            p[26] = new SqlParameter("@BloodLoss", tbBloodLoss.Text);
-            p[26].DbType = DbType.String;
-            p[27] = new SqlParameter("@PostOperativeInstructions", tbPostOperativeInstructions.Text);
-            p[27].DbType = DbType.String;
-            p[28] = new SqlParameter("@PatientCondition", tbPatientCondition.Text);
-            p[28].DbType = DbType.String;
-            p[29] = new SqlParameter("@ComplicationsIfAny", ComplicationsIfAny.ToString());
-            p[29].DbType = DbType.String;
-            p[30] = new SqlParameter("@TreatmentSurgeryStartDate", tbTreatmentSurgeryDate.Text);
-            p[30].DbType = DbType.String;
-            p[31] = new SqlParameter("@SurgeryStartTime", tbSurgeryStartTime.Text);
-            p[31].DbType = DbType.String;
-            p[32] = new SqlParameter("@SurgeryEndTime", tbSurgeryEndTime.Text);
-            p[32].DbType = DbType.String;
-            p[33] = new SqlParameter("@TreatmentGiven", tbTreatmentGiven.Text);
-            p[33].DbType = DbType.String;
-            p[34] = new SqlParameter("@OperativeFindings", tbOperativeFindings.Text);
-            p[34].DbType = DbType.String;
-            p[35] = new SqlParameter("@PostOperativePeriod", tbPostOperativePeriod.Text);
-            p[35].DbType = DbType.String;
-            p[36] = new SqlParameter("@PostSurgeryInvestigationGiven", tbPostSurgeryTherapy.Text);
-            p[36].DbType = DbType.String;
-            p[37] = new SqlParameter("@StatusAtDischarge", tbStatusDischarge.Text);
-            p[37].DbType = DbType.String;
-            p[38] = new SqlParameter("@Review", tbReview.Text);
-            p[38].DbType = DbType.String;
-            p[39] = new SqlParameter("@Advice", tbAdvice.Text);
-            p[39].DbType = DbType.String;
-            p[40] = new SqlParameter("@IsClaimInitiated", isClaimInitiated.ToString());
-            p[40].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InsertPatientDischargeDetails", p);
-            if (con.State == ConnectionState.Open)
-                con.Close();
-            if (ds != null)
-            {
-                if (ds.Tables[0].Rows[0]["ClaimNumber"].ToString() == "0")
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Already Discharged!');", true);
-                    return;
-                }
-                else
-                {
-                    MultiView1.SetActiveView(viewPatientList);
-                    GetPatientForClaimInitiation();
-                    if (isClaimInitiated.ToString() == "1")
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Claim Initiated! " + ds.Tables[0].Rows[0]["ClaimNumber"].ToString() + "');", true);
-                    }
-                    else
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Discharged Successfully');", true);
-                    }
-
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-        }
     }
     protected void btnUploadDischargeSummary_Click(object sender, EventArgs e)
     {
@@ -1318,9 +609,7 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
     }
     protected void lnkBackToList_Click(object sender, EventArgs e)
     {
-        btnRequestEnhancement.Visible = false;
         MultiView2.ActiveViewIndex = -1;
-        MultiView3.ActiveViewIndex = -1;
         btnInitialAssessment.CssClass = "btn btn-primary p-3";
         btnPastHistory.CssClass = "btn btn-primary p-3";
         btnPreAutoriztion.CssClass = "btn btn-primary p-3";
@@ -1699,29 +988,6 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    protected void ShowPreInvestigationDocuments()
-    {
-        try
-        {
-            DataTable dtDocumentGroup = new DataTable();
-            // TMS_PreAuthInsertDocumentPreInvestigation
-            dtDocumentGroup = preAuth.getPreInvestigationDocumentsPackage(Convert.ToInt32(hdHospitalId.Value), hdAbuaId.Value, hdPatientRegId.Value);
-            if (dtDocumentGroup.Rows.Count > 0)
-            {
-                GridPackage.DataSource = dtDocumentGroup;
-                GridPackage.DataBind();
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
     protected void GridPackage_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         try
@@ -1813,102 +1079,6 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
             // Dim parentGridViewRow As GridViewRow = CType(nestedGridViewRow.NamingContainer.NamingContainer, GridViewRow)
             // Dim packageId As String = CType(parentGridViewRow.Cells(0).Text, String) ' Assuming PackageID is in the first column
             ScriptManager.RegisterStartupScript(this, this.GetType(), "showDocumentUploadModal", "showDocumentUploadModal();", true);
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-        }
-    }
-    protected void btnUploadPostInvestigationFile_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            if (fuImage.HasFile)
-            {
-                string fileExtension = Path.GetExtension(fuImage.FileName).ToLower();
-                int fileSize = fuImage.PostedFile.ContentLength;
-                string mimeType = fuImage.PostedFile.ContentType;
-                if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png")
-                {
-                    using (Stream fileStream = fuImage.PostedFile.InputStream)
-                    {
-                        byte[] fileBytes = new byte[fileStream.Length];
-                        fileStream.Read(fileBytes, 0, fileBytes.Length);
-
-                        // Convert file content to Base64 string
-                        string base64String = Convert.ToBase64String(fileBytes);
-
-                        // Further processing with base64String if needed
-                        string randomFolderName = hdAbuaId.Value;
-                        string baseFolderPath = ConfigurationManager.AppSettings["RemoteImagePath"];
-                        string destinationFolderPath = Path.Combine(baseFolderPath, randomFolderName);
-
-                        if (!Directory.Exists(destinationFolderPath))
-                            Directory.CreateDirectory(destinationFolderPath);
-
-                        string fileName = hdPackageId.Value + "_" + hdProcedureId.Value + "_" + hdPostInvestigationId.Value + "_" + DateTime.Now.ToShortDateString();
-                        string imagePath = Path.Combine(destinationFolderPath, fileName + ".jpeg");
-
-                        // Save the file to the specified path
-                        File.WriteAllBytes(imagePath, fileBytes);
-                        SqlParameter[] p = new SqlParameter[9];
-                        p[0] = new SqlParameter("@HospitalId", hdHospitalId.Value);
-                        p[0].DbType = DbType.String;
-                        p[1] = new SqlParameter("@CardNumber", hdAbuaId.Value);
-                        p[1].DbType = DbType.String;
-                        p[2] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
-                        p[2].DbType = DbType.String;
-                        p[3] = new SqlParameter("@PackageId", hdPackageId.Value);
-                        p[3].DbType = DbType.String;
-                        p[4] = new SqlParameter("@ProcedureId", hdProcedureId.Value);
-                        p[4].DbType = DbType.String;
-                        p[5] = new SqlParameter("@PostInvestigationId", hdPostInvestigationId.Value);
-                        p[5].DbType = DbType.String;
-                        p[6] = new SqlParameter("@FolderName", randomFolderName.ToString());
-                        p[6].DbType = DbType.String;
-                        p[7] = new SqlParameter("@UploadedFileName", fileName.ToString());
-                        p[7].DbType = DbType.String;
-                        p[8] = new SqlParameter("@FilePath", imagePath.ToString());
-                        p[8].DbType = DbType.String;
-                        ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertDocumentPostInvestigation", p);
-                        if (con.State == ConnectionState.Open)
-                            con.Close();
-                        if (ds.Tables[0].Rows.Count > 0)
-                        {
-                            if (ds.Tables[0].Rows[0]["checkId"].ToString() == "1")
-                            {
-                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Image uploaded successfully!')", true);
-                                ShowPreInvestigationDocuments();
-                            }
-                            else if (ds.Tables[0].Rows[0]["checkId"].ToString() == "0")
-                            {
-                                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Image uploaded successfully!')", true);
-                                ShowPreInvestigationDocuments();
-                            }
-                            else
-                            {
-                                strMessage = "window.alert('Invalid request!');";
-                                ScriptManager.RegisterStartupScript(btnUploadPostInvestigationFile, btnUploadPostInvestigationFile.GetType(), "Error", strMessage, true);
-                            }
-                        }
-                        else
-                        {
-                            strMessage = "window.alert('Invalid request!');";
-                            ScriptManager.RegisterStartupScript(btnUploadPostInvestigationFile, btnUploadPostInvestigationFile.GetType(), "Error", strMessage, true);
-                        }
-                    }
-                }
-                else
-                    ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Invalid File Format! Please upload .jpg/.jpeg/.png')", true);
-            }
-            else
-                // Handle case where no file was selected
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Please select a file to upload.')", true);
         }
         catch (Exception ex)
         {
@@ -2434,4 +1604,295 @@ public partial class MEDCO_ClaimInitiation : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
+    public void getSurgeonDetails(string DischargeId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetSurgeonDetails(DischargeId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                tbDoctorType.Text = dt.Rows[0]["DoctorType"].ToString();
+                tbDoctorName.Text = dt.Rows[0]["Name"].ToString();
+                tbRegistrationNo.Text = dt.Rows[0]["RegistrationNumber"].ToString();
+                tbQualification.Text = dt.Rows[0]["Qualification"].ToString();
+                tbContact.Text = dt.Rows[0]["MobileNumber"].ToString();
+                getAnesthetistDetails(DischargeId);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getAnesthetistDetails(string DischargeId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetAnesthetistDetails(DischargeId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                tbAnesthetistName.Text = dt.Rows[0]["Name"].ToString();
+                tbAnesthetistRegNo.Text = dt.Rows[0]["RegistrationNumber"].ToString();
+                tbAnesthetistContact.Text = dt.Rows[0]["MobileNumber"].ToString();
+                getOtherDischargeDetails(DischargeId);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void getOtherDischargeDetails(string DischargeId)
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetOtherDischargeDetails(DischargeId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                tbIncisionType.Text = dt.Rows[0]["IncisionType"].ToString();
+                if (dt.Rows[0]["OPPhotosWebexTaken"].ToString().Equals("True"))
+                {
+                    rbPhotoWebYes.Checked = true;
+                    rbPhotoWebNo.Checked = false;
+                }
+                else
+                {
+                    rbPhotoWebYes.Checked = false;
+                    rbPhotoWebNo.Checked = true;
+                }
+                if (dt.Rows[0]["VideoRecordingDone"].ToString().Equals("True"))
+                {
+                    rbVideoYes.Checked = true;
+                    rbVideoNo.Checked = false;
+                }
+                else
+                {
+                    rbVideoYes.Checked = false;
+                    rbVideoNo.Checked = true;
+                }
+                tbSwabCount.Text = dt.Rows[0]["SwabCountInstrumentsCount"].ToString();
+                tbSutures.Text = dt.Rows[0]["SuturesLigatures"].ToString();
+                if (dt.Rows[0]["SpecimenRequired"].ToString().Equals("True"))
+                {
+                    rbSpecimenYes.Checked = true;
+                    rbSpecimenNo.Checked = false;
+                }
+                else
+                {
+                    rbSpecimenYes.Checked = false;
+                    rbSpecimenNo.Checked = true;
+                }
+                tbDrainageCount.Text = dt.Rows[0]["DrainageCount"].ToString();
+                tbBloodLoss.Text = dt.Rows[0]["BloodLoss"].ToString();
+                tbPostOperative.Text = dt.Rows[0]["PostOperativeInstructions"].ToString();
+                tbPatientCondition.Text = dt.Rows[0]["PatientCondition"].ToString();
+                if (dt.Rows[0]["ComplicationsIfAny"].ToString().Equals("True"))
+                {
+                    rbComplicationYes.Checked = true;
+                    rbComplicationNo.Checked = false;
+                }
+                else
+                {
+                    rbComplicationYes.Checked = false;
+                    rbComplicationNo.Checked = true;
+                }
+                tbTreatementDate.Text = dt.Rows[0]["TreatmentSurgeryStartDate"].ToString();
+                tbSurgeryStartTime.Text = dt.Rows[0]["SurgeryStartTime"].ToString();
+                tbSurgeryEndTime.Text = dt.Rows[0]["SurgeryEndTime"].ToString();
+                tbTreatementGiven.Text = dt.Rows[0]["TreatmentGiven"].ToString();
+                tbOperativeFinding.Text = dt.Rows[0]["OperativeFindings"].ToString();
+                tbPostOperativePeriod.Text = dt.Rows[0]["PostOperativePeriod"].ToString();
+                tbPostSurgeryGiven.Text = dt.Rows[0]["PostSurgeryInvestigationGiven"].ToString();
+                tbStatusAtDischarge.Text = dt.Rows[0]["StatusAtDischarge"].ToString();
+                tbReview.Text = dt.Rows[0]["Review"].ToString();
+                tbAdvice.Text = dt.Rows[0]["Advice"].ToString();
+                tbDischargeDate.Text = dt.Rows[0]["DischargeDate"].ToString();
+                tbNextFollowDate.Text = dt.Rows[0]["NextFollowUpDate"].ToString();
+                tbConsultAtBlock.Text = dt.Rows[0]["ConsultAtBlock"].ToString();
+                tbFloor.Text = dt.Rows[0]["FloorNo"].ToString();
+                tbRoomNo.Text = dt.Rows[0]["RoomNo"].ToString();
+                tbSpecialCaseValue.Text = dt.Rows[0]["SpecialCaseValue"].ToString();
+                tbFinalDiagnosisDescription.Text = dt.Rows[0]["FinalDiagnosisDesc"].ToString();
+                if (dt.Rows[0]["IsDischarged"].ToString().Equals("True"))
+                {
+                    rbDischarge.Checked = true;
+                    rbDeath.Checked = false;
+                }
+                else
+                {
+                    rbDischarge.Checked = false;
+                    rbDeath.Checked = true;
+                }
+                if (dt.Rows[0]["IsSpecialCase"].ToString().Equals("True"))
+                {
+                    tbIsSpecialCase.Text = "Yes";
+                }
+                else
+                {
+                    tbIsSpecialCase.Text = "No";
+                }
+                if (dt.Rows[0]["FinalDiagnosis"].ToString().Equals("1"))
+                {
+                    tbFinalDiagnosis.Text = "Other";
+                }
+                if (dt.Rows[0]["ProcedureConsent"].ToString().Equals("True"))
+                {
+                    rbProcedureConsentYes.Checked = true;
+                    rbProcedureConsentNo.Checked = false;
+                }
+                else
+                {
+                    rbProcedureConsentYes.Checked = false;
+                    rbProcedureConsentNo.Checked = true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnClaim_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            MultiView2.SetActiveView(viewClaim);
+            btnInitialAssessment.CssClass = "btn btn-primary p-3";
+            btnPastHistory.CssClass = "btn btn-primary p-3";
+            btnPreAutoriztion.CssClass = "btn btn-primary p-3";
+            btnTreatment.CssClass = "btn btn-primary p-3";
+            btnAttachments.CssClass = "btn btn-primary p-3";
+            btnClaim.CssClass = "btn btn-warning p-3";
+            getClaimDetails();
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void getClaimDetails()
+    {
+        try
+        {
+            DataTable dt = new DataTable();
+            dt = shaHelper.GetClaimsDetails(hdClaimId.Value);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                lbPreauthApprovedAmount.Text = Convert.ToDecimal(dt.Rows[0]["PreAuthApprovedAmt"]).ToString();
+                lbPreauthDate.Text = Convert.ToDateTime(dt.Rows[0]["PreAuthApprovedDate"]).ToString("dd/MM/yyyy hh:mm tt");
+                lbClaimSubmittedDate.Text = Convert.ToDateTime(dt.Rows[0]["ClaimSubmittedDate"]).ToString("dd/MM/yyyy hh:mm tt");
+                lbClaimUpdatedDate.Text = Convert.ToDateTime(dt.Rows[0]["ClaimUpdatedDate"]).ToString("dd/MM/yyyy hh:mm tt");
+                lbPenaltyAmount.Text = "NA";
+                lbClaimAmount.Text = Convert.ToDecimal(dt.Rows[0]["ClaimAmount"]).ToString();
+                lbInsuranceLiableAmount.Text = Convert.ToDecimal(dt.Rows[0]["InsuranceLiableAmt"]).ToString();
+                lbTrustLiableAmount.Text = Convert.ToDecimal(dt.Rows[0]["TrustLiableAmt"]).ToString();
+                lbBillAmount.Text = Convert.ToDecimal(dt.Rows[0]["BillAmt"]).ToString();
+                tbClaimRemarks.Text = dt.Rows[0]["ClaimRemarks"].ToString();
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    protected void btnInitiateClaim_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!cbTerms.Checked)
+            {
+                strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            }
+            else
+            {
+                if (dlAction.SelectedItem.Value.Equals("0"))
+                {
+                    strMessage = "window.alert('Action type is required.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else
+                {
+                    InitiateClaim();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
+    public void InitiateClaim()
+    {
+        try
+        {
+            SqlParameter[] p = new SqlParameter[7];
+            p[0] = new SqlParameter("@AdmissionId", hdAdmissionId.Value);
+            p[0].DbType = DbType.String;
+            p[1] = new SqlParameter("@ClaimId", hdClaimId.Value);
+            p[1].DbType = DbType.String;
+            p[2] = new SqlParameter("@UserId", hdUserId.Value);
+            p[2].DbType = DbType.String;
+            p[3] = new SqlParameter("@Amount", lbClaimAmount.Text.ToString());
+            p[3].DbType = DbType.String;
+            p[4] = new SqlParameter("@HospitalId", hdHospitalId.Value);
+            p[4].DbType = DbType.String;
+            p[5] = new SqlParameter("@PatientRegId", hdPatientRegId.Value);
+            p[5].DbType = DbType.String;
+            p[6] = new SqlParameter("@CardNumber", hdAbuaId.Value);
+            p[6].DbType = DbType.String;
+            SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_InitiateClaim", p);
+            if (con.State == ConnectionState.Open)
+                con.Close();
+            strMessage = "window.alert('Claim Initiated.');";
+            strMessage += "window.location='ClaimInitiation.aspx';";
+            ScriptManager.RegisterStartupScript(btnUploadDocumentThree, btnUploadDocumentThree.GetType(), "Error", strMessage, true);
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+
 }
