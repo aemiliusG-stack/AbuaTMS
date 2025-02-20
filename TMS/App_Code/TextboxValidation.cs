@@ -55,7 +55,7 @@ public class TextboxValidation
     public static bool isAlphaNumeric(string valToCheck)
     {
         string expresion;
-        expresion = "^[a-zA-Z0-9\\s]+$";
+        expresion = "^[a-zA-Z0-9\\s\\/]+$";
 
         if (Regex.IsMatch(valToCheck, expresion))
         {

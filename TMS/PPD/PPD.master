@@ -19,6 +19,13 @@
     <link href="../css/style.css" rel="stylesheet">
     <link href="../css/asby-style.css" rel="stylesheet" />
 
+    <style>
+        .span-title {
+            font-weight: 600 !important;
+            font-size: 13px;
+            color: #232629 !important;
+        }
+    </style>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>

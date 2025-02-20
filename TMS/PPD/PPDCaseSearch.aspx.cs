@@ -128,7 +128,15 @@ public partial class PPD_PPDCaseSearch : Page
             }
             else
             {
-                GetPatients(tbCaseNo.Text.ToString(), tbBeneficiaryCardNo.Text.ToString(), tbClaimNumber.Text.ToString(), tbFromDate.Text.ToString(), tbToDate.Text.ToString(), true);
+                if ((!tbCaseNo.Text.ToString().IsEmpty() && !TextboxValidation.isAlphaNumeric(tbCaseNo.Text)) || (!tbClaimNumber.Text.ToString().IsEmpty() && !TextboxValidation.isAlphaNumeric(tbClaimNumber.Text)) || (!tbBeneficiaryCardNo.Text.ToString().IsEmpty() && !TextboxValidation.isAlphaNumeric(tbBeneficiaryCardNo.Text)))
+                {
+                    strMessage = "window.alert('Invalid input by user!');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else
+                {
+                    GetPatients(tbCaseNo.Text.ToString(), tbBeneficiaryCardNo.Text.ToString(), tbClaimNumber.Text.ToString(), tbFromDate.Text.ToString(), tbToDate.Text.ToString(), true);
+                }
             }
         }
         catch (Exception ex)

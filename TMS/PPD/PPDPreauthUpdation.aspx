@@ -2,11 +2,6 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <style>
-        .span-title {
-            font-weight: 700;
-            font-size: 14px;
-        }
-
         /* Override Bootstrap tab background color */
         .nav-tabs .nav-link {
             background-color: #1ab394;
@@ -258,15 +253,15 @@
                                                 <div class="ibox-content text-dark">
                                                     <div class="row align-items-end">
                                                         <div class="col-md-3 mb-2">
-                                                            <span class="form-label fw-semibold">Case ID</span>
+                                                            <span class="form-label span-title">Case ID</span>
                                                             <asp:TextBox runat="server" ID="tbCaseId" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
                                                         </div>
                                                         <div class="col-md-3 mb-2">
-                                                            <span class="form-label fw-semibold">From Date</span>
+                                                            <span class="form-label span-title">From Date</span>
                                                             <asp:TextBox ID="tbFromDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
                                                         </div>
                                                         <div class="col-md-3 mb-2">
-                                                            <span class="form-label fw-semibold">To Date</span>
+                                                            <span class="form-label span-title">To Date</span>
                                                             <asp:TextBox ID="tbToDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
                                                         </div>
                                                         <div class="col-lg-3">
@@ -296,7 +291,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">1</th>
-                                                            <td><a href="#" class="text-decoration-underline text-black fw-semibold">CASE/PS7/HOSP20G12238/P2897102</a></td>
+                                                            <td><a href="#" class="text-decoration-underline text-black span-title">CASE/PS7/HOSP20G12238/P2897102</a></td>
                                                             <td>Demo User</td>
                                                             <td>Demo Hospital</td>
                                                             <td>Claim Forwarded by CEX(Insurance)</td>
@@ -335,15 +330,15 @@
                                                 <div class="ibox-content text-dark">
                                                     <div class="row">
                                                         <div class="col-md-3">
-                                                            <span class="form-label fw-semibold">Hospital Name</span>
+                                                            <span class="form-label span-title">Hospital Name</span>
                                                             <asp:TextBox runat="server" ID="tbHospitalName" class="form-control mt-2" Text="Demo Hospital" ReadOnly="true"></asp:TextBox>
                                                         </div>
                                                         <div class="col-md-3">
-                                                            <span class="form-label fw-semibold">Hospital Type</span>
+                                                            <span class="form-label span-title">Hospital Type</span>
                                                             <asp:TextBox runat="server" ID="tbHospitalType" class="form-control mt-2" Text="Private" ReadOnly="true"></asp:TextBox>
                                                         </div>
                                                         <div class="col-md-3">
-                                                            <span class="form-label fw-semibold">Hospital Address</span>
+                                                            <span class="form-label span-title">Hospital Address</span>
                                                             <asp:TextBox runat="server" ID="tbHospitalAddress" class="form-control mt-2" Text="Ranchi, Jharkhand" ReadOnly="true"></asp:TextBox>
                                                         </div>
                                                     </div>
@@ -359,13 +354,13 @@
                                                 <div class="ibox-content text-dark">
                                                     <div class="row">
                                                         <div class="col-md-3 mb-3">
-                                                            <sapn class="form-label fw-semibold">Primary Diagnosis</sapn>
+                                                            <sapn class="form-label span-title">Primary Diagnosis</sapn>
                                                             <asp:DropDownList ID="dropPrimaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropPrimaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                             </asp:DropDownList>
                                                         </div>
                                                         <div class="col-md-3"></div>
                                                         <div class="col-md-3 mb-3">
-                                                            <span class="form-label fw-semibold">Secondary Diagnosis</span>
+                                                            <span class="form-label span-title">Secondary Diagnosis</span>
                                                             <asp:DropDownList ID="dropSecondaryDiagnosis" AutoPostBack="true" OnSelectedIndexChanged="dropSecondaryDiagnosis_SelectedIndexChanged" runat="server" CssClass="form-control">
                                                             </asp:DropDownList>
                                                         </div>
@@ -742,7 +737,7 @@
                                             <div class="ibox-content">
                                                 <div class="row">
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Admission Type</span><br />
+                                                        <span class="form-label span-title">Admission Type</span><br />
                                                         <div class="form-check form-check-inline mt-2">
                                                             <asp:RadioButton ID="rbPlanned" runat="server" class="form-check-label" GroupName="AdmissionType" Text="&nbsp;&nbsp;Planned" Enabled="false" />
                                                             &nbsp;&nbsp;
@@ -750,12 +745,12 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Admission Date</span>
+                                                        <span class="form-label span-title">Admission Date</span>
                                                         <asp:TextBox runat="server" ReadOnly="true" ID="tbAdmissionDate" class="form-control mt-2"></asp:TextBox>
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Package Cost</span>
+                                                        <span class="form-label span-title">Package Cost</span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
@@ -767,7 +762,7 @@
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Incentive Cost</span>
+                                                        <span class="form-label span-title">Incentive Cost</span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <div class="input-group">
@@ -780,7 +775,7 @@
                                                     <div class="col-md-4 mb-3"></div>
                                                     <asp:Panel ID="panelImplant" runat="server" CssClass="row p-0 w-100" Visible="true">
                                                         <div class="col-md-4 mb-3">
-                                                            <span class="form-label fw-semibold">Implant Cost</span>
+                                                            <span class="form-label span-title">Implant Cost</span>
                                                         </div>
                                                         <div class="col-md-4 mb-3">
                                                             <div class="input-group">
@@ -793,7 +788,7 @@
                                                         <div class="col-md-4 mb-3"></div>
                                                     </asp:Panel>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">Total Package Cost</span><br />
+                                                        <span class="form-label span-title">Total Package Cost</span><br />
                                                         <span class="text-danger"><span class="font-weight-bold">(Note:</span> Incentive Applicable)</span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
@@ -810,7 +805,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">
+                                                        <span class="form-label span-title">
                                                             <asp:Label ID="lbInsurance" runat="server" Text="The amount liable by Insurance is"></asp:Label>
 
                                                         </span>
@@ -825,7 +820,7 @@
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
                                                     <div class="col-md-4 mb-3">
-                                                        <span class="form-label fw-semibold">
+                                                        <span class="form-label span-title">
                                                             <asp:Label ID="lbTrust" runat="server" Text="The amount liable by Trust is"></asp:Label>
 
                                                         </span>
@@ -840,7 +835,7 @@
                                                     </div>
                                                     <div class="col-md-4 mb-3"></div>
                                                     <div class="col-md-12">
-                                                        <span class="form-label fw-semibold">Remarks</span><br />
+                                                        <span class="form-label span-title">Remarks</span><br />
                                                         <asp:TextBox runat="server" ReadOnly="true" OnKeypress="return isAlphaNumeric(event)" ID="tbRemarks" class="form-control" TextMode="MultiLine" Rows="2"></asp:TextBox>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
@@ -998,28 +993,28 @@
                                                         <asp:CheckBox ID="cbTerms" runat="server" CssClass="" Text="&nbsp;&nbsp;I have received the case with best of my knowledge and have validated all documents before making any decision." />
                                                     </div>
                                                     <div class="col-md-3 mb-3">
-                                                        <span class="form-label fw-semibold">Action</span>
+                                                        <span class="form-label span-title">Action</span>
                                                         <asp:DropDownList ID="dlAction" runat="server" class="form-control mt-2" AutoPostBack="True" OnSelectedIndexChanged="dlAction_SelectedIndexChanged">
                                                         </asp:DropDownList>
                                                     </div>
                                                     <asp:Panel ID="pUserRole" runat="server" Visible="false" CssClass="col-md-3 mb-3">
-                                                        <span class="form-label fw-semibold">Select User To Assign</span>
+                                                        <span class="form-label span-title">Select User To Assign</span>
                                                         <asp:DropDownList ID="dlUserRole" runat="server" class="form-control mt-2" AutoPostBack="True">
                                                         </asp:DropDownList>
                                                     </asp:Panel>
                                                     <asp:Panel ID="pReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
-                                                        <span class="form-label fw-semibold">Reason</span>
+                                                        <span class="form-label span-title">Reason</span>
                                                         <asp:DropDownList ID="dlReason" runat="server" class="form-control mt-2" AutoPostBack="True" OnSelectedIndexChanged="dlReason_SelectedIndexChanged">
                                                         </asp:DropDownList>
                                                     </asp:Panel>
                                                     <asp:Panel ID="pSubReason" runat="server" Visible="false" CssClass="col-md-3 mb-3">
-                                                        <span class="form-label fw-semibold">Sub Reason</span>
+                                                        <span class="form-label span-title">Sub Reason</span>
                                                         <asp:DropDownList ID="dlSubReason" runat="server" class="form-control mt-2" AutoPostBack="True">
                                                         </asp:DropDownList>
                                                     </asp:Panel>
                                                     <asp:Panel ID="pRemarks" runat="server" Visible="false" CssClass="col-md-3 mb-3">
-                                                        <span class="form-label fw-semibold">Remarks</span>
-                                                        <asp:TextBox runat="server" ID="tbRemark" class="form-control mt-2"></asp:TextBox>
+                                                        <span class="form-label span-title">Remarks</span>
+                                                        <asp:TextBox runat="server" ID="tbRemark" OnKeyPress="return isAlphaNumeric(event)" OnPaste="return validatePaste(event)" class="form-control mt-2"></asp:TextBox>
                                                     </asp:Panel>
                                                 </div>
                                                 <asp:Panel ID="pAddReason" runat="server" Visible="false" CssClass="col-md-12 text-center">

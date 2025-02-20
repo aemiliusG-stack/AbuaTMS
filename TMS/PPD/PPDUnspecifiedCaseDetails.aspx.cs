@@ -957,6 +957,11 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
                         strMessage = "window.alert('Remarks is required.');";
                         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     }
+                    else if (!TextboxValidation.isAlphaNumeric(tbRemark.Text))
+                    {
+                        strMessage = "window.alert('Invalid remarks entered');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    }
                     else
                     {
                         // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
@@ -1307,7 +1312,7 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
     {
         try
         {
-            SqlParameter[] p = new SqlParameter[9];
+            SqlParameter[] p = new SqlParameter[8];
             p[0] = new SqlParameter("@ClaimId", ClaimId);
             p[0].DbType = DbType.String;
             p[1] = new SqlParameter("@UserId", UserId);
@@ -1322,10 +1327,8 @@ public partial class PPD_PPDUnspecifiedCaseDetails : System.Web.UI.Page
             p[5].DbType = DbType.String;
             p[6] = new SqlParameter("@Remarks", Remarks);
             p[6].DbType = DbType.String;
-            p[7] = new SqlParameter("@Amount", Convert.ToDecimal(Session["RoleId"].ToString() == "3" ? hdInsurerAmount.Value : hdTrustAmount.Value));
-            p[7].DbType = DbType.Decimal;
-            p[8] = new SqlParameter("@EnhancementId", hdEnhancementId.Value.ToString());
-            p[8].DbType = DbType.String;
+            p[7] = new SqlParameter("@EnhancementId", hdEnhancementId.Value.ToString());
+            p[7].DbType = DbType.String;
             SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_UnspecifiedInsertActions", p);
             if (con.State == ConnectionState.Open)
                 con.Close();

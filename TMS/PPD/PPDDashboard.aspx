@@ -15,13 +15,13 @@
                     <div class="ibox-content">
                         <div class="row align-items-end">
                             <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Scheme</span>
+                                <span class="form-label span-title">Scheme</span>
                                 <asp:DropDownList ID="dlScheme" runat="server" class="form-control mt-2">
                                     <asp:ListItem Text="ABUA-JHARKHAND" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Policy Period</span>
+                                <span class="form-label span-title">Policy Period</span>
                                 <asp:DropDownList ID="dlPolicyPeriod" runat="server" class="form-control mt-2">
                                     <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
                                 </asp:DropDownList>

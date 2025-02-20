@@ -141,25 +141,25 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Scheme</span>
+                                <span class="form-label span-title">Scheme</span>
                                 <asp:DropDownList ID="dlSchemeId" runat="server" class="form-control mt-2">
                                     <asp:ListItem Text="ABUA-JHARKHAND" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Case Number</span>
+                                <span class="form-label span-title">Case Number</span>
                                 <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)" OnPaste="return validatePaste(event)"></asp:TextBox>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Beneficiary Card Number</span>
+                                <span class="form-label span-title">Beneficiary Card Number</span>
                                 <asp:TextBox runat="server" ID="tbBeneficiaryCardNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)" OnPaste="return validatePaste(event)"></asp:TextBox>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Registered From Date</span>
+                                <span class="form-label span-title">Registered From Date</span>
                                 <asp:TextBox runat="server" ID="tbRegisteredFromDate" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Registered To Date</span>
+                                <span class="form-label span-title">Registered To Date</span>
                                 <asp:TextBox runat="server" ID="tbRegisteredToDate" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
                             </div>
                             <div class="col-lg-12 text-center mt-2">

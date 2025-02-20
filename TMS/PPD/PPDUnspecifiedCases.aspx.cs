@@ -80,7 +80,15 @@ public partial class PPD_PPDUnspecifiedCases : System.Web.UI.Page
             }
             else
             {
-                SearchUnspecifiedCases(tbCaseNo.Text.ToString(), tbBeneficiaryCardNo.Text.ToString(), tbRegisteredFromDate.Text.ToString(), tbRegisteredToDate.Text.ToString(), true);
+                if ((!tbCaseNo.Text.ToString().IsEmpty() && !TextboxValidation.isAlphaNumeric(tbCaseNo.Text)) || (!tbBeneficiaryCardNo.Text.ToString().IsEmpty() && !TextboxValidation.isAlphaNumeric(tbBeneficiaryCardNo.Text)))
+                {
+                    strMessage = "window.alert('Invalid input by user!');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                }
+                else
+                {
+                    SearchUnspecifiedCases(tbCaseNo.Text.ToString(), tbBeneficiaryCardNo.Text.ToString(), tbRegisteredFromDate.Text.ToString(), tbRegisteredToDate.Text.ToString(), true);
+                }
             }
         }
         catch (Exception ex)
