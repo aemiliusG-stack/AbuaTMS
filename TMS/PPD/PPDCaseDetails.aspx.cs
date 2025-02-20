@@ -12,15 +12,12 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 {
     private string pageName, childImageUrl, caseNumber, admissionId, claimId, strMessage;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
     private MasterData md = new MasterData();
     private PreAuth preAuth = new PreAuth();
     public static PPDHelper ppdHelper = new PPDHelper();
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
         try
         {
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
@@ -57,93 +54,157 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void btnPastHistory_Click(object sender, EventArgs e)
     {
-        MultiView1.SetActiveView(viewPastHistory);
-        btnPastHistory.CssClass = "btn btn-warning p-3";
-        btnPreauth.CssClass = "btn btn-primary p-3";
-        btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
-        btnAttachmanet.CssClass = "btn btn-primary p-3";
+        try
+        {
+            MultiView1.SetActiveView(viewPastHistory);
+            btnPastHistory.CssClass = "btn btn-warning p-3";
+            btnPreauth.CssClass = "btn btn-primary p-3";
+            btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
+            btnAttachmanet.CssClass = "btn btn-primary p-3";
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnPreauth_Click(object sender, EventArgs e)
     {
-        MultiView1.SetActiveView(viewPreauth);
-        btnPreauth.CssClass = "btn btn-warning p-3";
-        btnPastHistory.CssClass = "btn btn-primary p-3";
-        btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
-        btnAttachmanet.CssClass = "btn btn-primary p-3";
+        try
+        {
+            MultiView1.SetActiveView(viewPreauth);
+            btnPreauth.CssClass = "btn btn-warning p-3";
+            btnPastHistory.CssClass = "btn btn-primary p-3";
+            btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
+            btnAttachmanet.CssClass = "btn btn-primary p-3";
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnTreatmentDischarge_Click(object sender, EventArgs e)
     {
-        MultiView1.SetActiveView(viewTreatmentDischarge);
-        btnPreauth.CssClass = "btn btn-primary p-3";
-        btnPastHistory.CssClass = "btn btn-primary p-3";
-        btnTreatmentDischarge.CssClass = "btn btn-warning p-3";
-        btnAttachmanet.CssClass = "btn btn-primary p-3";
-        if (!hdDischargeId.Value.ToString().Equals(""))
+        try
         {
-            getSurgeonDetails(hdDischargeId.Value.ToString());
+            MultiView1.SetActiveView(viewTreatmentDischarge);
+            btnPreauth.CssClass = "btn btn-primary p-3";
+            btnPastHistory.CssClass = "btn btn-primary p-3";
+            btnTreatmentDischarge.CssClass = "btn btn-warning p-3";
+            btnAttachmanet.CssClass = "btn btn-primary p-3";
+            if (!hdDischargeId.Value.ToString().Equals(""))
+            {
+                getSurgeonDetails(hdDischargeId.Value.ToString());
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     protected void btnAttachmanet_Click(object sender, EventArgs e)
     {
-        MultiView1.SetActiveView(viewAttachment);
-        MultiView2.SetActiveView(viewPreauthorization);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        btnPreauth.CssClass = "btn btn-primary p-3";
-        btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
-        btnPastHistory.CssClass = "btn btn-primary p-3";
-        lnkPreauthorization.CssClass = "nav-link active nav-attach";
-        lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
-        lnkDischarge.CssClass = "nav-link nav-attach";
-        lnkPostInvestigation.CssClass = "nav-link nav-attach";
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView1.SetActiveView(viewAttachment);
+            MultiView2.SetActiveView(viewPreauthorization);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            btnPreauth.CssClass = "btn btn-primary p-3";
+            btnTreatmentDischarge.CssClass = "btn btn-primary p-3";
+            btnPastHistory.CssClass = "btn btn-primary p-3";
+            lnkPreauthorization.CssClass = "nav-link active nav-attach";
+            lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
+            lnkDischarge.CssClass = "nav-link nav-attach";
+            lnkPostInvestigation.CssClass = "nav-link nav-attach";
+            getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkPreauthorization_Click(object sender, EventArgs e)
     {
-        MultiView2.SetActiveView(viewPreauthorization);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        lnkPreauthorization.CssClass = "nav-link active nav-attach";
-        lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
-        lnkDischarge.CssClass = "nav-link nav-attach";
-        lnkPostInvestigation.CssClass = "nav-link nav-attach";
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView2.SetActiveView(viewPreauthorization);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            lnkPreauthorization.CssClass = "nav-link active nav-attach";
+            lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
+            lnkDischarge.CssClass = "nav-link nav-attach";
+            lnkPostInvestigation.CssClass = "nav-link nav-attach";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
+            getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkSpecialInvestigation_Click(object sender, EventArgs e)
     {
-        MultiView2.SetActiveView(viewSpecialInvestigation);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        lnkPreauthorization.CssClass = "nav-link nav-attach";
-        lnkSpecialInvestigation.CssClass = "nav-link active nav-attach";
-        lnkDischarge.CssClass = "nav-link nav-attach";
-        lnkPostInvestigation.CssClass = "nav-link nav-attach";
-        getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView2.SetActiveView(viewSpecialInvestigation);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            lnkPreauthorization.CssClass = "nav-link nav-attach";
+            lnkSpecialInvestigation.CssClass = "nav-link active nav-attach";
+            lnkDischarge.CssClass = "nav-link nav-attach";
+            lnkPostInvestigation.CssClass = "nav-link nav-attach";
+            getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkDischarge_Click(object sender, EventArgs e)
     {
-        MultiView2.SetActiveView(viewDischarge);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
-        lnkPreauthorization.CssClass = "nav-link nav-attach";
-        lnkDischarge.CssClass = "nav-link active nav-attach";
-        lnkPostInvestigation.CssClass = "nav-link nav-attach";
-        getDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView2.SetActiveView(viewDischarge);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
+            lnkPreauthorization.CssClass = "nav-link nav-attach";
+            lnkDischarge.CssClass = "nav-link active nav-attach";
+            lnkPostInvestigation.CssClass = "nav-link nav-attach";
+            getDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkPostInvestigation_Click(object sender, EventArgs e)
     {
-        MultiView2.SetActiveView(viewPostInvestigation);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
-        lnkPreauthorization.CssClass = "nav-link nav-attach";
-        lnkDischarge.CssClass = "nav-link nav-attach";
-        lnkPostInvestigation.CssClass = "nav-link active nav-attach";
-        getPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView2.SetActiveView(viewPostInvestigation);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
+            lnkPreauthorization.CssClass = "nav-link nav-attach";
+            lnkDischarge.CssClass = "nav-link nav-attach";
+            lnkPostInvestigation.CssClass = "nav-link active nav-attach";
+            getPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnTransactionDataReferences_Click(object sender, EventArgs e)
@@ -181,65 +242,73 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void gridTransactionDataReferences_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            Label lbEnhancementStatus = (Label)e.Row.FindControl("lbEnhancementStatus");
-            Label lbEnhancementApprovedDate = (Label)e.Row.FindControl("lbEnhancementApprovedDate");
-            Label lbEnhancementRejectedDate = (Label)e.Row.FindControl("lbEnhancementRejectedDate");
-            Label lbPatientFolderName = (Label)e.Row.FindControl("lbPatientFolderName");
-            Label lbJustificationFolderName = (Label)e.Row.FindControl("lbJustificationFolderName");
-            Label lbIcpFolderName = (Label)e.Row.FindControl("lbIcpFolderName");
-            LinkButton lnkPhoto = (LinkButton)e.Row.FindControl("lnkPhoto");
-            LinkButton lnkDocument = (LinkButton)e.Row.FindControl("lnkDocument");
-            LinkButton lnkIcp = (LinkButton)e.Row.FindControl("lnkIcp");
-            string EnhancementStatus = lbEnhancementStatus.Text.ToString();
-            string ApprovedDate = lbEnhancementApprovedDate.Text.ToString();
-            string RejectedDate = lbEnhancementRejectedDate.Text.ToString();
-            string PatientFolderName = lbPatientFolderName.Text.ToString();
-            string JustificationFolderName = lbJustificationFolderName.Text.ToString();
-            string IcpFolderName = lbIcpFolderName.Text.ToString();
-            if (EnhancementStatus != null)
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                if (EnhancementStatus.Equals("1"))
+                Label lbEnhancementStatus = (Label)e.Row.FindControl("lbEnhancementStatus");
+                Label lbEnhancementApprovedDate = (Label)e.Row.FindControl("lbEnhancementApprovedDate");
+                Label lbEnhancementRejectedDate = (Label)e.Row.FindControl("lbEnhancementRejectedDate");
+                Label lbPatientFolderName = (Label)e.Row.FindControl("lbPatientFolderName");
+                Label lbJustificationFolderName = (Label)e.Row.FindControl("lbJustificationFolderName");
+                Label lbIcpFolderName = (Label)e.Row.FindControl("lbIcpFolderName");
+                LinkButton lnkPhoto = (LinkButton)e.Row.FindControl("lnkPhoto");
+                LinkButton lnkDocument = (LinkButton)e.Row.FindControl("lnkDocument");
+                LinkButton lnkIcp = (LinkButton)e.Row.FindControl("lnkIcp");
+                string EnhancementStatus = lbEnhancementStatus.Text.ToString();
+                string ApprovedDate = lbEnhancementApprovedDate.Text.ToString();
+                string RejectedDate = lbEnhancementRejectedDate.Text.ToString();
+                string PatientFolderName = lbPatientFolderName.Text.ToString();
+                string JustificationFolderName = lbJustificationFolderName.Text.ToString();
+                string IcpFolderName = lbIcpFolderName.Text.ToString();
+                if (EnhancementStatus != null)
                 {
-                    lbEnhancementStatus.Text = "Pending";
-                    lbEnhancementApprovedDate.Text = "NA";
-                    lbEnhancementApprovedDate.Visible = true;
+                    if (EnhancementStatus.Equals("1"))
+                    {
+                        lbEnhancementStatus.Text = "Pending";
+                        lbEnhancementApprovedDate.Text = "NA";
+                        lbEnhancementApprovedDate.Visible = true;
+                    }
+                    else if (EnhancementStatus.Equals("2"))
+                    {
+                        lbEnhancementStatus.Text = "Approved";
+                        lbEnhancementApprovedDate.Text = ApprovedDate;
+                        lbEnhancementApprovedDate.Visible = true;
+                    }
+                    else if (EnhancementStatus.Equals("3"))
+                    {
+                        lbEnhancementStatus.Text = "Query Raised";
+                        lbEnhancementApprovedDate.Text = "NA";
+                        lbEnhancementApprovedDate.Visible = true;
+                    }
+                    else if (EnhancementStatus.Equals("4"))
+                    {
+                        lbEnhancementStatus.Text = "Reject";
+                        lbEnhancementRejectedDate.Text = RejectedDate;
+                        lbEnhancementRejectedDate.Visible = true;
+                    }
                 }
-                else if (EnhancementStatus.Equals("2"))
+                if (PatientFolderName.Equals("NA"))
                 {
-                    lbEnhancementStatus.Text = "Approved";
-                    lbEnhancementApprovedDate.Text = ApprovedDate;
-                    lbEnhancementApprovedDate.Visible = true;
+                    lnkPhoto.Enabled = false;
+                    lnkPhoto.CssClass = "text-danger";
                 }
-                else if (EnhancementStatus.Equals("3"))
+                if (JustificationFolderName.Equals("NA"))
                 {
-                    lbEnhancementStatus.Text = "Query Raised";
-                    lbEnhancementApprovedDate.Text = "NA";
-                    lbEnhancementApprovedDate.Visible = true;
+                    lnkDocument.Enabled = false;
+                    lnkDocument.CssClass = "text-danger";
                 }
-                else if (EnhancementStatus.Equals("4"))
+                if (IcpFolderName.Equals("NA"))
                 {
-                    lbEnhancementStatus.Text = "Reject";
-                    lbEnhancementRejectedDate.Text = RejectedDate;
-                    lbEnhancementRejectedDate.Visible = true;
+                    lnkIcp.Enabled = false;
+                    lnkIcp.CssClass = "text-danger";
                 }
             }
-            if (PatientFolderName.Equals("NA"))
-            {
-                lnkPhoto.Enabled = false;
-                lnkPhoto.CssClass = "text-danger";
-            }
-            if (JustificationFolderName.Equals("NA"))
-            {
-                lnkDocument.Enabled = false;
-                lnkDocument.CssClass = "text-danger";
-            }
-            if (IcpFolderName.Equals("NA"))
-            {
-                lnkIcp.Enabled = false;
-                lnkIcp.CssClass = "text-danger";
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -363,7 +432,7 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
             p[2].DbType = DbType.String;
             p[3] = new SqlParameter("@ClaimId", claimId);
             p[3].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetCaseSearchDetails", p);
+            DataSet ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetCaseSearchDetails", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
             if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
@@ -718,6 +787,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -744,6 +817,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -751,23 +828,31 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void gridPreauthQueryRejectionReason_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            Button btnViewaudit = (Button)e.Row.FindControl("btnViewaudit");
-            Label lbIsQueryReplied = (Label)e.Row.FindControl("lbIsQueryReplied");
-            string IsQueryReplied = lbIsQueryReplied.Text.ToString();
-            if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewaudit.Text = "View Audit";
-                btnViewaudit.Enabled = true;
-                btnViewaudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+                Button btnViewaudit = (Button)e.Row.FindControl("btnViewaudit");
+                Label lbIsQueryReplied = (Label)e.Row.FindControl("lbIsQueryReplied");
+                string IsQueryReplied = lbIsQueryReplied.Text.ToString();
+                if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
+                {
+                    btnViewaudit.Text = "View Audit";
+                    btnViewaudit.Enabled = true;
+                    btnViewaudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+                }
+                else
+                {
+                    btnViewaudit.Text = "Query Pending";
+                    btnViewaudit.Enabled = false;
+                    btnViewaudit.CssClass = "btn btn-warning btn-sm rounded-pill";
+                }
             }
-            else
-            {
-                btnViewaudit.Text = "Query Pending";
-                btnViewaudit.Enabled = false;
-                btnViewaudit.CssClass = "btn btn-warning btn-sm rounded-pill";
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -821,6 +906,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -828,24 +917,32 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void gridSpecialInvestigation_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewDocument = (Button)e.Row.FindControl("btnViewDocument");
-            Label lbInvestigationStage = (Label)e.Row.FindControl("lbInvestigationStage");
-            lbInvestigationStage.Text = "Pre Investigation";
-            if (string.IsNullOrEmpty(uploadedFileName))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewDocument.Text = "No Document";
-                btnViewDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewDocument.Enabled = false;
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewDocument = (Button)e.Row.FindControl("btnViewDocument");
+                Label lbInvestigationStage = (Label)e.Row.FindControl("lbInvestigationStage");
+                lbInvestigationStage.Text = "Pre Investigation";
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewDocument.Text = "No Document";
+                    btnViewDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewDocument.Text = "View Document";
+                    btnViewDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewDocument.Enabled = true;
+                }
             }
-            else
-            {
-                btnViewDocument.Text = "View Document";
-                btnViewDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewDocument.Enabled = true;
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -900,6 +997,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -907,32 +1008,40 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void gridManditoryDocument_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewMandateDocument = (Button)e.Row.FindControl("btnViewMandateDocument");
-            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
-            string DocumentFor = lbDocumentFor.Text.ToString();
-            if (DocumentFor == "1")
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                lbDocumentFor.Text = "Pre Investigation";
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewMandateDocument = (Button)e.Row.FindControl("btnViewMandateDocument");
+                Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+                string DocumentFor = lbDocumentFor.Text.ToString();
+                if (DocumentFor == "1")
+                {
+                    lbDocumentFor.Text = "Pre Investigation";
+                }
+                else
+                {
+                    lbDocumentFor.Text = "Post Investigation";
+                }
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewMandateDocument.Text = "No Document";
+                    btnViewMandateDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewMandateDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewMandateDocument.Text = "View Document";
+                    btnViewMandateDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewMandateDocument.Enabled = true;
+                }
             }
-            else
-            {
-                lbDocumentFor.Text = "Post Investigation";
-            }
-            if (string.IsNullOrEmpty(uploadedFileName))
-            {
-                btnViewMandateDocument.Text = "No Document";
-                btnViewMandateDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewMandateDocument.Enabled = false;
-            }
-            else
-            {
-                btnViewMandateDocument.Text = "View Document";
-                btnViewMandateDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewMandateDocument.Enabled = true;
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -985,6 +1094,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -992,32 +1105,40 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void gridDischargeDocument_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
-            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
-            string DocumentFor = lbDocumentFor.Text.ToString();
-            if (DocumentFor == "1")
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                lbDocumentFor.Text = "Pre Investigation";
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
+                Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+                string DocumentFor = lbDocumentFor.Text.ToString();
+                if (DocumentFor == "1")
+                {
+                    lbDocumentFor.Text = "Pre Investigation";
+                }
+                else
+                {
+                    lbDocumentFor.Text = "Post Investigation";
+                }
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewDischargeDocument.Text = "No Document";
+                    btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewDischargeDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewDischargeDocument.Text = "View Document";
+                    btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewDischargeDocument.Enabled = true;
+                }
             }
-            else
-            {
-                lbDocumentFor.Text = "Post Investigation";
-            }
-            if (string.IsNullOrEmpty(uploadedFileName))
-            {
-                btnViewDischargeDocument.Text = "No Document";
-                btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewDischargeDocument.Enabled = false;
-            }
-            else
-            {
-                btnViewDischargeDocument.Text = "View Document";
-                btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewDischargeDocument.Enabled = true;
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1070,6 +1191,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1077,24 +1202,32 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
 
     protected void gridPostInvestigation_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewPostDocument = (Button)e.Row.FindControl("btnViewPostDocument");
-            Label lbPostInvestigationStage = (Label)e.Row.FindControl("lbPostInvestigationStage");
-            lbPostInvestigationStage.Text = "Post Investigation";
-            if (string.IsNullOrEmpty(uploadedFileName))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewPostDocument.Text = "No Document";
-                btnViewPostDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewPostDocument.Enabled = false;
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewPostDocument = (Button)e.Row.FindControl("btnViewPostDocument");
+                Label lbPostInvestigationStage = (Label)e.Row.FindControl("lbPostInvestigationStage");
+                lbPostInvestigationStage.Text = "Post Investigation";
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewPostDocument.Text = "No Document";
+                    btnViewPostDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewPostDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewPostDocument.Text = "View Document";
+                    btnViewPostDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewPostDocument.Enabled = true;
+                }
             }
-            else
-            {
-                btnViewPostDocument.Text = "View Document";
-                btnViewPostDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewPostDocument.Enabled = true;
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1147,6 +1280,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1168,6 +1305,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1281,6 +1422,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1299,6 +1444,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1397,6 +1546,10 @@ public partial class PPD_PPDCaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }

@@ -417,6 +417,25 @@ partial class MEDCO_PatientRegistration : System.Web.UI.Page
     }
     protected void btnRegister_Click(object sender, EventArgs e)
     {
+        //MultiView1.SetActiveView(viewAadhaar);
+        //panelAadhaarNo.Visible = true;
+        //panelOtp.Visible = false;
+        RegisterUser();
+    }
+
+    protected void btnSendOtp_Click(object sender, EventArgs e)
+    {
+        //panelAadhaarNo.Visible = false;
+        //panelOtp.Visible = true;
+    }
+
+    protected void btnVerifyOtp_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    public void RegisterUser()
+    {
         try
         {
             if (TextboxValidation.isAlphaNumeric(tbCommAddress.Text) == false || TextboxValidation.isNumeric(tbPinCode.Text) == false || TextboxValidation.IsValidMobileNumber(tbCommMobileNo.Text) == false || TextboxValidation.isNumeric(tbCommMobileNo.Text) == false || TextboxValidation.isDate(tbRegDate.Text) == false)
@@ -465,7 +484,7 @@ partial class MEDCO_PatientRegistration : System.Web.UI.Page
                 return;
             }
 
-RegisterPatient:
+        RegisterPatient:
             ;
             int isChild = 0;
             string fileName = "";
@@ -614,6 +633,7 @@ RegisterPatient:
             return;
         }
     }
+
 }
 
 public class AbuaCardDetailsResponse

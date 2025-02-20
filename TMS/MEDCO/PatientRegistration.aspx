@@ -1,6 +1,41 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MEDCO/MEDCO.master" AutoEventWireup="true" Async="true" CodeFile="PatientRegistration.aspx.cs" Inherits="MEDCO_PatientRegistration" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+
+    <style>
+        .aadhaar-main {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .aadhaar-form {
+            width: 400px;
+            padding: 15px 30px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .aadhaar-title {
+            line-height: 0;
+            font-weight: 600;
+        }
+
+        .aadhaar-btn {
+            width: 100%;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .aadhaar-input {
+            height: 42px;
+            border-radius: 10px;
+        }
+    </style>
+
     <script type="text/javascript">
         function showModal() {
             $('#modal2').modal('hide');
@@ -99,7 +134,7 @@
                             </div>
                             <div class="hr-line-dashed"></div>
                             <p>
-                                Note: <b style="color:red;">*ID Number should be ABUA Card Number</b><br />
+                                Note: <b style="color: red;">*ID Number should be ABUA Card Number</b><br />
                                 Please select "Child Below 5 years" option if ABUA ID is not available for the child.
                             </p>
                             <div class="col-md-12 text-center">
@@ -494,10 +529,44 @@
                 </div>
             </div>
         </asp:View>
+        <asp:View ID="viewAadhaar" runat="server">
+            <asp:Panel ID="panelAadhaarNo" runat="server" Visible="true">
+                <div class="aadhaar-main">
+                    <div class="aadhaar-form">
+                        <div class="text-center">
+                            <img src="../img/otp.jpg" height="200" width="200" />
+                        </div>
+                        <h2 class="aadhaar-title text-center">Aadhaar OTP Request</h2>
+                        <label for="txtAadharNo" class="form-label mt-2 w-100 text-center">Kindly provide your Aadhaar number to proceed</label>
+                        <asp:TextBox ID="txtAadharNo" runat="server" TextMode="Number" CssClass="form-control mt-4 aadhaar-input" placeholder="Enter Aadhaar Number"></asp:TextBox>
+                        <div class="text-center">
+                            <asp:LinkButton ID="btnSendOtp" runat="server" CssClass="btn btn-primary mt-3 aadhaar-btn" OnClick="btnSendOtp_Click">REQUEST OTP</asp:LinkButton>
+                        </div>
+                    </div>
+                </div>
+            </asp:Panel>
+            <asp:Panel ID="panelOtp" runat="server" Visible="false">
+                <div class="aadhaar-main">
+                    <div class="aadhaar-form">
+                        <div class="text-center">
+                            <img src="../img/otp.jpg" height="200" width="200" />
+                        </div>
+                        <h2 class="aadhaar-title text-center">Aadhaar OTP Verification</h2>
+                        <label for="txtAadharNo" class="form-label mt-2 w-100 text-center">Please enter the OTP sent to your registered mobile number.</label>
+                        <asp:TextBox ID="TextBox1" runat="server" TextMode="Number" CssClass="form-control mt-4 aadhaar-input" placeholder="Enter OTP"></asp:TextBox>
+                        <div class="text-center">
+                            <asp:LinkButton ID="btnVerifyOtp" runat="server" CssClass="btn btn-primary mt-3 aadhaar-btn" OnClick="btnVerifyOtp_Click">VERIFY OTP</asp:LinkButton>
+                        </div>
+                    </div>
+                </div>
+            </asp:Panel>
+        </asp:View>
     </asp:MultiView>
     <asp:HiddenField ID="hdAbuaId" runat="server" Visible="false" />
     <asp:HiddenField ID="hdFamilyId" runat="server" Visible="false" />
     <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
     <asp:HiddenField ID="hdUserName" runat="server" Visible="false" />
     <asp:HiddenField ID="hdHospitalId" runat="server" Visible="false" />
+    <asp:HiddenField ID="hdAadharNo" runat="server" />
+    <asp:HiddenField ID="hdTransactionNo" runat="server" />
 </asp:Content>

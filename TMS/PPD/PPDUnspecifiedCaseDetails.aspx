@@ -1134,10 +1134,10 @@
                         <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-xl">
                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                        <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title fs-5 font-weight-bolder"></asp:Label>
+                                    <div class="modal-header align-items-center" style="background-color: #007e72; padding: 10px; border-radius: 0">
+                                        <asp:Label ID="lbTitle" runat="server" Text="" class="modal-title text-white" Style="font-size: 15px;"></asp:Label>
                                         <button type="button" class="btn" onclick="hideModal();">
-                                            <i class="fa fa-times"></i>
+                                            <i class="fa fa-times text-white"></i>
                                         </button>
                                     </div>
                                     <asp:MultiView ID="MultiView3" runat="server">

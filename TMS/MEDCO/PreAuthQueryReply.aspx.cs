@@ -246,7 +246,7 @@ public partial class MEDCO_PreAuthQueryReply : System.Web.UI.Page
     {
         dt.Clear();
         string claimId = claimIds.ToString();
-        dt = preAuth.GetClaimWorkFlow(Convert.ToInt32(hdClaimId.Value));
+        dt = preAuth.GetWorkFlow(Convert.ToInt32(hdClaimId.Value));
         if (dt != null && dt.Rows.Count > 0)
         {
             gridWorkFlow.DataSource = dt;

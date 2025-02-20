@@ -2,7 +2,6 @@
 using System.Data;
 using System.Linq;
 using System.Configuration;
-using CareerPath.DAL;
 using iText.IO.Image;
 using iText.Kernel.Pdf;
 using System.IO;
@@ -11,845 +10,479 @@ using iText.Layout.Element;
 using System.Net;
 using System;
 using System.Collections.Generic;
-using System.Web.Security;
+using System.Web.WebPages;
 
 public class PPDHelper
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    public DataTable GetAssignedCases(string UserId, string CaseNumber, string CardNumber, string FromDate, string ToDate)
+    public DataTable GetAssignedCases(string RoleId, string UserId, string CaseNumber, string CardNumber, string FromDate, string ToDate)
     {
-        try
-        {
-            DataSet ds = new DataSet();
-            DataTable dt = new DataTable();
-            SqlParameter[] p = new SqlParameter[5];
-            p[0] = new SqlParameter("@UserId", UserId);
-            p[0].DbType = DbType.String;
-            p[1] = new SqlParameter("@CaseNumber", CaseNumber);
-            p[1].DbType = DbType.String;
-            p[2] = new SqlParameter("@CardNumber", CardNumber);
-            p[2].DbType = DbType.String;
-            p[3] = new SqlParameter("@FromDate", FromDate);
-            p[3].DbType = DbType.String;
-            p[4] = new SqlParameter("@ToDate", ToDate);
-            p[4].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetAssignedCases", p);
-            if (con.State == ConnectionState.Open)
-                con.Close();
-            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-            {
-                dt = ds.Tables[0];
-            }
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
+        string SubQuery = "";
+        string Query = "";
 
-            }
+        if (!CaseNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CaseNumber = '" + CaseNumber + "' ";
         }
+        if (!CardNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CardNumber = '" + CardNumber + "' ";
+        }
+        if (!FromDate.IsEmpty() && !ToDate.IsEmpty())
+        {
+            SubQuery += "AND t3.RegDate between '" + FromDate + "' AND '" + ToDate + "' ";
+        }
+        if (RoleId.Equals("3"))
+        {
+            Query = "select distinct t1.AdmissionId, t1.ClaimId, t2.ClaimMode, t1.CaseNumber, t1.ClaimNumber, t3.PatientName, t1.CardNumber, t4.HospitalName, t3.RegDate, t5.PackageId from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 on t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails t4 on t1.HospitalId = t4.HospitalId LEFT JOIN TMS_PatientTreatmentProtocol t5 ON t1.CardNumber = t5.CardNumber where t2.ForwardActionInsurer = 3 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 AND t2.ForwardedToInsurerId = " + UserId + " AND t2.IsActive = 1 AND t2.IsDeleted = 0 " + SubQuery;
+        }
+        else
+        {
+            Query = "select distinct t1.AdmissionId, t1.ClaimId, t2.ClaimMode, t1.CaseNumber, t1.ClaimNumber, t3.PatientName, t1.CardNumber, t4.HospitalName, t3.RegDate, t5.PackageId from TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 on t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails t4 on t1.HospitalId = t4.HospitalId LEFT JOIN TMS_PatientTreatmentProtocol t5 ON t1.CardNumber = t5.CardNumber where t2.ForwardActionTrust = 3 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 AND t2.ForwardedToTrustId = " + UserId + " AND t2.IsActive = 1 AND t2.IsDeleted = 0 " + SubQuery;
+        }
+        DataTable dt = new DataTable();
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public int TransferCase(string ClaimId, string RoleId)
     {
-        try
+        string Query = "";
+        if (RoleId == "3")
         {
-            string Query = "";
-            if (RoleId == "3")
-            {
-                Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
-            }
-            else if (RoleId == "4")
-            {
-                Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
-            }
-            SqlCommand cmd = new SqlCommand(Query, con);
-            cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
-            con.Open();
-            int rowsAffected = cmd.ExecuteNonQuery();
-            con.Close();
-            return rowsAffected;
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
         }
-        catch (Exception ex)
+        else if (RoleId == "4")
         {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = 0 WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
         }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        int rowsAffected = cmd.ExecuteNonQuery();
+        con.Close();
+        return rowsAffected;
     }
 
     public DataTable GetMasterActions(bool EnhancementTaken, bool IsUnspecified)
     {
-        try
+        DataTable dt = new DataTable();
+        string Query = "";
+        if (IsUnspecified)
         {
-            DataTable dt = new DataTable();
-            string Query = "";
-            if (IsUnspecified)
+            if (EnhancementTaken)
             {
-                if (EnhancementTaken)
-                {
-                    Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Approve'";
-                }
-                else
-                {
-                    Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement' AND ActionName NOT LIKE 'Approve'";
-                }
+                Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Approve'";
             }
             else
             {
-                if (EnhancementTaken)
-                {
-                    Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Send To Medical Audit'";
-                }
-                else
-                {
-                    Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement' AND ActionName NOT LIKE 'Send To Medical Audit'";
-                }
+                Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement' AND ActionName NOT LIKE 'Approve'";
             }
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
         }
-        catch (Exception ex)
+        else
         {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
+            if (EnhancementTaken)
             {
-                con.Close();
+                Query = "SELECT ActionId, ActionName from TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Send To Medical Audit'";
+            }
+            else
+            {
+                Query = "SELECT ActionId, ActionName FROM TMS_MasterActionMaster WHERE PPD = 1 AND ActionName NOT LIKE 'Reject Enhancement' AND ActionName NOT LIKE 'Send To Medical Audit'";
             }
         }
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetUserDetails(string UserId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT t1.RoleName FROM TMS_Users t1 WHERE t1.UserId = @UserId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT t1.RoleName FROM TMS_Users t1 WHERE t1.UserId = @UserId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetAdmissionDetails(string AdmissionId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT t1.IncentivePercentage, t1.PackageCost, t1.IncentiveAmount, t1.ImplantAmount, t1.TotalPackageCost, t2.InsurerClaimAmountRequested, t2.TrustClaimAmountRequested, t1.EnhancementAmount FROM TMS_PatientAdmissionDetail t1 INNER JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
-
-
+        DataTable dt = new DataTable();
+        string Query = "SELECT t1.IncentivePercentage, t1.PackageCost, t1.IncentiveAmount, t1.ImplantAmount, t1.TotalPackageCost, t2.InsurerClaimAmountRequested, t2.TrustClaimAmountRequested, t1.EnhancementAmount FROM TMS_PatientAdmissionDetail t1 INNER JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetUsersByRole(string RoleId, string UserId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT UserId, CONCAT(FullName,' '+ RoleName+' ('+Username+')') AS FullName FROM TMS_Users WHERE RoleId = @RoleId AND UserId != @UserId AND IsActive = 1 AND IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@RoleId", RoleId);
-            sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT UserId, CONCAT(FullName,' '+ RoleName+' ('+Username+')') AS FullName FROM TMS_Users WHERE RoleId = @RoleId AND UserId != @UserId AND IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@RoleId", RoleId);
+        sd.SelectCommand.Parameters.AddWithValue("@UserId", UserId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetWorkFlow(string ClaimId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT t1.ActionDate, t2.RoleName AS Role, t1.Remarks, t1.ActionTaken AS Action, t1.Amount, ISNULL(t3.RejectName, 'NA') AS RejectedReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Users t2 ON t1.ActionTakenBy = t2.UserId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0 AND t1.IsActive = 1";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT t1.ActionDate, t2.RoleName AS Role, t1.Remarks, t1.ActionTaken AS Action, t1.Amount, ISNULL(t3.RejectName, 'NA') AS RejectedReason FROM TMS_PatientActionHistory t1 LEFT JOIN TMS_Users t2 ON t1.ActionTakenBy = t2.UserId LEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0 AND t1.IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetQueryReasons()
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT ReasonId, ReasonName FROM TMS_MasterQueryReason WHERE IsActive = 1 AND IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT ReasonId, ReasonName FROM TMS_MasterQueryReason WHERE IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetSubQueryReasons(string ReasonId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT SubReasonId, ReasonId, SubReasonName FROM TMS_MasterQuerySubReason WHERE ReasonId = @ReasonId AND IsActive = 1 AND IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@ReasonId", ReasonId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT SubReasonId, ReasonId, SubReasonName FROM TMS_MasterQuerySubReason WHERE ReasonId = @ReasonId AND IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ReasonId", ReasonId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetRejectReasons()
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT RejectId, RejectName FROM TMS_MasterRejectReason WHERE IsActive = 1 AND IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
-
-
+        DataTable dt = new DataTable();
+        string Query = "SELECT RejectId, RejectName FROM TMS_MasterRejectReason WHERE IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetPreauthQuery(string ClaimId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 0 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetClaimQuery(string ClaimId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 1 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT t1.QueryId, t1.QueryRaisedDate, t1.QueryRasiedByRole, t1.ClaimId, t2.ReasonName, t3.SubReasonName, ISNULL(t1.PpdQuery, 'NA') AS PpdQuery, ISNULL(t1.CpdQuery, 'NA') AS CpdQuery, ISNULL(t1.AcoQuery, 'NA') AS AcoQuery, ISNULL(t1.ShaQuery, 'NA') AS ShaQuery, t1.IsQueryReplied, ISNULL(t1.QueryReply, 'NA') AS QueryReply, t1.QueryFolderName, t1.QueryUploadedFileName, t1.QueryReplyDate FROM TMS_ClaimQuery t1 LEFT JOIN TMS_MasterQueryReason t2 ON t1.ReasonId = t2.ReasonId LEFT JOIN TMS_MasterQuerySubReason t3 ON t1.SubReasonId = t3.SubReasonId WHERE t1.ClaimId = @ClaimId AND t1.IsClaimInitiated = 1 AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetSpecialityName()
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT PackageId, SpecialityName from TMS_MasterPackageMaster WHERE IsActive = 1 AND IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
-
-
+        DataTable dt = new DataTable();
+        string Query = "SELECT PackageId, SpecialityName from TMS_MasterPackageMaster WHERE IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetSpecialityBasedProcedure(string PackageId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT ProcedureId, ProcedureName from TMS_MasterPackageDetail WHERE PackageId = @PackageId AND IsActive = 1 AND IsDeleted = 0";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
-
-
+        DataTable dt = new DataTable();
+        string Query = "SELECT ProcedureId, ProcedureName from TMS_MasterPackageDetail WHERE PackageId = @PackageId AND IsActive = 1 AND IsDeleted = 0";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetPackageMaster(string PackageId, string ProcedureId) //, int OffSet, int PageSize
     {
-        try
+        DataTable dt = new DataTable();
+        string Query = "";
+        if (PackageId != null && ProcedureId != null)
         {
-            DataTable dt = new DataTable();
-            string Query = "";
-            if (PackageId != null && ProcedureId != null)
-            {
-                Query = "SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId WHERE t2.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId";
-            }
-            else
-            {
-                Query = "SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId";
-            }
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            if (PackageId != null && ProcedureId != null)
-            {
-                sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
-                sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
-            }
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
+            Query = "SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId WHERE t2.PackageId = @PackageId AND t1.ProcedureId = @ProcedureId";
         }
-        catch (Exception ex)
+        else
         {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
+            Query = "SELECT t2.PackageId, t2.SpecialityCode, t2.SpecialityName, t1.ProcedureId, t1.ProcedureCode, t1.ProcedureName, t1.ProcedureAmount, t1.PreInvestigation, t1.PostInvestigation FROM TMS_MasterPackageDetail t1 INNER JOIN TMS_MasterPackageMaster t2 ON t1.PackageId = t2.PackageId";
         }
-        finally
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        if (PackageId != null && ProcedureId != null)
         {
-            if (con != null)
-            {
-                con.Close();
-
-            }
+            sd.SelectCommand.Parameters.AddWithValue("@PackageId", PackageId);
+            sd.SelectCommand.Parameters.AddWithValue("@ProcedureId", ProcedureId);
         }
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT DISTINCT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPreInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PreInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PreInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Pre'";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
-            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
-            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT DISTINCT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPreInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PreInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PreInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Pre'";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetPostInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT DISTINCT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPostInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PostInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PostInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Post'";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
-            sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
-            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT DISTINCT t5.HospitalName, t2.SpecialityCode, t2.SpecialityName, t3.ProcedureCode, t3.ProcedureName, t4.InvestigationCode, t4.InvestigationName, t1.UploadStatus, t6.InvestigationStage, t1.FolderName, t1.UploadedFileName, t1.FilePath, t1.CreatedOn from TMS_PatientDocumentPostInvestigation t1 INNER JOIN TMS_MasterPackageMaster t2 on t1.PackageId = t2.PackageId INNER JOIN TMS_MasterPackageDetail t3 on t1.ProcedureId = t3.ProcedureId INNER JOIN TMS_MasterInvestigationMaster t4 on t1.PostInvestigationId = t4.InvestigationId INNER JOIN HEM_HospitalDetails t5 on t1.HospitalId = t5.HospitalId LEFT JOIN TMS_MapProcedureInvestigation t6 ON t6.InvestigationId = t1.PostInvestigationId AND t6.PackageId = t1.PackageId AND t6.ProcedureId = t1.ProcedureId WHERE t1.HospitalId = @HospitalId AND t1.CardNumber = @CardNumber AND t1.PatientRegId = @PatientRegId AND t6.InvestigationStage = 'Post'";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        sd.SelectCommand.Parameters.AddWithValue("@CardNumber", CardNumber);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetManditoryDocuments(string HospitalId, string PatientRegId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 1 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
-            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 1 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetDischargeDocuments(string HospitalId, string PatientRegId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 2 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
-            sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT t4.DocumentName, t2.HospitalName, t2.Address AS HospitalAddress, t3.PatientName, t1.CardNumber, t1.DocumentFor, t1.FolderName, t1.UploadedFileName, t1.UploadStatus, t1.CreatedOn FROM TMS_PatientMandatoryDocument t1 INNER JOIN HEM_HospitalDetails t2 on t2.HospitalId = t1.HospitalId INNER JOIN TMS_PatientRegistration t3 ON t3.PatientRegId = t1.PatientRegId INNER JOIN TMS_MasterPreAuthMandatoryDocument t4 ON t4.DocumentId = t1.DocumentId WHERE t1.DocumentFor = 2 AND t1.PatientRegId = @PatientRegId AND t1.HospitalId = @HospitalId AND t1.IsActive = 1";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@HospitalId", HospitalId);
+        sd.SelectCommand.Parameters.AddWithValue("@PatientRegId", PatientRegId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public int UpdateCase(string ClaimId, string UserId, string RoleId)
     {
-        try
+        string Query = "";
+        if (RoleId == "3")
         {
-            string Query = "";
-            if (RoleId == "3")
-            {
-                Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = @UserId WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
-            }
-            else if (RoleId == "4")
-            {
-                Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = @UserId WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
-            }
-            SqlCommand cmd = new SqlCommand(Query, con);
-            cmd.Parameters.AddWithValue("@UserId", UserId);
-            cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
-            con.Open();
-            int rowsAffected = cmd.ExecuteNonQuery();
-            con.Close();
-            return rowsAffected;
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByInsurer = @UserId WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
         }
-        catch (Exception ex)
+        else if (RoleId == "4")
         {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
+            Query = "UPDATE TMS_ClaimMaster SET CurrentHandleByTrust = @UserId WHERE ClaimId = @ClaimId AND IsActive = 1 AND IsDeleted = 0";
         }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        SqlCommand cmd = new SqlCommand(Query, con);
+        cmd.Parameters.AddWithValue("@UserId", UserId);
+        cmd.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        int rowsAffected = cmd.ExecuteNonQuery();
+        con.Close();
+        return rowsAffected;
     }
 
     public DataTable GetDashboardData()
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPDInsurerOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustToday, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPDTrustOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 3 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerAssignedToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 3 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPDInsurerAssignedOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 3 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustAssignedToday, COUNT(CASE WHEN t2.ForwardActionTrust = 3 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPDTrustAssignedOverall, COUNT(CASE WHEN CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PreauthCountToday, COUNT(t1.AdmissionId) AS PreauthCountOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND t2.IsUnspecifiedCase = 1 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS UnspecifiedCaseInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND t2.IsUnspecifiedCase = 1 THEN t1.AdmissionId END) AS UnspecifiedCaseInsurerOverall,COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 4 AND t2.IsUnspecifiedCase = 1 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS UnspecifiedCaseTrustToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 4 AND t2.IsUnspecifiedCase = 1 THEN t1.AdmissionId END) AS UnspecifiedCaseTrustOverall FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dt = new DataTable();
+        string Query = "SELECT COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPDInsurerOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustToday, COUNT(CASE WHEN t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPDTrustOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 3 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDInsurerAssignedToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 3 AND t2.ForwardedByInsurer = 3 AND t2.ForwardedToInsurer = 3 THEN t1.AdmissionId END) AS PPDInsurerAssignedOverall, COUNT(CASE WHEN t2.ForwardActionTrust = 3 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PPDTrustAssignedToday, COUNT(CASE WHEN t2.ForwardActionTrust = 3 AND t2.ForwardedByTrust = 4 AND t2.ForwardedToTrust = 4 THEN t1.AdmissionId END) AS PPDTrustAssignedOverall, COUNT(CASE WHEN CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS PreauthCountToday, COUNT(t1.AdmissionId) AS PreauthCountOverall, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND t2.IsUnspecifiedCase = 1 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS UnspecifiedCaseInsurerToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND t2.IsUnspecifiedCase = 1 THEN t1.AdmissionId END) AS UnspecifiedCaseInsurerOverall,COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 4 AND t2.IsUnspecifiedCase = 1 AND CAST(t1.AdmissionDate AS DATE) = CAST(GETDATE() AS DATE) THEN t1.AdmissionId END) AS UnspecifiedCaseTrustToday, COUNT(CASE WHEN t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 4 AND t2.IsUnspecifiedCase = 1 THEN t1.AdmissionId END) AS UnspecifiedCaseTrustOverall FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetSurgeonDetails(string DischargeId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query;
-            SqlDataAdapter sd;
-            Query = "SELECT DoctorId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
-            sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
+        DataTable dt = new DataTable();
+        string Query;
+        SqlDataAdapter sd;
+        Query = "SELECT DoctorId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
 
-            string DoctorId = dt.Rows[0]["DoctorId"].ToString().Trim();
-            Query = "SELECT DISTINCT t1.Id, t1.Name, t1.RegistrationNumber, t2.Title AS Qualification, t1.MobileNumber, t3.Title AS DoctorType FROM HEM_HospitalManPowers t1 LEFT JOIN HEM_MasterQualifications t2 ON t1.QualificationId = t2.Id LEFT JOIN HEM_MasterMedicalExpertiseSubTypes t3 ON t1.MedicalSubExpertiseId = t3.Id WHERE t1.Id = @DoctorId";
-            dt.Clear();
-            sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@DoctorId", DoctorId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        string DoctorId = dt.Rows[0]["DoctorId"].ToString().Trim();
+        Query = "SELECT DISTINCT t1.Id, t1.Name, t1.RegistrationNumber, t2.Title AS Qualification, t1.MobileNumber, t3.Title AS DoctorType FROM HEM_HospitalManPowers t1 LEFT JOIN HEM_MasterQualifications t2 ON t1.QualificationId = t2.Id LEFT JOIN HEM_MasterMedicalExpertiseSubTypes t3 ON t1.MedicalSubExpertiseId = t3.Id WHERE t1.Id = @DoctorId";
+        dt.Clear();
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DoctorId", DoctorId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetAnesthetistDetails(string DischargeId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query;
-            SqlDataAdapter sd;
-            Query = "SELECT AnesthetistId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
-            sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
+        DataTable dt = new DataTable();
+        string Query;
+        SqlDataAdapter sd;
+        Query = "SELECT AnesthetistId FROM TMS_DischargeDetail WHERE DischargeId = @DischargeId";
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
 
-            DataTable dtSurgeon = dt;
-            string AnesthetistId = dtSurgeon.Rows[0]["AnesthetistId"].ToString().Trim();
-            Query = "SELECT DISTINCT t1.Id, t1.Name, t1.RegistrationNumber, t2.Title AS Qualification, t1.MobileNumber FROM HEM_HospitalManPowers t1 LEFT JOIN HEM_MasterQualifications t2 ON t1.QualificationId = t2.Id WHERE t1.Id = @AnesthetistId";
-            dt.Clear();
-            sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@AnesthetistId", AnesthetistId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        DataTable dtSurgeon = dt;
+        string AnesthetistId = dtSurgeon.Rows[0]["AnesthetistId"].ToString().Trim();
+        Query = "SELECT DISTINCT t1.Id, t1.Name, t1.RegistrationNumber, t2.Title AS Qualification, t1.MobileNumber FROM HEM_HospitalManPowers t1 LEFT JOIN HEM_MasterQualifications t2 ON t1.QualificationId = t2.Id WHERE t1.Id = @AnesthetistId";
+        dt.Clear();
+        sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@AnesthetistId", AnesthetistId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetOtherDischargeDetails(string DischargeId)
     {
-        try
-        {
-            string Query = "SELECT t1.IncisionType, t1.OPPhotosWebexTaken, t1.VideoRecordingDone, t1.SwabCountInstrumentsCount, t1.SuturesLigatures, t1.SpecimenRequired, t1.DrainageCount, t1.BloodLoss, t1.PostOperativeInstructions, t1.PatientCondition, t1.ComplicationsIfAny, t1.TreatmentSurgeryStartDate, t1.SurgeryStartTime, t1.SurgeryEndTime, t1.TreatmentGiven, t1.OperativeFindings, t1.PostOperativePeriod, t1.PostSurgeryInvestigationGiven, t1.StatusAtDischarge, t1.Review, t1.Advice, t1.DischargeDate, t1.NextFollowUpDate, t1.ConsultAtBlock, t1.FloorNo, t1.RoomNo, t1.IsSpecialCase, t1.SpecialCaseValue AS SpecialCaseId, t2.SpecialCaseValue, t1.FinalDiagnosis, t1.FinalDiagnosisDesc, t1.ProcedureConsent, t1.IsDischarged FROM TMS_DischargeDetail t1 LEFT JOIN TMS_SpecialCasevalue t2 on t1.SpecialCaseValue = t2.SpecialCaseId WHERE t1.DischargeId = @DischargeId";
-            DataTable dt = new DataTable();
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        string Query = "SELECT t1.IncisionType, t1.OPPhotosWebexTaken, t1.VideoRecordingDone, t1.SwabCountInstrumentsCount, t1.SuturesLigatures, t1.SpecimenRequired, t1.DrainageCount, t1.BloodLoss, t1.PostOperativeInstructions, t1.PatientCondition, t1.ComplicationsIfAny, t1.TreatmentSurgeryStartDate, t1.SurgeryStartTime, t1.SurgeryEndTime, t1.TreatmentGiven, t1.OperativeFindings, t1.PostOperativePeriod, t1.PostSurgeryInvestigationGiven, t1.StatusAtDischarge, t1.Review, t1.Advice, t1.DischargeDate, t1.NextFollowUpDate, t1.ConsultAtBlock, t1.FloorNo, t1.RoomNo, t1.IsSpecialCase, t1.SpecialCaseValue AS SpecialCaseId, t2.SpecialCaseValue, t1.FinalDiagnosis, t1.FinalDiagnosisDesc, t1.ProcedureConsent, t1.IsDischarged FROM TMS_DischargeDetail t1 LEFT JOIN TMS_SpecialCasevalue t2 on t1.SpecialCaseValue = t2.SpecialCaseId WHERE t1.DischargeId = @DischargeId";
+        DataTable dt = new DataTable();
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@DischargeId", DischargeId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetEnhancementDetails(string AdmissionId)
     {
-        try
-        {
-            string Query = "SELECT t1.EnhancementId, t1.AdmissionId, t1.CreatedOn AS EnhancementInitiateDate, t1.EnhancementFrom, t1.EnhancementTo, t1.EnhancementDays, t1.StratificationId, t1.EnhancementStatus, t1.Amount, t1.Remarks, t1.ApprovedDate, t1.RejectedDate, ISNULL(t2.RejectName, 'NA') AS RejectedReason, t1.RejectedRemarks, t1.PatientFolderName, t1.PatientUploadedFileName, t1.PatientFilePath, t1.JustificationFolderName, t1.JustificationFileName, t1.JustificationFilePath, t1.IcpFolderName, t1.IcpUploadedFileName, t1.IcpFilePath FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_MasterRejectReason t2 ON t1.RejectReasonId = t2.RejectId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
-            DataTable dt = new DataTable();
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
-
-            }
-        }
+        string Query = "SELECT t1.EnhancementId, t1.AdmissionId, t1.CreatedOn AS EnhancementInitiateDate, t1.EnhancementFrom, t1.EnhancementTo, t1.EnhancementDays, t1.StratificationId, t1.EnhancementStatus, t1.Amount, t1.Remarks, t1.ApprovedDate, t1.RejectedDate, ISNULL(t2.RejectName, 'NA') AS RejectedReason, t1.RejectedRemarks, t1.PatientFolderName, t1.PatientUploadedFileName, t1.PatientFilePath, t1.JustificationFolderName, t1.JustificationFileName, t1.JustificationFilePath, t1.IcpFolderName, t1.IcpUploadedFileName, t1.IcpFilePath FROM TMS_EnhancementMaster t1 LEFT JOIN TMS_MasterRejectReason t2 ON t1.RejectReasonId = t2.RejectId WHERE t1.AdmissionId = @AdmissionId AND t1.IsActive = 1 AND t1.IsDeleted = 0";
+        DataTable dt = new DataTable();
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@AdmissionId", AdmissionId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
-    public DataTable GetUnspecifiedCases(string UserId, string CaseNumber, string CardNumber, string FromDate, string ToDate)
+    public DataTable GetUnspecifiedCases(string RoleId, string UserId, string CaseNumber, string CardNumber, string FromDate, string ToDate)
     {
-        try
-        {
-            DataSet ds = new DataSet();
-            DataTable dt = new DataTable();
-            SqlParameter[] p = new SqlParameter[5];
-            p[0] = new SqlParameter("@UserId", UserId);
-            p[0].DbType = DbType.String;
-            p[1] = new SqlParameter("@CaseNumber", CaseNumber);
-            p[1].DbType = DbType.String;
-            p[2] = new SqlParameter("@CardNumber", CardNumber);
-            p[2].DbType = DbType.String;
-            p[3] = new SqlParameter("@FromDate", FromDate);
-            p[3].DbType = DbType.String;
-            p[4] = new SqlParameter("@ToDate", ToDate);
-            p[4].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_GetUnspecifiedCases", p);
-            if (con.State == ConnectionState.Open)
-                con.Close();
-            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-            {
-                dt = ds.Tables[0];
-            }
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
+        string SubQuery = "";
+        string Query = "";
 
-            }
+        if (!CaseNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CaseNumber = '" + CaseNumber + "' ";
         }
+        if (!CardNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CardNumber = '" + CardNumber + "' ";
+        }
+        if (!FromDate.IsEmpty() && !ToDate.IsEmpty())
+        {
+            SubQuery += "AND t3.RegDate between '" + FromDate + "' AND '" + ToDate + "' ";
+        }
+        if (RoleId.Equals("3"))
+        {
+            Query = "SELECT DISTINCT t1.AdmissionId, t1.ClaimId, t1.CaseNumber, t1.ClaimNumber, t3.PatientName, t1.CardNumber, t4.HospitalName, t3.RegDate FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails t4 ON t1.HospitalId = t4.HospitalId LEFT JOIN TMS_PatientTreatmentProtocol t5 ON t1.CardNumber = t5.CardNumber LEFT JOIN TMS_MasterPackageMaster t6 ON t5.PackageId = t6.PackageId WHERE t2.ForwardActionInsurer = 1 AND t2.ForwardedByInsurer = 2 AND t2.ForwardedToInsurer = 3 AND t6.SpecialityCode = 'US' AND t2.IsActive = 1 AND t2.IsDeleted = 0 " + SubQuery;
+        }
+        else
+        {
+            Query = "SELECT DISTINCT t1.AdmissionId, t1.ClaimId, t1.CaseNumber, t1.ClaimNumber, t3.PatientName, t1.CardNumber, t4.HospitalName, t3.RegDate FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails t4 ON t1.HospitalId = t4.HospitalId LEFT JOIN TMS_PatientTreatmentProtocol t5 ON t1.CardNumber = t5.CardNumber LEFT JOIN TMS_MasterPackageMaster t6 ON t5.PackageId = t6.PackageId WHERE t2.ForwardActionTrust = 1 AND t2.ForwardedByTrust = 2 AND t2.ForwardedToTrust = 4 AND t6.SpecialityCode = 'US' AND t2.IsActive = 1 AND t2.IsDeleted = 0 " + SubQuery;
+        }
+        DataTable dt = new DataTable();
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public DataTable GetCaseStatus(string ClaimId)
     {
-        try
-        {
-            DataTable dt = new DataTable();
-            string Query = "SELECT TOP 1 ActionTaken FROM TMS_PatientActionHistory WHERE ClaimId = @ClaimId AND IsActive = 1 ORDER BY ActionId DESC";
-            SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-            sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
-            con.Open();
-            sd.Fill(dt);
-            con.Close();
-            return dt;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("An error occurred while fetching assigned cases", ex);
-        }
-        finally
-        {
-            if (con != null)
-            {
-                con.Close();
+        DataTable dt = new DataTable();
+        string Query = "SELECT TOP 1 ActionTaken FROM TMS_PatientActionHistory WHERE ClaimId = @ClaimId AND IsActive = 1 ORDER BY ActionId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
 
-            }
+    public DataTable SearchCase(string CaseNumber, string CardNumber, string ClaimNumber, string FromDate, string ToDate)
+    {
+        string SubQuery = "";
+
+        if (!CaseNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CaseNumber = '" + CaseNumber + "' ";
         }
+        if (!CardNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CardNumber = '" + CardNumber + "' ";
+        }
+        if (!ClaimNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.ClaimNumber = '" + ClaimNumber + "' ";
+        }
+        if (!FromDate.IsEmpty() && !ToDate.IsEmpty())
+        {
+            SubQuery += "AND t3.RegDate between '" + FromDate + "' AND '" + ToDate + "' ";
+        }
+
+        string Query = "SELECT t1.AdmissionId, t2.ClaimId, t1.HospitalId, t3.PatientName, t1.CardNumber, t1.PatientRegId, t1.CaseNumber, t2.ClaimNumber, t1.AdmissionType, t1.AdmissionDate, t2.Remarks, t3.RegDate, t1.DischargeDate, t3.MobileNumber, t4.HospitalName, CONCAT(t4.Address,', ',t4.City,'-',t4.PinCode) AS HospitalAddress, t4.HospitalParentType, t3.Gender, t3.PatientFamilyId, t3.IsAadharVerified, t3.IsBiometricVerified, t5.Title AS State, t6.Title AS District, t3.IsChild, t3.ChildName, t3.ChildGender, t3.ChildFatherName, t3.ChildMotherName, t3.ChildDOB, t3.Age, t3.ImageURL, t3.ChildImageURL FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails t4 ON t1.HospitalId = t4.HospitalId LEFT JOIN HEM_MasterStates t5 ON t3.StateId = t5.Id LEFT JOIN HEM_MasterDistricts t6 ON t3.DistrictId = t6.Id WHERE t1.IsActive = 1 AND t1.IsDeleted = 0 " + SubQuery;
+        DataTable dt = new DataTable();
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
     }
 
     public byte[] CreatePdfWithImagesInMemory(List<string> images)

@@ -2,11 +2,12 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 
 public partial class PPD_PPDDashboard : System.Web.UI.Page
 {
-    private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private MasterData md = new MasterData();
+    private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     public static PPDHelper ppdHelper = new PPDHelper();
     string pageName;
 

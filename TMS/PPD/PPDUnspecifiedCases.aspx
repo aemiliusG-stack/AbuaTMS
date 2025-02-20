@@ -7,6 +7,7 @@
     <asp:UpdatePanel runat="server">
         <ContentTemplate>
             <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+            <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ibox-title text-center">
@@ -16,15 +17,11 @@
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <span class="form-label fw-semibold">Case Number</span>
-                                <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                                <asp:TextBox runat="server" ID="tbCaseNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)" OnPaste="return validatePaste(event)"></asp:TextBox>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <span class="form-label fw-semibold">Beneficiary Card Number</span>
-                                <asp:TextBox runat="server" ID="tbBeneficiaryCardNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Patient Name</span>
-                                <asp:TextBox runat="server" ID="tbPatientName" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)"></asp:TextBox>
+                                <asp:TextBox runat="server" ID="tbBeneficiaryCardNo" class="form-control mt-2" OnKeypress="return isAlphaNumeric(event)" OnPaste="return validatePaste(event)"></asp:TextBox>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <span class="form-label fw-semibold">Registered From Date</span>
@@ -34,27 +31,9 @@
                                 <span class="form-label fw-semibold">Registered To Date</span>
                                 <asp:TextBox ID="tbRegisteredToDate" runat="server" class="form-control mt-2" TextMode="Date" OnKeypress="return isDate(event)"></asp:TextBox>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Scheme Id</span>
-                                <asp:DropDownList ID="dlSchemeId" runat="server" class="form-control mt-2">
-                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Category</span>
-                                <asp:DropDownList ID="dlCategory" runat="server" class="form-control mt-2">
-                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold">Procudure Name</span>
-                                <asp:DropDownList ID="dlProcedureName" runat="server" class="form-control mt-2">
-                                    <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
                             <div class="col-lg-12 text-center mt-2">
-                                <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" />
-                                <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" />
+                                <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" OnClick="btnSearch_Click" />
+                                <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" OnClick="btnReset_Click" />
                             </div>
                         </div>
                     </div>

@@ -23,7 +23,7 @@ function isDecimal(evt) {
 }
 function isAlphaNumeric(e) { // Alphanumeric only
     var keyCode = e.keyCode || e.which;
-    var regex = /^[a-zA-Z0-9\s]+$/;
+    var regex = /^[a-zA-Z0-9\s\/]+$/;
     var isValid = regex.test(String.fromCharCode(keyCode));
     if (!isValid) {
         return isValid;
@@ -79,6 +79,14 @@ function isDate(e) {
     if (!isValid) {
         //lblError.innerHTML = "Only Alphabets and Numbers allowed.";
     }
-
     return isValid;
+}
+function validatePaste(e) {
+    var clipboardData = e.clipboardData || window.clipboardData;
+    var pastedText = clipboardData.getData('Text');
+    var regex = /^[a-zA-Z0-9\s\/]+$/;
+    if (!regex.test(pastedText)) {
+        e.preventDefault();
+        alert("Only alphanumeric characters and spaces are allowed.");
+    }
 }

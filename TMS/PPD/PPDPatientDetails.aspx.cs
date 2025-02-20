@@ -14,8 +14,6 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 {
     private string pageName, strMessage, caseNumber, admissionId, claimId, claimMode;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
     private MasterData md = new MasterData();
     private PreAuth preAuth = new PreAuth();
     public static PPDHelper ppdHelper = new PPDHelper();
@@ -58,54 +56,93 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
-
     }
 
     protected void btnPastHistory_Click(object sender, EventArgs e)
     {
-        MultiView1.SetActiveView(viewPastHistory);
-        btnPastHistory.CssClass = "btn btn-warning p-3";
-        btnPreauth.CssClass = "btn btn-primary p-3";
-        btnAttachmanet.CssClass = "btn btn-primary p-3";
+        try
+        {
+            MultiView1.SetActiveView(viewPastHistory);
+            btnPastHistory.CssClass = "btn btn-warning p-3";
+            btnPreauth.CssClass = "btn btn-primary p-3";
+            btnAttachmanet.CssClass = "btn btn-primary p-3";
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnPreauth_Click(object sender, EventArgs e)
     {
-        MultiView1.SetActiveView(viewPreauth);
-        btnPreauth.CssClass = "btn btn-warning p-3";
-        btnPastHistory.CssClass = "btn btn-primary p-3";
-        btnAttachmanet.CssClass = "btn btn-primary p-3";
+        try
+        {
+            MultiView1.SetActiveView(viewPreauth);
+            btnPreauth.CssClass = "btn btn-warning p-3";
+            btnPastHistory.CssClass = "btn btn-primary p-3";
+            btnAttachmanet.CssClass = "btn btn-primary p-3";
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnAttachmanet_Click(object sender, EventArgs e)
     {
-        MultiView1.SetActiveView(viewAttachment);
-        MultiView2.SetActiveView(viewPreauthorization);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        btnPreauth.CssClass = "btn btn-primary p-3";
-        btnPastHistory.CssClass = "btn btn-primary p-3";
-        lnkPreauthorization.CssClass = "nav-link active nav-attach";
-        lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView1.SetActiveView(viewAttachment);
+            MultiView2.SetActiveView(viewPreauthorization);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            btnPreauth.CssClass = "btn btn-primary p-3";
+            btnPastHistory.CssClass = "btn btn-primary p-3";
+            lnkPreauthorization.CssClass = "nav-link active nav-attach";
+            lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
+            getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkPreauthorization_Click(object sender, EventArgs e)
     {
-        MultiView2.SetActiveView(viewPreauthorization);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        lnkPreauthorization.CssClass = "nav-link active nav-attach";
-        lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
-        ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
-        getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView2.SetActiveView(viewPreauthorization);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            lnkPreauthorization.CssClass = "nav-link active nav-attach";
+            lnkSpecialInvestigation.CssClass = "nav-link nav-attach";
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "hideModal", "hideModal();", true);
+            getManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void lnkSpecialInvestigation_Click(object sender, EventArgs e)
     {
-        MultiView2.SetActiveView(viewSpecialInvestigation);
-        btnAttachmanet.CssClass = "btn btn-warning p-3";
-        lnkSpecialInvestigation.CssClass = "nav-link active nav-attach";
-        lnkPreauthorization.CssClass = "nav-link nav-attach";
-        getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        try
+        {
+            MultiView2.SetActiveView(viewSpecialInvestigation);
+            btnAttachmanet.CssClass = "btn btn-warning p-3";
+            lnkSpecialInvestigation.CssClass = "nav-link active nav-attach";
+            lnkPreauthorization.CssClass = "nav-link nav-attach";
+            getPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnTransactionDataReferences_Click(object sender, EventArgs e)
@@ -132,10 +169,6 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -143,65 +176,73 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     protected void gridTransactionDataReferences_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            Label lbEnhancementStatus = (Label)e.Row.FindControl("lbEnhancementStatus");
-            Label lbEnhancementApprovedDate = (Label)e.Row.FindControl("lbEnhancementApprovedDate");
-            Label lbEnhancementRejectedDate = (Label)e.Row.FindControl("lbEnhancementRejectedDate");
-            Label lbPatientFolderName = (Label)e.Row.FindControl("lbPatientFolderName");
-            Label lbJustificationFolderName = (Label)e.Row.FindControl("lbJustificationFolderName");
-            Label lbIcpFolderName = (Label)e.Row.FindControl("lbIcpFolderName");
-            LinkButton lnkPhoto = (LinkButton)e.Row.FindControl("lnkPhoto");
-            LinkButton lnkDocument = (LinkButton)e.Row.FindControl("lnkDocument");
-            LinkButton lnkIcp = (LinkButton)e.Row.FindControl("lnkIcp");
-            string EnhancementStatus = lbEnhancementStatus.Text.ToString();
-            string ApprovedDate = lbEnhancementApprovedDate.Text.ToString();
-            string RejectedDate = lbEnhancementRejectedDate.Text.ToString();
-            string PatientFolderName = lbPatientFolderName.Text.ToString();
-            string JustificationFolderName = lbJustificationFolderName.Text.ToString();
-            string IcpFolderName = lbIcpFolderName.Text.ToString();
-            if (EnhancementStatus != null)
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                if (EnhancementStatus.Equals("1"))
+                Label lbEnhancementStatus = (Label)e.Row.FindControl("lbEnhancementStatus");
+                Label lbEnhancementApprovedDate = (Label)e.Row.FindControl("lbEnhancementApprovedDate");
+                Label lbEnhancementRejectedDate = (Label)e.Row.FindControl("lbEnhancementRejectedDate");
+                Label lbPatientFolderName = (Label)e.Row.FindControl("lbPatientFolderName");
+                Label lbJustificationFolderName = (Label)e.Row.FindControl("lbJustificationFolderName");
+                Label lbIcpFolderName = (Label)e.Row.FindControl("lbIcpFolderName");
+                LinkButton lnkPhoto = (LinkButton)e.Row.FindControl("lnkPhoto");
+                LinkButton lnkDocument = (LinkButton)e.Row.FindControl("lnkDocument");
+                LinkButton lnkIcp = (LinkButton)e.Row.FindControl("lnkIcp");
+                string EnhancementStatus = lbEnhancementStatus.Text.ToString();
+                string ApprovedDate = lbEnhancementApprovedDate.Text.ToString();
+                string RejectedDate = lbEnhancementRejectedDate.Text.ToString();
+                string PatientFolderName = lbPatientFolderName.Text.ToString();
+                string JustificationFolderName = lbJustificationFolderName.Text.ToString();
+                string IcpFolderName = lbIcpFolderName.Text.ToString();
+                if (EnhancementStatus != null)
                 {
-                    lbEnhancementStatus.Text = "Pending";
-                    lbEnhancementApprovedDate.Text = "NA";
-                    lbEnhancementApprovedDate.Visible = true;
+                    if (EnhancementStatus.Equals("1"))
+                    {
+                        lbEnhancementStatus.Text = "Pending";
+                        lbEnhancementApprovedDate.Text = "NA";
+                        lbEnhancementApprovedDate.Visible = true;
+                    }
+                    else if (EnhancementStatus.Equals("2"))
+                    {
+                        lbEnhancementStatus.Text = "Approved";
+                        lbEnhancementApprovedDate.Text = ApprovedDate;
+                        lbEnhancementApprovedDate.Visible = true;
+                    }
+                    else if (EnhancementStatus.Equals("3"))
+                    {
+                        lbEnhancementStatus.Text = "Query Raised";
+                        lbEnhancementApprovedDate.Text = "NA";
+                        lbEnhancementApprovedDate.Visible = true;
+                    }
+                    else if (EnhancementStatus.Equals("4"))
+                    {
+                        lbEnhancementStatus.Text = "Reject";
+                        lbEnhancementRejectedDate.Text = RejectedDate;
+                        lbEnhancementRejectedDate.Visible = true;
+                    }
                 }
-                else if (EnhancementStatus.Equals("2"))
+                if (PatientFolderName.Equals("NA"))
                 {
-                    lbEnhancementStatus.Text = "Approved";
-                    lbEnhancementApprovedDate.Text = ApprovedDate;
-                    lbEnhancementApprovedDate.Visible = true;
+                    lnkPhoto.Enabled = false;
+                    lnkPhoto.CssClass = "text-danger";
                 }
-                else if (EnhancementStatus.Equals("3"))
+                if (JustificationFolderName.Equals("NA"))
                 {
-                    lbEnhancementStatus.Text = "Query Raised";
-                    lbEnhancementApprovedDate.Text = "NA";
-                    lbEnhancementApprovedDate.Visible = true;
+                    lnkDocument.Enabled = false;
+                    lnkDocument.CssClass = "text-danger";
                 }
-                else if (EnhancementStatus.Equals("4"))
+                if (IcpFolderName.Equals("NA"))
                 {
-                    lbEnhancementStatus.Text = "Reject";
-                    lbEnhancementRejectedDate.Text = RejectedDate;
-                    lbEnhancementRejectedDate.Visible = true;
+                    lnkIcp.Enabled = false;
+                    lnkIcp.CssClass = "text-danger";
                 }
             }
-            if (PatientFolderName.Equals("NA"))
-            {
-                lnkPhoto.Enabled = false;
-                lnkPhoto.CssClass = "text-danger";
-            }
-            if (JustificationFolderName.Equals("NA"))
-            {
-                lnkDocument.Enabled = false;
-                lnkDocument.CssClass = "text-danger";
-            }
-            if (IcpFolderName.Equals("NA"))
-            {
-                lnkIcp.Enabled = false;
-                lnkIcp.CssClass = "text-danger";
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -293,9 +334,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         {
             string childfolderName = hdAbuaId.Value;
             string childImageFileName = hdAbuaId.Value + "_Profile_Image_Child.jpeg";
-            string childBase64String = "";
-
-            childBase64String = preAuth.DisplayImage(childfolderName, childImageFileName);
+            string childBase64String = preAuth.DisplayImage(childfolderName, childImageFileName);
             if (childBase64String != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + childBase64String;
@@ -314,75 +353,91 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     protected void dlAction_SelectedIndexChanged(object sender, EventArgs e)
     {
-        string selectedValue = dlAction.SelectedItem.Value;
-        // Select Case
-        if (selectedValue.Equals("0"))
+        try
         {
-            pUserRole.Visible = false;
-            pReason.Visible = false;
-            pSubReason.Visible = false;
-            pRemarks.Visible = false;
-            pAddReason.Visible = false;
+            string selectedValue = dlAction.SelectedItem.Value;
+            // Select Case
+            if (selectedValue.Equals("0"))
+            {
+                pUserRole.Visible = false;
+                pReason.Visible = false;
+                pSubReason.Visible = false;
+                pRemarks.Visible = false;
+                pAddReason.Visible = false;
+            }
+            // Approve Case
+            else if (selectedValue.Equals("2"))
+            {
+                pUserRole.Visible = false;
+                pReason.Visible = false;
+                pSubReason.Visible = false;
+                pRemarks.Visible = true;
+                pAddReason.Visible = false;
+            }
+            // Forward Case
+            else if (selectedValue.Equals("3"))
+            {
+                pUserRole.Visible = true;
+                pReason.Visible = false;
+                pSubReason.Visible = false;
+                pRemarks.Visible = true;
+                pAddReason.Visible = false;
+                GetForwardUsers();
+            }
+            // Query Raise Case
+            else if (selectedValue.Equals("5"))
+            {
+                pUserRole.Visible = false;
+                pReason.Visible = true;
+                pSubReason.Visible = true;
+                pRemarks.Visible = true;
+                pAddReason.Visible = true;
+                GetQueryReasons();
+                GetSubReasons("0");
+            }
+            // Reject Case
+            else if (selectedValue.Equals("6"))
+            {
+                pUserRole.Visible = false;
+                pReason.Visible = true;
+                pSubReason.Visible = false;
+                pRemarks.Visible = true;
+                pAddReason.Visible = false;
+                GetRejectedReasons();
+            }
+            // Reject Enhancement
+            else if (selectedValue.Equals("8"))
+            {
+                pUserRole.Visible = false;
+                pReason.Visible = true;
+                pSubReason.Visible = false;
+                pRemarks.Visible = true;
+                pAddReason.Visible = false;
+                GetRejectedReasons();
+            }
         }
-        // Approve Case
-        else if (selectedValue.Equals("2"))
+        catch (Exception ex)
         {
-            pUserRole.Visible = false;
-            pReason.Visible = false;
-            pSubReason.Visible = false;
-            pRemarks.Visible = true;
-            pAddReason.Visible = false;
-        }
-        // Forward Case
-        else if (selectedValue.Equals("3"))
-        {
-            pUserRole.Visible = true;
-            pReason.Visible = false;
-            pSubReason.Visible = false;
-            pRemarks.Visible = true;
-            pAddReason.Visible = false;
-            GetForwardUsers();
-        }
-        // Query Raise Case
-        else if (selectedValue.Equals("5"))
-        {
-            pUserRole.Visible = false;
-            pReason.Visible = true;
-            pSubReason.Visible = true;
-            pRemarks.Visible = true;
-            pAddReason.Visible = true;
-            GetQueryReasons();
-            GetSubReasons("0");
-        }
-        // Reject Case
-        else if (selectedValue.Equals("6"))
-        {
-            pUserRole.Visible = false;
-            pReason.Visible = true;
-            pSubReason.Visible = false;
-            pRemarks.Visible = true;
-            pAddReason.Visible = false;
-            GetRejectedReasons();
-        }
-        // Reject Enhancement
-        else if (selectedValue.Equals("8"))
-        {
-            pUserRole.Visible = false;
-            pReason.Visible = true;
-            pSubReason.Visible = false;
-            pRemarks.Visible = true;
-            pAddReason.Visible = false;
-            GetRejectedReasons();
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     protected void dlReason_SelectedIndexChanged(object sender, EventArgs e)
     {
-        string selectedValue = dlReason.SelectedItem.Value;
-        string selectedAction = dlAction.SelectedItem.Value;
-        if (!selectedAction.Equals("6") && !selectedAction.Equals("8"))
+        try
         {
-            GetSubReasons(selectedValue);
+            string selectedValue = dlReason.SelectedItem.Value;
+            string selectedAction = dlAction.SelectedItem.Value;
+            if (!selectedAction.Equals("6") && !selectedAction.Equals("8"))
+            {
+                GetSubReasons(selectedValue);
+            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -620,6 +675,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 con.Close();
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -642,6 +698,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 con.Close();
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -660,7 +717,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             p[3].DbType = DbType.String;
             p[4] = new SqlParameter("@RegisteredBy", hdUserId.Value);
             p[4].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertPrimaryDiagnosis", p);
+            SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertPrimaryDiagnosis", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
             getPrimaryDiagnosis();
@@ -674,6 +731,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 con.Close();
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -692,7 +750,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             p[3].DbType = DbType.String;
             p[4] = new SqlParameter("@RegisteredBy", hdUserId.Value);
             p[4].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertSecondaryDiagnosis", p);
+            SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PreAuthInsertSecondaryDiagnosis", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
             getPrimaryDiagnosis();
@@ -706,6 +764,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 con.Close();
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -865,69 +924,77 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
-        if (!cbTerms.Checked)
+        try
         {
-            strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
-            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-        }
-        else
-        {
-            string selectedValue = dlAction.SelectedItem.Value;
-            if (selectedValue.Equals("0"))
+            if (!cbTerms.Checked)
             {
-                strMessage = "window.alert('Case action is required.');";
+                strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
             }
             else
             {
-                if (tbRemark.Text.ToString().IsEmpty())
+                string selectedValue = dlAction.SelectedItem.Value;
+                if (selectedValue.Equals("0"))
                 {
-                    strMessage = "window.alert('Remarks is required.');";
+                    strMessage = "window.alert('Case action is required.');";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
                 else
                 {
-                    // For Case Approval
-                    if (selectedValue.Equals("2"))
+                    if (tbRemark.Text.ToString().IsEmpty())
                     {
-                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
+                        strMessage = "window.alert('Remarks is required.');";
+                        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     }
-                    // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
-                    else if (selectedValue.Equals("3"))
+                    else
                     {
-                        string selectedUserId = dlUserRole.SelectedItem.Value;
-                        string selectedUserName = dlUserRole.SelectedItem.Text;
-                        if (selectedUserId.Equals("0"))
+                        // For Case Approval
+                        if (selectedValue.Equals("2"))
                         {
-                            strMessage = "window.alert('Please select user to assign this case.');";
-                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, "", "", tbRemark.Text.ToString() + "");
                         }
-                        else
+                        // For Case Assigning To Another PPD(Insurer) Or PPD(Trust)
+                        else if (selectedValue.Equals("3"))
                         {
-                            doAction(Session["ClaimId"].ToString(), hdUserId.Value, selectedUserId, selectedUserName, selectedValue, "", "", tbRemark.Text.ToString() + "");
+                            string selectedUserId = dlUserRole.SelectedItem.Value;
+                            string selectedUserName = dlUserRole.SelectedItem.Text;
+                            if (selectedUserId.Equals("0"))
+                            {
+                                strMessage = "window.alert('Please select user to assign this case.');";
+                                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            }
+                            else
+                            {
+                                doAction(Session["ClaimId"].ToString(), hdUserId.Value, selectedUserId, selectedUserName, selectedValue, "", "", tbRemark.Text.ToString() + "");
+                            }
                         }
-                    }
-                    // For Case Raising Query
-                    else if (selectedValue.Equals("5"))
-                    {
+                        // For Case Raising Query
+                        else if (selectedValue.Equals("5"))
+                        {
 
-                    }
-                    // For Case Reject
-                    else if (selectedValue.Equals("6") || selectedValue.Equals("8"))
-                    {
-                        string selectedRejectReason = dlReason.SelectedItem.Value;
-                        if (selectedRejectReason.Equals("0"))
-                        {
-                            strMessage = "window.alert('Please select reject reason.');";
-                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                         }
-                        else
+                        // For Case Reject
+                        else if (selectedValue.Equals("6") || selectedValue.Equals("8"))
                         {
-                            doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedRejectReason, "", tbRemark.Text.ToString() + "");
+                            string selectedRejectReason = dlReason.SelectedItem.Value;
+                            if (selectedRejectReason.Equals("0"))
+                            {
+                                strMessage = "window.alert('Please select reject reason.');";
+                                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                            }
+                            else
+                            {
+                                doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedRejectReason, "", tbRemark.Text.ToString() + "");
+                            }
                         }
                     }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -950,6 +1017,10 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -976,6 +1047,10 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -983,23 +1058,31 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     protected void gridPreauthQueryRejectionReason_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            Button btnViewaudit = (Button)e.Row.FindControl("btnViewaudit");
-            Label lbIsQueryReplied = (Label)e.Row.FindControl("lbIsQueryReplied");
-            string IsQueryReplied = lbIsQueryReplied.Text.ToString();
-            if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewaudit.Text = "View Audit";
-                btnViewaudit.Enabled = true;
-                btnViewaudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+                Button btnViewaudit = (Button)e.Row.FindControl("btnViewaudit");
+                Label lbIsQueryReplied = (Label)e.Row.FindControl("lbIsQueryReplied");
+                string IsQueryReplied = lbIsQueryReplied.Text.ToString();
+                if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
+                {
+                    btnViewaudit.Text = "View Audit";
+                    btnViewaudit.Enabled = true;
+                    btnViewaudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+                }
+                else
+                {
+                    btnViewaudit.Text = "Query Pending";
+                    btnViewaudit.Enabled = false;
+                    btnViewaudit.CssClass = "btn btn-warning btn-sm rounded-pill";
+                }
             }
-            else
-            {
-                btnViewaudit.Text = "Query Pending";
-                btnViewaudit.Enabled = false;
-                btnViewaudit.CssClass = "btn btn-warning btn-sm rounded-pill";
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1035,121 +1118,177 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     public void GetForwardUsers()
     {
-        DataTable dt = new DataTable();
-        dt = ppdHelper.GetUsersByRole(Session["RoleId"].ToString(), hdUserId.Value);
-        if (dt != null && dt.Rows.Count > 0)
+        try
         {
-            dlUserRole.Items.Clear();
-            dlUserRole.DataValueField = "UserId";
-            dlUserRole.DataTextField = "FullName";
-            dlUserRole.DataSource = dt;
-            dlUserRole.DataBind();
-            dlUserRole.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetUsersByRole(Session["RoleId"].ToString(), hdUserId.Value);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                dlUserRole.Items.Clear();
+                dlUserRole.DataValueField = "UserId";
+                dlUserRole.DataTextField = "FullName";
+                dlUserRole.DataSource = dt;
+                dlUserRole.DataBind();
+                dlUserRole.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                dlUserRole.Items.Clear();
+                dlUserRole.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
         }
-        else
+        catch (Exception ex)
         {
-            dlUserRole.Items.Clear();
-            dlUserRole.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     public void GetQueryReasons()
     {
-        DataTable dt = new DataTable();
-        dt = ppdHelper.GetQueryReasons();
-        if (dt != null && dt.Rows.Count > 0)
+        try
         {
-            dlReason.Items.Clear();
-            dlReason.DataValueField = "ReasonId";
-            dlReason.DataTextField = "ReasonName";
-            dlReason.DataSource = dt;
-            dlReason.DataBind();
-            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetQueryReasons();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                dlReason.Items.Clear();
+                dlReason.DataValueField = "ReasonId";
+                dlReason.DataTextField = "ReasonName";
+                dlReason.DataSource = dt;
+                dlReason.DataBind();
+                dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                dlReason.Items.Clear();
+                dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
         }
-        else
+        catch (Exception ex)
         {
-            dlReason.Items.Clear();
-            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     public void GetSubReasons(string ReasonId)
     {
-        DataTable dt = new DataTable();
-        dt = ppdHelper.GetSubQueryReasons(ReasonId);
-        if (dt != null && dt.Rows.Count > 0)
+        try
         {
-            dlSubReason.Items.Clear();
-            dlSubReason.DataValueField = "SubReasonId";
-            dlSubReason.DataTextField = "SubReasonName";
-            dlSubReason.DataSource = dt;
-            dlSubReason.DataBind();
-            dlSubReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetSubQueryReasons(ReasonId);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                dlSubReason.Items.Clear();
+                dlSubReason.DataValueField = "SubReasonId";
+                dlSubReason.DataTextField = "SubReasonName";
+                dlSubReason.DataSource = dt;
+                dlSubReason.DataBind();
+                dlSubReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                dlSubReason.Items.Clear();
+                dlSubReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
         }
-        else
+        catch (Exception ex)
         {
-            dlSubReason.Items.Clear();
-            dlSubReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     public void GetRejectedReasons()
     {
-        DataTable dt = new DataTable();
-        dt = ppdHelper.GetRejectReasons();
-        if (dt != null && dt.Rows.Count > 0)
+        try
         {
-            dlReason.Items.Clear();
-            dlReason.DataValueField = "RejectId";
-            dlReason.DataTextField = "RejectName";
-            dlReason.DataSource = dt;
-            dlReason.DataBind();
-            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            DataTable dt = new DataTable();
+            dt = ppdHelper.GetRejectReasons();
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                dlReason.Items.Clear();
+                dlReason.DataValueField = "RejectId";
+                dlReason.DataTextField = "RejectName";
+                dlReason.DataSource = dt;
+                dlReason.DataBind();
+                dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                dlReason.Items.Clear();
+                dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
         }
-        else
+        catch (Exception ex)
         {
-            dlReason.Items.Clear();
-            dlReason.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     protected void btnRaiseQuery_Click(object sender, EventArgs e)
     {
-        string selectedValue = dlAction.SelectedItem.Value;
-        string selectedReason = dlReason.SelectedItem.Value;
-        string selectedSubReason = dlSubReason.SelectedItem.Value;
-        if (!cbTerms.Checked)
+        try
         {
-            strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
-            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-        }
-        else
-        {
-            if (tbRemark.Text.ToString().IsEmpty())
+            string selectedValue = dlAction.SelectedItem.Value;
+            string selectedReason = dlReason.SelectedItem.Value;
+            string selectedSubReason = dlSubReason.SelectedItem.Value;
+            if (!cbTerms.Checked)
             {
-                strMessage = "window.alert('Remarks is required.');";
+                strMessage = "window.alert('Please confirm that you have validated all documents before making any decisions by checking the box.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
             }
             else
             {
-                if (selectedReason.Equals("0"))
+                if (tbRemark.Text.ToString().IsEmpty())
                 {
-                    strMessage = "window.alert('Please select query reason.');";
+                    strMessage = "window.alert('Remarks is required.');";
                     ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                 }
                 else
                 {
-                    if (selectedSubReason.Equals("0"))
+                    if (selectedReason.Equals("0"))
                     {
-                        strMessage = "window.alert('Please select query sub reason.');";
+                        strMessage = "window.alert('Please select query reason.');";
                         ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     }
                     else
                     {
-                        doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
+                        if (selectedSubReason.Equals("0"))
+                        {
+                            strMessage = "window.alert('Please select query sub reason.');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                        }
+                        else
+                        {
+                            doAction(Session["ClaimId"].ToString(), hdUserId.Value, "", "", selectedValue, selectedReason, selectedSubReason, tbRemark.Text.ToString() + "");
+                        }
                     }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1176,7 +1315,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
             p[7].DbType = DbType.Decimal;
             p[8] = new SqlParameter("@EnhancementId", hdEnhancementId.Value.ToString());
             p[8].DbType = DbType.String;
-            ds = SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_InsertActions", p);
+            SqlHelper.ExecuteDataset(con, CommandType.StoredProcedure, "TMS_PPD_InsertActions", p);
             if (con.State == ConnectionState.Open)
                 con.Close();
             if (ActionId.Equals("2"))
@@ -1234,6 +1373,7 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
                 con.Close();
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1257,6 +1397,10 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1264,22 +1408,34 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     protected void gridSpecialInvestigation_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewDocument = (Button)e.Row.FindControl("btnViewDocument");
-            if (string.IsNullOrEmpty(uploadedFileName))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewDocument.Text = "No Document";
-                btnViewDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewDocument.Enabled = false;
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewDocument = (Button)e.Row.FindControl("btnViewDocument");
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewDocument.Text = "No Document";
+                    btnViewDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewDocument.Text = "View Document";
+                    btnViewDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewDocument.Enabled = true;
+                }
             }
-            else
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
             {
-                btnViewDocument.Text = "View Document";
-                btnViewDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewDocument.Enabled = true;
+                con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1335,6 +1491,10 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1342,32 +1502,40 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
 
     protected void gridManditoryDocument_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewMandateDocument = (Button)e.Row.FindControl("btnViewMandateDocument");
-            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
-            string DocumentFor = lbDocumentFor.Text.ToString();
-            if (DocumentFor == "1")
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                lbDocumentFor.Text = "Pre Investigation";
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewMandateDocument = (Button)e.Row.FindControl("btnViewMandateDocument");
+                Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+                string DocumentFor = lbDocumentFor.Text.ToString();
+                if (DocumentFor == "1")
+                {
+                    lbDocumentFor.Text = "Pre Investigation";
+                }
+                else
+                {
+                    lbDocumentFor.Text = "Post Investigation";
+                }
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewMandateDocument.Text = "No Document";
+                    btnViewMandateDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewMandateDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewMandateDocument.Text = "View Document";
+                    btnViewMandateDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewMandateDocument.Enabled = true;
+                }
             }
-            else
-            {
-                lbDocumentFor.Text = "Post Investigation";
-            }
-            if (string.IsNullOrEmpty(uploadedFileName))
-            {
-                btnViewMandateDocument.Text = "No Document";
-                btnViewMandateDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewMandateDocument.Enabled = false;
-            }
-            else
-            {
-                btnViewMandateDocument.Text = "View Document";
-                btnViewMandateDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewMandateDocument.Enabled = true;
-            }
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1413,6 +1581,10 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1486,6 +1658,10 @@ public partial class PPD_PPDPatientDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }

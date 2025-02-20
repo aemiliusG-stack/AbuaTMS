@@ -37,12 +37,6 @@
                                     <asp:ListItem Text="ABUA-JHARKHAND" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <span class="form-label fw-semibold" style="font-size: 14px;">Reservance</span><br />
-                                <asp:DropDownList ID="dlReservance" runat="server" class="form-control mt-2">
-                                    <asp:ListItem Text="--SELECT--" Value="0"></asp:ListItem>
-                                </asp:DropDownList>
-                            </div>
                             <div class="col-lg-12 text-center mt-2">
                                 <asp:Button ID="btnSearch" runat="server" Text="Search" class="btn btn-success rounded-pill" OnClick="btnSearch_Click" />
                                 <asp:Button ID="btnReset" runat="server" Text="Reset" class="btn btn-warning rounded-pill" OnClick="btnReset_Click" />

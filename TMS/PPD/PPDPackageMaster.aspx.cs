@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Configuration;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -9,8 +10,6 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
 {
     private string pageName;
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
     private MasterData md = new MasterData();
     private PPDHelper ppdHelper = new PPDHelper();
 
@@ -47,15 +46,23 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
 
     protected void dlSpeciality_SelectedIndexChanged(object sender, EventArgs e)
     {
-        string selectedValue = dlSpeciality.SelectedItem.Value;
-        GetSpecialityBasedProcedure(selectedValue);
+        try
+        {
+            string selectedValue = dlSpeciality.SelectedItem.Value;
+            GetSpecialityBasedProcedure(selectedValue);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     public void GetSpecialityName()
     {
         try
         {
-            dt.Clear();
+            DataTable dt = new DataTable();
             dt = ppdHelper.GetSpecialityName();
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -87,7 +94,7 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
     {
         try
         {
-            dt.Clear();
+            DataTable dt = new DataTable();
             dt = ppdHelper.GetSpecialityBasedProcedure(PackageId);
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -119,7 +126,7 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
     {
         try
         {
-            dt.Clear();
+            DataTable dt = new DataTable();
             dt = ppdHelper.GetPackageMaster(PackageId, ProcedureId);
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -154,21 +161,45 @@ public partial class PPD_PPDPackageMaster : System.Web.UI.Page
 
     protected void gridPackageMaster_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
-        gridPackageMaster.PageIndex = e.NewPageIndex;
-        GetPackageMaster(null, null, false);
+        try
+        {
+            gridPackageMaster.PageIndex = e.NewPageIndex;
+            GetPackageMaster(null, null, false);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnSearch_Click(object sender, EventArgs e)
     {
-        string selectedSpeciality = dlSpeciality.SelectedItem.Value;
-        string selectedProcedure = dlProcedureName.SelectedItem.Value;
-        GetPackageMaster(selectedSpeciality, selectedProcedure, true);
+        try
+        {
+            string selectedSpeciality = dlSpeciality.SelectedItem.Value;
+            string selectedProcedure = dlProcedureName.SelectedItem.Value;
+            GetPackageMaster(selectedSpeciality, selectedProcedure, true);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 
     protected void btnReset_Click(object sender, EventArgs e)
     {
-        dlSpeciality.SelectedIndex = 0;
-        dlProcedureName.SelectedIndex = 0;
-        GetPackageMaster(null, null, false);
+        try
+        {
+            dlSpeciality.SelectedIndex = 0;
+            dlProcedureName.SelectedIndex = 0;
+            GetPackageMaster(null, null, false);
+        }
+        catch (Exception ex)
+        {
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
     }
 }
