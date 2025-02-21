@@ -14,8 +14,6 @@ using WebGrease.Activities;
 public class ACOHelper
 {
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
-    private DataTable dt = new DataTable();
-    private DataSet ds = new DataSet();
     private int rowsAffected;
     private MasterData md = new MasterData();
     private string base64String = "";
@@ -25,6 +23,7 @@ public class ACOHelper
         string query = "SELECT [ActionId], [ActionName] FROM [TMS_MasterActionMaster] WHERE [ACO] = 1";
         try
         {
+            DataTable dt = new DataTable();
             // Use the existing connection field
             if (con.State == ConnectionState.Closed)
                 con.Open();
@@ -51,33 +50,122 @@ public class ACOHelper
                 con.Close();
         }
     }
+    public DataTable GetAllDistrictsFromMasterDistrict()
+    {
+        DataTable dt = new DataTable();
+        string query = "SELECT Id,Title FROM HEM_MasterDistricts where IsDeleted=0 and IsActive=1";
+        try
+        {
+            // Use the existing connection field
+            if (con.State == ConnectionState.Closed)
+                con.Open();
+            using (SqlCommand command = new SqlCommand(query, con))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    adapter.Fill(dt);
+                }
+            }
+            return dt; // Return the shared DataTable
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exception as needed
+            throw new Exception("Error fetching action types: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+    }
+    public DataTable GetAllHospitalNameList()
+    {
+        DataTable dt = new DataTable();
+        string query = "select HospitalId,HospitalName from HEM_HospitalDetails where IsDeleted=0 and IsActive=1 ORDER BY HospitalName";
+        try
+        {
+            // Use the existing connection field
+            if (con.State == ConnectionState.Closed)
+                con.Open();
+
+            using (SqlCommand command = new SqlCommand(query, con))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    dt.Clear(); // Clear any previous data in the shared DataTable
+                    adapter.Fill(dt);
+                }
+            }
+            return dt; // Return the shared DataTable
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exception as needed
+            throw new Exception("Error fetching action types: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+    }
+    public DataTable GetAllHospitalType()
+    {
+        DataTable dt = new DataTable();
+        string query = "select DISTINCT Id,Title from HEM_MasterHospitalTypes where IsDeleted=0 and IsActive=1 ORDER BY Title";
+        try
+        {
+            // Use the existing connection field
+            if (con.State == ConnectionState.Closed)
+                con.Open();
+
+            using (SqlCommand command = new SqlCommand(query, con))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    dt.Clear(); // Clear any previous data in the shared DataTable
+                    adapter.Fill(dt);
+                }
+            }
+            return dt; // Return the shared DataTable
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exception as needed
+            throw new Exception("Error fetching action types: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+    }
     public DataTable GetClaimsDetails(string CaseNo)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "select t2.TotalPackageCost as PreAuthApprovedAmt, t2.AdmissionDate as PreAuthApprovedDate, t1.CreatedOn as ClaimSubmittedDate, t1.UpdatedOn as ClaimUpdatedDate, t2.TotalPackageCost as ClaimAmount, t1.InsurerClaimAmountRequested as InsuranceLiableAmt, t1.TrustClaimAmountRequested as TrustLiableAmt, t2.TotalPackageCost as BillAmt, t1.Remarks as ClaimRemarks, t1.ClaimId from TMS_ClaimMaster t1 inner join TMS_PatientAdmissionDetail t2 on t1.AdmissionId = t2.AdmissionId where t1.CaseNumber= @CaseNo and t1.IsActive = 1 and t1.IsDeleted = 0";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         con.Close();
-        dt = ds.Tables[0];
         return dt;
     }
     public DataTable GetNonTechnicalChecklist(long claimId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = "SELECT CaseNo, CardNumber, UserId, ClaimId, AddmissionId, IsNameCorrect, IsGenderCorrect, DoesPhotoMatch, AdmissionDateCS, DoesAddDateMatchCS, SurgeryDateCS, DoesSurDateMatchCS, DischargeDateCS, DoesDischDateMatchCS, IsPatientSignVerified, IsReportVerified, IsDateAndNameCorrect, NonTechChecklistRemarks FROM TMS_CEXNonTechChecklist WHERE IsActive = 1 AND ClaimId = claimId";
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", claimId);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         con.Close();
-        dt = ds.Tables[0];
         return dt;
     }
     public DataTable GetTechnicalChecklist(long claimId)
     {
-        dt.Clear();
+        DataTable dt = new DataTable();
         string Query = @" SELECT
         t2.TotalPackageCost AS TotalClaims,
         CASE 
@@ -112,67 +200,72 @@ public class ACOHelper
         SqlDataAdapter sd = new SqlDataAdapter(Query, con);
         sd.SelectCommand.Parameters.AddWithValue("@ClaimId", claimId);
         con.Open();
-        sd.Fill(ds);
+        sd.Fill(dt);
         con.Close();
-        dt = ds.Tables[0];
         return dt;
     }
 
-    //public DataTable GetTechnicalChecklist(long claimId)
-    //{
-    //    dt.Clear();
-    //    string Query = "SELECT\r\n    t2.TotalPackageCost AS TotalClaims,\r\n    CASE \r\n        WHEN t5.CaseNumber IS NOT NULL THEN t5.TotalAmtAfterDeduction\r\n        ELSE CONVERT(BIGINT, t1.InsurerClaimAmountApproved)\r\n    END AS [InsurerClaimAmountApproved],\r\n    t1.TrustClaimAmountApproved,\r\n    t3.IsSpecialCase,\r\n    t4.DiagnosisSupportedEvidence,\r\n    t4.EvidenceTherapyConducted,\r\n    t4.CaseManagementSTP,\r\n    t4.MandatoryReports\r\nFROM\r\n    TMS_ClaimMaster t1\r\nINNER JOIN\r\n    TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId\r\nINNER JOIN\r\n    TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId\r\nINNER JOIN\r\n    TMS_CPDTechnicalCkecklist t4 ON t2.CardNumber = t4.CardNumber\r\nLEFT JOIN\r\n    TMS_ClaimAddDeduction t5 ON t1.ClaimId = t5.ClaimId\r\n    AND t5.IsActive = 1 \r\n    AND t5.IsDeleted = 0\r\n    AND t5.RoleId = 7\r\nWHERE\r\n    t1.ClaimId = claimId\r\n    AND t1.IsActive = 1\r\n    AND t1.IsDeleted = 0;";
-    //    SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-    //    sd.SelectCommand.Parameters.AddWithValue("@ClaimId", claimId);
-    //    con.Open();
-    //    sd.Fill(ds);
-    //    con.Close();
-    //    dt = ds.Tables[0];
-    //    return dt;
-    //}
-    //public DataTable GetTechnicalChecklist(string CaseNo)
-    //{
-    //    dt.Clear();
-    //    string Query = @"
-    //    SELECT 
-    //        CASE 
-    //            WHEN t5.Id IS NOT NULL THEN t5.TotalAmtAfterDeduction
-    //            ELSE t2.TotalPackageCost
-    //        END AS TotalClaims,
-    //        t1.InsurerClaimAmountApproved,
-    //        t1.TrustClaimAmountApproved,
-    //        t3.IsSpecialCase,
-    //        t4.DiagnosisSupportedEvidence,
-    //        t4.EvidenceTherapyConducted,
-    //        t4.CaseManagementSTP,
-    //        t4.MandatoryReports
-    //    FROM
-    //        TMS_ClaimMaster t1
-    //    INNER JOIN 
-    //        TMS_PatientAdmissionDetail t2 ON t1.AdmissionId = t2.AdmissionId 
-    //    INNER JOIN 
-    //        TMS_DischargeDetail t3 ON t1.ClaimId = t3.ClaimId 
-    //    INNER JOIN 
-    //        TMS_CPDTechnicalCkecklist t4 ON t2.CardNumber = t4.CardNumber
-    //    LEFT JOIN 
-    //        TMS_ClaimAddDeduction t5 ON t1.CaseNumber = t5.CaseNumber 
-    //        AND t5.IsActive = 1 
-    //        AND t5.IsDeleted = 0
-    //    WHERE 
-    //        t1.CaseNumber = @CaseNo 
-    //        AND t1.IsActive = 1 
-    //        AND t1.IsDeleted = 0";
+    public DataTable GetHospitalSearchResults(string hemRefNumber, int? hospitalId, string hospitalType, int? districtId)
+    {
+        // Define the SQL query
+        string query = @"
+        SELECT
+            t1.HospitalId,
+            t1.HospitalName,
+            t1.HospitalType,
+            t3.Title AS District,
+            NULL AS Status,
+            NULL AS PaymentActivity
+        FROM HEM_Excel_Hospital t1
+        LEFT JOIN HEM_HospitalDetails t2 ON t1.BasicHospitalId = t2.HospitalId
+        LEFT JOIN HEM_MasterDistricts t3 ON t2.DistrictID = t3.Id
+        WHERE (@HemRefNumber IS NULL OR t1.HemRefNumber = @HemRefNumber)
+            AND (@HospitalId IS NULL OR t1.BasicHospitalId = @HospitalId)
+            AND (@HospitalType IS NULL OR t1.HospitalType = @HospitalType)
+            AND (@DistrictId IS NULL OR t3.Id = @DistrictId)
+        ORDER BY HospitalName";
 
-    //    SqlDataAdapter sd = new SqlDataAdapter(Query, con);
-    //    sd.SelectCommand.Parameters.AddWithValue("@CaseNo", CaseNo);
-    //    con.Open();
-    //    sd.Fill(ds);
-    //    con.Close();
-    //    dt = ds.Tables[0];
-    //    return dt;
-    //}
+        // Create a DataTable to store the results
+        DataTable dt = new DataTable();
+
+        try
+        {
+            // Create a SqlConnection object
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString))
+            {
+                // Create the SqlCommand object with the query and connection
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    // Add parameters to the command
+                    cmd.Parameters.AddWithValue("@HemRefNumber", string.IsNullOrEmpty(hemRefNumber) ? (object)DBNull.Value : hemRefNumber);
+                    cmd.Parameters.AddWithValue("@HospitalId", hospitalId.HasValue ? (object)hospitalId.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@HospitalType", string.IsNullOrEmpty(hospitalType) ? (object)DBNull.Value : hospitalType);
+                    cmd.Parameters.AddWithValue("@DistrictId", districtId.HasValue ? (object)districtId.Value : DBNull.Value);
+
+                    // Open the connection
+                    con.Open();
+
+                    // Create a SqlDataAdapter to execute the query and fill the DataTable
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(dt);  // Fill the DataTable with the result set
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions, log them or display an error message
+            throw new Exception("An error occurred while fetching hospital details.", ex);
+        }
+
+        // Return the DataTable
+        return dt;
+    }
+
     public DataTable GetClaimWorkFlow(string claimId)
     {
+        DataTable dt = new DataTable();
         string Query = "SELECT t1.ActionDate,\r\nt2.RoleName,\r\nt1.Remarks,\r\nt1.ActionTaken,\r\nt1.Amount,\r\nt3.RejectName AS RejectionReason\r\nFROM TMS_PatientActionHistory t1 \r\nLEFT JOIN TMS_Roles t2 ON t1.ActionTakenBy = t2.RoleId \r\nLEFT JOIN TMS_MasterRejectReason t3 ON t1.RejectReasonId = t3.RejectId WHERE t1.ClaimId = @claimId";
         //DataTable dt = new DataTable();
         SqlCommand cmd = new SqlCommand(Query, con);
@@ -232,6 +325,7 @@ public class ACOHelper
     }
     public DataTable GetDeductionTypesForACO()
     {
+        DataTable dt = new DataTable();
         string query = "SELECT DeductionTypeId, DeductionType FROM TMS_MasterDeductionTypeMaster WHERE IsACO = 1";
         try
         {
@@ -260,7 +354,7 @@ public class ACOHelper
                 con.Close();
         }
     }
-    public void SaveDeductionAmount(int userId, int roleId, decimal acODeductionAmount, decimal totalFinalAmountByAco, long claimId, string remarks, string deductionType)
+    public void SaveDeductionAmount(int userId, int roleId, decimal acODeductionAmount, decimal totalFinalAmountByAco, long claimId, string remarks)
     {
         SqlCommand cmd = new SqlCommand("TMS_ACO_InsertDeductionAndUpdateClaimMaster", con);
         cmd.CommandType = CommandType.StoredProcedure;
@@ -268,7 +362,7 @@ public class ACOHelper
         cmd.Parameters.AddWithValue("@RoleId", roleId);
         //cmd.Parameters.AddWithValue("@ACODeductionAmount", acODeductionAmount);
         cmd.Parameters.AddWithValue("@deductionAmount", acODeductionAmount);
-        cmd.Parameters.AddWithValue("@DeductionType", deductionType);
+        //cmd.Parameters.AddWithValue("@DeductionType", deductionType);
         cmd.Parameters.AddWithValue("@totalFinalAmountByAco", totalFinalAmountByAco);
         cmd.Parameters.AddWithValue("@ClaimId", claimId);
         cmd.Parameters.AddWithValue("@Remarks", remarks);
@@ -290,42 +384,179 @@ public class ACOHelper
             }
         }
     }
+    public void InsertDeductionAmount(int userId, int roleId, decimal acODeductionAmount, decimal totalFinalAmountByAco, long claimId, string remarks)
+    {
+        SqlCommand cmd = new SqlCommand();
+        cmd.Connection = con;
+
+        // SQL Insert Query
+        cmd.CommandText = @"
+        INSERT INTO [dbo].[TMS_ClaimAddDeduction]
+           ([ClaimId]
+           ,[RoleId]
+           ,[UserId]
+           ,[DeductionAmt]
+           ,[TotalAmtAfterDeduction]
+           ,[Remarks]
+           ,[IsActive]
+           ,[IsDeleted]
+           ,[CreatedOn]
+           ,[UpdatedOn])
+     VALUES
+           (@ClaimId
+           ,@RoleId
+           ,@UserId
+           ,@DeductionAmount
+           ,@TotalAmtAfterDeduction
+           ,@Remarks
+           ,@IsActive
+           ,@IsDeleted
+           ,@CreatedOn
+           ,@UpdatedOn);
+    ";
+
+        // Add parameters for the insert query
+        cmd.Parameters.AddWithValue("@ClaimId", claimId);
+        //cmd.Parameters.AddWithValue("@CaseNumber", claimId.ToString()); // Assuming you get CaseNumber from elsewhere or it's derived from ClaimId
+        cmd.Parameters.AddWithValue("@RoleId", roleId);
+        cmd.Parameters.AddWithValue("@UserId", userId);
+        cmd.Parameters.AddWithValue("@DeductionAmount", acODeductionAmount); // The deduction amount
+        cmd.Parameters.AddWithValue("@TotalAmtAfterDeduction", totalFinalAmountByAco); // The final amount after deduction
+        cmd.Parameters.AddWithValue("@Remarks", remarks); // Remarks from the user
+        cmd.Parameters.AddWithValue("@IsActive", true); // Assuming record is active by default
+        cmd.Parameters.AddWithValue("@IsDeleted", false); // Assuming the record is not deleted by default
+        cmd.Parameters.AddWithValue("@CreatedOn", DateTime.Now); // Current date and time for CreatedOn
+        cmd.Parameters.AddWithValue("@UpdatedOn", DateTime.Now); // Current date and time for UpdatedOn
+
+        try
+        {
+            con.Open();
+            cmd.ExecuteNonQuery(); // Execute the insert query
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while saving deduction amount: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+    }
+    public void UpdateDeductionAmount(int userId, int roleId, decimal acODeductionAmount, decimal totalFinalAmountByAco, long claimId, string remarks)
+    {
+        SqlCommand cmd = new SqlCommand();
+        cmd.Connection = con;
+
+        // SQL Update Query
+        cmd.CommandText = @"
+    UPDATE [dbo].[TMS_ClaimAddDeduction]
+    SET 
+        [RoleId] = @RoleId,
+        [UserId] = @UserId,
+        [DeductionAmt] = @DeductionAmount,
+        [TotalAmtAfterDeduction] = @TotalAmtAfterDeduction,
+        [Remarks] = @Remarks,
+        [UpdatedOn] = @UpdatedOn
+    WHERE 
+        [ClaimId] = @ClaimId AND 
+        [IsDeleted] = 0; -- Assuming you don't want to update deleted records
+    ";
+        // Add parameters for the update query
+        cmd.Parameters.AddWithValue("@ClaimId", claimId);
+        cmd.Parameters.AddWithValue("@RoleId", roleId);
+        cmd.Parameters.AddWithValue("@UserId", userId);
+        cmd.Parameters.AddWithValue("@DeductionAmount", acODeductionAmount); // The deduction amount
+        cmd.Parameters.AddWithValue("@TotalAmtAfterDeduction", totalFinalAmountByAco); // The final amount after deduction
+        cmd.Parameters.AddWithValue("@Remarks", remarks); // Remarks from the user
+        cmd.Parameters.AddWithValue("@UpdatedOn", DateTime.Now); // Current date and time for UpdatedOn
+
+        try
+        {
+            con.Open();
+            cmd.ExecuteNonQuery(); // Execute the update query
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while updating deduction amount: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
+    }
+
+    public DataTable GetExistingDeductionAmount(long claimId, int roleId)
+    {
+        DataTable dt = new DataTable();
+        try
+        {
+            string query = "SELECT DeductionAmt, Remarks FROM TMS_ClaimAddDeduction WHERE ClaimId = @ClaimId AND IsDeleted = 0 AND IsActive = 1 AND RoleId = @RoleId";
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@ClaimId", claimId);
+                cmd.Parameters.AddWithValue("@RoleId", roleId);
+                con.Open();
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    adapter.Fill(dt);  // Fill the DataTable with the result set
+                }
+            }
+        }
+        catch (SqlException ex)
+        {
+            // Log or handle the SQL exceptions as needed
+            throw new Exception("Database error: " + ex.Message);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+                con.Close();
+        }
+        return dt; // Return the DataTable
+    }
+
     public DataTable GetRecociliationCU_Filter(string caseNumber, string beneficiaryCardNumber, DateTime? regFromDate, DateTime? regToDate, int schemeId, int categoryId, int procedureId)
     {
         // Define base query
         string query = @"
         SELECT 
-            t1.CaseNumber,
-            t1.ClaimId,
-            t1.ClaimNumber As ClaimNo,
-            CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, 
-            t3.HospitalName,
-            t2.AdmissionDate as RegisteredDate,
-            t1.TrustClaimAmountRequested as ClaimInitiatedAmount,
-            t1.TrustClaimAmountApproved AS ClaimApprovedAmount,
-            NULL AS ErroneousAmount,
-            NULL AS ErroneousInitiatedAmount,
-            t9.AccountNumber As HospitalAccountNo,
-            t9.IFSCCode As HospitalIFSCCode,
-            t10.TDSExemptPercentage As TDSPercentage,
-            CASE 
-                WHEN t10.IsCPDTrustApproved = 1 THEN t10.TrustClaimAmountApproved 
-                ELSE NULL 
-            END AS CPDApprovedAmountTrust,
-            t10.TrustClaimAmountApproved As ApprovedAmountTrust,
-            t10.TrustTDSAmount As TDSAmountTrust,
-            t10.TrustClaimAmountApproved As FinalAmountTrust
-        FROM TMS_ClaimMaster t1
-        INNER JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber = t2.CaseNumber
-        INNER JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId
-        INNER JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId
-        INNER JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId
-        INNER JOIN TMS_PatientTreatmentProtocol t6 ON t2.PatientRegId = t6.PatientRegId
-        INNER JOIN TMS_MasterPackageMaster t7 ON t6.PackageId = t7.PackageId
-        INNER JOIN TMS_MasterPackageDetail t8 ON t6.ProcedureId = t8.ProcedureId
-        LEFT JOIN HEM_FinancialDetails t9 ON t1.HospitalId = t9.HospitalId
-        LEFT JOIN TMS_ClaimMaster t10 ON t1.CaseNumber = t10.CardNumber
-        WHERE 1 = 1 ";
+    t1.CaseNumber,
+    t1.ClaimId,
+    t1.ClaimNumber As ClaimNo,
+    CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, 
+    t3.HospitalName,
+    t2.AdmissionDate as RegisteredDate,
+    t1.TrustClaimAmountRequested as ClaimInitiatedAmount,
+    t1.TrustClaimAmountApproved AS ClaimApprovedAmount,
+    NULL AS ErroneousAmount,
+    NULL AS ErroneousInitiatedAmount,
+    t9.AccountNumber As HospitalAccountNo,
+    t9.IFSCCode As HospitalIFSCCode,
+    t10.TDSExemptPercentage As TDSPercentage,
+    CASE 
+        WHEN t10.IsCPDTrustApproved = 1 THEN t10.TrustClaimAmountApproved 
+        ELSE NULL 
+    END AS CPDApprovedAmountTrust,
+    t10.TrustClaimAmountApproved As ApprovedAmountTrust,
+    t10.TrustTDSAmount As TDSAmountTrust,
+    t10.TrustClaimAmountApproved As FinalAmountTrust
+FROM TMS_ClaimMaster t1
+Left JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber = t2.CaseNumber
+Left JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId
+Left JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId
+Left JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId
+Left JOIN TMS_PatientTreatmentProtocol t6 ON t2.PatientRegId = t6.PatientRegId
+Left JOIN TMS_MasterPackageMaster t7 ON t6.PackageId = t7.PackageId
+Left JOIN TMS_MasterPackageDetail t8 ON t6.ProcedureId = t8.ProcedureId
+LEFT JOIN HEM_FinancialDetails t9 ON t1.HospitalId = t9.HospitalId
+LEFT JOIN TMS_ClaimMaster t10 ON t1.CaseNumber = t10.CardNumber
+WHERE 1 = 1 ";
 
         // Dynamically add filters to the query based on provided parameters
         if (!string.IsNullOrEmpty(caseNumber))

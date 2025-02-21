@@ -72,7 +72,44 @@ function isEmailId(e) {
 
     return isValid;
 }
-function isDate(e) {
+function validateAmountPaste(e) {
+    // Get the clipboard data
+    var clipboardData = e.clipboardData || window.clipboardData;
+    var pastedText = clipboardData.getData('Text');
+
+    // Define the allowed pattern (only numeric characters)
+    var regex = /^[0-9]+$/;
+
+    // Test the pasted text against the regex
+    if (!regex.test(pastedText)) {
+        e.preventDefault(); // Prevent the paste if it doesn't match the numeric pattern
+        alert("Only numeric values are allowed.");
+    }
+}
+function isNumericValueOnly(event) {
+    debugger;
+    var keyCode = event.keyCode || event.which;
+    var key = String.fromCharCode(keyCode);
+    // Allow backspace, delete, tab, and other control keys
+    if (keyCode === 8 || keyCode === 9 || keyCode === 46 || keyCode === 37 || keyCode === 39) {
+        return true;
+    }
+    // Prevent alphabetic characters (A-Z, a-z)
+    if (/^[a-zA-Z]$/.test(key)) {
+        return false;
+    }
+    // Allow only numeric and decimal point
+    if (/^[0-9.]$/.test(key)) {
+        var currentValue = event.target.value;
+
+        // Ensure only one decimal point is allowed
+        if (key === '.' && currentValue.indexOf('.') !== -1) {
+            return false;
+        }
+        return true;
+    }
+    return false; // Block other keys
+}function isDate(e) {
     var keyCode = e.keyCode || e.which;
     var regex = /^[0-9-]+$/;
     var isValid = regex.test(String.fromCharCode(keyCode));

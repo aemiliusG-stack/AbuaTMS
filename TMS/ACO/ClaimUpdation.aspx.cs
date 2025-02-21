@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AbuaTMS;
 
 public partial class ACO_ClaimUpdation : System.Web.UI.Page
 {
@@ -15,6 +16,7 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
     MasterData md = new MasterData();
+    ACOHelper aco = new ACOHelper();
     string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -28,6 +30,36 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
             hdUserId.Value = Session["UserId"].ToString();
             pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             LoadClaimDetails();
+            LoadHospitalTypes();
+        }
+    }
+    private void LoadHospitalTypes()
+    {
+        try
+        {
+            dt = aco.GetAllHospitalType(); // Use the class method to get the hospital list
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                ddlHospitalType.DataSource = dt;
+                ddlHospitalType.DataTextField = "Title";
+                ddlHospitalType.DataValueField = "Id";
+                ddlHospitalType.DataBind();
+                ddlHospitalType.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                ddlHospitalType.Items.Clear();
+                ddlHospitalType.Items.Add(new ListItem("---select---", ""));
+            }
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     private void LoadClaimDetails()
@@ -76,6 +108,12 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
         {
             lblError.Text = "Error loading claim details: " + ex.Message;
             lblError.Visible = true;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
         finally
         {
@@ -89,10 +127,11 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
     {
         try
         {
-            ddlTypeS.SelectedIndex = 0;
+            ddlHospitalType.SelectedIndex = 0;
             ddlScheme.SelectedIndex = 0;
-            ddlPhase.SelectedIndex = 0;
-            ddlFinancialYear.SelectedIndex = 0;
+
+            //ddlPhase.SelectedIndex = 0;
+            //ddlFinancialYear.SelectedIndex = 0;
 
             gridrptClaimCases.DataSource = null;
             gridrptClaimCases.DataBind();
@@ -115,12 +154,69 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
             throw;
         }
     }
-
-    protected void btnSearch_Click(object sender, EventArgs e)
-    {
-    }
     protected void SearchSubmit_Click(object sender, EventArgs e)
     {
+        BindGridView();
+    }
+    private void BindGridView()
+    {
+        try
+        {
+            string userId = Session["UserId"].ToString();
+            var hospitalTypeId = string.IsNullOrEmpty(ddlHospitalType.SelectedValue) ? DBNull.Value : (object)ddlHospitalType.SelectedValue;
+            var schemeId = string.IsNullOrEmpty(ddlScheme.SelectedValue) ? DBNull.Value : (object)ddlScheme.SelectedValue;
+            using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetClaimDetailsSearch", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@HospitalTypeId", hospitalTypeId);
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                //cmd.Parameters.AddWithValue("@RejectedFromDate", string.IsNullOrEmpty(tbRegFromDate.Text) ? (object)DBNull.Value : DateTime.Parse(tbRegFromDate.Text));
+                //cmd.Parameters.AddWithValue("@RejectedToDate", string.IsNullOrEmpty(tbRegToDate.Text) ? (object)DBNull.Value : DateTime.Parse(tbRegToDate.Text));
+                cmd.Parameters.AddWithValue("@RejectedFromDate",string.IsNullOrEmpty(tbRegFromDate.Text) ? (object)DBNull.Value : DateTime.Parse(tbRegFromDate.Text));
+                cmd.Parameters.AddWithValue("@RejectedToDate",string.IsNullOrEmpty(tbRegToDate.Text) ? (object)DBNull.Value : DateTime.Parse(tbRegToDate.Text));
+
+                cmd.Parameters.AddWithValue("@Scheme", schemeId);
+                con.Open();
+                DataTable dt = new DataTable();
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    adapter.Fill(dt);
+                }
+
+                if (dt.Rows.Count == 0)
+                {
+                    lblError.Text = "No records found.";
+                    lblError.Visible = true;
+                    panelNoData.Visible = true;
+                    gridrptClaimCases.DataSource = null;
+                    gridrptClaimCases.DataBind();
+                }
+                else
+                {
+                    panelNoData.Visible = false;
+                    gridrptClaimCases.DataSource = dt;
+                    gridrptClaimCases.DataBind();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            lblError.Text = "An error occurred: " + ex.Message;
+            lblError.Visible = true;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+        finally
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+        }
     }
     protected void btnApprove_Click(object sender, EventArgs e)
     {
@@ -157,7 +253,6 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
     private void ApproveClaim(int claimId, long userId, int actionId, string queryReasonId, string querySubReasonId, string rejectReasonId, string remarks, int? totalFinalAmountByAco)
@@ -198,6 +293,12 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
         {
             lblError.Text = "Error processing action: " + ex.Message;
             lblError.Visible = true;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
         finally
         {
@@ -223,7 +324,6 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -252,7 +352,6 @@ public partial class ACO_ClaimUpdation : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 }

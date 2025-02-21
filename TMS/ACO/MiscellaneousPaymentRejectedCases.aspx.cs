@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AbuaTMS;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebGrease.Css.Ast;
 
 public partial class ACO_MiscellaneousPaymentRejectedCases : System.Web.UI.Page
 {
@@ -15,37 +17,47 @@ public partial class ACO_MiscellaneousPaymentRejectedCases : System.Web.UI.Page
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
+    ACOHelper aco = new ACOHelper();
+    MasterData md = new MasterData();
+    string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
-        LoadHospitals();
+        if (!IsPostBack)
+        {
+            hdUserId.Value = Session["UserId"].ToString();
+            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
+            LoadHospitals();
+        }
     }
     private void LoadHospitals()
     {
         try
         {
-            using (SqlCommand cmd = new SqlCommand("sp_GetAllHospitalsFromExcelHospital", con))
+            DataTable dt = new DataTable();
+            dt = aco.GetAllHospitalNameList(); // Use the class method to get the hospital list
+            if (dt != null && dt.Rows.Count > 0)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                DataTable dt = new DataTable();
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                {
-                    adapter.Fill(dt);
-                }
                 ddlHospitals.DataSource = dt;
                 ddlHospitals.DataTextField = "HospitalName";
-                ddlHospitals.DataValueField = "HospitalName";
+                ddlHospitals.DataValueField = "HospitalId";
                 ddlHospitals.DataBind();
+                ddlHospitals.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                ddlHospitals.Items.Clear();
+                ddlHospitals.Items.Add(new ListItem("---select---", ""));
             }
         }
-        finally
+        catch (Exception ex)
         {
             if (con.State == ConnectionState.Open)
             {
                 con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
-        ddlHospitals.Items.Insert(0, new ListItem("---select---", ""));
     }
     protected void btnSearch_Click(object sender, EventArgs e)
     {

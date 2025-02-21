@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Configuration;
+using WebGrease.Css.Ast;
 
 public partial class ACO_HospitalDetails : System.Web.UI.Page
 {
@@ -14,10 +15,14 @@ public partial class ACO_HospitalDetails : System.Web.UI.Page
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
+    MasterData md = new MasterData();
+    string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
+            hdUserId.Value = Session["UserId"].ToString();
+            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             string hospitalId = Request.QueryString["HospitalId"];
             // Check if the HospitalId is not null or empty
             if (!string.IsNullOrEmpty(hospitalId))
@@ -83,6 +88,12 @@ public partial class ACO_HospitalDetails : System.Web.UI.Page
         {
             // Handle any exceptions that occur during the database operation
             lblErrorMessage.Text = "An error occurred while retrieving hospital details: " + ex.Message;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
         finally
         {
@@ -96,26 +107,52 @@ public partial class ACO_HospitalDetails : System.Web.UI.Page
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
-        // Create a new FileUpload control
-        FileUpload fileUpload = new FileUpload();
-        //fileUpload.ID = "fileUpload" + (fileUpload1.Controls.Count + 1);
-        fileUpload.ID = "fileUpload" + (fileUploadContainer.Controls.Count + 1);
-        fileUpload.CssClass = "form-control";
+        try
+        {
+            // Create a new FileUpload control
+            FileUpload fileUpload = new FileUpload();
+            //fileUpload.ID = "fileUpload" + (fileUpload1.Controls.Count + 1);
+            fileUpload.ID = "fileUpload" + (fileUploadContainer.Controls.Count + 1);
+            fileUpload.CssClass = "form-control";
 
-        // Add the new FileUpload to the container
-        //fileUpload1.Controls.Add(fileUpload);
-        fileUploadContainer.Controls.Add(fileUpload);
+            // Add the new FileUpload to the container
+            //fileUpload1.Controls.Add(fileUpload);
+            fileUploadContainer.Controls.Add(fileUpload);
+        }
+        catch (Exception ex) 
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+       
     }
 
     protected void btnMinus_Click(object sender, EventArgs e)
     {
-        //if (fileUpload1.Controls.Count > 0)
-        if (fileUploadContainer.Controls.Count > 0)
+        try
         {
-            // Remove the last FileUpload control
-            //fileUpload1.Controls.RemoveAt(fileUpload1.Controls.Count - 1);
-            fileUploadContainer.Controls.RemoveAt(fileUploadContainer.Controls.Count - 1);
+            //if (fileUpload1.Controls.Count > 0)
+            if (fileUploadContainer.Controls.Count > 0)
+            {
+                // Remove the last FileUpload control
+                //fileUpload1.Controls.RemoveAt(fileUpload1.Controls.Count - 1);
+                fileUploadContainer.Controls.RemoveAt(fileUploadContainer.Controls.Count - 1);
+            }
         }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+        
     }
 
 }

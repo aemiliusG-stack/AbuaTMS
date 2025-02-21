@@ -157,15 +157,15 @@
 
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item ml-3">
-                    <asp:LinkButton ID="btnPastHistory" runat="server" CssClass="nav-link d-flex flex-column align-items-center" OnClick="btnPastHistory_Click"><i class="fas fa-history"></i> Past History</asp:LinkButton>
+                    <asp:LinkButton ID="btnPastHistory" runat="server" CssClass="nav-link d-flex flex-column align-items-center" OnClick="btnPastHistory_Click"><i class="fas fa-history"></i>Past History</asp:LinkButton>
                     <%--<asp:Button ID="Button1" runat="server" Text="Past History" OnClick="btnPastHistory_Click" class="nav-link d-flex flex-column align-items-center" />--%>
                 </li>
                 <li class="nav-item ml-3">
-                    <asp:LinkButton ID="btnPreauth" runat="server" OnClick="btnPreauth_Click" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-file-medical"></i> Preauthorization</asp:LinkButton>
+                    <asp:LinkButton ID="btnPreauth" runat="server" OnClick="btnPreauth_Click" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-file-medical"></i>Preauthorization</asp:LinkButton>
                     <%--<asp:Button ID="Button2" runat="server" Text="Preauthorization" OnClick="btnPreauth_Click" class="nav-link d-flex flex-column align-items-center" />--%>
                 </li>
                 <li class="nav-item ml-3">
-                    <asp:LinkButton ID="btnTreatandDischaarge" OnClick="btnTreatandDischaarge_Click" runat="server" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-procedures"></i> Treatment/Discharge</asp:LinkButton>
+                    <asp:LinkButton ID="btnTreatandDischaarge" OnClick="btnTreatandDischaarge_Click" runat="server" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-procedures"></i>Treatment/Discharge</asp:LinkButton>
                     <%--<asp:Button ID="btnTreatment" runat="server" Text="Treatment And Discharge" OnClick="btnTreatment_Click" class="nav-link d-flex flex-column align-items-center" />--%>
                 </li>
                 <li class="nav-item ml-3">
@@ -177,11 +177,11 @@
                     <%--<asp:Button ID="Button3" runat="server" Text="Attachments" OnClick="btnAttachments_Click" class="nav-link d-flex flex-column align-items-center" />--%>
                 </li>
                 <li class="nav-item ml-3">
-                    <asp:LinkButton ID="btnACaseSheet" runat="server" OnClick="btnACaseSheet_Click" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-notes-medical"></i> Case Sheet</asp:LinkButton>
+                    <asp:LinkButton ID="btnACaseSheet" runat="server" OnClick="btnACaseSheet_Click" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-notes-medical"></i>Case Sheet</asp:LinkButton>
                     <%--<asp:Button ID="Button4" runat="server" Text="Oncology Related Data" OnClick="btnOncology_Click" Visible="false" class="nav-link d-flex flex-column align-items-center" />--%>
                 </li>
                 <li class="nav-item ml-3">
-                    <asp:LinkButton ID="btnOncology" runat="server" OnClick="btnOncology_Click" Visible="false" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-dna"></i> Oncology Related Data</asp:LinkButton>
+                    <asp:LinkButton ID="btnOncology" runat="server" OnClick="btnOncology_Click" Visible="false" CssClass="nav-link d-flex flex-column align-items-center"><i class="fas fa-dna"></i>Oncology Related Data</asp:LinkButton>
                 </li>
             </ul>
 
@@ -741,7 +741,7 @@
                                             </asp:GridView>
                                         </div>
                                     </div>
-                                   <%-- <div style="margin-top: 20px;">
+                                    <%-- <div style="margin-top: 20px;">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                                             <label class="form-check-label" for="flexCheckDefault">
@@ -1356,7 +1356,7 @@
                                                         <%--<span class="font-weight-bold">Remarks:</span><br />
                  <textarea rows="4" cols="40" placeholder="Enter remarks here" class="form-control"></textarea>--%>
                                                         <span class="font-weight-bold text-dark">Remarks</span>
-                                                        <asp:TextBox ID="TextBox2" runat="server" OnKeypress="return isAlphaNumeric(event);" TextMode="MultiLine" CssClass="form-control" Enabled="false"></asp:TextBox>
+                                                        <asp:TextBox ID="TextBoxClaimDetailsRemarks" runat="server" OnKeypress="return isAlphaNumeric(event);" TextMode="MultiLine" CssClass="form-control" Enabled="false"></asp:TextBox>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1678,7 +1678,7 @@
                                             <div class="row">
                                                 <div class="col-md-3 mt-3">
                                                     <span class="font-weight-bold">Total Claims (Rs):</span><br />
-                                                    <asp:Label ID="Label8" runat="server"></asp:Label>
+                                                    <asp:Label ID="lbTotalClaim" runat="server"></asp:Label>
                                                 </div>
                                                 <asp:Panel ID="pnlInsuranceamount" Visible="false" runat="server" CssClass="col-md-3 mt-3">
                                                     <span class="font-weight-bold">Insurance liable Amount(Rs.):</span><br />
@@ -1691,19 +1691,15 @@
                                                 <div class="col-md-3 mt-3">
                                                     <span class="font-weight-bold">Final Approved Amount (Rs):</span><br />
                                                     <%--<asp:TextBox ID="TextBoxFinalApprovedAmount" runat="server" CssClass="form-control" AutoPostBack="True" OnTextChanged="TextBoxFinalApprovedAmount_TextChanged"></asp:TextBox>--%>
-                                                    <asp:TextBox ID="tbFinalAmountByAco" runat="server" CssClass="form-control" OnKeypress="return isNumeric(event);"></asp:TextBox>
+                                                    <asp:TextBox ID="tbFinalAmountByAco" runat="server" CssClass="form-control" OnKeypress="return isNumericValueOnly(event);" OnPaste="return validateAmountPaste(event)"></asp:TextBox>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 mb-3">
-                                                    <span class="font-weight-bold text-dark">Deduction Type</span><br />
-                                                    <asp:DropDownList runat="server" ID="dropDeductionTypeACO" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;">
-                                                        <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>
-                                                    </asp:DropDownList>
-                                                </div>
-                                                <div class="col-md-12 mb-3">
                                                     <span class="font-weight-bold text-dark">Remarks</span>
-                                                    <asp:TextBox ID="TextBox1" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
+                                                    <%--<asp:TextBox ID="TextBox1" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>--%>
+                                                    <asp:TextBox ID="ACORemark" runat="server" TextMode="MultiLine" CssClass="form-control"
+                                                        AutoPostBack="true"></asp:TextBox>
                                                     <asp:Button ID="btnAddDeduction" OnClick="btnAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-2" runat="server" Text="Add Deduction" />
                                                 </div>
                                             </div>
@@ -1711,11 +1707,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <%-- Add Deduction --%>
+
+                            <%-- Total Amount Deducted --%>
                             <div class="ibox">
                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">
                                     <div class="d-flex w-100 justify-content-center position-relative">
-                                        <h3 class="m-0">Add Deduction</h3>
+                                        <h3 class="m-0">Total Amount Deducted</h3>
                                     </div>
                                 </div>
                                 <div class="ibox-content">
@@ -1726,6 +1723,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <%--Work Flow--%>
                             <div class="ibox mt-4">
                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">

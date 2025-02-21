@@ -3,6 +3,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
+    <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
     <div class="ibox">
         <%-- <div class="ibox-title text-center" style="background-color: #31859c; color: white;">
             <h4>
@@ -103,7 +104,7 @@
                 </div>
                 <!-- File Upload Section -->
                 <div class="col-md-6 col-lg-3 mb-3">
-                    <div class ="form-group" id="fileUploadContainer" runat="server">
+                    <div class="form-group" id="fileUploadContainer" runat="server">
                         <div class="file-upload-item">
                             <label class="fw-bold" style="color: black;">File Upload</label>
                             <asp:FileUpload ID="fileUpload1" runat="server" CssClass="form-control" Style="border: none; border-bottom: 2px solid #D3D3D3;" />
@@ -112,7 +113,7 @@
                     <asp:Button ID="btnAdd" runat="server" Text="Add" CssClass="btn btn-success mt-2" OnClick="btnAdd_Click" />
                     <asp:Button ID="btnMinus" runat="server" Text="Minus" CssClass="btn btn-danger mt-2" OnClick="btnMinus_Click" />
                 </div>
-               <%-- <!-- File Upload Section -->
+                <%-- <!-- File Upload Section -->
                 <div class="col-md-6 col-lg-3 mb-3">
                     <div class="form-group">
                         <label class="fw-bold" style="color: black;">File Upload</label>

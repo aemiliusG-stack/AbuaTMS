@@ -607,10 +607,23 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                     //rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
 
 
-                    rbDiagnosisSupportedYes.Checked = Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
-                    rbCaseManagementYes.Checked = Convert.ToBoolean(row["CaseManagementSTP"]);
-                    rbEvidenceTherapyYes.Checked = Convert.ToBoolean(row["EvidenceTherapyConducted"]);
-                    rbMandatoryReportsYes.Checked = Convert.ToBoolean(row["MandatoryReports"]);
+                    //rbDiagnosisSupportedYes.Checked = Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                    //rbCaseManagementYes.Checked = Convert.ToBoolean(row["CaseManagementSTP"]);
+                    //rbEvidenceTherapyYes.Checked = Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                    //rbMandatoryReportsYes.Checked = Convert.ToBoolean(row["MandatoryReports"]);
+
+                    rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                    rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] == DBNull.Value || !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+
+                    rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && Convert.ToBoolean(row["CaseManagementSTP"]);
+                    rbCaseManagementNo.Checked = row["CaseManagementSTP"] == DBNull.Value || !Convert.ToBoolean(row["CaseManagementSTP"]);
+
+                    rbEvidenceTherapyYes.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                    rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] == DBNull.Value || !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+
+                    rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && Convert.ToBoolean(row["MandatoryReports"]);
+                    rbMandatoryReportsNo.Checked = row["MandatoryReports"] == DBNull.Value || !Convert.ToBoolean(row["MandatoryReports"]);
+
 
                     if (row["IsSpecialCase"] != DBNull.Value)
                     {
@@ -633,7 +646,6 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
 
     }
@@ -750,36 +762,36 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
     //    gvICDDetails.DataSource = dt;
     //    gvICDDetails.DataBind();
     //}
-    private void BindActionTypeDropdown()
-    {
-        try
-        {
-            ACOHelper helper = new ACOHelper();
-            DataTable actionTypes = helper.GetActionTypes();
+    //private void BindActionTypeDropdown()
+    //{
+    //    try
+    //    {
+    //        ACOHelper helper = new ACOHelper();
+    //        DataTable actionTypes = helper.GetActionTypes();
 
-            if (actionTypes != null && actionTypes.Rows.Count > 0)
-            {
-                actionType.DataSource = actionTypes;
-                actionType.DataTextField = "ActionName"; // Display ActionName in the dropdown
-                actionType.DataValueField = "ActionId";  // Use ActionId as the value
-                actionType.DataBind();
-            }
+    //        if (actionTypes != null && actionTypes.Rows.Count > 0)
+    //        {
+    //            actionType.DataSource = actionTypes;
+    //            actionType.DataTextField = "ActionName"; // Display ActionName in the dropdown
+    //            actionType.DataValueField = "ActionId";  // Use ActionId as the value
+    //            actionType.DataBind();
+    //        }
 
-            // Add the default "Select Action Type" option
-            actionType.Items.Insert(0, new ListItem("-- Select Action Type --", ""));
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-        }
+    //        // Add the default "Select Action Type" option
+    //        actionType.Items.Insert(0, new ListItem("-- Select Action Type --", ""));
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        if (con.State == ConnectionState.Open)
+    //        {
+    //            con.Close();
+    //        }
+    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+    //        Response.Redirect("~/Unauthorize.aspx", false);
+    //        throw;
+    //    }
 
-    }
+    //}
 
     private void LoadPatientDetails(string caseNumber)
     {
@@ -845,7 +857,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                                 getPatientSecondaryDiagnosis();
                                 //getPatientPrimaryDiagnosis();
                                 //getPatientSecondaryDiagnosis();
-                                BindActionTypeDropdown();
+                                //BindActionTypeDropdown();
                                 //BindICDDetailsGrid();
                                 BindClaimsDetails();
                                 BindNonTechnicalChecklist();
@@ -1018,7 +1030,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             string caseNo = Session["CaseNumber"].ToString();
             long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
             string deductionType = dropDeductionTypeACO.SelectedItem.Value;
-            string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
+            //string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
             decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.Trim());
             decimal totalClaimAmount = 0;
             if (hdRoleId.Value == "9")
@@ -1035,41 +1047,41 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             lbFinalAmount.Text = finalDeductedAmount.ToString();
             if (finalDeductedAmount > 0)
             {
-                aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks, deductionType);
+                //aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks, deductionType);
             }
             // Save the deduction amount to the database
-            long actionId = Convert.ToInt64(actionType.SelectedValue);
-            string selectedQueryReasonId = ddlReason.SelectedValue;
-            string selectedSubQueryReasonId = ddlSubReason.SelectedValue;
-            switch (actionId)
-            {
-                case 2: // Approve
-                    DoAction(claimId, userId, actionId, " ", "", "", remarks, (int)totalFinalAmountByAco);
-                    //string result = cpd.ExecuteTDSCalculation(Convert.ToInt32(claimId));
-                    strMessage = "window.alert('Claim has been approved by ACO. " + caseNo + "'); window.location.href = 'ClaimUpdation.aspx';";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    //Response.Redirect("~/ACO/ClaimUpdation.aspx");
-                    break;
-                case 5: // Raise Query
-                        //long reasonId = Convert.ToInt64(reasonDropdown.SelectedValue);
-                        //long subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue);
-                    DoAction(claimId, userId, actionId, selectedQueryReasonId, selectedSubQueryReasonId, null, remarks, (int)totalFinalAmountByAco);
-                    strMessage = "window.alert('Query Raised Successfully.'); window.location.href = 'ClaimUpdation.aspx';";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    //Response.Redirect("~/ACO/ClaimUpdation.aspx");
-                    break;
-                case 6: // Reject
-                    string rejectReasonId = ddlReason.SelectedItem.Value;
-                    DoAction(claimId, userId, actionId, "", "", rejectReasonId, remarks, (int)totalFinalAmountByAco);
-                    strMessage = "window.alert('Case Rejected Successfully.'); window.location.href = 'ClaimUpdation.aspx';";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    //Response.Redirect("~/ACO/ClaimUpdation.aspx");
-                    break;
-                default:
-                    lblError.Text = "Invalid action selected.";
-                    lblError.Visible = true;
-                    break;
-            }
+            //long actionId = Convert.ToInt64(actionType.SelectedValue);
+            //string selectedQueryReasonId = ddlReason.SelectedValue;
+            //string selectedSubQueryReasonId = ddlSubReason.SelectedValue;
+            //switch (actionId)
+            //{
+            //    case 2: // Approve
+            //        DoAction(claimId, userId, actionId, " ", "", "", /*remarks,*/ (int)totalFinalAmountByAco);
+            //        //string result = cpd.ExecuteTDSCalculation(Convert.ToInt32(claimId));
+            //        strMessage = "window.alert('Claim has been approved by ACO. " + caseNo + "'); window.location.href = 'ClaimUpdation.aspx';";
+            //        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            //        //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+            //        break;
+            //    case 5: // Raise Query
+            //            //long reasonId = Convert.ToInt64(reasonDropdown.SelectedValue);
+            //            //long subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue);
+            //        DoAction(claimId, userId, actionId, /*selectedQueryReasonId, selectedSubQueryReasonId,*/ null, remarks, (int)totalFinalAmountByAco);
+            //        strMessage = "window.alert('Query Raised Successfully.'); window.location.href = 'ClaimUpdation.aspx';";
+            //        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            //        //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+            //        break;
+            //    case 6: // Reject
+            //        string rejectReasonId = ddlReason.SelectedItem.Value;
+            //        DoAction(claimId, userId, actionId, "", "", rejectReasonId, remarks, (int)totalFinalAmountByAco);
+            //        strMessage = "window.alert('Case Rejected Successfully.'); window.location.href = 'ClaimUpdation.aspx';";
+            //        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+            //        //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+            //        break;
+            //    default:
+            //        lblError.Text = "Invalid action selected.";
+            //        lblError.Visible = true;
+            //        break;
+            //}
         }
         catch (Exception ex)
         {
@@ -1082,164 +1094,164 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             throw;
         }
     }
-    protected void DoAction(long claimId, long userId, long actionId, string queryReasonId, string querySubReasonId, string rejectReasonId, string remarks, int? totalFinalAmountByAco)
-    {
-        try
-        {
-            //reasonId = (long?)(selectedReason ?? (object)DBNull.Value) ?? 0;
-            using (SqlCommand cmd = new SqlCommand("TMS_ACO_InsertActions", con))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@ClaimId", claimId);
-                cmd.Parameters.AddWithValue("@UserId", userId);
-                cmd.Parameters.AddWithValue("@ActionId", actionId);
-                cmd.Parameters.AddWithValue("@ReasonId", queryReasonId ?? (object)DBNull.Value);
-                //cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ??  (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ?? "");
-                cmd.Parameters.AddWithValue("@RejectReasonId", rejectReasonId ?? "");
-                cmd.Parameters.AddWithValue("@Remarks", remarks ?? "");
-                //cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco ?? "");
-                // Only add the Amount parameter when actionId is 1 (Approve)
-                if (totalFinalAmountByAco.HasValue)
-                {
-                    cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco.Value);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@Amount", 0); // Or omit this parameter entirely if you prefer
-                }
-                con.Open();
-                cmd.ExecuteNonQuery();
-            }
+    //protected void DoAction(long claimId, long userId, long actionId, string queryReasonId, string querySubReasonId, string rejectReasonId, string remarks, int? totalFinalAmountByAco)
+    //{
+    //    try
+    //    {
+    //        //reasonId = (long?)(selectedReason ?? (object)DBNull.Value) ?? 0;
+    //        using (SqlCommand cmd = new SqlCommand("TMS_ACO_InsertActions", con))
+    //        {
+    //            cmd.CommandType = CommandType.StoredProcedure;
+    //            cmd.Parameters.AddWithValue("@ClaimId", claimId);
+    //            cmd.Parameters.AddWithValue("@UserId", userId);
+    //            cmd.Parameters.AddWithValue("@ActionId", actionId);
+    //            cmd.Parameters.AddWithValue("@ReasonId", queryReasonId ?? (object)DBNull.Value);
+    //            //cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ??  (object)DBNull.Value);
+    //            cmd.Parameters.AddWithValue("@SubReasonId", querySubReasonId ?? "");
+    //            cmd.Parameters.AddWithValue("@RejectReasonId", rejectReasonId ?? "");
+    //            cmd.Parameters.AddWithValue("@Remarks", remarks ?? "");
+    //            //cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco ?? "");
+    //            // Only add the Amount parameter when actionId is 1 (Approve)
+    //            if (totalFinalAmountByAco.HasValue)
+    //            {
+    //                cmd.Parameters.AddWithValue("@Amount", totalFinalAmountByAco.Value);
+    //            }
+    //            else
+    //            {
+    //                cmd.Parameters.AddWithValue("@Amount", 0); // Or omit this parameter entirely if you prefer
+    //            }
+    //            con.Open();
+    //            cmd.ExecuteNonQuery();
+    //        }
 
-            lblSuccess.Text = "Action processed successfully!";
-            lblSuccess.Visible = true;
-            //Response.Redirect("~/ACO/ClaimUpdation.aspx");
-        }
-        catch (Exception ex)
-        {
-            lblError.Text = "Error processing action: " + ex.Message;
-            lblError.Visible = true;
-        }
-        finally
-        {
-            con.Close();
-        }
-    }
+    //        lblSuccess.Text = "Action processed successfully!";
+    //        lblSuccess.Visible = true;
+    //        //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        lblError.Text = "Error processing action: " + ex.Message;
+    //        lblError.Visible = true;
+    //    }
+    //    finally
+    //    {
+    //        con.Close();
+    //    }
+    //}
 
-    private void BindRejectReason()
-    {
-        try
-        {
-            DataTable dt = cpd.GetRejectReason();
-            ddlReason.DataSource = dt;
-            ddlReason.DataTextField = "RejectName";
-            ddlReason.DataValueField = "RejectId";
-            ddlReason.DataBind();
-            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error: " + ex.Message);
-        }
-    }
-    private void BindQueryReason()
-    {
-        try
-        {
-            DataTable dt = cpd.GetQueryReason();
-            ddlReason.DataSource = dt;
-            ddlReason.DataTextField = "ReasonName";
-            ddlReason.DataValueField = "ReasonId";
-            ddlReason.DataBind();
-            ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error: " + ex.Message);
-        }
-    }
-    private void BindQuerySubReason(string ReasonId)
-    {
-        try
-        {
-            DataTable dt = cpd.GetQuerySubReason(ReasonId);
-            ddlSubReason.DataSource = dt;
-            ddlSubReason.DataTextField = "SubReasonName";
-            ddlSubReason.DataValueField = "SubReasonId";
-            ddlSubReason.DataBind();
-            ddlSubReason.Items.Insert(0, new ListItem("--Select--", ""));
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error: " + ex.Message);
-        }
-    }
-    protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            pReason.Visible = false;
-            //pRemarks.Visible = false;
-            pSubReason.Visible = false;
-            // Show/hide the remarks TextBox based on selected value
-            if (actionType.SelectedValue == "2") // Assuming "1" is for "Approve"
-            {
-                txtRemarks.Visible = true; // Show remarks section
-            }
-            else if (actionType.SelectedValue == "6")
-            {
-                pReason.Visible = true;
-                //pRemarks.Visible = true;
-                txtRemarks.Visible = true;
-                BindRejectReason();
-            }
-            else if (actionType.SelectedValue == "5")
-            {
-                pReason.Visible = true;
-                pSubReason.Visible = true;
-                //pRemarks.Visible = true;
-                txtRemarks.Visible = true;
-                BindQueryReason();
-                BindQuerySubReason("1");
+    //private void BindRejectReason()
+    //{
+    //    try
+    //    {
+    //        DataTable dt = cpd.GetRejectReason();
+    //        ddlReason.DataSource = dt;
+    //        ddlReason.DataTextField = "RejectName";
+    //        ddlReason.DataValueField = "RejectId";
+    //        ddlReason.DataBind();
+    //        ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Console.WriteLine("Error: " + ex.Message);
+    //    }
+    //}
+    //private void BindQueryReason()
+    //{
+    //    try
+    //    {
+    //        DataTable dt = cpd.GetQueryReason();
+    //        ddlReason.DataSource = dt;
+    //        ddlReason.DataTextField = "ReasonName";
+    //        ddlReason.DataValueField = "ReasonId";
+    //        ddlReason.DataBind();
+    //        ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Console.WriteLine("Error: " + ex.Message);
+    //    }
+    //}
+    //private void BindQuerySubReason(string ReasonId)
+    //{
+    //    try
+    //    {
+    //        DataTable dt = cpd.GetQuerySubReason(ReasonId);
+    //        ddlSubReason.DataSource = dt;
+    //        ddlSubReason.DataTextField = "SubReasonName";
+    //        ddlSubReason.DataValueField = "SubReasonId";
+    //        ddlSubReason.DataBind();
+    //        ddlSubReason.Items.Insert(0, new ListItem("--Select--", ""));
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Console.WriteLine("Error: " + ex.Message);
+    //    }
+    //}
+    //protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)
+    //{
+    //    try
+    //    {
+    //        pReason.Visible = false;
+    //        //pRemarks.Visible = false;
+    //        pSubReason.Visible = false;
+    //        // Show/hide the remarks TextBox based on selected value
+    //        if (actionType.SelectedValue == "2") // Assuming "1" is for "Approve"
+    //        {
+    //            txtRemarks.Visible = true; // Show remarks section
+    //        }
+    //        else if (actionType.SelectedValue == "6")
+    //        {
+    //            pReason.Visible = true;
+    //            //pRemarks.Visible = true;
+    //            txtRemarks.Visible = true;
+    //            BindRejectReason();
+    //        }
+    //        else if (actionType.SelectedValue == "5")
+    //        {
+    //            pReason.Visible = true;
+    //            pSubReason.Visible = true;
+    //            //pRemarks.Visible = true;
+    //            txtRemarks.Visible = true;
+    //            BindQueryReason();
+    //            BindQuerySubReason("1");
 
-            }
-            else
-            {
-                txtRemarks.Visible = false; // Hide remarks section
-                pReason.Visible = false;
-                pSubReason.Visible = false;
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-        }
-    }
-    protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        try
-        {
-            string selectedValue = ddlReason.SelectedItem.Value;
-            BindQuerySubReason(selectedValue);
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-        }
-    }
+    //        }
+    //        else
+    //        {
+    //            txtRemarks.Visible = false; // Hide remarks section
+    //            pReason.Visible = false;
+    //            pSubReason.Visible = false;
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        if (con.State == ConnectionState.Open)
+    //        {
+    //            con.Close();
+    //        }
+    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+    //        Response.Redirect("~/Unauthorize.aspx", false);
+    //        throw;
+    //    }
+    //}
+    //protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
+    //{
+    //    try
+    //    {
+    //        string selectedValue = ddlReason.SelectedItem.Value;
+    //        BindQuerySubReason(selectedValue);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        if (con.State == ConnectionState.Open)
+    //        {
+    //            con.Close();
+    //        }
+    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+    //        Response.Redirect("~/Unauthorize.aspx", false);
+    //        throw;
+    //    }
+    //}
     protected void lnkClaimTab_Click(object sender, EventArgs e)
     {
         try

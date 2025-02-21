@@ -12,6 +12,7 @@ using System.Web.UI.WebControls;
 using WebGrease.Css.Ast;
 using System.Collections.Generic;
 using Label = System.Web.UI.WebControls.Label;
+using Microsoft.Ajax.Utilities;
 
 public partial class ACO_CaseDetails : System.Web.UI.Page
 {
@@ -177,9 +178,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-       
+
     }
     private void BindGrid_TreatmentProtocol()
     {
@@ -204,9 +204,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-        
+
     }
     private void BindGrid_ICHIDetails()
     {
@@ -245,10 +244,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-            throw;
         }
-        
     }
     private void BindGrid_PreauthWorkFlow()
     {
@@ -282,9 +278,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-       
+
     }
     private void BindPreauthAdmissionDetails()
     {
@@ -334,9 +329,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-        
+
     }
     //Tratment and discharge
     private void getTreatmentDischarge()
@@ -410,33 +404,71 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-        
+
     }
-    private void BindDeductionTypes()
+    protected void btnAddDeduction_Click(object sender, EventArgs e)
     {
         try
         {
-            dropDeductionTypeACO.Items.Clear();
-            dropDeductionTypeACO.Items.Add(new ListItem("--Select--", "Select"));
-            DataTable dt = aco.GetDeductionTypesForACO(); // Get the DataTable from the GetDeductionTypesForACO method
-            if (dt.Rows.Count > 0)
+            decimal totalClaimAmount = 0;
+            decimal totalFinalAmountByAco = 0;
+            decimal finalDeductedAmount = 0;
+            int parsedUserId;
+            int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
+            long claimId = Convert.ToInt64(Session["ClaimId"]);
+            string remarks = ACORemark.Text.Trim();
+            if (string.IsNullOrWhiteSpace(remarks))
             {
-                foreach (DataRow row in dt.Rows)
+                strMessage = "window.alert('Remarks is required.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                return; // Stop execution
+            }
+            if (!TextboxValidation.isAlphaNumeric(remarks))
+            {
+                strMessage = "window.alert('Invalid remarks entered. Please enter only alphanumeric characters.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                return; // Stop execution
+            }
+            if (!decimal.TryParse(tbFinalAmountByAco.Text.Trim(), out totalFinalAmountByAco))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid approved amount.');", true);
+                return;
+            }
+            if (hdRoleId.Value == "9") // Insurance Liable
+            {
+                if (!decimal.TryParse(lbpnlInsuranceAmount.Text.Trim(), out totalClaimAmount))
                 {
-                    string deductionTypeId = row["DeductionTypeId"].ToString();
-                    string deductionType = row["DeductionType"].ToString();
-
-                    // Add items to the DropDownList
-                    dropDeductionTypeACO.Items.Add(new ListItem(deductionType, deductionTypeId));
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid total claim amount.');", true);
+                    return;
                 }
+            }
+            else if (hdRoleId.Value == "10") // Trust Liable
+            {
+                if (!decimal.TryParse(lbpnlTrustAmount.Text.Trim(), out totalClaimAmount))
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid total claim amount.');", true);
+                    return;
+                }
+            }
+
+            finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
+            if (finalDeductedAmount < 0)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
+                return;
             }
             else
             {
-                lblError.Text = "No deduction types found for ACO.";
-                lblError.Visible = true;
+                dt = aco.GetExistingDeductionAmount(claimId, Convert.ToInt32(Session["RoleId"].ToString()));
+                if (dt.Rows.Count > 0)
+                {
+                    aco.UpdateDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks);
+                }
+                aco.InsertDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks);
             }
+            lbFinalAmount.Text = finalDeductedAmount.ToString("N2");
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('ACO Remarks Updated Successfully!');", true);
         }
         catch (Exception ex)
         {
@@ -446,11 +478,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-        
     }
-
     private void BindACORemarks()
     {
         try
@@ -458,28 +487,35 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             dt.Clear();
             int parsedUserId;
             int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
-            //string claimId = Session["ClaimId"].ToString();
             long claimId = Convert.ToInt64(Session["ClaimId"]);
-            if (claimId == null)
+
+            // Call GetExistingDeductionAmount and get the data
+            dt = aco.GetExistingDeductionAmount(claimId, Convert.ToInt32(Session["RoleId"].ToString()));
+
+            if (dt.Rows.Count > 0)
             {
-                lblError.Text = "Claim ID is missing!";
-                lblError.Visible = true;
-                return;
+                DataRow row = dt.Rows[0];
+                decimal existingDeduction = Convert.ToDecimal(row["DeductionAmt"]);
+                lbFinalAmount.Text = existingDeduction.ToString();
+                ACORemark.Text = row["Remarks"].ToString(); // Assuming lbRemarks is a Label or TextBox for displaying remarks
             }
+            else
+            {
+                ACORemark.Text = "No remarks available.";
+            }
+            // Retrieve the remarks and claims for the ACO-specific logic
             dt = aco.GetACORemarksFromSP(claimId, userId);
             if (dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
-                Label8.Text = row["TotalClaims"].ToString();
-                //Label9.Text = row["TrustLiable"].ToString();
-                //Label10.Text = row["Final Approved Amount"].ToString();
+                lbTotalClaim.Text = row["TotalClaims"].ToString();
+                // You can also use other fields here as per your logic for TrustLiable, InsurerLiable, etc.
                 if (hdRoleId.Value == "9")
                 {
                     pnlInsuranceamount.Visible = true;
                     pnlTrustAmount.Visible = false;
                     lbpnlInsuranceAmount.Text = row["InsurerLiable"].ToString();
                     tbFinalAmountByAco.Text = row["InsurerLiable"].ToString();
-
                 }
                 else if (hdRoleId.Value == "10")
                 {
@@ -491,9 +527,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             else
             {
-                //Label8.Text = "N/A";
-                //Label9.Text = "N/A";
-                //Label10.Text = "N/A";
                 tbFinalAmountByAco.Text = "N/A";
             }
         }
@@ -505,10 +538,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-            throw;
         }
-        
     }
     private void BindClaimWorkflow()
     {
@@ -542,9 +572,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-        
+
     }
     private void BindTechnicalChecklistData()
     {
@@ -592,10 +621,23 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                     //rbMandatoryReportsNo.Checked = row["MandatoryReports"] != DBNull.Value && !Convert.ToBoolean(row["MandatoryReports"]);
 
 
-                    rbDiagnosisSupportedYes.Checked = Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
-                    rbCaseManagementYes.Checked = Convert.ToBoolean(row["CaseManagementSTP"]);
-                    rbEvidenceTherapyYes.Checked = Convert.ToBoolean(row["EvidenceTherapyConducted"]);
-                    rbMandatoryReportsYes.Checked = Convert.ToBoolean(row["MandatoryReports"]);
+                    //rbDiagnosisSupportedYes.Checked = Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                    //rbCaseManagementYes.Checked = Convert.ToBoolean(row["CaseManagementSTP"]);
+                    //rbEvidenceTherapyYes.Checked = Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                    //rbMandatoryReportsYes.Checked = Convert.ToBoolean(row["MandatoryReports"]);
+
+                    rbDiagnosisSupportedYes.Checked = row["DiagnosisSupportedEvidence"] != DBNull.Value && Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+                    rbDiagnosisSupportedNo.Checked = row["DiagnosisSupportedEvidence"] == DBNull.Value || !Convert.ToBoolean(row["DiagnosisSupportedEvidence"]);
+
+                    rbCaseManagementYes.Checked = row["CaseManagementSTP"] != DBNull.Value && Convert.ToBoolean(row["CaseManagementSTP"]);
+                    rbCaseManagementNo.Checked = row["CaseManagementSTP"] == DBNull.Value || !Convert.ToBoolean(row["CaseManagementSTP"]);
+
+                    rbEvidenceTherapyYes.Checked = row["EvidenceTherapyConducted"] != DBNull.Value && Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+                    rbEvidenceTherapyNo.Checked = row["EvidenceTherapyConducted"] == DBNull.Value || !Convert.ToBoolean(row["EvidenceTherapyConducted"]);
+
+                    rbMandatoryReportsYes.Checked = row["MandatoryReports"] != DBNull.Value && Convert.ToBoolean(row["MandatoryReports"]);
+                    rbMandatoryReportsNo.Checked = row["MandatoryReports"] == DBNull.Value || !Convert.ToBoolean(row["MandatoryReports"]);
+
 
                     if (row["IsSpecialCase"] != DBNull.Value)
                     {
@@ -618,9 +660,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-        
+
     }
     public void BindNonTechnicalChecklist()
     {
@@ -662,6 +703,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         catch (Exception ex)
         {
             lblError.Text = "Error loading data: " + ex.Message;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     public void BindClaimsDetails()
@@ -690,11 +737,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                     lbInsuranceLiableAmt.Text = Convert.ToDecimal(row["InsuranceLiableAmt"]).ToString("C");
                     lbTrustLiableAmt.Text = Convert.ToDecimal(row["TrustLiableAmt"]).ToString("C");
                     lbBillAmt.Text = Convert.ToDecimal(row["BillAmt"]).ToString("C");
-                    lbFinalErupiAmt.Text = "0";
+                    lbFinalErupiAmt.Text = "NA";
+                    // Set the Claim Remarks in the TextBox
+                    TextBoxClaimDetailsRemarks.Text = row["ClaimRemarks"].ToString();
                     //lbRemark.Text = row["ClaimRemarks"].ToString();
                     string claimId = row["ClaimId"].ToString();
                     Session["ClaimId"] = claimId;
-
                 }
                 else
                 {
@@ -709,6 +757,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         catch (Exception ex)
         {
             lbPreauthApprovedAmt.Text = "Error: " + ex.Message;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     private void BindActionTypeDropdown()
@@ -737,9 +791,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
-        
     }
 
     private void LoadPatientDetails(string caseNumber)
@@ -813,7 +865,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                                 BindTechnicalChecklistData();
                                 BindClaimWorkflow();
                                 BindACORemarks();
-                                BindDeductionTypes();
+                                //BindDeductionTypes();
                                 getTreatmentDischarge();
                                 BindGrid_PrimaryDiagnosis();
                                 getClaimQuery(Session["ClaimId"].ToString());
@@ -852,7 +904,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         catch (Exception ex)
         {
             lblError.Text = "An error occurred while retrieving hospital details: " + ex.Message;
-            throw;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
         finally
         {
@@ -917,52 +974,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    protected void btnAddDeduction_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            decimal finalDeductedAmount = 0;
-            if (hdRoleId.Value == "9")
-            {
-                decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-                //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
-                decimal totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.ToString().Trim());
-                finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
 
-                if (finalDeductedAmount < 0)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
-                    return;
-                }
-                lbFinalAmount.Text = finalDeductedAmount.ToString();
 
-            }
-            else if (hdRoleId.Value == "10")
-            {
-                decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-                //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
-                decimal totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.ToString().Trim());
-                finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-
-                if (finalDeductedAmount < 0)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
-                    return;
-                }
-                lbFinalAmount.Text = finalDeductedAmount.ToString();
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-        }
-    }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
         try
@@ -978,25 +991,59 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             roleName = cpd.GetUserRole(userId);
             string caseNo = Session["CaseNumber"].ToString();
             long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
-            string deductionType = dropDeductionTypeACO.SelectedItem.Value;
+            //string deductionType = dropDeductionTypeACO.SelectedItem.Value;
             string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
+            if (string.IsNullOrWhiteSpace(remarks))
+            {
+                strMessage = "window.alert('Remarks is required.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                return; // Stop execution
+            }
+            if (!TextboxValidation.isAlphaNumeric(remarks))
+            {
+                strMessage = "window.alert('Invalid remarks entered. Please enter only alphanumeric characters.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                return; // Stop execution
+            }
             decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.Trim());
+            if (!decimal.TryParse(tbFinalAmountByAco.Text.Trim(), out totalFinalAmountByAco))
+            {
+                strMessage = "window.alert('Invalid Final Approved Amount.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                return; // Stop execution
+            }
             decimal totalClaimAmount = 0;
             if (hdRoleId.Value == "9")
             {
                 totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.Trim());
-
-
+                if (!decimal.TryParse(lbpnlInsuranceAmount.Text.Trim(), out totalClaimAmount))
+                {
+                    strMessage = "window.alert('Invalid Total Claim Amount.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    return; // Stop execution
+                }
             }
             else if (hdRoleId.Value == "10")
             {
                 totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.Trim());
+                if (!decimal.TryParse(lbpnlTrustAmount.Text.Trim(), out totalClaimAmount))
+                {
+                    strMessage = "window.alert('Invalid Total Claim Amount.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    return; // Stop execution
+                }
             }
             decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
+            if (finalDeductedAmount < 0)
+            {
+                strMessage = "window.alert('Deduction cannot exceed total claim amount.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                return; // Stop execution
+            }
             lbFinalAmount.Text = finalDeductedAmount.ToString();
             if (finalDeductedAmount > 0)
             {
-                aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks, deductionType);
+                aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks);
             }
             // Save the deduction amount to the database
             long actionId = Convert.ToInt64(actionType.SelectedValue);
@@ -1029,6 +1076,8 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 default:
                     lblError.Text = "Invalid action selected.";
                     lblError.Visible = true;
+                    strMessage = "window.alert('Claim action is required.');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
                     break;
             }
         }
@@ -1040,7 +1089,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
     protected void DoAction(long claimId, long userId, long actionId, string queryReasonId, string querySubReasonId, string rejectReasonId, string remarks, int? totalFinalAmountByAco)
@@ -1081,6 +1129,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             lblError.Text = "Error processing action: " + ex.Message;
             lblError.Visible = true;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
         finally
         {
@@ -1101,7 +1155,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error: " + ex.Message);
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     private void BindQueryReason()
@@ -1117,7 +1176,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error: " + ex.Message);
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     private void BindQuerySubReason(string ReasonId)
@@ -1133,7 +1197,12 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error: " + ex.Message);
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)
@@ -1180,7 +1249,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
     protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
@@ -1198,7 +1266,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
     protected void lnkClaimTab_Click(object sender, EventArgs e)
@@ -1237,7 +1304,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
     protected void btnPastHistory_Click(object sender, EventArgs e)
@@ -1264,7 +1330,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
     protected void btnPreauth_Click(object sender, EventArgs e)
@@ -1291,7 +1356,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1319,7 +1383,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1358,7 +1421,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1386,7 +1448,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1414,7 +1475,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1442,7 +1502,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1470,7 +1529,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1498,7 +1556,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1526,7 +1583,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
         }
     }
 
@@ -1550,6 +1606,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1574,6 +1634,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1598,70 +1662,111 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     protected void gridPostInvestigationDocument_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewPostInvestigationDocument = (Button)e.Row.FindControl("btnViewPostInvestigationDocument");
-            if (string.IsNullOrEmpty(uploadedFileName))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewPostInvestigationDocument.Text = "No Document";
-                btnViewPostInvestigationDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewPostInvestigationDocument.Enabled = false;
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewPostInvestigationDocument = (Button)e.Row.FindControl("btnViewPostInvestigationDocument");
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewPostInvestigationDocument.Text = "No Document";
+                    btnViewPostInvestigationDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewPostInvestigationDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewPostInvestigationDocument.Text = "View Document";
+                    btnViewPostInvestigationDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewPostInvestigationDocument.Enabled = true;
+                }
             }
-            else
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
             {
-                btnViewPostInvestigationDocument.Text = "View Document";
-                btnViewPostInvestigationDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewPostInvestigationDocument.Enabled = true;
+                con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     protected void gridSpecialInvestigation_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewDocument = (Button)e.Row.FindControl("btnViewDocument");
-            if (string.IsNullOrEmpty(uploadedFileName))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewDocument.Text = "No Document";
-                btnViewDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewDocument.Enabled = false;
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewDocument = (Button)e.Row.FindControl("btnViewDocument");
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewDocument.Text = "No Document";
+                    btnViewDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewDocument.Text = "View Document";
+                    btnViewDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewDocument.Enabled = true;
+                }
             }
-            else
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
             {
-                btnViewDocument.Text = "View Document";
-                btnViewDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewDocument.Enabled = true;
+                con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
     protected void gridDischargeDocument_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
-            if (string.IsNullOrEmpty(uploadedFileName))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnViewDischargeDocument.Text = "No Document";
-                btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewDischargeDocument.Enabled = false;
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewDischargeDocument = (Button)e.Row.FindControl("btnViewDischargeDocument");
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewDischargeDocument.Text = "No Document";
+                    btnViewDischargeDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewDischargeDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewDischargeDocument.Text = "View Document";
+                    btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewDischargeDocument.Enabled = true;
+                }
             }
-            else
+
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
             {
-                btnViewDischargeDocument.Text = "View Document";
-                btnViewDischargeDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewDischargeDocument.Enabled = true;
+                con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     public void getPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
@@ -1684,38 +1789,54 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
     protected void gridManditoryDocument_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
-            Button btnViewMandateDocument = (Button)e.Row.FindControl("btnViewMandateDocument");
-            Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
-            string DocumentFor = lbDocumentFor.Text.ToString();
-            if (DocumentFor == "1")
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                lbDocumentFor.Text = "Pre Investigation";
+                var uploadedFileName = DataBinder.Eval(e.Row.DataItem, "UploadedFileName") as string;
+                Button btnViewMandateDocument = (Button)e.Row.FindControl("btnViewMandateDocument");
+                Label lbDocumentFor = (Label)e.Row.FindControl("lbDocumentFor");
+                string DocumentFor = lbDocumentFor.Text.ToString();
+                if (DocumentFor == "1")
+                {
+                    lbDocumentFor.Text = "Pre Investigation";
+                }
+                else
+                {
+                    lbDocumentFor.Text = "Post Investigation";
+                }
+                if (string.IsNullOrEmpty(uploadedFileName))
+                {
+                    btnViewMandateDocument.Text = "No Document";
+                    btnViewMandateDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
+                    btnViewMandateDocument.Enabled = false;
+                }
+                else
+                {
+                    btnViewMandateDocument.Text = "View Document";
+                    btnViewMandateDocument.CssClass = "btn btn-success btn-sm rounded-pill";
+                    btnViewMandateDocument.Enabled = true;
+                }
             }
-            else
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
             {
-                lbDocumentFor.Text = "Post Investigation";
+                con.Close();
             }
-            if (string.IsNullOrEmpty(uploadedFileName))
-            {
-                btnViewMandateDocument.Text = "No Document";
-                btnViewMandateDocument.CssClass = "btn btn-warning btn-sm rounded-pill";
-                btnViewMandateDocument.Enabled = false;
-            }
-            else
-            {
-                btnViewMandateDocument.Text = "View Document";
-                btnViewMandateDocument.CssClass = "btn btn-success btn-sm rounded-pill";
-                btnViewMandateDocument.Enabled = true;
-            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -1743,6 +1864,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1772,6 +1897,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1803,6 +1932,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1834,6 +1967,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1929,6 +2066,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1953,6 +2094,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
@@ -1960,23 +2105,35 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
 
     protected void gridClaimQuery_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowType == DataControlRowType.DataRow)
+        try
         {
-            Button btnClaimViewAudit = (Button)e.Row.FindControl("btnClaimViewAudit");
-            Label lbClaimIsQueryReplied = (Label)e.Row.FindControl("lbClaimIsQueryReplied");
-            string IsQueryReplied = lbClaimIsQueryReplied.Text.ToString();
-            if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                btnClaimViewAudit.Text = "View Audit";
-                btnClaimViewAudit.Enabled = true;
-                btnClaimViewAudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+                Button btnClaimViewAudit = (Button)e.Row.FindControl("btnClaimViewAudit");
+                Label lbClaimIsQueryReplied = (Label)e.Row.FindControl("lbClaimIsQueryReplied");
+                string IsQueryReplied = lbClaimIsQueryReplied.Text.ToString();
+                if (IsQueryReplied != null && !IsQueryReplied.Equals("0"))
+                {
+                    btnClaimViewAudit.Text = "View Audit";
+                    btnClaimViewAudit.Enabled = true;
+                    btnClaimViewAudit.CssClass = "btn btn-primary btn-sm rounded-pill";
+                }
+                else
+                {
+                    btnClaimViewAudit.Text = "Query Pending";
+                    btnClaimViewAudit.Enabled = false;
+                    btnClaimViewAudit.CssClass = "btn btn-warning btn-sm rounded-pill";
+                }
             }
-            else
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
             {
-                btnClaimViewAudit.Text = "Query Pending";
-                btnClaimViewAudit.Enabled = false;
-                btnClaimViewAudit.CssClass = "btn btn-warning btn-sm rounded-pill";
+                con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
 
@@ -2005,6 +2162,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         }
         catch (Exception ex)
         {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
             md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }

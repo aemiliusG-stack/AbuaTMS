@@ -18,6 +18,7 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     CPD cpd = new CPD();
     ACOHelper aco = new ACOHelper();
     string pageName;
+    MasterData md = new MasterData();
     protected void Page_Load(object sender, EventArgs e)
     {
         if (Session["UserId"] == null)
@@ -55,7 +56,11 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
         }
         catch (Exception ex)
         {
-
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
@@ -63,29 +68,30 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     {
         try
         {
-            using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetAllHospitalTypesFromExcelHospital", con))
+            dt = aco.GetAllHospitalType(); // Use the class method to get the hospital list
+            if (dt != null && dt.Rows.Count > 0)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                DataTable dt = new DataTable();
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                {
-                    adapter.Fill(dt);
-                }
                 ddlHospitalType.DataSource = dt;
-                ddlHospitalType.DataTextField = "HospitalType";
-                ddlHospitalType.DataValueField = "HospitalType";
+                ddlHospitalType.DataTextField = "Title";
+                ddlHospitalType.DataValueField = "Id";
                 ddlHospitalType.DataBind();
+                ddlHospitalType.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                ddlHospitalType.Items.Clear();
+                ddlHospitalType.Items.Add(new ListItem("---select---", ""));
             }
         }
-        finally
+        catch (Exception ex)
         {
             if (con.State == ConnectionState.Open)
             {
                 con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
-        ddlHospitalType.Items.Insert(0, new ListItem("---select---", ""));
     }
     protected void btnSearch_Click(object sender, EventArgs e)
     {
@@ -119,6 +125,12 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
             // Handle and display any errors
             lblError.Text = "An error occurred: " + ex.Message;
             lblError.Visible = true;
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
         finally
         {
@@ -160,20 +172,36 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
         }
         catch (Exception ex)
         {
-
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
             Response.Redirect("~/Unauthorize.aspx", false);
-            return;
         }
     }
     protected void btnReset_Click(object sender, EventArgs e)
     {
-        tbCaseNumber.Text = string.Empty;
-        tbBeneficiaryNo.Text = string.Empty;
-        //ddlHospitals.SelectedIndex = 0;
-        ddlHospitalType.SelectedIndex = 0;
-        //DropDownListDistricts.SelectedIndex = 0;
-        //GridView1.DataSource = null;
-        //GridView1.DataBind();
-        lblError.Visible = false;
+        try
+        {
+            tbCaseNumber.Text = string.Empty;
+            tbBeneficiaryNo.Text = string.Empty;
+            //ddlHospitals.SelectedIndex = 0;
+            ddlHospitalType.SelectedIndex = 0;
+            //DropDownListDistricts.SelectedIndex = 0;
+            //GridView1.DataSource = null;
+            //GridView1.DataBind();
+            lblError.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            if (con.State == ConnectionState.Open)
+            {
+                con.Close();
+            }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+       
     }
 }

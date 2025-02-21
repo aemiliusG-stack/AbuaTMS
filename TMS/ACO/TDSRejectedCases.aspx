@@ -12,6 +12,7 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
+    <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox">

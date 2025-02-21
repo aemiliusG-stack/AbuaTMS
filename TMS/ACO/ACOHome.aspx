@@ -1,271 +1,271 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ACO/ACO.master" AutoEventWireup="true" CodeFile="ACOHome.aspx.cs" Inherits="ACO_ACOHome" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
-    <script type="text/javascript">
-        window.onload = function () {
-            var today = new Date().toISOString().split('T')[0];
-            document.getElementById('<%= tbToDate.ClientID %>').setAttribute('max', today);
-        };
-    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <style>
+        .btn-search-icon::before {
+            font-family: 'Font Awesome 5 Free';
+            content: '\f002'; /* Unicode for search icon */
+            margin-right: 5px;
+            font-weight: 900;
+        }
+    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="Server">
-    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" /></asp:ScriptManager>
-    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <ContentTemplate>
-            <div class="row">
-                <div class="col-lg-12">
-                    <form role="form" id="CPDCaseSearchForm">
-                        <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                            <div class="d-flex w-100 justify-content-center position-relative">
-                                <h3 class="m-0">Case Search</h3>
-                            </div>
+    <asp:HiddenField ID="hdUserId" runat="server" Visible="false" />
+    <asp:HiddenField ID="hdRoleId" runat="server" Visible="false" />
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title d-flex justify-content-between text-white align-items-center">
+                    <h4 class="m-0">Dashboard</h4>
+                </div>
+                <div class="ibox-content p-4 bg-light">
+                    <div class="row mb-3">
+                        <!-- Scheme -->
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Scheme <span style="color: red;">*</span></label>
+                            <asp:DropDownList ID="ddlScheme" runat="server" CssClass="form-control">
+                                <asp:ListItem Text="MSBY(P)" Value="MSBY(P)"></asp:ListItem>
+                            </asp:DropDownList>
                         </div>
-                        <div class="ibox-content">
-                            <div class="ibox">
-                                <div class="ibox-content text-dark">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Case Number</span>
-                                            <asp:TextBox ID="tbCaseNumber" runat="server" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Beneficiary Card Number</span>
-                                            <asp:TextBox ID="tbCardNumber" runat="server" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Patient State</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddPatientState" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropCPDPatientState" OnSelectedIndexChanged="dropPatientState_SelectedIndexChanged"></asp:DropDownList>
-                                        </div>
-
-                                        <div class="col-md-3">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">District</span><br />
-                                            <asp:DropDownList ID="ddPatientDistrict" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropCPDDistrict"></asp:DropDownList>
-                                        </div>
-
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Case Type</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddCaseType" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropCPDCaseType">
-                                                <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                                <asp:ListItem Text="Insurer" Value="1"></asp:ListItem>
-                                                <asp:ListItem Text="Trust" Value="2"></asp:ListItem>
-                                                <asp:ListItem Text="All" Value="3"></asp:ListItem>
-                                            </asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Scheme</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddScheme" runat="server" class="form-control">
-                                                <asp:ListItem Text="ABUA-JHARKHAND" Value="1" Selected="True" />
-                                            </asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Hospital State</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddHospitalState" runat="server" class="form-control" OnSelectedIndexChanged="dropHospitalState_SelectedIndexChanged" AutoPostBack="True" ControlToValidate="dropCPDHospitalState"></asp:DropDownList>
-
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Hospital Name</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddHospitalName" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropHospitalName"></asp:DropDownList>
-                                        </div>
-
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Category</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddCategory" runat="server" class="form-control" OnSelectedIndexChanged="ddCategory_SelectedIndexChanged" AutoPostBack="True" ControlToValidate="ddCategor"></asp:DropDownList>
-                                            <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Procedure Name</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddProcedureName" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropProcedureName"></asp:DropDownList>
-                                            <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>
-
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Case Status</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddCaseStatus" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropCaseStatus"></asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Policy Period</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddPolicyPeriod" runat="server" class="form-control" AutoPostBack="True">
-                                                <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                                <asp:ListItem Text="PS-1" Value="1"></asp:ListItem>
-                                            </asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">UTR</span><span class="text-danger">*</span><br />
-                                            <asp:TextBox ID="tbUTR" runat="server" CssClass="form-control" OnKeyPress="return isAlphaNumeric(event)"></asp:TextBox>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Hospital District</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddHospitalDistrict" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropHospitalDistrict"></asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Record Period</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddRecordPeriod" runat="server" class="form-control" AutoPostBack="True" ControlToValidate="dropRecordPeriod"></asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Special Case</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddSpecialCase" runat="server" class="form-control" AutoPostBack="True">
-                                                <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                                <asp:ListItem Text="Yes" Value="1"></asp:ListItem>
-                                                <asp:ListItem Text="No" Value="2"></asp:ListItem>
-                                            </asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">Advance Search Parameter</span><span class="text-danger">*</span><br />
-                                            <asp:DropDownList ID="ddSearchParameter" runat="server" class="form-control" AutoPostBack="True">
-                                                <asp:ListItem Text="--Select--" Value="0"></asp:ListItem>
-                                                <asp:ListItem Text="Discharge Date" Value="1"></asp:ListItem>
-                                                <asp:ListItem Text="Surgery Date" Value="2"></asp:ListItem>
-                                                <asp:ListItem Text="Preauth Initiation Date" Value="3"></asp:ListItem>
-                                                <asp:ListItem Text="Registered Date" Value="4"></asp:ListItem>
-                                                <asp:ListItem Text="Claim Date" Value="5"></asp:ListItem>
-                                                <asp:ListItem Text="Preauth Approved Date" Value="6"></asp:ListItem>
-                                            </asp:DropDownList>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">From Date</span><span class="text-danger">*</span><br />
-                                            <asp:TextBox ID="tbFromDate" runat="server" CssClass="form-control" OnKeyPress="return isDate(event)" TextMode="Date"></asp:TextBox>
-                                        </div>
-                                        <div class="col-md-3 mt-2">
-                                            <span class="form-label fw-semibold" style="font-size: 14px; font-weight: bold;">To Date</span><span class="text-danger">*</span><br />
-                                            <asp:TextBox ID="tbToDate" runat="server" CssClass="form-control" OnKeyPress="return isDate(event)" TextMode="Date"></asp:TextBox>
-                                        </div>
-                                        <div class="col-md-6 mt-2">
-                                            <p class="m-0 text-danger">Note: Report will be generated for maximum of 90 days.</p>
-                                        </div>
-                                        <div class="text-center mt-5">
-                                            <asp:LinkButton ID="btnCPDSearch" runat="server" CssClass="btn btn-success rounded-pill" OnClick="btnCPDSearch_Click">
-                                                <i class="bi bi-search"></i>Search
-                                            </asp:LinkButton>
-                                            <asp:LinkButton ID="btnCPDReset" runat="server" CssClass="btn btn-warning rounded-pill" OnClick="btnCPDReset_Click1">
-                                                <i class="bi bi-arrow-counterclockwise"></i>Reset
-                                            </asp:LinkButton>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Policy Period -->
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Policy Period<span style="color: red;">*</span></label>
+                            <asp:DropDownList ID="ddPolicyPeriod" runat="server" CssClass="form-control">
+                                <asp:ListItem Text="---select---" Value=""></asp:ListItem>
+                            </asp:DropDownList>
                         </div>
-                    </form>
-                    <div class="form-group  row">
-                        <div class="col-md-12">
-                            <asp:Label ID="lbRecordCount" runat="server" Text="Total No Records:" class="card-title fw-bold"></asp:Label>
-                            <div class="table-responsive mt-2">
-                                <div style="overflow-x: auto; white-space: nowrap;">
-                                    <asp:GridView ID="gvCaseSearch" runat="server" AutoGenerateColumns="False" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Both" Width="100%" OnPageIndexChanging="gridCaseSearch_PageIndexChanging" OnRowDataBound="gvCaseSearch_RowDataBound">
-                                        <AlternatingRowStyle BackColor="Gainsboro" />
-                                        <Columns>
-                                            <asp:TemplateField HeaderText="S.No.">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbSlNo" runat="server" Text='<%# Container.DataItemIndex + 1 %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Left" VerticalAlign="Middle" Width="2%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Case No">
-                                                <ItemTemplate>
-                                                    <asp:HyperLink ID="hyperlinkCaseNo" runat="server"
-                                                        Text='<%# Eval("CaseNumber") %>'
-                                                        NavigateUrl='<%# "ACOCaseSearchPatientDetail.aspx?CaseNo=" + Eval("CaseNumber") %>' />
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="5%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Claim No">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbClaimNo" runat="server" Text='<%# Eval("ClaimNumber") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Patient Name">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbPatientName" runat="server" Text='<%# Eval("PatientName") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Contact No">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbContactNo" runat="server" Text='<%# Eval("ContactNumber") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Beneficiary Card Number">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbBeneficiaryNo" runat="server" Text='<%# Eval("BeneficiaryCardNo") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Case Status">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbCaseStatus" runat="server" Text='<%# Eval("CaseStatus") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Hospital Name">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbHospitalName" runat="server" Text='<%# Eval("HospitalName") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Patient Registration Date">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbPatientRegDate" runat="server" Text='<%# Eval("PatientRegistrationDate") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-
-                                            <asp:TemplateField HeaderText="Case Registration Date">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbCaseRegDate" runat="server" Text='<%# Eval("CaseRegistrationDate") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Category">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbCategory" runat="server" Text='<%# Eval("SpecialityName") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Procedure Name">
-                                                <ItemTemplate>
-                                                    <asp:Label ID="lbProcedureName" runat="server" Text='<%# Eval("ProcedureName") %>'></asp:Label>
-                                                </ItemTemplate>
-                                                <HeaderStyle BackColor="#1E8C86" Font-Bold="True" ForeColor="White" />
-                                                <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" Width="10%" />
-                                            </asp:TemplateField>
-                                        </Columns>
-                                    </asp:GridView>
-                                </div>
+                        <!-- Search and Reset Buttons -->
+                        <div class="row mt-3">
+                            <div class="col-md-12 text-center" style="margin-top: 10px;">
+                                <%--<asp:Button ID="btnSearch" runat="server" CssClass="btn btn-success rounded-pill" Text="Search" />--%>
+                                <asp:LinkButton ID="LinkButton1" runat="server" CssClass="btn btn-success rounded-pill">
+                                        <i class="fas fa-search"></i> Search
+                                </asp:LinkButton>
+                                <%--<asp:Button ID="Button1" runat="server" CssClass="btn btn-success rounded-pill" Text="Search" OnClick="btnSearch_Click" />--%>
                             </div>
                         </div>
                     </div>
-                    <asp:Panel ID="paginationPanel" runat="server" Visible="false">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-end">
-                                <li class="page-item disabled">
-                                    <a class="page-link">Previous</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </asp:Panel>
+                    <!-- Error Message -->
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <asp:Label ID="lblError" runat="server" CssClass="text-danger" Visible="False"></asp:Label>
+                        </div>
+                    </div>
+                    <!-- Information Message -->
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <span>Please use any search criteria along with Scheme to fetch data.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-            </div>
-        </ContentTemplate>
-    </asp:UpdatePanel>
+        </div>
+    </div>
+    <div class="ibox mt-4">
+        <div class="ibox-title text-center">
+            <h3 class="text-white">
+                <asp:Label ID="lbTitle" runat="server" Text="Pendency Dashboard"></asp:Label>
+            </h3>
+        </div>
+        <div class="ibox-content table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr class="table-primary text-center">
+                        <%--<th scope="col" style="background-color: #007e72; color: white;">S.No</th>--%>
+                        <th scope="col" style="background-color: #007e72; color: white;">Role</th>
+                        <th scope="col" style="background-color: #007e72; color: white;">Today</th>
+                        <th scope="col" style="background-color: #007e72; color: white;">Overall</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    <!-- Preauth Panel Doctor Insurer -->
+                   <%-- <tr>
+                        <td>
+                            <asp:Label ID="lbPreauthPanelDoctorInsurer" runat="server" Text="Preauth Panel Doctor Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>--%>
+                    <!-- Preauth Panel Doctor trust -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="Label1" runat="server" Text="Preauth Panel Doctor Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Preauth Panel Doctor Insurer (Assigned) -->
+                    <%--<tr>
+                        <td>
+                            <asp:Label ID="lbPreauthPanelDoctorInsurerAssigned" runat="server" Text="Preauth Panel Doctor Insurer (Assigned)"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorInsurerAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>--%>
+                    <!-- Preauth Panel Doctor Trust(Assigned) -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbPreauthPanelDoctorTrust" runat="server" Text="Preauth Panel Doctor Trust (Assigned)"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbPreauthPanelDoctorTrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Executive Officer Insurer -->
+                    <%--<tr>
+                        <td>
+                            <asp:Label ID="lbClaimExecutiveInsurer" runat="server" Text="Claim Executive Officer Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>--%>
+                    <!-- Claim Executive Officer TRUST -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimExecutiveTrust" runat="server" Text="Claim Executive Officer Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveTrustToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimExecutiveTrustOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Panel Doctor Insurer -->
+                    <%--<tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorInsurer" runat="server" Text="Claim Panel Doctor Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>--%>
+                    <!-- Claim Panel Doctor Insurer (Assigned) -->
+                    <%--<tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorInsurerAssigned" runat="server" Text="Claim Panel Doctor Insurer (Assigned)"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorInsurerAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>--%>
+                    <!-- Claim Panel Doctor Trust (Assigned)-->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorTrustAssigned" runat="server" Text="Claim Panel Doctor Trust(Assigned) "></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Claim Panel Doctor Trust -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbClaimPanelDoctorTrust" runat="server" Text="Claim Panel Doctor Trust "></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbClaimPanelDoctorTrustOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- Account Claim Officer Insurer -->
+                    <%--<tr>
+                        <td>
+                            <asp:Label ID="lbACOInsurer" runat="server" Text="Account Claim Officer Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>--%>
+                    <!-- Account Claim Officer Trsut -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbACOTrust" runat="server" Text="Account Claim Officer Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOTrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbACOTrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                    <!-- SHA Insurer -->
+                    <%--<tr>
+                        <td>
+                            <asp:Label ID="lbSHAInsurer" runat="server" Text="SHA Insurer"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHAInsurerToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHAInsurerOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>--%>
+                    <!-- SHA Trsut -->
+                    <tr>
+                        <td>
+                            <asp:Label ID="lbSHATrust" runat="server" Text="SHA Trust"></asp:Label></td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHATrustAssignedToday" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                        <td>
+                            <h4>
+                                <asp:Label ID="lbSHATrustAssignedOverall" runat="server" Text="0"></asp:Label></h4>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </asp:Content>
+
 

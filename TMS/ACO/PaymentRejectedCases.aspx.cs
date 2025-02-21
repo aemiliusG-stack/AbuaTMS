@@ -10,89 +10,90 @@ public partial class ACO_PaymentRejectedCases : System.Web.UI.Page
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
+    ACOHelper aco = new ACOHelper();
+    MasterData md = new MasterData();
+    string pageName;
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
+            hdUserId.Value = Session["UserId"].ToString();
+            pageName = System.IO.Path.GetFileName(Request.Url.AbsolutePath);
             LoadHospitals();
+            //BindGridView();
         }
     }
     private void LoadHospitals()
     {
         try
         {
-            //using (SqlCommand cmd = new SqlCommand("sp_GetAllHospitalsFromExcelHospital", con))
-            using (SqlCommand cmd = new SqlCommand("TMS_ACO_HospitalNamelist", con))
+            DataTable dt = new DataTable();
+            dt = aco.GetAllHospitalNameList(); // Use the class method to get the hospital list
+            if (dt != null && dt.Rows.Count > 0)
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                DataTable dt = new DataTable();
-                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                {
-                    adapter.Fill(dt);
-                }
                 ddlHospitals.DataSource = dt;
                 ddlHospitals.DataTextField = "HospitalName";
                 ddlHospitals.DataValueField = "HospitalId";
                 ddlHospitals.DataBind();
+                ddlHospitals.Items.Insert(0, new ListItem("--SELECT--", "0"));
+            }
+            else
+            {
+                ddlHospitals.Items.Clear();
+                ddlHospitals.Items.Add(new ListItem("---select---", ""));
             }
         }
-        finally
+        catch (Exception ex)
         {
             if (con.State == ConnectionState.Open)
             {
                 con.Close();
             }
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
         }
-        ddlHospitals.Items.Insert(0, new ListItem("---select---", ""));
     }
     protected void btnSearch_Click(object sender, EventArgs e)
     {
-        lblError.Visible = false; // Hide error label at the beginning of the method
-
+        BindGridView();
+    }
+    private void BindGridView()
+    {
         try
         {
             var hospitalId = string.IsNullOrEmpty(ddlHospitals.SelectedValue) ? DBNull.Value : (object)ddlHospitals.SelectedValue;
             using (SqlCommand cmd = new SqlCommand("TMS_ACO_GetHospitalPaymentRejectedCases", con))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@BasicHospitalId", ddlHospitals.SelectedValue == "" ? DBNull.Value : (object)ddlHospitals.SelectedValue);
+                cmd.Parameters.AddWithValue("@BasicHospitalId", hospitalId);
                 cmd.Parameters.AddWithValue("@RejectedFromDate", string.IsNullOrEmpty(tbRegisteredFromDate.Text) ? (object)DBNull.Value : DateTime.Parse(tbRegisteredFromDate.Text));
                 cmd.Parameters.AddWithValue("@RejectedToDate", string.IsNullOrEmpty(TextBox1.Text) ? (object)DBNull.Value : DateTime.Parse(TextBox1.Text));
                 cmd.Parameters.AddWithValue("@Scheme", ddlScheme.SelectedValue);
-
                 con.Open();
                 DataTable dt = new DataTable();
-
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                 {
                     adapter.Fill(dt);
                 }
-                // Debug: Output column names to verify presence of "CaseNumber" and other expected columns
-                System.Diagnostics.Debug.WriteLine("Columns in DataTable:");
-                foreach (DataColumn column in dt.Columns)
-                {
-                    System.Diagnostics.Debug.WriteLine(column.ColumnName);
-                }
-                // Check if any rows are returned
+
                 if (dt.Rows.Count == 0)
                 {
                     lblError.Text = "No records found.";
                     lblError.Visible = true;
-                    rptClaimCases.DataSource = null;
-                    rptClaimCases.DataBind();
+                    panelNoData.Visible = true;
+                    GridView1.DataSource = null;
+                    GridView1.DataBind();
                 }
                 else
                 {
-                    // Clear any previous data bindings and bind the new data
-                    rptClaimCases.DataSource = dt;
-                    rptClaimCases.DataBind();
+                    panelNoData.Visible = false;
+                    GridView1.DataSource = dt;
+                    GridView1.DataBind();
                 }
             }
         }
         catch (Exception ex)
         {
-            // Display error message in case of an exception
             lblError.Text = "An error occurred: " + ex.Message;
             lblError.Visible = true;
         }
@@ -105,6 +106,14 @@ public partial class ACO_PaymentRejectedCases : System.Web.UI.Page
         }
     }
 
+    protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        // Change the page index to the selected page
+        GridView1.PageIndex = e.NewPageIndex;
+
+        // Rebind the data to reflect the new page
+        BindGridView(); // This is the method to bind data to GridView (if you don't have it, create one)
+    }
     protected void btnReset_Click(object sender, EventArgs e)
     {
         ddlHospitals.SelectedIndex = 0;
@@ -112,7 +121,5 @@ public partial class ACO_PaymentRejectedCases : System.Web.UI.Page
         TextBox1.Text = "";
         ddlScheme.SelectedIndex = 0;
         lblError.Visible = false;
-        rptClaimCases.DataSource = null;
-        rptClaimCases.DataBind();
     }
 }

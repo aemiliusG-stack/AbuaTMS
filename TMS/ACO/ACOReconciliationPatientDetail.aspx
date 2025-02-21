@@ -6,7 +6,7 @@
     <style>
     </style>
     <script type="text/javascript">
-        function toggleRemarks() {
+       <%-- function toggleRemarks() {
             debugger;
             var actionTypeDropdown = document.getElementById('<%= actionType.ClientID %>');
             var remarksSection = document.getElementById('remarksSection');
@@ -16,7 +16,7 @@
             } else {
                 remarksSection.style.display = 'none'; // Hide the remarks section
             }
-        }
+        }--%>
 
         function showModal() {
             $('#contentModal').modal('hide');
@@ -1885,7 +1885,7 @@
                             </div>
                             <!-- Action Type -->
                             <%-- <asp:Panel ID="pnlActionType" runat="server">--%>
-                            <div class="panel panel-default">
+                            <%--<div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4>Action Type</h4>
                                 </div>
@@ -1917,7 +1917,16 @@
                                     </div>
                                     <asp:Button ID="submitButton" runat="server" Text="Submit" CssClass="btn btn-primary" OnClick="btnSubmit_Click" AutoPostBack="True" />
                                 </div>
-                            </div>
+                            </div>--%>
+                           <%-- <div class="col-md-3 mb-3">
+                                <div class="form-group">
+                                    <asp:Label ID="ibActionType" runat="server" CssClass="form-label font-weight-bold text-dark" Text="Action Type"></asp:Label>
+                                    <asp:DropDownList ID="actionType" runat="server" CssClass="form-control" AutoPostBack="true">
+                                        <asp:ListItem Value="0">Select</asp:ListItem>
+                                        <asp:ListItem Value="1">Forward</asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+                            </div>--%>
                             <%--</asp:Panel>--%>
                         </div>
                     </asp:View>
