@@ -15,7 +15,6 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     DataTable dt = new DataTable();
     DataSet ds = new DataSet();
-    CPD cpd = new CPD();
     ACOHelper aco = new ACOHelper();
     string pageName;
     MasterData md = new MasterData();
@@ -38,7 +37,7 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
     {
         try
         {
-            dt = cpd.GetSpecialityName();
+            dt = aco.GetSpecialityName();
             if (dt != null && dt.Rows.Count > 0)
             {
                 ddCategory.Items.Clear();
@@ -148,7 +147,7 @@ public partial class ACO_ReconciliationClaimCasesforApproval : System.Web.UI.Pag
             int packageId;
             if (int.TryParse(ddCategory.SelectedValue, out packageId))
             {
-                dt = cpd.GetProcedureName(packageId);
+                dt = aco.GetProcedureName(packageId);
                 if (dt.Rows.Count > 0)
                 {
                     ddProcedureName.Items.Clear();

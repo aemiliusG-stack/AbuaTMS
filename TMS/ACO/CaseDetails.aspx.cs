@@ -20,10 +20,6 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     private SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["MyDbConn"].ConnectionString);
     private DataTable dt = new DataTable();
     private DataSet ds = new DataSet();
-    private PreAuth preAuth = new PreAuth();
-    CPD cpd = new CPD();
-    CEX cex = new CEX();
-    public PPDHelper ppdHelper = new PPDHelper();
     MasterData md = new MasterData();
     ACOHelper aco = new ACOHelper();
     string pageName;
@@ -71,7 +67,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cex.getPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.getPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt.Rows.Count > 0)
             {
                 gvPICDDetails_Claim.DataSource = dt;
@@ -98,7 +94,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cpd.GetPatientPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.GetPatientPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gvPICDDetails_Claim.DataSource = dt;
@@ -125,7 +121,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cpd.GetPatientSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.GetPatientSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gvSICDDetails_Claim.DataSource = dt;
@@ -155,7 +151,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             dt.Clear();
             string caseNo = Session["CaseNumber"].ToString();
-            dt = cpd.GetNetworkHospitalDetails(caseNo);
+            dt = aco.GetNetworkHospitalDetails(caseNo);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -186,7 +182,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             string caseNo = Session["CaseNumber"].ToString();
-            dt = cpd.GetTreatmentProtocol(caseNo);
+            dt = aco.GetTreatmentProtocol(caseNo);
 
             gvTreatmentProtocol.DataSource = dt;
             gvTreatmentProtocol.DataBind();
@@ -252,7 +248,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             dt.Clear();
             string claimId = hdClaimId.Value;
-            dt = cpd.GetClaimWorkFlow(claimId);
+            dt = aco.GetClaimWorkFlow(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 dt.Columns.Add("SlNo", typeof(int));
@@ -286,7 +282,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             string caseNo = Session["CaseNumber"].ToString();
-            DataTable dt = cpd.GetAdmissionDetails(caseNo);
+            DataTable dt = aco.GetAdmissionDetails(caseNo);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -339,7 +335,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             string claimId = hdClaimId.Value;
             dt.Clear();
-            dt = cpd.GetTreatmentDischarge(claimId);
+            dt = aco.GetTreatmentDischarge(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -413,33 +409,33 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             decimal totalClaimAmount = 0;
             decimal totalFinalAmountByAco = 0;
+            decimal lbTotalClaimAmount = Convert.ToDecimal(lbTotalClaim.Text.Trim());
             decimal finalDeductedAmount = 0;
+            decimal existingDeductionAmount = 0;
             int parsedUserId;
             int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
             long claimId = Convert.ToInt64(Session["ClaimId"]);
             string remarks = ACORemark.Text.Trim();
             if (string.IsNullOrWhiteSpace(remarks))
             {
-                strMessage = "window.alert('Remarks is required.');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                return; // Stop execution
+                ShowAlert("Remarks is required.");
+                return;
             }
             if (!TextboxValidation.isAlphaNumeric(remarks))
             {
-                strMessage = "window.alert('Invalid remarks entered. Please enter only alphanumeric characters.');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                return; // Stop execution
+                ShowAlert("Invalid remarks entered. Please enter only alphanumeric characters.");
+                return;
             }
             if (!decimal.TryParse(tbFinalAmountByAco.Text.Trim(), out totalFinalAmountByAco))
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid approved amount.');", true);
+                ShowAlert("Invalid approved amount.");
                 return;
             }
             if (hdRoleId.Value == "9") // Insurance Liable
             {
                 if (!decimal.TryParse(lbpnlInsuranceAmount.Text.Trim(), out totalClaimAmount))
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid total claim amount.');", true);
+                    ShowAlert("Invalid total claim amount.");
                     return;
                 }
             }
@@ -447,28 +443,40 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             {
                 if (!decimal.TryParse(lbpnlTrustAmount.Text.Trim(), out totalClaimAmount))
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid total claim amount.');", true);
+                    ShowAlert("Invalid total claim amount.");
                     return;
                 }
             }
-
-            finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-            if (finalDeductedAmount < 0)
+            if (totalFinalAmountByAco > totalClaimAmount || totalFinalAmountByAco <= lbTotalClaimAmount)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
-                return;
-            }
-            else
-            {
+                finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
+                if (finalDeductedAmount < 0)
+                {
+                    ShowAlert("deduction cannot exceed total claim amount.");
+                    return;
+                }
+                // Proceed with update or insert logic
                 dt = aco.GetExistingDeductionAmount(claimId, Convert.ToInt32(Session["RoleId"].ToString()));
                 if (dt.Rows.Count > 0)
                 {
+                    // Retrieve existing deduction amount and add to the new deduction amount
+                    existingDeductionAmount = Convert.ToDecimal(dt.Rows[0]["DeductionAmt"]);
+                    finalDeductedAmount += existingDeductionAmount;
                     aco.UpdateDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks);
                 }
-                aco.InsertDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks);
+                else
+                {
+                    aco.InsertDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks);
+                }
+
+                lbFinalAmount.Text = finalDeductedAmount.ToString("N2");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('ACO Remarks Updated Successfully!');", true);
             }
-            lbFinalAmount.Text = finalDeductedAmount.ToString("N2");
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('ACO Remarks Updated Successfully!');", true);
+            else
+            {
+                ShowAlert("Deduction cannot exceed total claim amount.");
+                return;
+            }
         }
         catch (Exception ex)
         {
@@ -723,7 +731,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             if (!string.IsNullOrEmpty(caseNo))
             {
-                DataTable dtClaimsDetails = cpd.GetClaimsDetails(caseNo);
+                DataTable dtClaimsDetails = aco.GetClaimsDetails(caseNo);
 
                 if (dtClaimsDetails != null && dtClaimsDetails.Rows.Count > 0)
                 {
@@ -869,7 +877,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                                 getTreatmentDischarge();
                                 BindGrid_PrimaryDiagnosis();
                                 getClaimQuery(Session["ClaimId"].ToString());
-                                bool IfSecondaryDiagnosisPresent = cex.IfSecondaryDiagnosisPresent(hdAbuaId.Value, hdPatientRegId.Value);
+                                bool IfSecondaryDiagnosisPresent = aco.IfSecondaryDiagnosisPresent(hdAbuaId.Value, hdPatientRegId.Value);
                                 if (IfSecondaryDiagnosisPresent)
                                 {
                                     pClaimsSD.Visible = true;
@@ -881,7 +889,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                                 string folderName = hdAbuaId.Value;
                                 string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
                                 string base64String = "";
-                                base64String = cex.DisplayImage(folderName, imageFileName);
+                                base64String = aco.DisplayImage(folderName, imageFileName);
                                 if (base64String != "")
                                 {
                                     imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
@@ -925,7 +933,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cex.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt.Rows.Count > 0)
             {
                 gvPraauthSD.DataSource = dt;
@@ -952,7 +960,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cex.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt.Rows.Count > 0)
             {
                 gvSICDDetails_Claim.DataSource = dt;
@@ -974,110 +982,101 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-
-
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
         try
         {
+            decimal existingDeductionAmount = 0;
+            decimal finalApprovedAmount = 0;
+            decimal lbTotalClaimAmount = Convert.ToDecimal(lbTotalClaim.Text.Trim());
+            string acoRemark = "";
+            // Check if UserId is present in session
             if (Session["UserId"] == null)
             {
                 Response.Redirect("~/Unauthorize.aspx", false);
                 return;
             }
-            int parsedUserId;
+            int parsedUserId = 0;
             int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
-            string roleName = "";
-            roleName = cpd.GetUserRole(userId);
             string caseNo = Session["CaseNumber"].ToString();
-            long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
-            //string deductionType = dropDeductionTypeACO.SelectedItem.Value;
-            string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
+            long claimId = Convert.ToInt64(Session["ClaimId"]);
+            string remarks = txtRemarks.Text.Trim();
+            // Action selection handling
+            long actionId = Convert.ToInt64(actionType.SelectedValue);
+            // Validate remarks input
             if (string.IsNullOrWhiteSpace(remarks))
             {
-                strMessage = "window.alert('Remarks is required.');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                return; // Stop execution
+                ShowAlert("Remarks is required.");
+                return;
             }
             if (!TextboxValidation.isAlphaNumeric(remarks))
             {
-                strMessage = "window.alert('Invalid remarks entered. Please enter only alphanumeric characters.');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                return; // Stop execution
+                ShowAlert("Invalid remarks entered. Please enter only alphanumeric characters.");
+                return;
             }
-            decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.Trim());
-            if (!decimal.TryParse(tbFinalAmountByAco.Text.Trim(), out totalFinalAmountByAco))
+            // Validate Final Approved Amount
+            if (!decimal.TryParse(tbFinalAmountByAco.Text.Trim(), out finalApprovedAmount))
             {
-                strMessage = "window.alert('Invalid Final Approved Amount.');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                return; // Stop execution
+                ShowAlert("Invalid Final Approved Amount.");
+                return;
             }
+            // Validate Total Claim Amount based on role
             decimal totalClaimAmount = 0;
-            if (hdRoleId.Value == "9")
+            if (hdRoleId.Value == "9" && !decimal.TryParse(lbpnlInsuranceAmount.Text.Trim(), out totalClaimAmount) ||
+                hdRoleId.Value == "10" && !decimal.TryParse(lbpnlTrustAmount.Text.Trim(), out totalClaimAmount))
             {
-                totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.Trim());
-                if (!decimal.TryParse(lbpnlInsuranceAmount.Text.Trim(), out totalClaimAmount))
+                ShowAlert("Invalid Total Claim Amount.");
+                return;
+            }
+            // Check if the deduction record exists
+            var dt = aco.GetExistingDeductionAmount(claimId, Convert.ToInt32(Session["RoleId"].ToString()));
+            if (dt.Rows.Count > 0)
+            {
+                // If record exists, retrieve existing deduction amount and final approved amount
+                existingDeductionAmount = Convert.ToDecimal(dt.Rows[0]["DeductionAmt"]);
+                finalApprovedAmount = Convert.ToDecimal(dt.Rows[0]["TotalAmtAfterDeduction"]);
+                acoRemark = dt.Rows[0]["Remarks"].ToString();
+            }
+            else
+            {
+                // If no record exists, calculate deduction amount
+                finalApprovedAmount = decimal.TryParse(tbFinalAmountByAco.Text.Trim(), out finalApprovedAmount) ? finalApprovedAmount : 0;
+                decimal noDeductionAmount = finalApprovedAmount - totalClaimAmount;
+                dt = aco.GetExistingDeductionAmountfromClaimMaster(claimId);
+                if (dt.Rows.Count > 0)
                 {
-                    strMessage = "window.alert('Invalid Total Claim Amount.');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    return; // Stop execution
+                    decimal existedDeductionAmount = Convert.ToDecimal(dt.Rows[0]["TrustClaimAmountDeducted"]);
+                    decimal finalDeductionAmount = noDeductionAmount - existedDeductionAmount;
+                    aco.UpdateDeductionAmountInClaimMaster(finalDeductionAmount, claimId);
                 }
             }
-            else if (hdRoleId.Value == "10")
+            // Save the deduction amount if conditions met
+            if (existingDeductionAmount >= 0 && actionId == 2)
             {
-                totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.Trim());
-                if (!decimal.TryParse(lbpnlTrustAmount.Text.Trim(), out totalClaimAmount))
-                {
-                    strMessage = "window.alert('Invalid Total Claim Amount.');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    return; // Stop execution
-                }
+                aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), existingDeductionAmount, finalApprovedAmount, claimId, acoRemark);
             }
-            decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-            if (finalDeductedAmount < 0)
-            {
-                strMessage = "window.alert('Deduction cannot exceed total claim amount.');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                return; // Stop execution
-            }
-            lbFinalAmount.Text = finalDeductedAmount.ToString();
-            if (finalDeductedAmount > 0)
-            {
-                aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks);
-            }
-            // Save the deduction amount to the database
-            long actionId = Convert.ToInt64(actionType.SelectedValue);
             string selectedQueryReasonId = ddlReason.SelectedValue;
             string selectedSubQueryReasonId = ddlSubReason.SelectedValue;
+            // Action handling
             switch (actionId)
             {
                 case 2: // Approve
-                    DoAction(claimId, userId, actionId, " ", "", "", remarks, (int)totalFinalAmountByAco);
-                    //string result = cpd.ExecuteTDSCalculation(Convert.ToInt32(claimId));
-                    strMessage = "window.alert('Claim has been approved by ACO. " + caseNo + "'); window.location.href = 'ClaimUpdation.aspx';";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+                    DoAction(claimId, userId, actionId, " ", "", "", remarks, (int)finalApprovedAmount);
+                    ShowAlert("Claim has been approved by ACO. " + caseNo, "ClaimUpdation.aspx");
                     break;
                 case 5: // Raise Query
-                        //long reasonId = Convert.ToInt64(reasonDropdown.SelectedValue);
-                        //long subReasonId = Convert.ToInt64(subReasonDropdown.SelectedValue);
-                    DoAction(claimId, userId, actionId, selectedQueryReasonId, selectedSubQueryReasonId, null, remarks, (int)totalFinalAmountByAco);
-                    strMessage = "window.alert('Query Raised Successfully.'); window.location.href = 'ClaimUpdation.aspx';";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+                    DoAction(claimId, userId, actionId, selectedQueryReasonId, selectedSubQueryReasonId, null, remarks, (int)finalApprovedAmount);
+                    ShowAlert("Query Raised Successfully.", "ClaimUpdation.aspx");
                     break;
                 case 6: // Reject
                     string rejectReasonId = ddlReason.SelectedItem.Value;
-                    DoAction(claimId, userId, actionId, "", "", rejectReasonId, remarks, (int)totalFinalAmountByAco);
-                    strMessage = "window.alert('Case Rejected Successfully.'); window.location.href = 'ClaimUpdation.aspx';";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
-                    //Response.Redirect("~/ACO/ClaimUpdation.aspx");
+                    DoAction(claimId, userId, actionId, "", "", rejectReasonId, remarks, (int)finalApprovedAmount);
+                    ShowAlert("Case Rejected Successfully.", "ClaimUpdation.aspx");
                     break;
                 default:
                     lblError.Text = "Invalid action selected.";
                     lblError.Visible = true;
-                    strMessage = "window.alert('Claim action is required.');";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+                    ShowAlert("Claim action is required.");
                     break;
             }
         }
@@ -1146,7 +1145,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     {
         try
         {
-            DataTable dt = cpd.GetRejectReason();
+            DataTable dt = aco.GetRejectReason();
             ddlReason.DataSource = dt;
             ddlReason.DataTextField = "RejectName";
             ddlReason.DataValueField = "RejectId";
@@ -1167,7 +1166,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     {
         try
         {
-            DataTable dt = cpd.GetQueryReason();
+            DataTable dt = aco.GetQueryReason();
             ddlReason.DataSource = dt;
             ddlReason.DataTextField = "ReasonName";
             ddlReason.DataValueField = "ReasonId";
@@ -1188,7 +1187,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
     {
         try
         {
-            DataTable dt = cpd.GetQuerySubReason(ReasonId);
+            DataTable dt = aco.GetQuerySubReason(ReasonId);
             ddlSubReason.DataSource = dt;
             ddlSubReason.DataTextField = "SubReasonName";
             ddlSubReason.DataValueField = "SubReasonId";
@@ -1591,7 +1590,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dt = aco.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridManditoryDocument.DataSource = dt;
@@ -1619,7 +1618,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetDischargeDocuments(HospitalId, PatientRegId);
+            dt = aco.GetDischargeDocuments(HospitalId, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridDischargeDocument.DataSource = dt;
@@ -1647,7 +1646,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetPostInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
+            dt = aco.GetPostInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridPostInvestigationDocument.DataSource = dt;
@@ -1769,12 +1768,13 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
     public void getPreInvestigationDocuments(string HospitalId, string CardNumber, string PatientRegId)
     {
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetPreInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
+            dt = aco.GetPreInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridSpecialInvestigation.DataSource = dt;
@@ -1853,7 +1853,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             string fileName = lbFileName.Text + ".jpeg";
             string DocumentName = lbDocumentName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1886,7 +1886,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             string fileName = lbFileName.Text + ".jpeg";
             string DocumentName = lbDocumentName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1921,7 +1921,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             string packageName = lbPackageName.Text;
             string investigationName = lbInvestigationName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1956,7 +1956,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             string packageName = lbPackageName.Text;
             string investigationName = lbInvestigationName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1985,10 +1985,10 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             DataTable dtDischargeDocument = new DataTable();
             DataTable dtPostInvestigationDocument = new DataTable();
             List<string> images = new List<string>();
-            dtSpecialDocument = cex.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
-            dtManditoryDocument = cex.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
-            dtDischargeDocument = cex.GetDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
-            dtPostInvestigationDocument = cex.GetPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtSpecialDocument = aco.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtManditoryDocument = aco.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtDischargeDocument = aco.GetDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtPostInvestigationDocument = aco.GetPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
             if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
             {
                 foreach (DataRow row in dtManditoryDocument.Rows)
@@ -1997,7 +1997,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -2013,7 +2013,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -2029,7 +2029,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -2045,7 +2045,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -2055,7 +2055,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             }
             if (images.Count > 0)
             {
-                byte[] pdfBytes = cex.CreatePdfWithImagesInMemory(images);
+                byte[] pdfBytes = aco.CreatePdfWithImagesInMemory(images);
                 Response.Clear();
                 Response.ContentType = "application/pdf";
                 Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
@@ -2080,7 +2080,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
         {
             string claimId = Session["ClaimId"].ToString();
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetClaimQuery(claimId);
+            dt = aco.GetClaimQuery(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridClaimQuery.DataSource = dt;
@@ -2151,7 +2151,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             string fileName = lbFileName.Text + ".jpeg";
             string DocumentName = lbClaimMainReason.Text.ToString() + " (" + lbClaimSubReason.Text.ToString() + ")";
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -2170,4 +2170,36 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
+
+    protected void btnDeleteDeduction_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            int userId = Convert.ToInt32(Session["UserId"]);  // Get the userId from the session
+            int roleId = Convert.ToInt32(Session["RoleId"]);  // Get the roleId from the session
+            long claimId = Convert.ToInt64(Session["ClaimId"]);  // Get the claimId from the session
+            aco.DeleteDeductionAmount(userId, roleId, claimId);
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction record deleted successfully.');", true);
+            lbFinalAmount.Text = string.Empty;
+            BindACORemarks();
+            //btnReset_Click(sender, e); // Reset the form after deletion
+        }
+        catch (Exception ex)
+        {
+            // Handle errors during deletion
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Error while deleting deduction record.');", true);
+            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
+            Response.Redirect("~/Unauthorize.aspx", false);
+        }
+    }
+    private void ShowAlert(string message, string redirectUrl = "")
+    {
+        strMessage = "window.alert('" + message + "');";
+        if (!string.IsNullOrEmpty(redirectUrl))
+        {
+            strMessage += "window.location.href = '" + redirectUrl + "';";
+        }
+        ScriptManager.RegisterStartupScript(this, GetType(), "AlertMessage", strMessage, true);
+    }
+
 }

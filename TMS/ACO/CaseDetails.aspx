@@ -1701,6 +1701,8 @@
                                                     <asp:TextBox ID="ACORemark" runat="server" TextMode="MultiLine" CssClass="form-control"
                                                         AutoPostBack="true"></asp:TextBox>
                                                     <asp:Button ID="btnAddDeduction" OnClick="btnAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-2" runat="server" Text="Add Deduction" />
+                                                    <asp:Button ID="btnDeleteDeduction" runat="server" OnClick="btnDeleteDeduction_Click" CssClass="btn btn-danger rounded-pill mt-2" Text="Delete Deduction" />
+
                                                 </div>
                                             </div>
                                         </div>

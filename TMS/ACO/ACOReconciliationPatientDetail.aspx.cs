@@ -18,11 +18,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
     DataTable dt = new DataTable();
     DataSet ds = new DataSet();
     MasterData md = new MasterData();
-    private PreAuth preAuth = new PreAuth();
-    CEX cex = new CEX();
-    CPD cpd = new CPD();
     ACOHelper aco = new ACOHelper();
-    public static PPDHelper ppdHelper = new PPDHelper();
     private string caseNo;
     private string claimNo;
     string pageName;
@@ -70,7 +66,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cex.getPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.getPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt.Rows.Count > 0)
             {
                 gvPICDDetails_Claim.DataSource = dt;
@@ -97,7 +93,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cpd.GetPatientPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.GetPatientPrimaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gvPICDDetails_Claim.DataSource = dt;
@@ -124,7 +120,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cpd.GetPatientSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.GetPatientSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gvSICDDetails_Claim.DataSource = dt;
@@ -154,7 +150,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         {
             dt.Clear();
             string caseNo = Session["CaseNumber"].ToString();
-            dt = cpd.GetNetworkHospitalDetails(caseNo);
+            dt = aco.GetNetworkHospitalDetails(caseNo);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -186,7 +182,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             string caseNo = Session["CaseNumber"].ToString();
-            dt = cpd.GetTreatmentProtocol(caseNo);
+            dt = aco.GetTreatmentProtocol(caseNo);
 
             gvTreatmentProtocol.DataSource = dt;
             gvTreatmentProtocol.DataBind();
@@ -269,7 +265,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         {
             dt.Clear();
             string claimId = Session["ClaimId"].ToString();
-            dt = cpd.GetClaimWorkFlow(claimId);
+            dt = aco.GetClaimWorkFlow(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 dt.Columns.Add("SlNo", typeof(int));
@@ -304,7 +300,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             string caseNo = Session["CaseNumber"].ToString();
-            DataTable dt = cpd.GetAdmissionDetails(caseNo);
+            DataTable dt = aco.GetAdmissionDetails(caseNo);
 
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -360,7 +356,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             long claimId2 = Convert.ToInt64(Session["ClaimId"]);
             string claimId = claimId2.ToString();
             dt.Clear();
-            dt = cpd.GetTreatmentDischarge(claimId);
+            dt = aco.GetTreatmentDischarge(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow row = dt.Rows[0];
@@ -703,7 +699,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             }
             if (!string.IsNullOrEmpty(caseNo))
             {
-                DataTable dtClaimsDetails = cpd.GetClaimsDetails(caseNo);
+                DataTable dtClaimsDetails = aco.GetClaimsDetails(caseNo);
 
                 if (dtClaimsDetails != null && dtClaimsDetails.Rows.Count > 0)
                 {
@@ -868,7 +864,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                                 getTreatmentDischarge();
                                 BindGrid_PrimaryDiagnosis();
                                 getClaimQuery(Session["ClaimId"].ToString());
-                                bool IfSecondaryDiagnosisPresent = cex.IfSecondaryDiagnosisPresent(hdAbuaId.Value, hdPatientRegId.Value);
+                                bool IfSecondaryDiagnosisPresent = aco.IfSecondaryDiagnosisPresent(hdAbuaId.Value, hdPatientRegId.Value);
                                 if (IfSecondaryDiagnosisPresent)
                                 {
                                     pClaimsSD.Visible = true;
@@ -880,7 +876,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                                 string folderName = hdAbuaId.Value;
                                 string imageFileName = hdAbuaId.Value + "_Profile_Image.jpeg";
                                 string base64String = "";
-                                base64String = cex.DisplayImage(folderName, imageFileName);
+                                base64String = aco.DisplayImage(folderName, imageFileName);
                                 if (base64String != "")
                                 {
                                     imgPatientPhoto.ImageUrl = "data:image/jpeg;base64," + base64String;
@@ -919,7 +915,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cex.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt.Rows.Count > 0)
             {
                 gvPraauthSD.DataSource = dt;
@@ -946,7 +942,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             dt.Clear();
-            dt = cex.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
+            dt = aco.getSecondaryDiagnosis(hdAbuaId.Value, hdPatientRegId.Value);
             if (dt.Rows.Count > 0)
             {
                 gvSICDDetails_Claim.DataSource = dt;
@@ -1026,7 +1022,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             int parsedUserId;
             int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
             string roleName = "";
-            roleName = cpd.GetUserRole(userId);
+            roleName = aco.GetUserRole(userId);
             string caseNo = Session["CaseNumber"].ToString();
             long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
             string deductionType = dropDeductionTypeACO.SelectedItem.Value;
@@ -1586,7 +1582,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dt = aco.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridManditoryDocument.DataSource = dt;
@@ -1610,7 +1606,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetDischargeDocuments(HospitalId, PatientRegId);
+            dt = aco.GetDischargeDocuments(HospitalId, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridDischargeDocument.DataSource = dt;
@@ -1634,7 +1630,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetPostInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
+            dt = aco.GetPostInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridPostInvestigationDocument.DataSource = dt;
@@ -1720,7 +1716,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         try
         {
             DataTable dt = new DataTable();
-            dt = cex.GetPreInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
+            dt = aco.GetPreInvestigationDocuments(HospitalId, hdAbuaId.Value, PatientRegId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridSpecialInvestigation.DataSource = dt;
@@ -1783,7 +1779,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             string fileName = lbFileName.Text + ".jpeg";
             string DocumentName = lbDocumentName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1812,7 +1808,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             string fileName = lbFileName.Text + ".jpeg";
             string DocumentName = lbDocumentName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1843,7 +1839,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             string packageName = lbPackageName.Text;
             string investigationName = lbInvestigationName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1874,7 +1870,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             string packageName = lbPackageName.Text;
             string investigationName = lbInvestigationName.Text;
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
@@ -1899,10 +1895,10 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             DataTable dtDischargeDocument = new DataTable();
             DataTable dtPostInvestigationDocument = new DataTable();
             List<string> images = new List<string>();
-            dtSpecialDocument = cex.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
-            dtManditoryDocument = cex.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
-            dtDischargeDocument = cex.GetDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
-            dtPostInvestigationDocument = cex.GetPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtSpecialDocument = aco.GetPreInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
+            dtManditoryDocument = aco.GetManditoryDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtDischargeDocument = aco.GetDischargeDocuments(hdHospitalId.Value, hdPatientRegId.Value);
+            dtPostInvestigationDocument = aco.GetPostInvestigationDocuments(hdHospitalId.Value, hdAbuaId.Value, hdPatientRegId.Value);
             if (dtManditoryDocument != null && dtManditoryDocument.Rows.Count > 0)
             {
                 foreach (DataRow row in dtManditoryDocument.Rows)
@@ -1911,7 +1907,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -1927,7 +1923,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -1943,7 +1939,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -1959,7 +1955,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
                     string fileName = row["UploadedFileName"].ToString().Trim() + ".jpeg";
                     if (!string.IsNullOrEmpty(folderName) && !string.IsNullOrEmpty(fileName))
                     {
-                        string base64Image = preAuth.DisplayImage(folderName, fileName);
+                        string base64Image = aco.DisplayImage(folderName, fileName);
                         if (!string.IsNullOrEmpty(base64Image))
                         {
                             images.Add("data:image/jpeg;base64," + base64Image);
@@ -1969,7 +1965,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             }
             if (images.Count > 0)
             {
-                byte[] pdfBytes = cex.CreatePdfWithImagesInMemory(images);
+                byte[] pdfBytes = aco.CreatePdfWithImagesInMemory(images);
                 Response.Clear();
                 Response.ContentType = "application/pdf";
                 Response.AppendHeader("Content-Disposition", "attachment; filename=merged.pdf");
@@ -1990,7 +1986,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         {
             string claimId = Session["ClaimId"].ToString();
             DataTable dt = new DataTable();
-            dt = ppdHelper.GetClaimQuery(claimId);
+            dt = aco.GetClaimQuery(claimId);
             if (dt != null && dt.Rows.Count > 0)
             {
                 gridClaimQuery.DataSource = dt;
@@ -2045,7 +2041,7 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             string fileName = lbFileName.Text + ".jpeg";
             string DocumentName = lbClaimMainReason.Text.ToString() + " (" + lbClaimSubReason.Text.ToString() + ")";
             string base64Image = "";
-            base64Image = preAuth.DisplayImage(folderName, fileName);
+            base64Image = aco.DisplayImage(folderName, fileName);
             if (base64Image != "")
             {
                 imgChildView.ImageUrl = "data:image/jpeg;base64," + base64Image;
