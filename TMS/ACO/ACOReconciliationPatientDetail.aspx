@@ -1664,52 +1664,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <%-- ACO Remarks --%>
-                            <div class="ibox">
-                                <div class="ibox-title d-flex justify-content-between text-white align-items-center">
-                                    <div class="d-flex w-100 justify-content-center position-relative">
-                                        <h3 class="m-0">ACO Remarks</h3>
-                                    </div>
-                                </div>
-                                <div class="ibox-content">
-                                    <div class="row text-dark">
-                                        <div class="col-lg-9">
-                                            <div class="row">
-                                                <div class="col-md-3 mt-3">
-                                                    <span class="font-weight-bold">Total Claims (Rs):</span><br />
-                                                    <asp:Label ID="Label8" runat="server"></asp:Label>
-                                                </div>
-                                                <asp:Panel ID="pnlInsuranceamount" Visible="false" runat="server" CssClass="col-md-3 mt-3">
-                                                    <span class="font-weight-bold">Insurance liable Amount(Rs.):</span><br />
-                                                    <asp:Label ID="lbpnlInsuranceAmount" runat="server" CssClass="small-text"></asp:Label>
-                                                </asp:Panel>
-                                                <asp:Panel ID="pnlTrustAmount" Visible="false" runat="server" CssClass="col-md-3 mt-3">
-                                                    <span class="font-weight-bold">Trust liable Amount(Rs.):</span><br />
-                                                    <asp:Label ID="lbpnlTrustAmount" runat="server" CssClass="small-text"></asp:Label>
-                                                </asp:Panel>
-                                                <div class="col-md-3 mt-3">
-                                                    <span class="font-weight-bold">Final Approved Amount (Rs):</span><br />
-                                                    <%--<asp:TextBox ID="TextBoxFinalApprovedAmount" runat="server" CssClass="form-control" AutoPostBack="True" OnTextChanged="TextBoxFinalApprovedAmount_TextChanged"></asp:TextBox>--%>
-                                                    <asp:TextBox ID="tbFinalAmountByAco" runat="server" CssClass="form-control"></asp:TextBox>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12 mb-3">
-                                                    <span class="font-weight-bold text-dark">Deduction Type</span><br />
-                                                    <asp:DropDownList runat="server" ID="dropDeductionTypeACO" CssClass="border-0 border-bottom" Style="border-color: transparent; border-width: 0 0 1px; outline: none;">
-                                                        <asp:ListItem Text="--Select--" Value="Select"></asp:ListItem>
-                                                    </asp:DropDownList>
-                                                </div>
-                                                <div class="col-md-12 mb-3">
-                                                    <span class="font-weight-bold text-dark">Remarks</span>
-                                                    <asp:TextBox ID="TextBox1" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>
-                                                    <asp:Button ID="btnAddDeduction" OnClick="btnAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-2" runat="server" Text="Add Deduction" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <%-- Add Deduction --%>
                             <div class="ibox">
                                 <div class="ibox-title d-flex justify-content-between text-white align-items-center">
@@ -1918,7 +1872,7 @@
                                     <asp:Button ID="submitButton" runat="server" Text="Submit" CssClass="btn btn-primary" OnClick="btnSubmit_Click" AutoPostBack="True" />
                                 </div>
                             </div>--%>
-                           <%-- <div class="col-md-3 mb-3">
+                            <%-- <div class="col-md-3 mb-3">
                                 <div class="form-group">
                                     <asp:Label ID="ibActionType" runat="server" CssClass="form-label font-weight-bold text-dark" Text="Action Type"></asp:Label>
                                     <asp:DropDownList ID="actionType" runat="server" CssClass="form-control" AutoPostBack="true">

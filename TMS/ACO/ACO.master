@@ -68,87 +68,57 @@
                         </li>
                         <li>
                             <a href="AssignedCases.aspx">
-                                <%--<i class="fa fa-th-large"></i>--%>
                                 <i class="fa fa-users" aria-hidden="true"></i>
                                 <span class="nav-label">Assigned Cases</span>
                             </a>
                         </li>
                         <li>
                             <a href="CaseSearch.aspx">
-                                <%--<i class="fa fa-th-large"></i>--%>
                                 <i class="fa fa-address-book" aria-hidden="true"></i>
                                 <span class="nav-label">Case Search</span>
                             </a>
                         </li>
                         <li>
                             <a href="Dashboard.aspx">
-                                <%--<i class="fa fa-th-large"></i>--%>
                                 <i class="fa fa-address-book" aria-hidden="true"></i>
                                 <span class="nav-label">Dashboard</span>
                             </a>
                         </li>
                         <li>
-                            <%--<a href="BasicHospitalInfo.aspx">
-                                <i class="fa fa-cog"></i>
-                                <span class="nav-label">Payments</span>
-                                <span class="fa arrow"></span>
-
-                            </a>--%>
                             <a href="#">
-                                <%--<i class="fa fa-cog"></i>--%>
                                 <i class="fa fa-money" aria-hidden="true"></i>
                                 <span class="nav-label">Payments</span>
                                 <span class="fa arrow"></span>
                             </a>
                             <ul class="nav nav-second-level collapse">
-                                <%--<li><a href="BasicHospitalInfo.aspx">Hospital Amount Recovery</a></li>--%>
-                                <li><a href="AmountRecoveryWorkList.aspx">Amount Recovery Worklist</a></li>
-                                <li><a href="HybridPaymentRejectedCases.aspx">Hybrid payment Rejected Cases</a></li>
-                                <li><a href="MiscellaneousPaymentRejectedCases.aspx">Miscellaneous Payment Rejected Cases</a></li>
-                                <li><a href="PaymentRejectedCases.aspx">Payment Rejected Cases</a></li>
-                                <li><a href="TDSRejectedCases.aspx ">TDS Rejected Cases</a></li>
+                                <%--<li><a href="BasicHospitalInfo.aspx"><i class="fa fa-hospital" aria-hidden="true"></i>Hospital Amount Recovery</a></li>--%>
+                                <li><a href="AmountRecoveryWorkList.aspx"><i class="fa fa-list" aria-hidden="true"></i>Amount Recovery Worklist</a></li>
+                                <li><a href="HybridPaymentRejectedCases.aspx"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Hybrid payment Rejected Cases</a></li>
+                                <li><a href="MiscellaneousPaymentRejectedCases.aspx"><i class="fa fa-cogs" aria-hidden="true"></i>Miscellaneous Payment Rejected Cases</a></li>
+                                <li><a href="PaymentRejectedCases.aspx"><i class="fa fa-times-circle" aria-hidden="true"></i>Payment Rejected Cases</a></li>
+                                <li><a href="TDSRejectedCases.aspx "><i class="fa fa-percent" aria-hidden="true"></i>TDS Rejected Cases</a></li>
                                 <%--<li><a href="/Master/Block">RF Payment Rejected Cases</a></li>--%>
                                 <%--<li><a href="/Master/Block">Offline Recovery For Paid Fraud Claims</a></li>--%>
                                 <%--<li><a href="/Master/Block">View Offline Recovery Cases</a></li>--%>
                             </ul>
                         </li>
-                        <%--                        <li>
-                            <a href="#">
-                                <i class="fa fa-wifi" aria-hidden="true"></i>
-                                <span class="nav-label">Offline Cases</span>
-                                <span class="fa arrow"></span>
-                            </a>
-                        </li>--%>
                         <li>
                             <a href="#">
-                                <%--<i class="fa fa-th-large"></i>--%>
                                 <i class="fa fa-balance-scale" aria-hidden="true"></i>
                                 <span class="nav-label">Claims</span>
                                 <span class="fa arrow"></span>
                             </a>
                             <ul class="nav nav-second-level collapse">
                                 <%--<li><a href="ClaimWithoutbanckAC.aspx">Claims with out A/C</a></li>--%>
-                                <li><a href="ClaimUpdation.aspx">Claims Updation</a></li>
+                                <li><a href="ClaimUpdation.aspx"><i class="fa fa-edit" aria-hidden="true"></i>Claims Updation</a></li>
                                 <%--<li><a href="ClaimsUpdateforFraudulentOrPartialAmountCases.aspx">Claims Update for Fraudulent/Partial Amount Cases</a></li>--%>
                                 <li><a href="/Master/Block">Adjustment Excel Upload</a></li>
-                                <li><a href="ReconciliationClaimCasesforApproval.aspx">Reconcillation Request</a></li>
+                                <li><a href="ReconciliationClaimCasesforApproval.aspx"><i class="fa fa-sync" aria-hidden="true"></i>Reconcillation Request</a></li>
                                 <%--<li><a href="/Master/Block">Adjustment Cases</a></li>--%>
                             </ul>
                         </li>
-                        <%--<li>
-                            <a href="#">
-                                <i class="fa-solid fa-virus-covid"></i>
-                                <span class="nav-label">COVID Test</span>
-                            </a>
-                            <ul class="nav nav-second-level collapse">
-                                <li><a href="/AdminHome/Register">Claims Updation(COVID)</a></li>
-                                <li><a href="/Master/Block">Claims with out A/C</a></li>
-                                <li><a href="/Master/Block">Case Search</a></li>
-                            </ul>
-                        </li>--%>
                         <li>
                             <a href="#">
-                                <%--<i class="fa fa-th-large"></i>--%>
                                 <i class="fa fa-book" aria-hidden="true"></i>
                                 <span class="nav-label">MIS</span>
                                 <span class="fa arrow"></span>

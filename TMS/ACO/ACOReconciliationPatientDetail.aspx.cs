@@ -425,102 +425,6 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
         }
 
     }
-    private void BindDeductionTypes()
-    {
-        try
-        {
-            dropDeductionTypeACO.Items.Clear();
-            dropDeductionTypeACO.Items.Add(new ListItem("--Select--", "Select"));
-            DataTable dt = aco.GetDeductionTypesForACO(); // Get the DataTable from the GetDeductionTypesForACO method
-            if (dt.Rows.Count > 0)
-            {
-                foreach (DataRow row in dt.Rows)
-                {
-                    string deductionTypeId = row["DeductionTypeId"].ToString();
-                    string deductionType = row["DeductionType"].ToString();
-
-                    // Add items to the DropDownList
-                    dropDeductionTypeACO.Items.Add(new ListItem(deductionType, deductionTypeId));
-                }
-            }
-            else
-            {
-                lblError.Text = "No deduction types found for ACO.";
-                lblError.Visible = true;
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-        }
-
-    }
-
-    private void BindACORemarks()
-    {
-        try
-        {
-            dt.Clear();
-            int parsedUserId;
-            int userId = int.TryParse(Session["UserId"].ToString(), out parsedUserId) ? parsedUserId : 0;
-            //string claimId = Session["ClaimId"].ToString();
-            long claimId = Convert.ToInt64(Session["ClaimId"]);
-            if (claimId == null)
-            {
-                lblError.Text = "Claim ID is missing!";
-                lblError.Visible = true;
-                return;
-            }
-            dt = aco.GetACORemarksFromSP(claimId, userId);
-            if (dt.Rows.Count > 0)
-            {
-                DataRow row = dt.Rows[0];
-                Label8.Text = row["TotalClaims"].ToString();
-                //Label9.Text = row["TrustLiable"].ToString();
-                //Label10.Text = row["Final Approved Amount"].ToString();
-                if (hdRoleId.Value == "9")
-                {
-                    pnlInsuranceamount.Visible = true;
-                    pnlTrustAmount.Visible = false;
-                    lbpnlInsuranceAmount.Text = row["InsurerLiable"].ToString();
-                    tbFinalAmountByAco.Text = row["InsurerLiable"].ToString();
-
-                }
-                else if (hdRoleId.Value == "10")
-                {
-                    pnlInsuranceamount.Visible = false;
-                    pnlTrustAmount.Visible = true;
-                    lbpnlTrustAmount.Text = row["TrustLiable"].ToString();
-                    tbFinalAmountByAco.Text = row["TrustLiable"].ToString();
-                }
-            }
-            else
-            {
-                //Label8.Text = "N/A";
-                //Label9.Text = "N/A";
-                //Label10.Text = "N/A";
-                tbFinalAmountByAco.Text = "N/A";
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-            throw;
-        }
-
-    }
     private void BindClaimWorkflow()
     {
         try
@@ -851,16 +755,10 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
 
                                 getPatientPrimaryDiagnosis();
                                 getPatientSecondaryDiagnosis();
-                                //getPatientPrimaryDiagnosis();
-                                //getPatientSecondaryDiagnosis();
-                                //BindActionTypeDropdown();
-                                //BindICDDetailsGrid();
                                 BindClaimsDetails();
                                 BindNonTechnicalChecklist();
                                 BindTechnicalChecklistData();
                                 BindClaimWorkflow();
-                                BindACORemarks();
-                                BindDeductionTypes();
                                 getTreatmentDischarge();
                                 BindGrid_PrimaryDiagnosis();
                                 getClaimQuery(Session["ClaimId"].ToString());
@@ -964,52 +862,6 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             Response.Redirect("~/Unauthorize.aspx", false);
         }
     }
-    protected void btnAddDeduction_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            decimal finalDeductedAmount = 0;
-            if (hdRoleId.Value == "9")
-            {
-                decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-                //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
-                decimal totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.ToString().Trim());
-                finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-
-                if (finalDeductedAmount < 0)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
-                    return;
-                }
-                lbFinalAmount.Text = finalDeductedAmount.ToString();
-
-            }
-            else if (hdRoleId.Value == "10")
-            {
-                decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.ToString().Trim());
-                //decimal totalClaimAmount = Convert.ToDecimal(Label8.Text.ToString().Trim());
-                decimal totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.ToString().Trim());
-                finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-
-                if (finalDeductedAmount < 0)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Deduction cannot exceed total claim amount.');", true);
-                    return;
-                }
-                lbFinalAmount.Text = finalDeductedAmount.ToString();
-            }
-        }
-        catch (Exception ex)
-        {
-            if (con.State == ConnectionState.Open)
-            {
-                con.Close();
-            }
-            md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-            Response.Redirect("~/Unauthorize.aspx", false);
-            throw;
-        }
-    }
     protected void btnSubmit_Click(object sender, EventArgs e)
     {
         try
@@ -1025,26 +877,25 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
             roleName = aco.GetUserRole(userId);
             string caseNo = Session["CaseNumber"].ToString();
             long claimId = Convert.ToInt64(Session["ClaimId"]); // Ensure ClaimId is stored in the session
-            string deductionType = dropDeductionTypeACO.SelectedItem.Value;
             //string remarks = txtRemarks.Text.Trim(); // Assuming a textbox for remarks exists
-            decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.Trim());
+
+            //decimal totalFinalAmountByAco = Convert.ToDecimal(tbFinalAmountByAco.Text.Trim());
             decimal totalClaimAmount = 0;
             if (hdRoleId.Value == "9")
             {
-                totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.Trim());
-
+                //totalClaimAmount = Convert.ToDecimal(lbpnlInsuranceAmount.Text.Trim());
 
             }
             else if (hdRoleId.Value == "10")
             {
-                totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.Trim());
+                //totalClaimAmount = Convert.ToDecimal(lbpnlTrustAmount.Text.Trim());
             }
-            decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
-            lbFinalAmount.Text = finalDeductedAmount.ToString();
-            if (finalDeductedAmount > 0)
-            {
-                //aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks, deductionType);
-            }
+            //decimal finalDeductedAmount = totalClaimAmount - totalFinalAmountByAco;
+            //lbFinalAmount.Text = finalDeductedAmount.ToString();
+            //if (finalDeductedAmount > 0)
+            //{
+            //    //aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), finalDeductedAmount, totalFinalAmountByAco, claimId, remarks, deductionType);
+            //}
             // Save the deduction amount to the database
             //long actionId = Convert.ToInt64(actionType.SelectedValue);
             //string selectedQueryReasonId = ddlReason.SelectedValue;
@@ -1135,54 +986,6 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
     //    }
     //}
 
-    //private void BindRejectReason()
-    //{
-    //    try
-    //    {
-    //        DataTable dt = cpd.GetRejectReason();
-    //        ddlReason.DataSource = dt;
-    //        ddlReason.DataTextField = "RejectName";
-    //        ddlReason.DataValueField = "RejectId";
-    //        ddlReason.DataBind();
-    //        ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine("Error: " + ex.Message);
-    //    }
-    //}
-    //private void BindQueryReason()
-    //{
-    //    try
-    //    {
-    //        DataTable dt = cpd.GetQueryReason();
-    //        ddlReason.DataSource = dt;
-    //        ddlReason.DataTextField = "ReasonName";
-    //        ddlReason.DataValueField = "ReasonId";
-    //        ddlReason.DataBind();
-    //        ddlReason.Items.Insert(0, new ListItem("--Select--", ""));
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine("Error: " + ex.Message);
-    //    }
-    //}
-    //private void BindQuerySubReason(string ReasonId)
-    //{
-    //    try
-    //    {
-    //        DataTable dt = cpd.GetQuerySubReason(ReasonId);
-    //        ddlSubReason.DataSource = dt;
-    //        ddlSubReason.DataTextField = "SubReasonName";
-    //        ddlSubReason.DataValueField = "SubReasonId";
-    //        ddlSubReason.DataBind();
-    //        ddlSubReason.Items.Insert(0, new ListItem("--Select--", ""));
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine("Error: " + ex.Message);
-    //    }
-    //}
     //protected void ActionType_SelectedIndexChanged(object sender, EventArgs e)
     //{
     //    try
@@ -1218,24 +1021,6 @@ public partial class ACO_ACOReconciliationPatientDetail : System.Web.UI.Page
     //            pReason.Visible = false;
     //            pSubReason.Visible = false;
     //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        if (con.State == ConnectionState.Open)
-    //        {
-    //            con.Close();
-    //        }
-    //        md.InsertErrorLog(hdUserId.Value, pageName, ex.Message, ex.StackTrace, ex.GetType().ToString());
-    //        Response.Redirect("~/Unauthorize.aspx", false);
-    //        throw;
-    //    }
-    //}
-    //protected void ddlReason_SelectedIndexChanged(object sender, EventArgs e)
-    //{
-    //    try
-    //    {
-    //        string selectedValue = ddlReason.SelectedItem.Value;
-    //        BindQuerySubReason(selectedValue);
     //    }
     //    catch (Exception ex)
     //    {

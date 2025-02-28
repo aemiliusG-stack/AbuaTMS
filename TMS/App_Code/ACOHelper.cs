@@ -13,6 +13,7 @@ using iText.Kernel.Pdf;
 using iText.Layout.Element;
 using System.Net;
 using iText.Layout;
+using System.Web.WebPages;
 
 /// <summary>
 /// Summary description for ACOHelper
@@ -996,7 +997,7 @@ public class ACOHelper
         DataTable dt = new DataTable();
         try
         {
-            string query = "SELECT TrustClaimAmountDeducted FROM TMS_ClaimMaster WHERE ClaimId = @ClaimId AND IsCPDTrustApproved=1 AND IsDeleted = 0 AND IsActive = 1 ";
+            string query = "SELECT TrustClaimAmountDeducted FROM TMS_ClaimMaster WHERE ClaimId = @ClaimId AND IsCPDTrustApproved = 1 AND IsACOTrustApproved=0 AND IsDeleted = 0 AND IsActive = 1 AND TrustClaimAmountDeducted IS NOT NULL AND TrustClaimAmountDeducted > 0;";
             using (SqlCommand cmd = new SqlCommand(query, con))
             {
                 cmd.Parameters.AddWithValue("@ClaimId", claimId);
@@ -1025,11 +1026,11 @@ public class ACOHelper
     {
         // Define base query
         string query = @"
-        SELECT 
+                        SELECT 
     t1.CaseNumber,
     t1.ClaimId,
     t1.ClaimNumber As ClaimNo,
-    CONCAT(t4.ActionName, ' by ', t5.RoleName) as CaseStatus, 
+    CONCAT('Erroneous Claim ', t4.ActionName, ' by ', t5.RoleName) as CaseStatus, 
     t3.HospitalName,
     t2.AdmissionDate as RegisteredDate,
     t1.TrustClaimAmountRequested as ClaimInitiatedAmount,
@@ -1049,14 +1050,14 @@ public class ACOHelper
 FROM TMS_ClaimMaster t1
 Left JOIN TMS_PatientAdmissionDetail t2 ON t1.CaseNumber = t2.CaseNumber
 Left JOIN HEM_HospitalDetails t3 ON t1.HospitalId = t3.HospitalId
-Left JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionInsurer = t4.ActionId
-Left JOIN TMS_Roles t5 ON t1.ForwardedByInsurer = t5.RoleId
+Left JOIN TMS_MasterActionMaster t4 ON t1.ForwardActionTrust = t4.ActionId
+Left JOIN TMS_Roles t5 ON t1.ForwardedByTrust = t5.RoleId
 Left JOIN TMS_PatientTreatmentProtocol t6 ON t2.PatientRegId = t6.PatientRegId
 Left JOIN TMS_MasterPackageMaster t7 ON t6.PackageId = t7.PackageId
 Left JOIN TMS_MasterPackageDetail t8 ON t6.ProcedureId = t8.ProcedureId
 LEFT JOIN HEM_FinancialDetails t9 ON t1.HospitalId = t9.HospitalId
 LEFT JOIN TMS_ClaimMaster t10 ON t1.CaseNumber = t10.CardNumber
-WHERE 1 = 1 ";
+WHERE 1 = 1";
 
         // Dynamically add filters to the query based on provided parameters
         if (!string.IsNullOrEmpty(caseNumber))
@@ -1163,5 +1164,46 @@ WHERE 1 = 1 ";
         con.Close();
         return dt;
     }
+    //Case Search Method start here and
+    public DataTable GetCaseStatus(string ClaimId)
+    {
+        DataTable dt = new DataTable();
+        string Query = "SELECT TOP 1 ActionTaken FROM TMS_PatientActionHistory WHERE ClaimId = @ClaimId AND IsActive = 1 ORDER BY ActionId DESC";
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        sd.SelectCommand.Parameters.AddWithValue("@ClaimId", ClaimId);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+    public DataTable SearchCase(string CaseNumber, string CardNumber, string ClaimNumber, string FromDate, string ToDate)
+    {
+        string SubQuery = "";
 
+        if (!CaseNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CaseNumber = '" + CaseNumber + "' ";
+        }
+        if (!CardNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.CardNumber = '" + CardNumber + "' ";
+        }
+        if (!ClaimNumber.IsEmpty())
+        {
+            SubQuery += "AND t1.ClaimNumber = '" + ClaimNumber + "' ";
+        }
+        if (!FromDate.IsEmpty() && !ToDate.IsEmpty())
+        {
+            SubQuery += "AND t3.RegDate between '" + FromDate + "' AND '" + ToDate + "' ";
+        }
+
+        string Query = "SELECT t1.AdmissionId, t2.ClaimId, t1.HospitalId, t3.PatientName, t1.CardNumber, t1.PatientRegId, t1.CaseNumber, t2.ClaimNumber, t1.AdmissionType, t1.AdmissionDate, t2.Remarks, t3.RegDate, t1.DischargeDate, t3.MobileNumber, t4.HospitalName, CONCAT(t4.Address,', ',t4.City,'-',t4.PinCode) AS HospitalAddress, t4.HospitalParentType, t3.Gender, t3.PatientFamilyId, t3.IsAadharVerified, t3.IsBiometricVerified, t5.Title AS State, t6.Title AS District, t3.IsChild, t3.ChildName, t3.ChildGender, t3.ChildFatherName, t3.ChildMotherName, t3.ChildDOB, t3.Age, t3.ImageURL, t3.ChildImageURL FROM TMS_PatientAdmissionDetail t1 LEFT JOIN TMS_ClaimMaster t2 ON t1.ClaimId = t2.ClaimId LEFT JOIN TMS_PatientRegistration t3 ON t1.PatientRegId = t3.PatientRegId LEFT JOIN HEM_HospitalDetails t4 ON t1.HospitalId = t4.HospitalId LEFT JOIN HEM_MasterStates t5 ON t3.StateId = t5.Id LEFT JOIN HEM_MasterDistricts t6 ON t3.DistrictId = t6.Id WHERE t1.IsActive = 1 AND t1.IsDeleted = 0 " + SubQuery;
+        DataTable dt = new DataTable();
+        SqlDataAdapter sd = new SqlDataAdapter(Query, con);
+        con.Open();
+        sd.Fill(dt);
+        con.Close();
+        return dt;
+    }
+    //end here
 }

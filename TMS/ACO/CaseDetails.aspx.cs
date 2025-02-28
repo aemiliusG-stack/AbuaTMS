@@ -1043,7 +1043,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 finalApprovedAmount = decimal.TryParse(tbFinalAmountByAco.Text.Trim(), out finalApprovedAmount) ? finalApprovedAmount : 0;
                 decimal noDeductionAmount = finalApprovedAmount - totalClaimAmount;
                 dt = aco.GetExistingDeductionAmountfromClaimMaster(claimId);
-                if (dt.Rows.Count > 0)
+                if (dt.Rows.Count > 0 && actionId == 2)
                 {
                     decimal existedDeductionAmount = Convert.ToDecimal(dt.Rows[0]["TrustClaimAmountDeducted"]);
                     decimal finalDeductionAmount = noDeductionAmount - existedDeductionAmount;
@@ -1051,7 +1051,7 @@ public partial class ACO_CaseDetails : System.Web.UI.Page
                 }
             }
             // Save the deduction amount if conditions met
-            if (existingDeductionAmount >= 0 && actionId == 2)
+            if (existingDeductionAmount >= 0 /*&& actionId == 2*/)
             {
                 aco.SaveDeductionAmount(userId, Convert.ToInt32(Session["RoleId"].ToString()), existingDeductionAmount, finalApprovedAmount, claimId, acoRemark);
             }

@@ -1700,9 +1700,12 @@
                                                     <%--<asp:TextBox ID="TextBox1" runat="server" TextMode="MultiLine" CssClass="form-control"></asp:TextBox>--%>
                                                     <asp:TextBox ID="ACORemark" runat="server" TextMode="MultiLine" CssClass="form-control"
                                                         AutoPostBack="true"></asp:TextBox>
-                                                    <asp:Button ID="btnAddDeduction" OnClick="btnAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-2" runat="server" Text="Add Deduction" />
-                                                    <asp:Button ID="btnDeleteDeduction" runat="server" OnClick="btnDeleteDeduction_Click" CssClass="btn btn-danger rounded-pill mt-2" Text="Delete Deduction" />
-
+                                                    <asp:LinkButton ID="btnAddDeduction" runat="server" OnClick="btnAddDeduction_Click" CssClass="btn btn-primary rounded-pill mt-4">
+                                                                 <i class="fa fa-plus"></i> Add Deduction
+                                                    </asp:LinkButton>
+                                                    <asp:LinkButton ID="btnClear" runat="server" OnClick="btnDeleteDeduction_Click" CssClass="btn btn-danger rounded-pill mt-4 ml-2">
+                                                                 <i class="fa fa-trash"></i> Delete Deduction
+                                                    </asp:LinkButton>
                                                 </div>
                                             </div>
                                         </div>
